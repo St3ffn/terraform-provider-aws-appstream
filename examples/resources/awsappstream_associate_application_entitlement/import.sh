@@ -1,0 +1,1 @@
+terraform import awsappstream_associate_application_entitlement.example "example-stack|example-entitlement|example-application"
