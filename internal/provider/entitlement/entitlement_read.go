@@ -10,10 +10,19 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	awsappstream "github.com/aws/aws-sdk-go-v2/service/appstream"
+	awstypes "github.com/aws/aws-sdk-go-v2/service/appstream/types"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
+
+var entitlementAttributeObjectType = types.ObjectType{
+	AttrTypes: map[string]attr.Type{
+		"name":  types.StringType,
+		"value": types.StringType,
+	},
+}
 
 func (r *entitlementResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	var state entitlementModel
@@ -85,27 +94,31 @@ func (r *entitlementResource) Read(ctx context.Context, req resource.ReadRequest
 		newState.Description = types.StringNull()
 	}
 
-	attrs := make([]entitlementAttributeModel, 0, len(e.Attributes))
-	for _, a := range e.Attributes {
+	newState.Attributes = flattenEntitlementAttributes(ctx, e.Attributes, &resp.Diagnostics)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &newState)...)
+}
+
+func flattenEntitlementAttributes(
+	ctx context.Context, awsAttrs []awstypes.EntitlementAttribute, diags *diag.Diagnostics,
+) types.Set {
+
+	attrs := make([]entitlementAttributeModel, 0, len(awsAttrs))
+	for _, a := range awsAttrs {
 		attrs = append(attrs, entitlementAttributeModel{
 			Name:  types.StringValue(aws.ToString(a.Name)),
 			Value: types.StringValue(aws.ToString(a.Value)),
 		})
 	}
 
-	attrObjType := types.ObjectType{
-		AttrTypes: map[string]attr.Type{
-			"name":  types.StringType,
-			"value": types.StringType,
-		},
+	setVal, d := types.SetValueFrom(ctx, entitlementAttributeObjectType, attrs)
+	diags.Append(d...)
+	if diags.HasError() {
+		return types.SetNull(entitlementAttributeObjectType)
 	}
 
-	setVal, diags := types.SetValueFrom(ctx, attrObjType, attrs)
-	resp.Diagnostics.Append(diags...)
-	if resp.Diagnostics.HasError() {
-		return
-	}
-	newState.Attributes = setVal
-
-	resp.Diagnostics.Append(resp.State.Set(ctx, &newState)...)
+	return setVal
 }

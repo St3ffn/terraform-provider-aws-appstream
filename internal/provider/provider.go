@@ -197,7 +197,9 @@ func (A *awsAppStreamProvider) Configure(ctx context.Context, req provider.Confi
 }
 
 func (A *awsAppStreamProvider) DataSources(_ context.Context) []func() datasource.DataSource {
-	return nil
+	return []func() datasource.DataSource{
+		entitlement.NewEntitlementDataSource,
+	}
 }
 
 func (A *awsAppStreamProvider) Resources(_ context.Context) []func() resource.Resource {
