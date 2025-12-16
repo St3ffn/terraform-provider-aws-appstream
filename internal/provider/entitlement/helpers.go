@@ -27,6 +27,14 @@ func isAppStreamNotFound(err error) bool {
 	}
 }
 
+func isAppStreamAlreadyExists(err error) bool {
+	var apiErr smithy.APIError
+	if err == nil || !errors.As(err, &apiErr) {
+		return false
+	}
+	return apiErr.ErrorCode() == "ResourceAlreadyExistsException"
+}
+
 type assocDiagMode string
 
 const (

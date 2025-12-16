@@ -202,6 +202,7 @@ func (A *awsAppStreamProvider) DataSources(_ context.Context) []func() datasourc
 
 func (A *awsAppStreamProvider) Resources(_ context.Context) []func() resource.Resource {
 	return []func() resource.Resource{
+		entitlement.NewEntitlementResource,
 		entitlement.NewAssociateApplicationEntitlementResource,
 	}
 }

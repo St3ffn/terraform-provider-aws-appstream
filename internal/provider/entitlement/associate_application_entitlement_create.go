@@ -111,6 +111,6 @@ func (r *associateApplicationEntitlementResource) Create(ctx context.Context, re
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
 
-func buildAssocID(stack, ent, app string) string {
-	return fmt.Sprintf("%s|%s|%s", stack, ent, app)
+func buildAssocID(stackName, entName, appID string) string {
+	return fmt.Sprintf("%s|%s|%s", stackName, entName, appID)
 }

@@ -6,7 +6,7 @@ package entitlement
 import (
 	"context"
 	"fmt"
-	"regexp"
+	"strings"
 
 	awsappstream "github.com/aws/aws-sdk-go-v2/service/appstream"
 	"github.com/hashicorp/terraform-plugin-framework/path"
@@ -61,7 +61,7 @@ func (r *associateApplicationEntitlementResource) Configure(_ context.Context, r
 }
 
 func (r *associateApplicationEntitlementResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	parts := regexp.MustCompile(`\|`).Split(req.ID, -1)
+	parts := strings.SplitN(req.ID, "|", 3)
 	if len(parts) != 3 {
 		resp.Diagnostics.AddError(
 			"Unexpected Import Identifier",
