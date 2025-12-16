@@ -1,7 +1,7 @@
 // Copyright (c) St3ffn
 // SPDX-License-Identifier: MPL-2.0
 
-package entitlement
+package provider
 
 import (
 	"context"
@@ -93,6 +93,9 @@ func (r *entitlementResource) Read(ctx context.Context, req resource.ReadRequest
 	} else {
 		newState.Description = types.StringNull()
 	}
+
+	newState.CreatedTime = stringFromTime(e.CreatedTime)
+	newState.LastModifiedTime = stringFromTime(e.LastModifiedTime)
 
 	newState.Attributes = flattenEntitlementAttributes(ctx, e.Attributes, &resp.Diagnostics)
 	if resp.Diagnostics.HasError() {

@@ -1,13 +1,15 @@
 // Copyright (c) St3ffn
 // SPDX-License-Identifier: MPL-2.0
 
-package entitlement
+package provider
 
 import (
 	"errors"
+	"time"
 
 	"github.com/aws/smithy-go"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 func isAppStreamNotFound(err error) bool {
@@ -67,4 +69,11 @@ func addAssocPartsDiagnostics(m associateApplicationEntitlementModel, diags *dia
 			)
 		}
 	}
+}
+
+func stringFromTime(t *time.Time) types.String {
+	if t == nil {
+		return types.StringNull()
+	}
+	return types.StringValue(t.Format(time.RFC3339))
 }

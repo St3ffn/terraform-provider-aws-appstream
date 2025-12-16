@@ -44,7 +44,9 @@ resource "awsappstream_entitlement" "example" {
 
 ### Read-Only
 
+- `created_time` (String) The timestamp when the entitlement was created, in RFC 3339 format (for example, `2024-01-09T14:32:11Z`). This value is set by AWS and cannot be modified.
 - `id` (String) A synthetic identifier for the entitlement, composed of the stack name and entitlement name. This value is managed by the provider and cannot be set manually.
+- `last_modified_time` (String) The timestamp when the entitlement was last modified, in RFC 3339 format (for example, `2024-01-09T15:47:03Z`). This value is set by AWS and cannot be modified.
 
 <a id="nestedatt--attributes"></a>
 ### Nested Schema for `attributes`

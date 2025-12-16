@@ -1,7 +1,7 @@
 // Copyright (c) St3ffn
 // SPDX-License-Identifier: MPL-2.0
 
-package entitlement
+package provider
 
 import (
 	"context"
@@ -64,8 +64,6 @@ func (ds *entitlementDataSource) Schema(_ context.Context, _ datasource.SchemaRe
 				MarkdownDescription: "One or more attribute rules used to match federated user attributes (AWS IAM SAML PrincipalTag). " +
 					"Each entry specifies a supported attribute name and the value that must be present for a user session.",
 				Computed: true,
-
-				// Optional: keep this, in case AWS returns empty (shouldn't), you can enforce min size in state
 				Validators: []validator.Set{
 					setvalidator.SizeAtLeast(1),
 				},
@@ -84,6 +82,18 @@ func (ds *entitlementDataSource) Schema(_ context.Context, _ datasource.SchemaRe
 						},
 					},
 				},
+			},
+			"created_time": schema.StringAttribute{
+				Description: "Time the entitlement was created.",
+				MarkdownDescription: "The timestamp when the entitlement was created, in RFC 3339 format " +
+					"(for example, `2024-01-09T14:32:11Z`).",
+				Computed: true,
+			},
+			"last_modified_time": schema.StringAttribute{
+				Description: "Time the entitlement was last modified.",
+				MarkdownDescription: "The timestamp when the entitlement was last modified, in RFC 3339 format " +
+					"(for example, `2024-01-09T15:47:03Z`).",
+				Computed: true,
 			},
 		},
 	}

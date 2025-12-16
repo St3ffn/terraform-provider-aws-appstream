@@ -1,7 +1,7 @@
 // Copyright (c) St3ffn
 // SPDX-License-Identifier: MPL-2.0
 
-package entitlement
+package provider
 
 import (
 	"context"
@@ -43,7 +43,7 @@ func (r *associateApplicationEntitlementResource) Configure(_ context.Context, r
 	clients, ok := req.ProviderData.(*intaws.Clients)
 	if !ok {
 		resp.Diagnostics.AddError(
-			"Unexpected Data Source Configure Type",
+			"Unexpected Resource Configure Type",
 			fmt.Sprintf("Expected *awsClients, got: %T. Please report this issue to the provider developers.", req.ProviderData),
 		)
 		return
@@ -51,7 +51,7 @@ func (r *associateApplicationEntitlementResource) Configure(_ context.Context, r
 
 	if clients.AppStream == nil {
 		resp.Diagnostics.AddError(
-			"Unexpected Data Source Configure Type",
+			"Unexpected Resource Configure Type",
 			"Expected *awsClients.AppStream, got: nil. Please report this issue to the provider developers.",
 		)
 		return

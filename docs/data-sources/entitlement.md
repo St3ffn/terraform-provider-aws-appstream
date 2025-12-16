@@ -31,8 +31,10 @@ data "awsappstream_entitlement" "example" {
 
 - `app_visibility` (String) Controls which applications are visible to users who match the entitlement attributes. Valid values are `ALL` or `ASSOCIATED`.
 - `attributes` (Attributes Set) One or more attribute rules used to match federated user attributes (AWS IAM SAML PrincipalTag). Each entry specifies a supported attribute name and the value that must be present for a user session. (see [below for nested schema](#nestedatt--attributes))
+- `created_time` (String) The timestamp when the entitlement was created, in RFC 3339 format (for example, `2024-01-09T14:32:11Z`).
 - `description` (String) The entitlement description, if set.
 - `id` (String) A synthetic identifier for the entitlement, composed of the stack name and entitlement name in the format `<stack_name>|<name>`.
+- `last_modified_time` (String) The timestamp when the entitlement was last modified, in RFC 3339 format (for example, `2024-01-09T15:47:03Z`).
 
 <a id="nestedatt--attributes"></a>
 ### Nested Schema for `attributes`

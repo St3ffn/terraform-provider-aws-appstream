@@ -1,7 +1,7 @@
 // Copyright (c) St3ffn
 // SPDX-License-Identifier: MPL-2.0
 
-package entitlement
+package provider
 
 import (
 	"context"
@@ -68,11 +68,22 @@ func (r *entitlementResource) Update(ctx context.Context, req resource.UpdateReq
 	}
 
 	var description *string
-	if !plan.Description.IsNull() && !plan.Description.IsUnknown() {
-		description = plan.Description.ValueStringPointer()
+
+	switch {
+	case plan.Description.IsUnknown():
+		description = nil
+	case !plan.Description.IsNull():
+		// user explicitly set description
+		description = aws.String(plan.Description.ValueString())
+	case plan.Description.IsNull() && !state.Description.IsNull():
+		// user removed description
+		description = aws.String("")
+	default:
+		// unset and previously unset
+		description = nil
 	}
 
-	_, err := r.appStreamClient.UpdateEntitlement(ctx, &awsappstream.UpdateEntitlementInput{
+	out, err := r.appStreamClient.UpdateEntitlement(ctx, &awsappstream.UpdateEntitlementInput{
 		StackName:     aws.String(stackName),
 		Name:          aws.String(name),
 		Description:   description,
@@ -97,7 +108,39 @@ func (r *entitlementResource) Update(ctx context.Context, req resource.UpdateReq
 		return
 	}
 
-	plan.ID = types.StringValue(buildEntitlementID(stackName, name))
+	var newState entitlementModel
+	newState.ID = types.StringValue(buildEntitlementID(stackName, name))
+	newState.StackName = plan.StackName
+	newState.Name = plan.Name
+	newState.Description = plan.Description
+	newState.AppVisibility = plan.AppVisibility
+	newState.Attributes = plan.Attributes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	if out != nil && out.Entitlement != nil {
+		e := out.Entitlement
+
+		if e.Description != nil {
+			newState.Description = types.StringValue(aws.ToString(e.Description))
+		} else {
+			newState.Description = types.StringNull()
+		}
+
+		if e.AppVisibility != "" {
+			newState.AppVisibility = types.StringValue(string(e.AppVisibility))
+		}
+
+		newState.CreatedTime = stringFromTime(e.CreatedTime)
+		newState.LastModifiedTime = stringFromTime(e.LastModifiedTime)
+
+		newState.Attributes = flattenEntitlementAttributes(ctx, e.Attributes, &resp.Diagnostics)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+	} else {
+		// fallback: keep old computed values
+		newState.CreatedTime = state.CreatedTime
+		newState.LastModifiedTime = state.LastModifiedTime
+	}
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &newState)...)
 }

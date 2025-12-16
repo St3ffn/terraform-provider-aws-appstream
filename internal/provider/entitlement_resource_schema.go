@@ -1,7 +1,7 @@
 // Copyright (c) St3ffn
 // SPDX-License-Identifier: MPL-2.0
 
-package entitlement
+package provider
 
 import (
 	"context"
@@ -118,6 +118,24 @@ func (r *entitlementResource) Schema(_ context.Context, _ resource.SchemaRequest
 							},
 						},
 					},
+				},
+			},
+			"created_time": schema.StringAttribute{
+				Description: "Time the entitlement was created.",
+				MarkdownDescription: "The timestamp when the entitlement was created, in RFC 3339 format (for example, `2024-01-09T14:32:11Z`). " +
+					"This value is set by AWS and cannot be modified.",
+				Computed: true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
+			},
+			"last_modified_time": schema.StringAttribute{
+				Description: "Time the entitlement was last modified.",
+				MarkdownDescription: "The timestamp when the entitlement was last modified, in RFC 3339 format (for example, `2024-01-09T15:47:03Z`). " +
+					"This value is set by AWS and cannot be modified.",
+				Computed: true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
 				},
 			},
 		},

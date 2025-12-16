@@ -22,7 +22,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	intaws "github.com/st3ffn/terraform-provider-aws-appstream/internal/aws"
-	"github.com/st3ffn/terraform-provider-aws-appstream/internal/provider/entitlement"
 )
 
 var (
@@ -198,14 +197,14 @@ func (A *awsAppStreamProvider) Configure(ctx context.Context, req provider.Confi
 
 func (A *awsAppStreamProvider) DataSources(_ context.Context) []func() datasource.DataSource {
 	return []func() datasource.DataSource{
-		entitlement.NewEntitlementDataSource,
+		NewEntitlementDataSource,
 	}
 }
 
 func (A *awsAppStreamProvider) Resources(_ context.Context) []func() resource.Resource {
 	return []func() resource.Resource{
-		entitlement.NewEntitlementResource,
-		entitlement.NewAssociateApplicationEntitlementResource,
+		NewEntitlementResource,
+		NewAssociateApplicationEntitlementResource,
 	}
 }
 

@@ -1,7 +1,7 @@
 // Copyright (c) St3ffn
 // SPDX-License-Identifier: MPL-2.0
 
-package entitlement
+package provider
 
 import (
 	"context"
@@ -51,7 +51,7 @@ func (r *entitlementResource) Create(ctx context.Context, req resource.CreateReq
 		description = plan.Description.ValueStringPointer()
 	}
 
-	_, err := r.appStreamClient.CreateEntitlement(ctx, &awsappstream.CreateEntitlementInput{
+	out, err := r.appStreamClient.CreateEntitlement(ctx, &awsappstream.CreateEntitlementInput{
 		StackName:     aws.String(stackName),
 		Name:          aws.String(name),
 		Description:   description,
@@ -83,8 +83,40 @@ func (r *entitlementResource) Create(ctx context.Context, req resource.CreateReq
 		return
 	}
 
-	plan.ID = types.StringValue(buildEntitlementID(stackName, name))
-	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	var newState entitlementModel
+	newState.ID = types.StringValue(buildEntitlementID(stackName, name))
+	newState.StackName = plan.StackName
+	newState.Name = plan.Name
+	newState.Description = plan.Description
+	newState.AppVisibility = plan.AppVisibility
+	newState.Attributes = plan.Attributes
+
+	if out != nil && out.Entitlement != nil {
+		e := out.Entitlement
+
+		if e.Description != nil {
+			newState.Description = types.StringValue(aws.ToString(e.Description))
+		} else {
+			newState.Description = types.StringNull()
+		}
+
+		if e.AppVisibility != "" {
+			newState.AppVisibility = types.StringValue(string(e.AppVisibility))
+		}
+
+		newState.CreatedTime = stringFromTime(e.CreatedTime)
+		newState.LastModifiedTime = stringFromTime(e.LastModifiedTime)
+
+		newState.Attributes = flattenEntitlementAttributes(ctx, e.Attributes, &resp.Diagnostics)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+	} else {
+		newState.CreatedTime = types.StringNull()
+		newState.LastModifiedTime = types.StringNull()
+	}
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &newState)...)
 }
 
 func buildEntitlementID(stackName, name string) string {
