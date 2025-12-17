@@ -49,7 +49,7 @@ func (r *entitlementResource) Read(ctx context.Context, req resource.ReadRequest
 	stackName := state.StackName.ValueString()
 	name := state.Name.ValueString()
 
-	out, err := r.appStreamClient.DescribeEntitlements(ctx, &awsappstream.DescribeEntitlementsInput{
+	out, err := r.appstreamClient.DescribeEntitlements(ctx, &awsappstream.DescribeEntitlementsInput{
 		StackName: aws.String(stackName),
 		Name:      aws.String(name),
 	})

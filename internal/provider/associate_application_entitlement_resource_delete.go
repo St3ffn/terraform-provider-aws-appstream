@@ -34,7 +34,7 @@ func (r *associateApplicationEntitlementResource) Delete(ctx context.Context, re
 	entName := state.EntitlementName.ValueString()
 	appID := state.ApplicationIdentifier.ValueString()
 
-	_, err := r.appStreamClient.DisassociateApplicationFromEntitlement(ctx, &awsappstream.DisassociateApplicationFromEntitlementInput{
+	_, err := r.appstreamClient.DisassociateApplicationFromEntitlement(ctx, &awsappstream.DisassociateApplicationFromEntitlementInput{
 		StackName:             aws.String(stackName),
 		EntitlementName:       aws.String(entName),
 		ApplicationIdentifier: aws.String(appID),

@@ -22,7 +22,7 @@ func NewEntitlementDataSource() datasource.DataSource {
 }
 
 type entitlementDataSource struct {
-	appStreamClient *awsappstream.Client
+	appstreamClient *awsappstream.Client
 }
 
 func (ds *entitlementDataSource) Metadata(_ context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
@@ -34,22 +34,22 @@ func (ds *entitlementDataSource) Configure(_ context.Context, req datasource.Con
 		return
 	}
 
-	clients, ok := req.ProviderData.(*awsClients)
+	meta, ok := req.ProviderData.(*metadata)
 	if !ok {
 		resp.Diagnostics.AddError(
 			"Unexpected Data Source Configure Type",
-			fmt.Sprintf("Expected *awsClients, got: %T. Please report this issue to the provider developers.", req.ProviderData),
+			fmt.Sprintf("Expected *metadata, got: %T. Please report this issue to the provider developers.", req.ProviderData),
 		)
 		return
 	}
 
-	if clients.AppStream == nil {
+	if meta.appstream == nil {
 		resp.Diagnostics.AddError(
 			"Unexpected Data Source Configure Type",
-			"Expected *awsClients.AppStream, got: nil. Please report this issue to the provider developers.",
+			"Expected *metadata.appstream, got: nil. Please report this issue to the provider developers.",
 		)
 		return
 	}
 
-	ds.appStreamClient = clients.AppStream
+	ds.appstreamClient = meta.appstream
 }

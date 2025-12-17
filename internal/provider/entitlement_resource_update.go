@@ -83,7 +83,7 @@ func (r *entitlementResource) Update(ctx context.Context, req resource.UpdateReq
 		description = nil
 	}
 
-	out, err := r.appStreamClient.UpdateEntitlement(ctx, &awsappstream.UpdateEntitlementInput{
+	out, err := r.appstreamClient.UpdateEntitlement(ctx, &awsappstream.UpdateEntitlementInput{
 		StackName:     aws.String(stackName),
 		Name:          aws.String(name),
 		Description:   description,

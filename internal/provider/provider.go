@@ -35,14 +35,19 @@ type awsAppStreamProvider struct {
 
 // awsAppStreamProviderModel describes the provider data model.
 type awsAppStreamProviderModel struct {
-	AccessKey        types.String `tfsdk:"access_key"`
-	SecretAccessKey  types.String `tfsdk:"secret_access_key"`
-	SessionToken     types.String `tfsdk:"session_token"`
-	Profile          types.String `tfsdk:"profile"`
-	Region           types.String `tfsdk:"region"`
-	RetryMode        types.String `tfsdk:"retry_mode"`
-	RetryMaxAttempts types.Int64  `tfsdk:"retry_max_attempts"`
-	RetryMaxBackoff  types.Int64  `tfsdk:"retry_max_backoff"`
+	AccessKey        types.String      `tfsdk:"access_key"`
+	SecretAccessKey  types.String      `tfsdk:"secret_access_key"`
+	SessionToken     types.String      `tfsdk:"session_token"`
+	Profile          types.String      `tfsdk:"profile"`
+	Region           types.String      `tfsdk:"region"`
+	RetryMode        types.String      `tfsdk:"retry_mode"`
+	RetryMaxAttempts types.Int64       `tfsdk:"retry_max_attempts"`
+	RetryMaxBackoff  types.Int64       `tfsdk:"retry_max_backoff"`
+	DefaultTags      *defaultTagsModel `tfsdk:"default_tags"`
+}
+
+type defaultTagsModel struct {
+	Tags types.Map `tfsdk:"tags"`
 }
 
 func (p *awsAppStreamProvider) Metadata(_ context.Context, _ provider.MetadataRequest, resp *provider.MetadataResponse) {
@@ -140,6 +145,21 @@ Authentication and region selection follow the standard AWS SDK behavior.
 					int64(awsretry.DefaultMaxBackoff.Seconds()),
 				),
 				Validators: []validator.Int64{int64validator.AtLeast(1)},
+			},
+			"default_tags": schema.SingleNestedAttribute{
+				Optional:    true,
+				Description: "Default tags to apply to all taggable resources managed by this provider.",
+				MarkdownDescription: "Default tags to apply to all **taggable** resources managed by this provider. " +
+					"Tags defined on individual resources take precedence over these defaults when keys overlap.",
+				Attributes: map[string]schema.Attribute{
+					"tags": schema.MapAttribute{
+						Optional:    true,
+						ElementType: types.StringType,
+						Description: "A map of tags to apply by default.",
+						MarkdownDescription: "A map of tags to apply by default. " +
+							"Resource-level tags override these defaults when the same key is set.",
+					},
+				},
 			},
 		},
 	}
@@ -243,6 +263,17 @@ func (p *awsAppStreamProvider) ValidateConfig(ctx context.Context, req provider.
 		return
 	}
 
+	if config.DefaultTags != nil && config.DefaultTags.Tags.IsUnknown() {
+		resp.Diagnostics.AddAttributeError(
+			path.Root("default_tags").AtName("tags"),
+			"Unknown Default Tags",
+			"The AWS AppStream provider cannot be configured because \"default_tags.tags\" is unknown. "+
+				"Provider configuration values must be static. "+
+				"Set \"default_tags.tags\" to a fixed map or remove it to use no default tags.",
+		)
+		return
+	}
+
 	hasAccessKey := !config.AccessKey.IsNull()
 	hasSecretKey := !config.SecretAccessKey.IsNull()
 	hasSession := !config.SessionToken.IsNull()
@@ -258,7 +289,7 @@ func (p *awsAppStreamProvider) ValidateConfig(ctx context.Context, req provider.
 	}
 
 	// session_token only makes sense with static credentials
-	if hasSession && !(hasAccessKey && hasSecretKey) {
+	if hasSession && (!hasAccessKey && !hasSecretKey) {
 		resp.Diagnostics.AddAttributeError(
 			path.Root("session_token"),
 			"Invalid AWS Session Token Configuration",
@@ -389,10 +420,19 @@ func (p *awsAppStreamProvider) Configure(ctx context.Context, req provider.Confi
 		return
 	}
 
-	clients := newAWSClients(awscfg)
+	defaultTags := map[string]string{}
 
-	resp.DataSourceData = clients
-	resp.ResourceData = clients
+	if config.DefaultTags != nil && !config.DefaultTags.Tags.IsNull() {
+		diags := config.DefaultTags.Tags.ElementsAs(ctx, &defaultTags, false)
+		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+	}
+	meta := newMetadata(awscfg, defaultTags)
+
+	resp.DataSourceData = meta
+	resp.ResourceData = meta
 
 	tflog.Info(ctx, "Configured AWS AppStream client", map[string]any{"success": true})
 }

@@ -37,7 +37,7 @@ func (r *entitlementResource) Delete(ctx context.Context, req resource.DeleteReq
 	stackName := state.StackName.ValueString()
 	name := state.Name.ValueString()
 
-	_, err := r.appStreamClient.DeleteEntitlement(ctx, &awsappstream.DeleteEntitlementInput{
+	_, err := r.appstreamClient.DeleteEntitlement(ctx, &awsappstream.DeleteEntitlementInput{
 		StackName: aws.String(stackName),
 		Name:      aws.String(name),
 	})

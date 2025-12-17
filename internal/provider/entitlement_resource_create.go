@@ -51,7 +51,7 @@ func (r *entitlementResource) Create(ctx context.Context, req resource.CreateReq
 		description = plan.Description.ValueStringPointer()
 	}
 
-	out, err := r.appStreamClient.CreateEntitlement(ctx, &awsappstream.CreateEntitlementInput{
+	out, err := r.appstreamClient.CreateEntitlement(ctx, &awsappstream.CreateEntitlementInput{
 		StackName:     aws.String(stackName),
 		Name:          aws.String(name),
 		Description:   description,

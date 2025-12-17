@@ -38,7 +38,7 @@ func (ds *entitlementDataSource) Read(ctx context.Context, req datasource.ReadRe
 	stackName := config.StackName.ValueString()
 	name := config.Name.ValueString()
 
-	out, err := ds.appStreamClient.DescribeEntitlements(ctx, &awsappstream.DescribeEntitlementsInput{
+	out, err := ds.appstreamClient.DescribeEntitlements(ctx, &awsappstream.DescribeEntitlementsInput{
 		StackName: aws.String(stackName),
 		Name:      aws.String(name),
 	})

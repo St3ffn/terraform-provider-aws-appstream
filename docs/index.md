@@ -39,6 +39,7 @@ provider "awsappstream" {
 ### Optional
 
 - `access_key` (String, Sensitive) The AWS access key ID to use for authentication. If not set, the AWS SDK default credential resolution chain is used (environment variables, shared credentials file, EC2/ECS metadata, etc.).
+- `default_tags` (Attributes) Default tags to apply to all **taggable** resources managed by this provider. Tags defined on individual resources take precedence over these defaults when keys overlap. (see [below for nested schema](#nestedatt--default_tags))
 - `profile` (String) The name of the AWS CLI profile to use. If not set, the AWS SDK default credential resolution chain is used (environment variables, shared credentials file, EC2/ECS metadata, etc.).
 - `region` (String) The AWS region in which AppStream resources are managed. If not set, the AWS SDK default region resolution chain is used (environment variables such as `AWS_REGION` or `AWS_DEFAULT_REGION`, shared configuration files, or EC2/ECS metadata).
 - `retry_max_attempts` (Number) The maximum number of retry attempts for AWS AppStream API calls. This controls how many times a failed request is retried before returning an error.If not set, the AWS SDK default retry configuration is used (for example via environment variables such as `AWS_MAX_ATTEMPTS`). **SDK Default:** 3
@@ -51,3 +52,10 @@ provider "awsappstream" {
 	If not set, the AWS SDK default retry configuration is used (for example via environment variables such as `AWS_RETRY_MODE`).
 - `secret_access_key` (String, Sensitive) The AWS secret access key to use for authentication. If not set, the AWS SDK default credential resolution chain is used (environment variables, shared credentials file, EC2/ECS metadata, etc.).
 - `session_token` (String, Sensitive) The AWS session token to use for temporary credentials, such as those obtained via AWS STS. This value is optional and typically only required when using temporary security credentials.If not set, the AWS SDK default credential resolution chain is used.
+
+<a id="nestedatt--default_tags"></a>
+### Nested Schema for `default_tags`
+
+Optional:
+
+- `tags` (Map of String) A map of tags to apply by default. Resource-level tags override these defaults when the same key is set.

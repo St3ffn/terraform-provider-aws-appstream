@@ -38,7 +38,7 @@ func (r *associateApplicationEntitlementResource) Create(ctx context.Context, re
 	isAssociated := func() (bool, error) {
 		var nextToken *string
 		for {
-			out, err := r.appStreamClient.ListEntitledApplications(ctx, &awsappstream.ListEntitledApplicationsInput{
+			out, err := r.appstreamClient.ListEntitledApplications(ctx, &awsappstream.ListEntitledApplicationsInput{
 				StackName:       aws.String(stackName),
 				EntitlementName: aws.String(entName),
 				NextToken:       nextToken,
@@ -89,7 +89,7 @@ func (r *associateApplicationEntitlementResource) Create(ctx context.Context, re
 		return
 	}
 
-	_, err = r.appStreamClient.AssociateApplicationToEntitlement(ctx, &awsappstream.AssociateApplicationToEntitlementInput{
+	_, err = r.appstreamClient.AssociateApplicationToEntitlement(ctx, &awsappstream.AssociateApplicationToEntitlementInput{
 		StackName:             aws.String(stackName),
 		EntitlementName:       aws.String(entName),
 		ApplicationIdentifier: aws.String(appID),

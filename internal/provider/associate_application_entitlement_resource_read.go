@@ -38,7 +38,7 @@ func (r *associateApplicationEntitlementResource) Read(ctx context.Context, req 
 	found := false
 
 	for {
-		out, err := r.appStreamClient.ListEntitledApplications(ctx, &awsappstream.ListEntitledApplicationsInput{
+		out, err := r.appstreamClient.ListEntitledApplications(ctx, &awsappstream.ListEntitledApplicationsInput{
 			StackName:       aws.String(stackName),
 			EntitlementName: aws.String(entName),
 			NextToken:       nextToken,

@@ -25,7 +25,7 @@ func NewEntitlementResource() resource.Resource {
 }
 
 type entitlementResource struct {
-	appStreamClient *awsappstream.Client
+	appstreamClient *awsappstream.Client
 }
 
 func (r *entitlementResource) Metadata(_ context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -37,24 +37,24 @@ func (r *entitlementResource) Configure(_ context.Context, req resource.Configur
 		return
 	}
 
-	clients, ok := req.ProviderData.(*awsClients)
+	meta, ok := req.ProviderData.(*metadata)
 	if !ok {
 		resp.Diagnostics.AddError(
 			"Unexpected Resource Configure Type",
-			fmt.Sprintf("Expected *awsClients, got: %T. Please report this issue to the provider developers.", req.ProviderData),
+			fmt.Sprintf("Expected *metadata, got: %T. Please report this issue to the provider developers.", req.ProviderData),
 		)
 		return
 	}
 
-	if clients.AppStream == nil {
+	if meta.appstream == nil {
 		resp.Diagnostics.AddError(
 			"Unexpected Resource Configure Type",
-			"Expected *awsClients.AppStream, got: nil. Please report this issue to the provider developers.",
+			"Expected *metadata.appstream, got: nil. Please report this issue to the provider developers.",
 		)
 		return
 	}
 
-	r.appStreamClient = clients.AppStream
+	r.appstreamClient = meta.appstream
 }
 
 func (r *entitlementResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
