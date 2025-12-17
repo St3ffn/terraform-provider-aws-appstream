@@ -11,7 +11,6 @@ import (
 	awsappstream "github.com/aws/aws-sdk-go-v2/service/appstream"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
-	intaws "github.com/st3ffn/terraform-provider-aws-appstream/internal/aws"
 )
 
 // Ensure the implementation satisfies the expected interfaces.
@@ -38,7 +37,7 @@ func (r *entitlementResource) Configure(_ context.Context, req resource.Configur
 		return
 	}
 
-	clients, ok := req.ProviderData.(*intaws.Clients)
+	clients, ok := req.ProviderData.(*awsClients)
 	if !ok {
 		resp.Diagnostics.AddError(
 			"Unexpected Resource Configure Type",

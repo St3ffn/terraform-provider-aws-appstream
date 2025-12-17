@@ -11,7 +11,6 @@ import (
 	awsappstream "github.com/aws/aws-sdk-go-v2/service/appstream"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
-	intaws "github.com/st3ffn/terraform-provider-aws-appstream/internal/aws"
 )
 
 var AppStreamMaxResults int32 = 50
@@ -40,7 +39,7 @@ func (r *associateApplicationEntitlementResource) Configure(_ context.Context, r
 		return
 	}
 
-	clients, ok := req.ProviderData.(*intaws.Clients)
+	clients, ok := req.ProviderData.(*awsClients)
 	if !ok {
 		resp.Diagnostics.AddError(
 			"Unexpected Resource Configure Type",
