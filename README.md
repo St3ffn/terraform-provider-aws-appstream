@@ -23,3 +23,9 @@ For context, [see the open AppStream-related issues](https://github.com/hashicor
 
 - `awsappstream_stack`
 - `awsappstream_entitlement`
+
+## Planned
+
+- resource `awsappstream_stack`
+- resource & data source `awsappstream_fleet`
+- resource `awsappstream_fleet_stack_association`
