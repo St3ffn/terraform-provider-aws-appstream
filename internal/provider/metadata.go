@@ -23,7 +23,7 @@ func newMetadata(awscfg aws.Config, defaultTags map[string]string) *metadata {
 	}
 }
 
-//lint:ignore U1000 applyDefaultTags will be used in a future change
+//nolint:unused // reserved for future default tag handling
 func (m *metadata) applyDefaultTags(tags map[string]string) map[string]string {
 	out := make(map[string]string)
 

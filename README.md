@@ -21,4 +21,5 @@ For context, [see the open AppStream-related issues](https://github.com/hashicor
 
 ## Supported Data Sources
 
+- `awsappstream_stack`
 - `awsappstream_entitlement`

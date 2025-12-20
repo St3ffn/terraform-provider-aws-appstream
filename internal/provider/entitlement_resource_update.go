@@ -119,11 +119,7 @@ func (r *entitlementResource) Update(ctx context.Context, req resource.UpdateReq
 	if out != nil && out.Entitlement != nil {
 		e := out.Entitlement
 
-		if e.Description != nil {
-			newState.Description = types.StringValue(aws.ToString(e.Description))
-		} else {
-			newState.Description = types.StringNull()
-		}
+		newState.Description = stringOrNull(e.Description)
 
 		if e.AppVisibility != "" {
 			newState.AppVisibility = types.StringValue(string(e.AppVisibility))

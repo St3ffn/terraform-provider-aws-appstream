@@ -84,12 +84,7 @@ func (ds *entitlementDataSource) Read(ctx context.Context, req datasource.ReadRe
 	state.Name = types.StringValue(aws.ToString(e.Name))
 	state.ID = types.StringValue(buildEntitlementID(aws.ToString(e.StackName), aws.ToString(e.Name)))
 	state.AppVisibility = types.StringValue(string(e.AppVisibility))
-
-	if e.Description != nil {
-		state.Description = types.StringValue(aws.ToString(e.Description))
-	} else {
-		state.Description = types.StringNull()
-	}
+	state.Description = stringOrNull(e.Description)
 
 	state.CreatedTime = stringFromTime(e.CreatedTime)
 	state.LastModifiedTime = stringFromTime(e.LastModifiedTime)

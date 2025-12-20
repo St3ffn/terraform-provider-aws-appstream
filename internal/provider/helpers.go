@@ -4,6 +4,7 @@
 package provider
 
 import (
+	"context"
 	"errors"
 	"time"
 
@@ -21,6 +22,7 @@ func isAppStreamNotFound(err error) bool {
 	// see https://docs.aws.amazon.com/appstream2/latest/APIReference/API_ListEntitledApplications.html
 	// see https://docs.aws.amazon.com/appstream2/latest/APIReference/API_AssociateApplicationToEntitlement.html
 	// see https://docs.aws.amazon.com/appstream2/latest/APIReference/API_DisassociateApplicationFromEntitlement.html
+	// see https://docs.aws.amazon.com/appstream2/latest/APIReference/API_DescribeStacks.html
 	switch apiErr.ErrorCode() {
 	case "ResourceNotFoundException", "EntitlementNotFoundException":
 		return true
@@ -71,9 +73,49 @@ func addAssocPartsDiagnostics(m associateApplicationEntitlementModel, diags *dia
 	}
 }
 
+func boolOrNull(v *bool) types.Bool {
+	if v == nil {
+		return types.BoolNull()
+	}
+	return types.BoolValue(*v)
+}
+
+func int32OrNull(v *int32) types.Int64 {
+	if v == nil {
+		return types.Int64Null()
+	}
+	return types.Int64Value(int64(*v))
+}
+
+func stringOrNull(v *string) types.String {
+	if v == nil {
+		return types.StringNull()
+	}
+	return types.StringValue(*v)
+}
+
 func stringFromTime(t *time.Time) types.String {
 	if t == nil {
 		return types.StringNull()
 	}
 	return types.StringValue(t.Format(time.RFC3339))
+}
+
+func setStringOrNull(
+	ctx context.Context,
+	values []string,
+	diags *diag.Diagnostics,
+) types.Set {
+
+	if len(values) == 0 {
+		return types.SetNull(types.StringType)
+	}
+
+	setVal, d := types.SetValueFrom(ctx, types.StringType, values)
+	diags.Append(d...)
+	if diags.HasError() {
+		return types.SetNull(types.StringType)
+	}
+
+	return setVal
 }
