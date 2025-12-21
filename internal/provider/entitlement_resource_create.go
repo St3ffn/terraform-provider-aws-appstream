@@ -5,15 +5,12 @@ package provider
 
 import (
 	"context"
-	"errors"
 	"fmt"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	awsappstream "github.com/aws/aws-sdk-go-v2/service/appstream"
 	awstypes "github.com/aws/aws-sdk-go-v2/service/appstream/types"
-	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
-	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 func (r *entitlementResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
@@ -46,20 +43,15 @@ func (r *entitlementResource) Create(ctx context.Context, req resource.CreateReq
 		return
 	}
 
-	var description *string
-	if !plan.Description.IsNull() && !plan.Description.IsUnknown() {
-		description = plan.Description.ValueStringPointer()
-	}
-
-	out, err := r.appstreamClient.CreateEntitlement(ctx, &awsappstream.CreateEntitlementInput{
+	_, err := r.appstreamClient.CreateEntitlement(ctx, &awsappstream.CreateEntitlementInput{
 		StackName:     aws.String(stackName),
 		Name:          aws.String(name),
-		Description:   description,
+		Description:   stringPointerOrNil(plan.Description),
 		AppVisibility: awstypes.AppVisibility(plan.AppVisibility.ValueString()),
 		Attributes:    awsAttrs,
 	})
 	if err != nil {
-		if errors.Is(err, context.Canceled) || errors.Is(err, context.DeadlineExceeded) {
+		if isContextCanceled(ctx) {
 			return
 		}
 
@@ -83,73 +75,19 @@ func (r *entitlementResource) Create(ctx context.Context, req resource.CreateReq
 		return
 	}
 
-	var newState entitlementModel
-	newState.ID = types.StringValue(buildEntitlementID(stackName, name))
-	newState.StackName = plan.StackName
-	newState.Name = plan.Name
-	newState.Description = plan.Description
-	newState.AppVisibility = plan.AppVisibility
-	newState.Attributes = plan.Attributes
+	newState, diags := r.readEntitlement(ctx, stackName, name)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
 
-	if out != nil && out.Entitlement != nil {
-		e := out.Entitlement
-
-		if e.Description != nil {
-			newState.Description = types.StringValue(aws.ToString(e.Description))
-		} else {
-			newState.Description = types.StringNull()
-		}
-
-		if e.AppVisibility != "" {
-			newState.AppVisibility = types.StringValue(string(e.AppVisibility))
-		}
-
-		newState.CreatedTime = stringFromTime(e.CreatedTime)
-		newState.LastModifiedTime = stringFromTime(e.LastModifiedTime)
-
-		newState.Attributes = flattenEntitlementAttributes(ctx, e.Attributes, &resp.Diagnostics)
-		if resp.Diagnostics.HasError() {
+	if newState == nil {
+		if ctx.Err() != nil {
 			return
 		}
-	} else {
-		newState.CreatedTime = types.StringNull()
-		newState.LastModifiedTime = types.StringNull()
+		resp.State.RemoveResource(ctx)
+		return
 	}
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &newState)...)
-}
-
-func buildEntitlementID(stackName, name string) string {
-	return fmt.Sprintf("%s|%s", stackName, name)
-}
-
-func expandEntitlementAttributes(
-	ctx context.Context, tfAttrs types.Set, diags *diag.Diagnostics,
-) []awstypes.EntitlementAttribute {
-
-	var attrs []entitlementAttributeModel
-	diags.Append(tfAttrs.ElementsAs(ctx, &attrs, false)...)
-	if diags.HasError() {
-		return nil
-	}
-
-	awsAttrs := make([]awstypes.EntitlementAttribute, 0, len(attrs))
-	for _, a := range attrs {
-		if a.Name.IsNull() || a.Name.IsUnknown() ||
-			a.Value.IsNull() || a.Value.IsUnknown() {
-
-			diags.AddError(
-				"Invalid Terraform Plan",
-				"All entitlement attributes must have known, non-null name and value.",
-			)
-			return nil
-		}
-
-		awsAttrs = append(awsAttrs, awstypes.EntitlementAttribute{
-			Name:  aws.String(a.Name.ValueString()),
-			Value: aws.String(a.Value.ValueString()),
-		})
-	}
-
-	return awsAttrs
+	resp.Diagnostics.Append(resp.State.Set(ctx, newState)...)
 }

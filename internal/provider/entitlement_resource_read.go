@@ -5,11 +5,11 @@ package provider
 
 import (
 	"context"
-	"errors"
 	"fmt"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	awsappstream "github.com/aws/aws-sdk-go-v2/service/appstream"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -39,54 +39,72 @@ func (r *entitlementResource) Read(ctx context.Context, req resource.ReadRequest
 	stackName := state.StackName.ValueString()
 	name := state.Name.ValueString()
 
+	newState, diags := r.readEntitlement(ctx, stackName, name)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	if newState == nil {
+		if isContextCanceled(ctx) {
+			return
+		}
+		resp.State.RemoveResource(ctx)
+		return
+	}
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, newState)...)
+}
+
+func (r *entitlementResource) readEntitlement(
+	ctx context.Context, stackName, name string,
+) (*entitlementModel, diag.Diagnostics) {
+
+	var diags diag.Diagnostics
+
 	out, err := r.appstreamClient.DescribeEntitlements(ctx, &awsappstream.DescribeEntitlementsInput{
 		StackName: aws.String(stackName),
 		Name:      aws.String(name),
 	})
 	if err != nil {
-		// respect cancellation/deadlines
-		if errors.Is(err, context.Canceled) || errors.Is(err, context.DeadlineExceeded) {
-			return
+		if isContextCanceled(ctx) {
+			return nil, diags
 		}
+
 		if isAppStreamNotFound(err) {
-			resp.State.RemoveResource(ctx)
-			return
+			return nil, diags
 		}
-		resp.Diagnostics.AddError(
+
+		diags.AddError(
 			"Error Reading AWS AppStream Entitlement",
 			fmt.Sprintf("Could not read entitlement %q in stack %q: %v", name, stackName, err),
 		)
-		return
+		return nil, diags
 	}
 
 	if len(out.Entitlements) == 0 {
-		// remove resource if missing
-		resp.State.RemoveResource(ctx)
-		return
+		return nil, diags
 	}
 
 	e := out.Entitlements[0]
 	if e.StackName == nil || e.Name == nil {
-		resp.State.RemoveResource(ctx)
-		return
+		return nil, diags
 	}
 
-	var newState entitlementModel
-	newState.ID = types.StringValue(buildEntitlementID(aws.ToString(e.StackName), aws.ToString(e.Name)))
-	newState.StackName = types.StringValue(aws.ToString(e.StackName))
-	newState.Name = types.StringValue(aws.ToString(e.Name))
-	newState.AppVisibility = types.StringValue(string(e.AppVisibility))
-
-	// optional description
-	newState.Description = stringOrNull(e.Description)
-
-	newState.CreatedTime = stringFromTime(e.CreatedTime)
-	newState.LastModifiedTime = stringFromTime(e.LastModifiedTime)
-
-	newState.Attributes = flattenEntitlementAttributes(ctx, e.Attributes, &resp.Diagnostics)
-	if resp.Diagnostics.HasError() {
-		return
+	state := &entitlementModel{
+		ID:               types.StringValue(buildEntitlementID(stackName, name)),
+		StackName:        types.StringValue(aws.ToString(e.StackName)),
+		Name:             types.StringValue(aws.ToString(e.Name)),
+		Description:      stringOrNull(e.Description),
+		AppVisibility:    types.StringValue(string(e.AppVisibility)),
+		CreatedTime:      stringFromTime(e.CreatedTime),
+		LastModifiedTime: stringFromTime(e.LastModifiedTime),
+		Attributes:       flattenEntitlementAttributes(ctx, e.Attributes, &diags),
 	}
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &newState)...)
+	if diags.HasError() {
+		return nil, diags
+	}
+
+	return state, diags
 }

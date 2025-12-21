@@ -7,7 +7,7 @@ import (
 	"context"
 	"regexp"
 
-	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/int32validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/mapvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/setvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
@@ -171,14 +171,14 @@ func (r *stackResource) Schema(_ context.Context, _ resource.SchemaRequest, resp
 								stringvalidator.OneOf("ENABLED", "DISABLED"),
 							},
 						},
-						"maximum_length": schema.Int64Attribute{
+						"maximum_length": schema.Int32Attribute{
 							Description: "Maximum number of characters that can be copied.",
 							MarkdownDescription: "Specifies the maximum number of characters that can be copied for clipboard actions. " +
 								"This setting applies only to `CLIPBOARD_COPY_FROM_LOCAL_DEVICE` and `CLIPBOARD_COPY_TO_LOCAL_DEVICE`. " +
 								"It cannot be set when permission is `DISABLED`.",
 							Optional: true,
-							Validators: []validator.Int64{
-								int64validator.Between(1, 20971520),
+							Validators: []validator.Int32{
+								int32validator.Between(1, 20971520),
 							},
 						},
 					},

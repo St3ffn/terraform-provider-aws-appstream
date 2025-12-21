@@ -103,7 +103,7 @@ func (ds *stackDataSource) Schema(_ context.Context, _ datasource.SchemaRequest,
 							MarkdownDescription: "Whether the action is enabled or disabled.",
 							Computed:            true,
 						},
-						"maximum_length": schema.Int64Attribute{
+						"maximum_length": schema.Int32Attribute{
 							Description:         "Maximum number of characters that can be copied.",
 							MarkdownDescription: "The maximum number of characters that can be copied for clipboard actions.",
 							Computed:            true,

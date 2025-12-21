@@ -8,11 +8,9 @@ import (
 	"fmt"
 
 	awsappstream "github.com/aws/aws-sdk-go-v2/service/appstream"
-	awstaggingapi "github.com/aws/aws-sdk-go-v2/service/resourcegroupstaggingapi"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
 
-// Ensure the implementation satisfies the expected interfaces.
 var (
 	_ datasource.DataSource              = &stackDataSource{}
 	_ datasource.DataSourceWithConfigure = &stackDataSource{}
@@ -24,7 +22,7 @@ func NewStackDataSource() datasource.DataSource {
 
 type stackDataSource struct {
 	appstreamClient *awsappstream.Client
-	taggingClient   *awstaggingapi.Client
+	tags            *tagManager
 }
 
 func (ds *stackDataSource) Metadata(_ context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
@@ -62,5 +60,5 @@ func (ds *stackDataSource) Configure(_ context.Context, req datasource.Configure
 	}
 
 	ds.appstreamClient = meta.appstream
-	ds.taggingClient = meta.tagging
+	ds.tags = newTagManager(meta.tagging, meta.defaultTags)
 }

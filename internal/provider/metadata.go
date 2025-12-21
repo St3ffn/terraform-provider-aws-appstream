@@ -22,16 +22,3 @@ func newMetadata(awscfg aws.Config, defaultTags map[string]string) *metadata {
 		defaultTags: defaultTags,
 	}
 }
-
-//nolint:unused // reserved for future default tag handling
-func (m *metadata) applyDefaultTags(tags map[string]string) map[string]string {
-	out := make(map[string]string)
-
-	for k, v := range m.defaultTags {
-		out[k] = v
-	}
-	for k, v := range tags {
-		out[k] = v
-	}
-	return out
-}

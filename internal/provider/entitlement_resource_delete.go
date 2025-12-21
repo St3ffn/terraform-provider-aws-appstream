@@ -5,7 +5,6 @@ package provider
 
 import (
 	"context"
-	"errors"
 	"fmt"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -42,8 +41,7 @@ func (r *entitlementResource) Delete(ctx context.Context, req resource.DeleteReq
 		Name:      aws.String(name),
 	})
 	if err != nil {
-		// respect cancellation/deadlines
-		if errors.Is(err, context.Canceled) || errors.Is(err, context.DeadlineExceeded) {
+		if isContextCanceled(ctx) {
 			return
 		}
 

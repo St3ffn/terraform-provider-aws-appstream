@@ -8,12 +8,10 @@ import (
 	"fmt"
 
 	awsappstream "github.com/aws/aws-sdk-go-v2/service/appstream"
-	awstaggingapi "github.com/aws/aws-sdk-go-v2/service/resourcegroupstaggingapi"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
 
-// Ensure the implementation satisfies the expected interfaces.
 var (
 	_ resource.Resource                   = &stackResource{}
 	_ resource.ResourceWithConfigure      = &stackResource{}
@@ -27,7 +25,7 @@ func NewStackResource() resource.Resource {
 
 type stackResource struct {
 	appstreamClient *awsappstream.Client
-	taggingClient   *awstaggingapi.Client
+	tags            *tagManager
 }
 
 func (r *stackResource) ValidateConfig(ctx context.Context, req resource.ValidateConfigRequest, resp *resource.ValidateConfigResponse) {
@@ -139,7 +137,7 @@ func (r *stackResource) Configure(_ context.Context, req resource.ConfigureReque
 	}
 
 	r.appstreamClient = meta.appstream
-	r.taggingClient = meta.tagging
+	r.tags = newTagManager(meta.tagging, meta.defaultTags)
 }
 
 func (r *stackResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {

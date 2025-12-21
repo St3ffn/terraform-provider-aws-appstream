@@ -11,7 +11,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
 
-// Ensure the implementation satisfies the expected interfaces.
 var (
 	_ datasource.DataSource              = &entitlementDataSource{}
 	_ datasource.DataSourceWithConfigure = &entitlementDataSource{}

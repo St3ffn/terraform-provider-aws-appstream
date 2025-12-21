@@ -13,6 +13,10 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
+func isContextCanceled(ctx context.Context) bool {
+	return errors.Is(ctx.Err(), context.Canceled) || errors.Is(ctx.Err(), context.DeadlineExceeded)
+}
+
 func isAppStreamNotFound(err error) bool {
 	var apiErr smithy.APIError
 	if err == nil || !errors.As(err, &apiErr) {
@@ -39,40 +43,6 @@ func isAppStreamAlreadyExists(err error) bool {
 	return apiErr.ErrorCode() == "ResourceAlreadyExistsException"
 }
 
-type assocDiagMode string
-
-const (
-	assocDiagPlan   assocDiagMode = "plan"
-	assocDiagRead   assocDiagMode = "read"
-	assocDiagDelete assocDiagMode = "delete"
-)
-
-func addAssocPartsDiagnostics(m associateApplicationEntitlementModel, diags *diag.Diagnostics, mode assocDiagMode) {
-	if m.StackName.IsNull() || m.StackName.IsUnknown() ||
-		m.EntitlementName.IsNull() || m.EntitlementName.IsUnknown() ||
-		m.ApplicationIdentifier.IsNull() || m.ApplicationIdentifier.IsUnknown() {
-
-		switch mode {
-		case assocDiagPlan:
-			diags.AddError(
-				"Invalid Terraform Plan",
-				"Cannot associate application to entitlement because stack_name, entitlement_name, and application_identifier must be known.",
-			)
-		case assocDiagDelete:
-			diags.AddError(
-				"Invalid Terraform State",
-				"Cannot disassociate application from entitlement because stack_name, entitlement_name, and application_identifier must be known.",
-			)
-		case assocDiagRead:
-			diags.AddError(
-				"Invalid Terraform State",
-				"Required attributes stack_name, entitlement_name, and application_identifier are missing from state. "+
-					"This can happen after an incomplete import or a prior provider bug. Re-import or recreate the resource.",
-			)
-		}
-	}
-}
-
 func boolOrNull(v *bool) types.Bool {
 	if v == nil {
 		return types.BoolNull()
@@ -80,11 +50,11 @@ func boolOrNull(v *bool) types.Bool {
 	return types.BoolValue(*v)
 }
 
-func int32OrNull(v *int32) types.Int64 {
+func int32OrNull(v *int32) types.Int32 {
 	if v == nil {
-		return types.Int64Null()
+		return types.Int32Null()
 	}
-	return types.Int64Value(int64(*v))
+	return types.Int32Value(*v)
 }
 
 func stringOrNull(v *string) types.String {
@@ -118,4 +88,63 @@ func setStringOrNull(
 	}
 
 	return setVal
+}
+
+func boolPointerOrNil(v types.Bool) *bool {
+	if v.IsNull() || v.IsUnknown() {
+		return nil
+	}
+	b := v.ValueBool()
+	return &b
+}
+
+func int32PointerOrNil(v types.Int32) *int32 {
+	if v.IsNull() || v.IsUnknown() {
+		return nil
+	}
+	i := v.ValueInt32()
+	return &i
+}
+
+func stringPointerOrNil(v types.String) *string {
+	if v.IsNull() || v.IsUnknown() {
+		return nil
+	}
+	s := v.ValueString()
+	return &s
+}
+
+func expandStringSetOrNil(ctx context.Context, set types.Set, diags *diag.Diagnostics) []string {
+	if set.IsNull() || set.IsUnknown() {
+		return nil
+	}
+
+	var values []string
+	diags.Append(set.ElementsAs(ctx, &values, false)...)
+	if diags.HasError() {
+		return nil
+	}
+
+	if len(values) == 0 {
+		return nil
+	}
+
+	return values
+}
+
+func optionalStringUpdate(
+	plan types.String,
+	state types.String,
+	setter func(*string),
+) {
+	switch {
+	case plan.IsUnknown():
+		return
+	case !plan.IsNull():
+		v := plan.ValueString()
+		setter(&v)
+	case plan.IsNull() && !state.IsNull():
+		empty := ""
+		setter(&empty)
+	}
 }

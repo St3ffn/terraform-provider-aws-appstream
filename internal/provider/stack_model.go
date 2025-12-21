@@ -58,7 +58,7 @@ type stackUserSettingModel struct {
 	Permission types.String `tfsdk:"permission"`
 	// MaximumLength specifies the maximum number of characters that can be copied
 	// for clipboard-related actions (optional).
-	MaximumLength types.Int64 `tfsdk:"maximum_length"`
+	MaximumLength types.Int32 `tfsdk:"maximum_length"`
 }
 
 type stackApplicationSettingsModel struct {

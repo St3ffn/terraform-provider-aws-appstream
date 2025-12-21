@@ -25,7 +25,7 @@ var stackUserSettingObjectType = types.ObjectType{
 	AttrTypes: map[string]attr.Type{
 		"action":         types.StringType,
 		"permission":     types.StringType,
-		"maximum_length": types.Int64Type,
+		"maximum_length": types.Int32Type,
 	},
 }
 
@@ -69,14 +69,10 @@ func flattenStorageConnectors(
 
 	for _, c := range awsConnectors {
 		m := stackStorageConnectorModel{
-			ConnectorType:      types.StringValue(string(c.ConnectorType)),
-			ResourceIdentifier: stringOrNull(c.ResourceIdentifier),
-			Domains:            setStringOrNull(ctx, c.Domains, diags),
-			DomainsRequireAdminConsent: setStringOrNull(
-				ctx,
-				c.DomainsRequireAdminConsent,
-				diags,
-			),
+			ConnectorType:              types.StringValue(string(c.ConnectorType)),
+			ResourceIdentifier:         stringOrNull(c.ResourceIdentifier),
+			Domains:                    setStringOrNull(ctx, c.Domains, diags),
+			DomainsRequireAdminConsent: setStringOrNull(ctx, c.DomainsRequireAdminConsent, diags),
 		}
 
 		out = append(out, m)

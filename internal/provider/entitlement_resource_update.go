@@ -5,14 +5,12 @@ package provider
 
 import (
 	"context"
-	"errors"
 	"fmt"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	awsappstream "github.com/aws/aws-sdk-go-v2/service/appstream"
 	awstypes "github.com/aws/aws-sdk-go-v2/service/appstream/types"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
-	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 func (r *entitlementResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
@@ -67,31 +65,20 @@ func (r *entitlementResource) Update(ctx context.Context, req resource.UpdateReq
 		return
 	}
 
-	var description *string
-
-	switch {
-	case plan.Description.IsUnknown():
-		description = nil
-	case !plan.Description.IsNull():
-		// user explicitly set description
-		description = aws.String(plan.Description.ValueString())
-	case plan.Description.IsNull() && !state.Description.IsNull():
-		// user removed description
-		description = aws.String("")
-	default:
-		// unset and previously unset
-		description = nil
-	}
-
-	out, err := r.appstreamClient.UpdateEntitlement(ctx, &awsappstream.UpdateEntitlementInput{
+	input := &awsappstream.UpdateEntitlementInput{
 		StackName:     aws.String(stackName),
 		Name:          aws.String(name),
-		Description:   description,
 		AppVisibility: awstypes.AppVisibility(plan.AppVisibility.ValueString()),
 		Attributes:    awsAttrs,
+	}
+
+	optionalStringUpdate(plan.Description, state.Description, func(description *string) {
+		input.Description = description
 	})
+
+	_, err := r.appstreamClient.UpdateEntitlement(ctx, input)
 	if err != nil {
-		if errors.Is(err, context.Canceled) || errors.Is(err, context.DeadlineExceeded) {
+		if isContextCanceled(ctx) {
 			return
 		}
 
@@ -108,35 +95,19 @@ func (r *entitlementResource) Update(ctx context.Context, req resource.UpdateReq
 		return
 	}
 
-	var newState entitlementModel
-	newState.ID = types.StringValue(buildEntitlementID(stackName, name))
-	newState.StackName = plan.StackName
-	newState.Name = plan.Name
-	newState.Description = plan.Description
-	newState.AppVisibility = plan.AppVisibility
-	newState.Attributes = plan.Attributes
-
-	if out != nil && out.Entitlement != nil {
-		e := out.Entitlement
-
-		newState.Description = stringOrNull(e.Description)
-
-		if e.AppVisibility != "" {
-			newState.AppVisibility = types.StringValue(string(e.AppVisibility))
-		}
-
-		newState.CreatedTime = stringFromTime(e.CreatedTime)
-		newState.LastModifiedTime = stringFromTime(e.LastModifiedTime)
-
-		newState.Attributes = flattenEntitlementAttributes(ctx, e.Attributes, &resp.Diagnostics)
-		if resp.Diagnostics.HasError() {
-			return
-		}
-	} else {
-		// fallback: keep old computed values
-		newState.CreatedTime = state.CreatedTime
-		newState.LastModifiedTime = state.LastModifiedTime
+	newState, diags := r.readEntitlement(ctx, stackName, name)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
 	}
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &newState)...)
+	if newState == nil {
+		if isContextCanceled(ctx) {
+			return
+		}
+		resp.State.RemoveResource(ctx)
+		return
+	}
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, newState)...)
 }

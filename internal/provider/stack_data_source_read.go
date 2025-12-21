@@ -5,7 +5,6 @@ package provider
 
 import (
 	"context"
-	"errors"
 	"fmt"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -40,7 +39,7 @@ func (ds *stackDataSource) Read(ctx context.Context, req datasource.ReadRequest,
 		Names: []string{name},
 	})
 	if err != nil {
-		if errors.Is(err, context.Canceled) || errors.Is(err, context.DeadlineExceeded) {
+		if isContextCanceled(ctx) {
 			return
 		}
 
@@ -76,30 +75,31 @@ func (ds *stackDataSource) Read(ctx context.Context, req datasource.ReadRequest,
 		return
 	}
 
-	var state stackModel
-
-	state.Name = types.StringValue(aws.ToString(stack.Name))
-	state.ID = types.StringValue(aws.ToString(stack.Name))
-
-	state.Description = stringOrNull(stack.Description)
-	state.DisplayName = stringOrNull(stack.DisplayName)
-	state.RedirectURL = stringOrNull(stack.RedirectURL)
-	state.FeedbackURL = stringOrNull(stack.FeedbackURL)
-	state.StorageConnectors = flattenStorageConnectors(ctx, stack.StorageConnectors, &resp.Diagnostics)
-	state.UserSettings = flattenUserSettings(ctx, stack.UserSettings, &resp.Diagnostics)
-	state.ApplicationSettings = flattenApplicationSettings(ctx, stack.ApplicationSettings, &resp.Diagnostics)
-	state.AccessEndpoints = flattenAccessEndpoints(ctx, stack.AccessEndpoints, &resp.Diagnostics)
-	state.EmbedHostDomains = setStringOrNull(ctx, stack.EmbedHostDomains, &resp.Diagnostics)
-	state.StreamingExperienceSettings = flattenStreamingExperienceSettings(ctx, stack.StreamingExperienceSettings, &resp.Diagnostics)
-
-	state.ARN = stringOrNull(stack.Arn)
-	state.CreatedTime = stringFromTime(stack.CreatedTime)
-	state.StackErrors = flattenStackErrors(ctx, stack.StackErrors, &resp.Diagnostics)
+	state := &stackModel{
+		ID:                  types.StringValue(aws.ToString(stack.Name)),
+		Name:                types.StringValue(aws.ToString(stack.Name)),
+		Description:         stringOrNull(stack.Description),
+		DisplayName:         stringOrNull(stack.DisplayName),
+		StorageConnectors:   flattenStorageConnectors(ctx, stack.StorageConnectors, &resp.Diagnostics),
+		RedirectURL:         stringOrNull(stack.RedirectURL),
+		FeedbackURL:         stringOrNull(stack.FeedbackURL),
+		UserSettings:        flattenUserSettings(ctx, stack.UserSettings, &resp.Diagnostics),
+		ApplicationSettings: flattenApplicationSettings(ctx, stack.ApplicationSettings, &resp.Diagnostics),
+		Tags:                types.Map{},
+		AccessEndpoints:     flattenAccessEndpoints(ctx, stack.AccessEndpoints, &resp.Diagnostics),
+		EmbedHostDomains:    setStringOrNull(ctx, stack.EmbedHostDomains, &resp.Diagnostics),
+		StreamingExperienceSettings: flattenStreamingExperienceSettings(
+			ctx, stack.StreamingExperienceSettings, &resp.Diagnostics,
+		),
+		ARN:         stringOrNull(stack.Arn),
+		CreatedTime: stringFromTime(stack.CreatedTime),
+		StackErrors: flattenStackErrors(ctx, stack.StackErrors, &resp.Diagnostics),
+	}
 
 	if !state.ARN.IsNull() {
-		tags, diags := readTags(ctx, ds.taggingClient, state.ARN.ValueString())
+		tags, diags := ds.tags.Read(ctx, state.ARN.ValueString())
 		resp.Diagnostics.Append(diags...)
-		state.Tags = flattenTags(ctx, tags, &resp.Diagnostics)
+		state.Tags = tags
 	}
 
 	if resp.Diagnostics.HasError() {

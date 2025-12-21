@@ -5,7 +5,6 @@ package provider
 
 import (
 	"context"
-	"errors"
 	"fmt"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -43,7 +42,7 @@ func (ds *entitlementDataSource) Read(ctx context.Context, req datasource.ReadRe
 		Name:      aws.String(name),
 	})
 	if err != nil {
-		if errors.Is(err, context.Canceled) || errors.Is(err, context.DeadlineExceeded) {
+		if isContextCanceled(ctx) {
 			return
 		}
 
@@ -79,17 +78,17 @@ func (ds *entitlementDataSource) Read(ctx context.Context, req datasource.ReadRe
 		return
 	}
 
-	var state entitlementModel
-	state.StackName = types.StringValue(aws.ToString(e.StackName))
-	state.Name = types.StringValue(aws.ToString(e.Name))
-	state.ID = types.StringValue(buildEntitlementID(aws.ToString(e.StackName), aws.ToString(e.Name)))
-	state.AppVisibility = types.StringValue(string(e.AppVisibility))
-	state.Description = stringOrNull(e.Description)
+	state := &entitlementModel{
+		ID:               types.StringValue(buildEntitlementID(aws.ToString(e.StackName), aws.ToString(e.Name))),
+		StackName:        types.StringValue(aws.ToString(e.StackName)),
+		Name:             types.StringValue(aws.ToString(e.Name)),
+		Description:      stringOrNull(e.Description),
+		AppVisibility:    types.StringValue(string(e.AppVisibility)),
+		Attributes:       flattenEntitlementAttributes(ctx, e.Attributes, &resp.Diagnostics),
+		CreatedTime:      stringFromTime(e.CreatedTime),
+		LastModifiedTime: stringFromTime(e.LastModifiedTime),
+	}
 
-	state.CreatedTime = stringFromTime(e.CreatedTime)
-	state.LastModifiedTime = stringFromTime(e.LastModifiedTime)
-
-	state.Attributes = flattenEntitlementAttributes(ctx, e.Attributes, &resp.Diagnostics)
 	if resp.Diagnostics.HasError() {
 		return
 	}

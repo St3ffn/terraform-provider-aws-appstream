@@ -6,14 +6,12 @@ package provider
 import (
 	"context"
 	"fmt"
-	"strings"
 
 	awsappstream "github.com/aws/aws-sdk-go-v2/service/appstream"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
 
-// Ensure the implementation satisfies the expected interfaces.
 var (
 	_ resource.Resource                = &entitlementResource{}
 	_ resource.ResourceWithConfigure   = &entitlementResource{}
@@ -58,8 +56,8 @@ func (r *entitlementResource) Configure(_ context.Context, req resource.Configur
 }
 
 func (r *entitlementResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	parts := strings.SplitN(req.ID, "|", 2)
-	if len(parts) != 2 {
+	stackName, name, err := parseEntitlementID(req.ID)
+	if err != nil {
 		resp.Diagnostics.AddError(
 			"Unexpected Import Identifier",
 			"Expected import identifier format: <stack_name>|<name>",
@@ -67,7 +65,7 @@ func (r *entitlementResource) ImportState(ctx context.Context, req resource.Impo
 		return
 	}
 
-	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("stack_name"), parts[0])...)
-	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("name"), parts[1])...)
+	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("stack_name"), stackName)...)
+	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("name"), name)...)
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("id"), req.ID)...)
 }

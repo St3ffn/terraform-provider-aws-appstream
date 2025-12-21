@@ -5,7 +5,6 @@ package provider
 
 import (
 	"context"
-	"errors"
 	"fmt"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -31,17 +30,16 @@ func (r *associateApplicationEntitlementResource) Delete(ctx context.Context, re
 	}
 
 	stackName := state.StackName.ValueString()
-	entName := state.EntitlementName.ValueString()
-	appID := state.ApplicationIdentifier.ValueString()
+	entitlementName := state.EntitlementName.ValueString()
+	applicationIdentifier := state.ApplicationIdentifier.ValueString()
 
 	_, err := r.appstreamClient.DisassociateApplicationFromEntitlement(ctx, &awsappstream.DisassociateApplicationFromEntitlementInput{
 		StackName:             aws.String(stackName),
-		EntitlementName:       aws.String(entName),
-		ApplicationIdentifier: aws.String(appID),
+		EntitlementName:       aws.String(entitlementName),
+		ApplicationIdentifier: aws.String(applicationIdentifier),
 	})
 	if err != nil {
-		// respect cancellation/deadlines
-		if errors.Is(err, context.Canceled) || errors.Is(err, context.DeadlineExceeded) {
+		if isContextCanceled(ctx) {
 			return
 		}
 
@@ -53,7 +51,7 @@ func (r *associateApplicationEntitlementResource) Delete(ctx context.Context, re
 		resp.Diagnostics.AddError(
 			"Error Deleting AWS AppStream Application Entitlement Association",
 			fmt.Sprintf("Could not disassociate application %q from entitlement %q (stack %q): %v",
-				appID, entName, stackName, err,
+				applicationIdentifier, entitlementName, stackName, err,
 			),
 		)
 		return
