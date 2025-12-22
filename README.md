@@ -16,13 +16,13 @@ For context, [see the open AppStream-related issues](https://github.com/hashicor
 
 ## AppStream Coverage
 
-| Name                                                   | Resource | Data Source | Planned |
-|--------------------------------------------------------|----------|-------------|---------|
-| awsappstream_stack                                     | ✅        | ✅           |         |
-| awsappstream_entitlement                               | ✅        | ✅           |         |
-| awsappstream_associate_application_entitlement         | ✅        | ✅           |         |
-| awsappstream_stackawsappstream_fleet_stack_association |          |             | ✅       |
-| awsappstream_fleet                                     |          |             | ✅       |
+| Name                                           | Resource | Data Source | Planned |
+|------------------------------------------------|----------|-------------|---------|
+| awsappstream_stack                             | ✅        | ✅           |         |
+| awsappstream_entitlement                       | ✅        | ✅           |         |
+| awsappstream_associate_application_entitlement | ✅        | ✅           |         |
+| awsappstream_fleet_stack_association           | ❌        | ❌           | 🚧      |
+| awsappstream_fleet                             | ❌        | ❌           | ✅       |
 
 ## Behavior and Design Principles
 
