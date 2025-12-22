@@ -23,7 +23,7 @@ func (r *associateApplicationEntitlementResource) Create(ctx context.Context, re
 		return
 	}
 
-	addAssocPartsDiagnostics(plan, &resp.Diagnostics, assocDiagPlan)
+	addAssociateApplicationEntitlementDiagnostics(plan, &resp.Diagnostics, associateDiagnosticPlan)
 	if resp.Diagnostics.HasError() {
 		return
 	}

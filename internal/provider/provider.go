@@ -439,16 +439,17 @@ func (p *awsAppStreamProvider) Configure(ctx context.Context, req provider.Confi
 
 func (p *awsAppStreamProvider) DataSources(_ context.Context) []func() datasource.DataSource {
 	return []func() datasource.DataSource{
-		NewEntitlementDataSource,
 		NewStackDataSource,
+		NewEntitlementDataSource,
 	}
 }
 
 func (p *awsAppStreamProvider) Resources(_ context.Context) []func() resource.Resource {
 	return []func() resource.Resource{
-		NewEntitlementResource,
-		NewAssociateApplicationEntitlementResource,
 		NewStackResource,
+		NewAssociateFleetStackResource,
+		NewAssociateApplicationEntitlementResource,
+		NewEntitlementResource,
 	}
 }
 

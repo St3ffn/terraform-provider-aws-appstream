@@ -5,31 +5,26 @@ package provider
 
 import "github.com/hashicorp/terraform-plugin-framework/diag"
 
-type assocDiagMode string
+func addAssociateApplicationEntitlementDiagnostics(
+	model associateApplicationEntitlementModel, diags *diag.Diagnostics, mode associateDiagnosticMode,
+) {
 
-const (
-	assocDiagPlan   assocDiagMode = "plan"
-	assocDiagRead   assocDiagMode = "read"
-	assocDiagDelete assocDiagMode = "delete"
-)
-
-func addAssocPartsDiagnostics(m associateApplicationEntitlementModel, diags *diag.Diagnostics, mode assocDiagMode) {
-	if m.StackName.IsNull() || m.StackName.IsUnknown() ||
-		m.EntitlementName.IsNull() || m.EntitlementName.IsUnknown() ||
-		m.ApplicationIdentifier.IsNull() || m.ApplicationIdentifier.IsUnknown() {
+	if model.StackName.IsNull() || model.StackName.IsUnknown() ||
+		model.EntitlementName.IsNull() || model.EntitlementName.IsUnknown() ||
+		model.ApplicationIdentifier.IsNull() || model.ApplicationIdentifier.IsUnknown() {
 
 		switch mode {
-		case assocDiagPlan:
+		case associateDiagnosticPlan:
 			diags.AddError(
 				"Invalid Terraform Plan",
 				"Cannot associate application to entitlement because stack_name, entitlement_name, and application_identifier must be known.",
 			)
-		case assocDiagDelete:
+		case associateDiagnosticDelete:
 			diags.AddError(
 				"Invalid Terraform State",
 				"Cannot disassociate application from entitlement because stack_name, entitlement_name, and application_identifier must be known.",
 			)
-		case assocDiagRead:
+		case associateDiagnosticRead:
 			diags.AddError(
 				"Invalid Terraform State",
 				"Required attributes stack_name, entitlement_name, and application_identifier are missing from state. "+

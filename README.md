@@ -1,5 +1,12 @@
 # Terraform AWS AppStream Provider
 
+[![Release](https://img.shields.io/github/v/release/St3ffn/terraform-provider-aws-appstream)](https://github.com/St3ffn/terraform-provider-aws-appstream/releases)
+[![CI](https://github.com/St3ffn/terraform-provider-aws-appstream/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/St3ffn/terraform-provider-aws-appstream/actions/workflows/test.yml?branch=main)
+[![License](https://img.shields.io/github/license/st3ffn/terraform-provider-aws-appstream)](/LICENSE)
+[![GO](https://img.shields.io/github/go-mod/go-version/St3ffn/terraform-provider-aws-appstream)](https://golang.org/)
+
+---
+
 The **awsappstream** provider allows Terraform to manage AWS AppStream resources.
 
 Authentication and region configuration follow the standard AWS SDK behavior,
@@ -19,9 +26,9 @@ For context, [see the open AppStream-related issues](https://github.com/hashicor
 | Name                                           | Resource | Data Source | Planned |
 |------------------------------------------------|----------|-------------|---------|
 | awsappstream_stack                             | ✅        | ✅           |         |
+| awsappstream_fleet_stack_association           | ✅        | ✅           |         |
 | awsappstream_entitlement                       | ✅        | ✅           |         |
 | awsappstream_associate_application_entitlement | ✅        | ✅           |         |
-| awsappstream_fleet_stack_association           | ❌        | ❌           | 🚧      |
 | awsappstream_fleet                             | ❌        | ❌           | ✅       |
 
 ## Behavior and Design Principles

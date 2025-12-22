@@ -29,7 +29,7 @@ func (r *associateApplicationEntitlementResource) Read(
 		return
 	}
 
-	addAssocPartsDiagnostics(state, &resp.Diagnostics, assocDiagRead)
+	addAssociateApplicationEntitlementDiagnostics(state, &resp.Diagnostics, associateDiagnosticRead)
 	if resp.Diagnostics.HasError() {
 		return
 	}
@@ -110,6 +110,5 @@ func (r *associateApplicationEntitlementResource) readAssociateApplicationEntitl
 		nextToken = out.NextToken
 	}
 
-	// Not found
 	return nil, diags
 }

@@ -24,7 +24,7 @@ func (r *associateApplicationEntitlementResource) Delete(ctx context.Context, re
 		return
 	}
 
-	addAssocPartsDiagnostics(state, &resp.Diagnostics, assocDiagDelete)
+	addAssociateApplicationEntitlementDiagnostics(state, &resp.Diagnostics, associateDiagnosticDelete)
 	if resp.Diagnostics.HasError() {
 		return
 	}
