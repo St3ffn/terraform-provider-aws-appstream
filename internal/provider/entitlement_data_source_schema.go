@@ -7,7 +7,6 @@ import (
 	"context"
 	"regexp"
 
-	"github.com/hashicorp/terraform-plugin-framework-validators/setvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -64,9 +63,6 @@ func (ds *entitlementDataSource) Schema(_ context.Context, _ datasource.SchemaRe
 				MarkdownDescription: "One or more attribute rules used to match federated user attributes (AWS IAM SAML PrincipalTag). " +
 					"Each entry specifies a supported attribute name and the value that must be present for a user session.",
 				Computed: true,
-				Validators: []validator.Set{
-					setvalidator.SizeAtLeast(1),
-				},
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"name": schema.StringAttribute{
