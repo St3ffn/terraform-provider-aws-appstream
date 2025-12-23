@@ -446,6 +446,7 @@ func (p *awsAppStreamProvider) DataSources(_ context.Context) []func() datasourc
 
 func (p *awsAppStreamProvider) Resources(_ context.Context) []func() resource.Resource {
 	return []func() resource.Resource{
+		NewFleetResource,
 		NewStackResource,
 		NewAssociateFleetStackResource,
 		NewAssociateApplicationEntitlementResource,

@@ -58,16 +58,16 @@ var stackErrorObjectType = types.ObjectType{
 }
 
 func flattenStorageConnectors(
-	ctx context.Context, awsConnectors []awstypes.StorageConnector, diags *diag.Diagnostics,
+	ctx context.Context, awsStorageConnectors []awstypes.StorageConnector, diags *diag.Diagnostics,
 ) types.Set {
 
-	if len(awsConnectors) == 0 {
+	if len(awsStorageConnectors) == 0 {
 		return types.SetNull(stackStorageConnectorObjectType)
 	}
 
-	out := make([]stackStorageConnectorModel, 0, len(awsConnectors))
+	out := make([]stackStorageConnectorModel, 0, len(awsStorageConnectors))
 
-	for _, c := range awsConnectors {
+	for _, c := range awsStorageConnectors {
 		m := stackStorageConnectorModel{
 			ConnectorType:              types.StringValue(string(c.ConnectorType)),
 			ResourceIdentifier:         stringOrNull(c.ResourceIdentifier),
@@ -88,16 +88,16 @@ func flattenStorageConnectors(
 }
 
 func flattenUserSettings(
-	ctx context.Context, awsSettings []awstypes.UserSetting, diags *diag.Diagnostics,
+	ctx context.Context, awsUserSettings []awstypes.UserSetting, diags *diag.Diagnostics,
 ) types.Set {
 
-	if len(awsSettings) == 0 {
+	if len(awsUserSettings) == 0 {
 		return types.SetNull(stackUserSettingObjectType)
 	}
 
-	out := make([]stackUserSettingModel, 0, len(awsSettings))
+	out := make([]stackUserSettingModel, 0, len(awsUserSettings))
 
-	for _, s := range awsSettings {
+	for _, s := range awsUserSettings {
 		m := stackUserSettingModel{
 			Action:        types.StringValue(string(s.Action)),
 			Permission:    types.StringValue(string(s.Permission)),
@@ -116,10 +116,10 @@ func flattenUserSettings(
 }
 
 func flattenApplicationSettings(
-	ctx context.Context, awsSettings *awstypes.ApplicationSettingsResponse, diags *diag.Diagnostics,
+	ctx context.Context, awsApplicationSettingsResponse *awstypes.ApplicationSettingsResponse, diags *diag.Diagnostics,
 ) types.Object {
 
-	if awsSettings == nil {
+	if awsApplicationSettingsResponse == nil {
 		return types.ObjectNull(stackApplicationSettingsObjectType.AttrTypes)
 	}
 
@@ -127,9 +127,9 @@ func flattenApplicationSettings(
 		ctx,
 		stackApplicationSettingsObjectType.AttrTypes,
 		stackApplicationSettingsModel{
-			Enabled:       boolOrNull(awsSettings.Enabled),
-			SettingsGroup: stringOrNull(awsSettings.SettingsGroup),
-			S3BucketName:  stringOrNull(awsSettings.S3BucketName),
+			Enabled:       boolOrNull(awsApplicationSettingsResponse.Enabled),
+			SettingsGroup: stringOrNull(awsApplicationSettingsResponse.SettingsGroup),
+			S3BucketName:  stringOrNull(awsApplicationSettingsResponse.S3BucketName),
 		},
 	)
 	diags.Append(d...)
@@ -141,16 +141,16 @@ func flattenApplicationSettings(
 }
 
 func flattenAccessEndpoints(
-	ctx context.Context, awsEndpoints []awstypes.AccessEndpoint, diags *diag.Diagnostics,
+	ctx context.Context, awsAccessEndpoint []awstypes.AccessEndpoint, diags *diag.Diagnostics,
 ) types.Set {
 
-	if len(awsEndpoints) == 0 {
+	if len(awsAccessEndpoint) == 0 {
 		return types.SetNull(stackAccessEndpointObjectType)
 	}
 
-	out := make([]stackAccessEndpointModel, 0, len(awsEndpoints))
+	out := make([]stackAccessEndpointModel, 0, len(awsAccessEndpoint))
 
-	for _, e := range awsEndpoints {
+	for _, e := range awsAccessEndpoint {
 		out = append(out, stackAccessEndpointModel{
 			EndpointType: types.StringValue(string(e.EndpointType)),
 			VpceID:       stringOrNull(e.VpceId),
@@ -167,10 +167,10 @@ func flattenAccessEndpoints(
 }
 
 func flattenStreamingExperienceSettings(
-	ctx context.Context, awsSettings *awstypes.StreamingExperienceSettings, diags *diag.Diagnostics,
+	ctx context.Context, awsStreamingExperienceSettings *awstypes.StreamingExperienceSettings, diags *diag.Diagnostics,
 ) types.Object {
 
-	if awsSettings == nil {
+	if awsStreamingExperienceSettings == nil {
 		return types.ObjectNull(stackStreamingExperienceSettingsObjectType.AttrTypes)
 	}
 
@@ -178,7 +178,7 @@ func flattenStreamingExperienceSettings(
 		ctx,
 		stackStreamingExperienceSettingsObjectType.AttrTypes,
 		stackStreamingExperienceSettingsModel{
-			PreferredProtocol: types.StringValue(string(awsSettings.PreferredProtocol)),
+			PreferredProtocol: types.StringValue(string(awsStreamingExperienceSettings.PreferredProtocol)),
 		},
 	)
 	diags.Append(d...)
@@ -190,16 +190,16 @@ func flattenStreamingExperienceSettings(
 }
 
 func flattenStackErrors(
-	ctx context.Context, awsErrors []awstypes.StackError, diags *diag.Diagnostics,
+	ctx context.Context, awsStackErrors []awstypes.StackError, diags *diag.Diagnostics,
 ) types.Set {
 
-	if len(awsErrors) == 0 {
+	if len(awsStackErrors) == 0 {
 		return types.SetNull(stackErrorObjectType)
 	}
 
-	out := make([]stackErrorModel, 0, len(awsErrors))
+	out := make([]stackErrorModel, 0, len(awsStackErrors))
 
-	for _, e := range awsErrors {
+	for _, e := range awsStackErrors {
 		out = append(out, stackErrorModel{
 			ErrorCode:    types.StringValue(string(e.ErrorCode)),
 			ErrorMessage: stringOrNull(e.ErrorMessage),

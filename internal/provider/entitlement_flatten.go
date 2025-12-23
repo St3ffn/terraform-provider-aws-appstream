@@ -21,11 +21,11 @@ var entitlementAttributeObjectType = types.ObjectType{
 }
 
 func flattenEntitlementAttributes(
-	ctx context.Context, awsAttrs []awstypes.EntitlementAttribute, diags *diag.Diagnostics,
+	ctx context.Context, awsEntitlementAttributes []awstypes.EntitlementAttribute, diags *diag.Diagnostics,
 ) types.Set {
 
-	attrs := make([]entitlementAttributeModel, 0, len(awsAttrs))
-	for _, a := range awsAttrs {
+	attrs := make([]entitlementAttributeModel, 0, len(awsEntitlementAttributes))
+	for _, a := range awsEntitlementAttributes {
 		attrs = append(attrs, entitlementAttributeModel{
 			Name:  types.StringValue(aws.ToString(a.Name)),
 			Value: types.StringValue(aws.ToString(a.Value)),

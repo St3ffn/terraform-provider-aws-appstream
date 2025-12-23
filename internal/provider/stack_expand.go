@@ -13,9 +13,7 @@ import (
 )
 
 func expandStorageConnectors(
-	ctx context.Context,
-	setVal types.Set,
-	diags *diag.Diagnostics,
+	ctx context.Context, setVal types.Set, diags *diag.Diagnostics,
 ) []awstypes.StorageConnector {
 
 	var models []stackStorageConnectorModel
@@ -37,12 +35,7 @@ func expandStorageConnectors(
 	return out
 }
 
-func expandUserSettings(
-	ctx context.Context,
-	setVal types.Set,
-	diags *diag.Diagnostics,
-) []awstypes.UserSetting {
-
+func expandUserSettings(ctx context.Context, setVal types.Set, diags *diag.Diagnostics) []awstypes.UserSetting {
 	var models []stackUserSettingModel
 	diags.Append(setVal.ElementsAs(ctx, &models, false)...)
 	if diags.HasError() {
@@ -64,9 +57,7 @@ func expandUserSettings(
 }
 
 func expandApplicationSettings(
-	ctx context.Context,
-	obj types.Object,
-	diags *diag.Diagnostics,
+	ctx context.Context, obj types.Object, diags *diag.Diagnostics,
 ) *awstypes.ApplicationSettings {
 
 	var m stackApplicationSettingsModel
@@ -81,12 +72,7 @@ func expandApplicationSettings(
 	}
 }
 
-func expandAccessEndpoints(
-	ctx context.Context,
-	setVal types.Set,
-	diags *diag.Diagnostics,
-) []awstypes.AccessEndpoint {
-
+func expandAccessEndpoints(ctx context.Context, setVal types.Set, diags *diag.Diagnostics) []awstypes.AccessEndpoint {
 	var models []stackAccessEndpointModel
 	diags.Append(setVal.ElementsAs(ctx, &models, false)...)
 	if diags.HasError() {
@@ -105,9 +91,7 @@ func expandAccessEndpoints(
 }
 
 func expandStreamingExperienceSettings(
-	ctx context.Context,
-	obj types.Object,
-	diags *diag.Diagnostics,
+	ctx context.Context, obj types.Object, diags *diag.Diagnostics,
 ) *awstypes.StreamingExperienceSettings {
 
 	var m stackStreamingExperienceSettingsModel

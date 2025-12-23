@@ -43,7 +43,7 @@ func (r *associateApplicationEntitlementResource) Delete(ctx context.Context, re
 			return
 		}
 
-		// if it's already gone, that's fine for Delete.
+		// if it's already gone, that's fine for delete.
 		if isAppStreamNotFound(err) {
 			return
 		}

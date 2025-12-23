@@ -27,6 +27,7 @@ func isAppStreamNotFound(err error) bool {
 	// see https://docs.aws.amazon.com/appstream2/latest/APIReference/API_AssociateApplicationToEntitlement.html
 	// see https://docs.aws.amazon.com/appstream2/latest/APIReference/API_DisassociateApplicationFromEntitlement.html
 	// see https://docs.aws.amazon.com/appstream2/latest/APIReference/API_DescribeStacks.html
+	// see https://docs.aws.amazon.com/appstream2/latest/APIReference/API_DescribeFleets.html
 	switch apiErr.ErrorCode() {
 	case "ResourceNotFoundException", "EntitlementNotFoundException":
 		return true

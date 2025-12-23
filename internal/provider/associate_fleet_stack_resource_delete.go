@@ -41,7 +41,7 @@ func (r *associateFleetStackResource) Delete(ctx context.Context, req resource.D
 			return
 		}
 
-		// if it's already gone, that's fine for Delete.
+		// if it's already gone, that's fine for delete.
 		if isAppStreamNotFound(err) {
 			return
 		}

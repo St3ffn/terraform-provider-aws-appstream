@@ -13,7 +13,7 @@ Manages an AppStream stack. A stack defines the streaming configuration and user
 ## Example Usage
 
 ```terraform
-# minimal resource
+# minimal stack
 resource "awsappstream_stack" "example" {
   name = "example-stack"
 }

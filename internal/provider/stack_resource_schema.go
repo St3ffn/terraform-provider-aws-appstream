@@ -90,8 +90,7 @@ func (r *stackResource) Schema(_ context.Context, _ resource.SchemaRequest, resp
 							MarkdownDescription: "The resource identifier associated with the storage connector.",
 							Optional:            true,
 							Validators: []validator.String{
-								stringvalidator.LengthAtLeast(1),
-								stringvalidator.LengthAtMost(2048),
+								stringvalidator.LengthBetween(1, 2048),
 							},
 						},
 						"domains": schema.SetAttribute{
@@ -217,8 +216,7 @@ func (r *stackResource) Schema(_ context.Context, _ resource.SchemaRequest, resp
 				Validators: []validator.Map{
 					mapvalidator.SizeAtMost(50),
 					mapvalidator.KeysAre(
-						stringvalidator.LengthAtLeast(1),
-						stringvalidator.LengthAtMost(128),
+						stringvalidator.LengthBetween(1, 128),
 						stringvalidator.RegexMatches(
 							regexp.MustCompile(`^[\p{L}\p{Z}\p{N}_.:/=+\-@]*$`),
 							"must match ^[\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*$",

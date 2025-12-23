@@ -25,11 +25,11 @@ For context, [see the open AppStream-related issues](https://github.com/hashicor
 
 | Name                                           | Resource | Data Source | Planned |
 |------------------------------------------------|----------|-------------|---------|
+| awsappstream_fleet                             | ✅        | ✅           |         |
 | awsappstream_stack                             | ✅        | ✅           |         |
 | awsappstream_fleet_stack_association           | ✅        | ✅           |         |
 | awsappstream_entitlement                       | ✅        | ✅           |         |
 | awsappstream_associate_application_entitlement | ✅        | ✅           |         |
-| awsappstream_fleet                             | ❌        | ❌           | ✅       |
 
 ## Behavior and Design Principles
 

@@ -12,8 +12,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
 
-func (r *entitlementResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
-	var state entitlementModel
+func (r *fleetResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+	var state fleetModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
@@ -24,21 +24,18 @@ func (r *entitlementResource) Delete(ctx context.Context, req resource.DeleteReq
 		return
 	}
 
-	if state.StackName.IsNull() || state.StackName.IsUnknown() ||
-		state.Name.IsNull() || state.Name.IsUnknown() {
+	if state.Name.IsNull() || state.Name.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Invalid Terraform State",
-			"Cannot delete entitlement because stack_name, and name must be known.",
+			"Cannot delete fleet because name must be known.",
 		)
 		return
 	}
 
-	stackName := state.StackName.ValueString()
 	name := state.Name.ValueString()
 
-	_, err := r.appstreamClient.DeleteEntitlement(ctx, &awsappstream.DeleteEntitlementInput{
-		StackName: aws.String(stackName),
-		Name:      aws.String(name),
+	_, err := r.appstreamClient.DeleteFleet(ctx, &awsappstream.DeleteFleetInput{
+		Name: aws.String(name),
 	})
 	if err != nil {
 		if isContextCanceled(ctx) {
@@ -51,8 +48,8 @@ func (r *entitlementResource) Delete(ctx context.Context, req resource.DeleteReq
 		}
 
 		resp.Diagnostics.AddError(
-			"Error Deleting AWS AppStream Entitlement",
-			fmt.Sprintf("Could not delete entitlement %q in stack %q: %v", name, stackName, err),
+			"Error Deleting AWS AppStream Fleet",
+			fmt.Sprintf("Could not delete fleet %q: %v", name, err),
 		)
 		return
 	}

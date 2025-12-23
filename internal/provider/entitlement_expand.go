@@ -13,11 +13,11 @@ import (
 )
 
 func expandEntitlementAttributes(
-	ctx context.Context, tfAttrs types.Set, diags *diag.Diagnostics,
+	ctx context.Context, tfAttributes types.Set, diags *diag.Diagnostics,
 ) []awstypes.EntitlementAttribute {
 
 	var attrs []entitlementAttributeModel
-	diags.Append(tfAttrs.ElementsAs(ctx, &attrs, false)...)
+	diags.Append(tfAttributes.ElementsAs(ctx, &attrs, false)...)
 	if diags.HasError() {
 		return nil
 	}
