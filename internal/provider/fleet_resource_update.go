@@ -196,7 +196,7 @@ func (r *fleetResource) Update(ctx context.Context, req resource.UpdateRequest, 
 
 	out, err := r.appstreamClient.UpdateFleet(ctx, input)
 	if err != nil {
-		if isContextCanceled(ctx) {
+		if isContextCanceled(err) {
 			return
 		}
 

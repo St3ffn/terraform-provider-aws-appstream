@@ -39,7 +39,7 @@ func (r *associateApplicationEntitlementResource) Delete(ctx context.Context, re
 		ApplicationIdentifier: aws.String(applicationIdentifier),
 	})
 	if err != nil {
-		if isContextCanceled(ctx) {
+		if isContextCanceled(err) {
 			return
 		}
 

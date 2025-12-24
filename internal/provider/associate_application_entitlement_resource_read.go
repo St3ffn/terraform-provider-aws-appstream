@@ -47,7 +47,7 @@ func (r *associateApplicationEntitlementResource) Read(
 	}
 
 	if newState == nil {
-		if isContextCanceled(ctx) {
+		if isContextCanceled(ctx.Err()) {
 			return
 		}
 		resp.State.RemoveResource(ctx)
@@ -72,7 +72,7 @@ func (r *associateApplicationEntitlementResource) readAssociateApplicationEntitl
 			MaxResults:      aws.Int32(AppStreamMaxResults),
 		})
 		if err != nil {
-			if isContextCanceled(ctx) {
+			if isContextCanceled(err) {
 				return nil, diags
 			}
 

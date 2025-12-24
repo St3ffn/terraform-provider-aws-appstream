@@ -39,7 +39,7 @@ func (ds *stackDataSource) Read(ctx context.Context, req datasource.ReadRequest,
 		Names: []string{name},
 	})
 	if err != nil {
-		if isContextCanceled(ctx) {
+		if isContextCanceled(err) {
 			return
 		}
 

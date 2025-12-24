@@ -32,13 +32,29 @@ func (r *associateApplicationEntitlementResource) Create(ctx context.Context, re
 	entitlementName := plan.EntitlementName.ValueString()
 	applicationIdentifier := plan.ApplicationIdentifier.ValueString()
 
-	_, err := r.appstreamClient.AssociateApplicationToEntitlement(ctx, &awsappstream.AssociateApplicationToEntitlementInput{
-		StackName:             aws.String(stackName),
-		EntitlementName:       aws.String(entitlementName),
-		ApplicationIdentifier: aws.String(applicationIdentifier),
-	})
+	err := retryOn(
+		ctx,
+		func(ctx context.Context) error {
+			_, err := r.appstreamClient.AssociateApplicationToEntitlement(
+				ctx,
+				&awsappstream.AssociateApplicationToEntitlementInput{
+					StackName:             aws.String(stackName),
+					EntitlementName:       aws.String(entitlementName),
+					ApplicationIdentifier: aws.String(applicationIdentifier),
+				},
+			)
+			return err
+		},
+		// see https://docs.aws.amazon.com/appstream2/latest/APIReference/API_AssociateApplicationToEntitlement.html
+		withRetryOnFns(
+			isOperationNotPermittedException,
+			isResourceNotFoundException,
+			isEntitlementNotFoundException,
+		),
+	)
+
 	if err != nil {
-		if isContextCanceled(ctx) {
+		if isContextCanceled(err) {
 			return
 		}
 

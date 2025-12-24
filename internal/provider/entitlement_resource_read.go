@@ -46,7 +46,7 @@ func (r *entitlementResource) Read(ctx context.Context, req resource.ReadRequest
 	}
 
 	if newState == nil {
-		if isContextCanceled(ctx) {
+		if isContextCanceled(ctx.Err()) {
 			return
 		}
 		resp.State.RemoveResource(ctx)
@@ -67,7 +67,7 @@ func (r *entitlementResource) readEntitlement(
 		Name:      aws.String(name),
 	})
 	if err != nil {
-		if isContextCanceled(ctx) {
+		if isContextCanceled(err) {
 			return nil, diags
 		}
 

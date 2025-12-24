@@ -41,7 +41,7 @@ func (r *entitlementResource) Delete(ctx context.Context, req resource.DeleteReq
 		Name:      aws.String(name),
 	})
 	if err != nil {
-		if isContextCanceled(ctx) {
+		if isContextCanceled(err) {
 			return
 		}
 

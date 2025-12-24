@@ -31,12 +31,25 @@ func (r *associateFleetStackResource) Create(ctx context.Context, req resource.C
 	fleetName := plan.FleetName.ValueString()
 	stackName := plan.StackName.ValueString()
 
-	_, err := r.appstreamClient.AssociateFleet(ctx, &awsappstream.AssociateFleetInput{
-		FleetName: aws.String(fleetName),
-		StackName: aws.String(stackName),
-	})
+	err := retryOn(
+		ctx,
+		func(ctx context.Context) error {
+			_, err := r.appstreamClient.AssociateFleet(ctx, &awsappstream.AssociateFleetInput{
+				FleetName: aws.String(fleetName),
+				StackName: aws.String(stackName),
+			})
+			return err
+		},
+		// see https://docs.aws.amazon.com/appstream2/latest/APIReference/API_AssociateFleet.html
+		withRetryOnFns(
+			isOperationNotPermittedException,
+			isResourceNotFoundException,
+			isConcurrentModificationException,
+		),
+	)
+
 	if err != nil {
-		if isContextCanceled(ctx) {
+		if isContextCanceled(err) {
 			return
 		}
 

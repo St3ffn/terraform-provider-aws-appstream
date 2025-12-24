@@ -156,7 +156,7 @@ func (r *stackResource) Update(ctx context.Context, req resource.UpdateRequest, 
 
 	out, err := r.appstreamClient.UpdateStack(ctx, input)
 	if err != nil {
-		if isContextCanceled(ctx) {
+		if isContextCanceled(err) {
 			return
 		}
 
@@ -187,7 +187,7 @@ func (r *stackResource) Update(ctx context.Context, req resource.UpdateRequest, 
 	}
 
 	if newState == nil {
-		if isContextCanceled(ctx) {
+		if isContextCanceled(ctx.Err()) {
 			return
 		}
 		resp.State.RemoveResource(ctx)

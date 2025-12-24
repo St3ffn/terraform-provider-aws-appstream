@@ -37,7 +37,7 @@ func (r *associateFleetStackResource) Delete(ctx context.Context, req resource.D
 		StackName: aws.String(stackName),
 	})
 	if err != nil {
-		if isContextCanceled(ctx) {
+		if isContextCanceled(err) {
 			return
 		}
 

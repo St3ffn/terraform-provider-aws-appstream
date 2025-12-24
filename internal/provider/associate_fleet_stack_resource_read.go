@@ -42,7 +42,7 @@ func (r *associateFleetStackResource) Read(
 	}
 
 	if newState == nil {
-		if isContextCanceled(ctx) {
+		if isContextCanceled(ctx.Err()) {
 			return
 		}
 		resp.State.RemoveResource(ctx)
@@ -65,7 +65,7 @@ func (r *associateFleetStackResource) readAssociateFleetStack(
 			NextToken: nextToken,
 		})
 		if err != nil {
-			if isContextCanceled(ctx) {
+			if isContextCanceled(err) {
 				return nil, diags
 			}
 

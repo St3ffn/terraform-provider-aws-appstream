@@ -44,7 +44,7 @@ func (r *fleetResource) Read(ctx context.Context, req resource.ReadRequest, resp
 	}
 
 	if newState == nil {
-		if isContextCanceled(ctx) {
+		if isContextCanceled(ctx.Err()) {
 			return
 		}
 		resp.State.RemoveResource(ctx)
@@ -61,7 +61,7 @@ func (r *fleetResource) readFleet(ctx context.Context, name string) (*fleetModel
 		Names: []string{name},
 	})
 	if err != nil {
-		if isContextCanceled(ctx) {
+		if isContextCanceled(err) {
 			return nil, diags
 		}
 

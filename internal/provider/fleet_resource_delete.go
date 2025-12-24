@@ -38,7 +38,7 @@ func (r *fleetResource) Delete(ctx context.Context, req resource.DeleteRequest, 
 		Name: aws.String(name),
 	})
 	if err != nil {
-		if isContextCanceled(ctx) {
+		if isContextCanceled(err) {
 			return
 		}
 

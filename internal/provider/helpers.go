@@ -13,35 +13,46 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-func isContextCanceled(ctx context.Context) bool {
-	return errors.Is(ctx.Err(), context.Canceled) || errors.Is(ctx.Err(), context.DeadlineExceeded)
+func isContextCanceled(err error) bool {
+	return errors.Is(err, context.Canceled) || errors.Is(err, context.DeadlineExceeded)
+}
+
+func isAWSAPIError(err error, code ...string) bool {
+	var apiErr smithy.APIError
+	if err == nil || !errors.As(err, &apiErr) {
+		return false
+	}
+
+	for _, c := range code {
+		if apiErr.ErrorCode() == c {
+			return true
+		}
+	}
+	return false
+}
+
+func isOperationNotPermittedException(err error) bool {
+	return isAWSAPIError(err, "OperationNotPermittedException")
+}
+
+func isResourceNotFoundException(err error) bool {
+	return isAWSAPIError(err, "ResourceNotFoundException")
+}
+
+func isConcurrentModificationException(err error) bool {
+	return isAWSAPIError(err, "ConcurrentModificationException")
+}
+
+func isEntitlementNotFoundException(err error) bool {
+	return isAWSAPIError(err, "EntitlementNotFoundException")
+}
+
+func isResourceAlreadyExists(err error) bool {
+	return isAWSAPIError(err, "ResourceAlreadyExistsException")
 }
 
 func isAppStreamNotFound(err error) bool {
-	var apiErr smithy.APIError
-	if err == nil || !errors.As(err, &apiErr) {
-		return false
-	}
-
-	// see https://docs.aws.amazon.com/appstream2/latest/APIReference/API_ListEntitledApplications.html
-	// see https://docs.aws.amazon.com/appstream2/latest/APIReference/API_AssociateApplicationToEntitlement.html
-	// see https://docs.aws.amazon.com/appstream2/latest/APIReference/API_DisassociateApplicationFromEntitlement.html
-	// see https://docs.aws.amazon.com/appstream2/latest/APIReference/API_DescribeStacks.html
-	// see https://docs.aws.amazon.com/appstream2/latest/APIReference/API_DescribeFleets.html
-	switch apiErr.ErrorCode() {
-	case "ResourceNotFoundException", "EntitlementNotFoundException":
-		return true
-	default:
-		return false
-	}
-}
-
-func isAppStreamAlreadyExists(err error) bool {
-	var apiErr smithy.APIError
-	if err == nil || !errors.As(err, &apiErr) {
-		return false
-	}
-	return apiErr.ErrorCode() == "ResourceAlreadyExistsException"
+	return isAWSAPIError(err, "ResourceNotFoundException", "EntitlementNotFoundException")
 }
 
 func boolOrNull(v *bool) types.Bool {

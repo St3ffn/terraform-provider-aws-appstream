@@ -43,19 +43,30 @@ func (r *entitlementResource) Create(ctx context.Context, req resource.CreateReq
 		return
 	}
 
-	_, err := r.appstreamClient.CreateEntitlement(ctx, &awsappstream.CreateEntitlementInput{
-		StackName:     aws.String(stackName),
-		Name:          aws.String(name),
-		Description:   stringPointerOrNil(plan.Description),
-		AppVisibility: awstypes.AppVisibility(plan.AppVisibility.ValueString()),
-		Attributes:    awsAttrs,
-	})
+	err := retryOn(
+		ctx,
+		func(ctx context.Context) error {
+			_, err := r.appstreamClient.CreateEntitlement(ctx, &awsappstream.CreateEntitlementInput{
+				StackName:     aws.String(stackName),
+				Name:          aws.String(name),
+				Description:   stringPointerOrNil(plan.Description),
+				AppVisibility: awstypes.AppVisibility(plan.AppVisibility.ValueString()),
+				Attributes:    awsAttrs,
+			})
+			return err
+		},
+		// see https://docs.aws.amazon.com/appstream2/latest/APIReference/API_CreateEntitlement.html
+		withRetryOnFns(
+			isOperationNotPermittedException,
+			isResourceNotFoundException),
+	)
+
 	if err != nil {
-		if isContextCanceled(ctx) {
+		if isContextCanceled(err) {
 			return
 		}
 
-		if isAppStreamAlreadyExists(err) {
+		if isResourceAlreadyExists(err) {
 			resp.Diagnostics.AddError(
 				"AWS AppStream Entitlement Already Exists",
 				fmt.Sprintf(

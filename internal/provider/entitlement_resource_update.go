@@ -78,7 +78,7 @@ func (r *entitlementResource) Update(ctx context.Context, req resource.UpdateReq
 
 	_, err := r.appstreamClient.UpdateEntitlement(ctx, input)
 	if err != nil {
-		if isContextCanceled(ctx) {
+		if isContextCanceled(err) {
 			return
 		}
 
@@ -102,7 +102,7 @@ func (r *entitlementResource) Update(ctx context.Context, req resource.UpdateReq
 	}
 
 	if newState == nil {
-		if isContextCanceled(ctx) {
+		if isContextCanceled(ctx.Err()) {
 			return
 		}
 		resp.State.RemoveResource(ctx)

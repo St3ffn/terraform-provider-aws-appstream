@@ -66,3 +66,23 @@ In practice, this means:
 Overall, the provider prioritizes **correctness, consistency, and drift
 resilience** over minimizing API calls.
 
+## Retry and Eventual Consistency Handling
+
+AWS AppStream APIs exhibit **eventual consistency** and transient errors,
+especially when creating or associating dependent resources (for example,
+fleets, stacks, and entitlements).
+
+This provider uses a **layered retry approach**:
+
+- **AWS SDK retries**
+    - Configurable via provider settings (`retry_mode`, `retry_max_attempts`, `retry_max_backoff`)
+    - Handles throttling, networking issues, and standard AWS retryable errors
+
+- **Provider-level retries**
+    - Applied selectively to operations known to fail temporarily due to
+      AppStream lifecycle constraints (for example `OperationNotPermittedException`
+      or `ResourceNotFoundException` during creation or association)
+    - Uses bounded exponential backoff and respects Terraform cancellation
+
+This ensures Terraform operations converge reliably without requiring
+manual sleeps or explicit dependencies in configuration.

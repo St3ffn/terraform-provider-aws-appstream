@@ -42,7 +42,7 @@ func (ds *entitlementDataSource) Read(ctx context.Context, req datasource.ReadRe
 		Name:      aws.String(name),
 	})
 	if err != nil {
-		if isContextCanceled(ctx) {
+		if isContextCanceled(err) {
 			return
 		}
 

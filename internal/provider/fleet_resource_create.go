@@ -96,11 +96,11 @@ func (r *fleetResource) Create(ctx context.Context, req resource.CreateRequest, 
 
 	out, err := r.appstreamClient.CreateFleet(ctx, input)
 	if err != nil {
-		if isContextCanceled(ctx) {
+		if isContextCanceled(err) {
 			return
 		}
 
-		if isAppStreamAlreadyExists(err) {
+		if isResourceAlreadyExists(err) {
 			resp.Diagnostics.AddError(
 				"AWS AppStream Fleet Already Exists",
 				fmt.Sprintf(
@@ -134,7 +134,7 @@ func (r *fleetResource) Create(ctx context.Context, req resource.CreateRequest, 
 	}
 
 	if newState == nil {
-		if isContextCanceled(ctx) {
+		if isContextCanceled(ctx.Err()) {
 			return
 		}
 		resp.State.RemoveResource(ctx)
