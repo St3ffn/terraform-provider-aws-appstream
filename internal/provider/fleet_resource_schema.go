@@ -82,6 +82,9 @@ func (r *fleetResource) Schema(_ context.Context, _ resource.SchemaRequest, resp
 				Description:         "Type of the AppStream fleet.",
 				MarkdownDescription: "The fleet type. Valid values are `ON_DEMAND`, `ALWAYS_ON`, or `ELASTIC`.",
 				Required:            true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.RequiresReplace(),
+				},
 				Validators: []validator.String{
 					stringvalidator.OneOf(
 						"ON_DEMAND",

@@ -6,7 +6,7 @@ package provider
 import (
 	"context"
 
-	"github.com/aws/aws-sdk-go-v2/aws/arn"
+	awsarn "github.com/aws/aws-sdk-go-v2/aws/arn"
 	"github.com/hashicorp/terraform-plugin-framework-validators/helpers/validatordiag"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
@@ -28,7 +28,7 @@ func (a arnValidator) ValidateString(ctx context.Context, req validator.StringRe
 
 	value := req.ConfigValue.ValueString()
 
-	if _, err := arn.Parse(value); err != nil {
+	if _, err := awsarn.Parse(value); err != nil {
 		resp.Diagnostics.Append(
 			validatordiag.InvalidAttributeValueMatchDiagnostic(
 				req.Path,

@@ -8,9 +8,9 @@ import (
 )
 
 type associateFleetStackModel struct {
-	// ID is a synthetic identifier composed of "<fleet_name>|<stack_name>"
+	// ID is a synthetic identifier composed of "<fleet_name>|<stack_name>".
 	ID types.String `tfsdk:"id"`
-	// FleetName is the name of the AppStream fleet to be associated with the stack (required)
+	// FleetName is the name of the AppStream fleet to be associated with the stack (required).
 	FleetName types.String `tfsdk:"fleet_name"`
 	// StackName is the name of the AppStream stack to associate with the fleet (required).
 	StackName types.String `tfsdk:"stack_name"`

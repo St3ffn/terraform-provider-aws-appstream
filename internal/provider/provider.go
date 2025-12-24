@@ -452,6 +452,7 @@ func (p *awsAppStreamProvider) Resources(_ context.Context) []func() resource.Re
 		NewEntitlementResource,
 		NewAssociateFleetStackResource,
 		NewAssociateApplicationEntitlementResource,
+		NewApplicationResource,
 	}
 }
 

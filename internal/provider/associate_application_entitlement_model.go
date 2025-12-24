@@ -8,7 +8,7 @@ import (
 )
 
 type associateApplicationEntitlementModel struct {
-	// ID is a synthetic identifier composed of "<stack_name>|<entitlement_name>|<application_identifier>"
+	// ID is a synthetic identifier composed of "<stack_name>|<entitlement_name>|<application_identifier>".
 	ID types.String `tfsdk:"id"`
 	// StackName is the name of the AppStream stack that owns the entitlement (required).
 	StackName types.String `tfsdk:"stack_name"`
