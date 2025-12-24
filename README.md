@@ -27,9 +27,16 @@ For context, [see the open AppStream-related issues](https://github.com/hashicor
 |------------------------------------------------|----------|-------------|---------|
 | awsappstream_fleet                             | ✅        | ✅           |         |
 | awsappstream_stack                             | ✅        | ✅           |         |
-| awsappstream_fleet_stack_association           | ✅        | ✅           |         |
+| awsappstream_fleet_stack_association           | ✅        | ❌           |         |
 | awsappstream_entitlement                       | ✅        | ✅           |         |
-| awsappstream_associate_application_entitlement | ✅        | ✅           |         |
+| awsappstream_associate_application_entitlement | ✅        | ❌           |         |
+| awsappstream_application                       | 🚧       | 🚧          | ✅       |
+| awsappstream_directory_config                  | 🚧       | 🚧          | ✅       |
+| awsappstream_user                              | 🚧       | 🚧          | ✅       |
+| awsappstream_image_builder                     | 🚧       | 🚧          | ✅       |
+| awsappstream_application_fleet_association     | 🚧       | 🚧          | ✅       |
+| awsappstream_user_stack_association            | 🚧       | 🚧          | ✅       |
+| awsappstream_image                             | ❌        | 🚧          | ✅       |
 
 ## Behavior and Design Principles
 
