@@ -142,7 +142,9 @@ func (r *applicationResource) Schema(_ context.Context, _ resource.SchemaRequest
 				Description:         "App block ARN.",
 				MarkdownDescription: "The ARN of the app block associated with the application.",
 				Required:            true,
-				Validators:          []validator.String{validARN()},
+				Validators: []validator.String{
+					validARNWithServiceAndResource("appstream", "app-block/"),
+				},
 			},
 			"tags": schema.MapAttribute{
 				Description:         "Tags applied to the AppStream application.",

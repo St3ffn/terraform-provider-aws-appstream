@@ -66,8 +66,10 @@ func (r *fleetResource) Schema(_ context.Context, _ resource.SchemaRequest, resp
 				Description: "ARN of the AppStream image.",
 				MarkdownDescription: "The ARN of the AppStream image used to create the fleet. " +
 					"Either `image_name` or `image_arn` must be specified.",
-				Optional:   true,
-				Validators: []validator.String{validARN()},
+				Optional: true,
+				Validators: []validator.String{
+					validARNWithServiceAndResource("appstream", "image/"),
+				},
 			},
 			"instance_type": schema.StringAttribute{
 				Description: "EC2 instance type for fleet instances.",
@@ -227,7 +229,9 @@ func (r *fleetResource) Schema(_ context.Context, _ resource.SchemaRequest, resp
 				Description:         "IAM role ARN.",
 				MarkdownDescription: "The ARN of the IAM role applied to fleet instances.",
 				Optional:            true,
-				Validators:          []validator.String{validARN()},
+				Validators: []validator.String{
+					validARNWithServiceAndResource("iam", "role/"),
+				},
 			},
 			"stream_view": schema.StringAttribute{
 				Description:         "Streaming view configuration.",

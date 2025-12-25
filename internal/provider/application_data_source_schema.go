@@ -30,7 +30,9 @@ func (ds *applicationDataSource) Schema(
 				Description:         "ARN of the AppStream application.",
 				MarkdownDescription: "The Amazon Resource Name (ARN) of the AppStream application.",
 				Required:            true,
-				Validators:          []validator.String{validARN()},
+				Validators: []validator.String{
+					validARNWithServiceAndResource("appstream", "application/"),
+				},
 			},
 			"name": schema.StringAttribute{
 				Description:         "Name of the AppStream application.",
