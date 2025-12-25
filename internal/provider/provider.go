@@ -442,6 +442,7 @@ func (p *awsAppStreamProvider) DataSources(_ context.Context) []func() datasourc
 		NewFleetDataSource,
 		NewStackDataSource,
 		NewEntitlementDataSource,
+		NewApplicationDataSource,
 	}
 }
 
