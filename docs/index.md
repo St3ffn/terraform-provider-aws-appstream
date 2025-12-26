@@ -26,10 +26,20 @@ provider "awsappstream" {
 ```terraform
 # full provider configuration
 provider "awsappstream" {
-  profile            = "aws-test-account-profile"
-  region             = "eu-central-1" # required
+  profile = "appstream-admin"
+  region  = "eu-central-1"
+
+  retry_mode         = "adaptive"
   retry_max_attempts = 10
   retry_max_backoff  = 30
+
+  default_tags {
+    tags = {
+      environment = "prod"
+      team        = "platform"
+      managed_by  = "terraform"
+    }
+  }
 }
 ```
 
@@ -42,8 +52,8 @@ provider "awsappstream" {
 - `default_tags` (Attributes) Default tags to apply to all **taggable** resources managed by this provider. Tags defined on individual resources take precedence over these defaults when keys overlap. (see [below for nested schema](#nestedatt--default_tags))
 - `profile` (String) The name of the AWS CLI profile to use. If not set, the AWS SDK default credential resolution chain is used (environment variables, shared credentials file, EC2/ECS metadata, etc.).
 - `region` (String) The AWS region in which AppStream resources are managed. If not set, the AWS SDK default region resolution chain is used (environment variables such as `AWS_REGION` or `AWS_DEFAULT_REGION`, shared configuration files, or EC2/ECS metadata).
-- `retry_max_attempts` (Number) The maximum number of retry attempts for AWS AppStream API calls. This controls how many times a failed request is retried before returning an error.If not set, the AWS SDK default retry configuration is used (for example via environment variables such as `AWS_MAX_ATTEMPTS`). **SDK Default:** 3
-- `retry_max_backoff` (Number) The maximum backoff time, in seconds, between retry attempts for AWS AppStream API calls. This value limits the exponential backoff applied by the AWS SDK.If not set, the AWS SDK default retry configuration is used. **SDK Default:** 20 seconds
+- `retry_max_attempts` (Number) The maximum number of retry attempts for retryable AWS AppStream API requests. Retries are only performed for retryable errors as determined by the AWS SDK (for example throttling errors, transient network failures, and 5xx service errors). Non-retryable errors such as validation or authorization failures are not retried. If not set, the AWS SDK default retry configuration is used (for example via environment variables such as `AWS_MAX_ATTEMPTS`). **SDK Default:** 3
+- `retry_max_backoff` (Number) The maximum backoff time, in seconds, between retry attempts for retryable AWS AppStream API requests. This limits the exponential backoff applied by the AWS SDK for retryable errors only. If not set, the AWS SDK default retry configuration is used. **SDK Default:** 20 seconds
 - `retry_mode` (String) Controls the retry strategy used by the AWS SDK when calling AWS AppStream APIs. Supported values are:
 
 	- **`standard`** – Uses exponential backoff and retries failed requests *after* throttling or transient errors occur.

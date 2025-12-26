@@ -1,7 +1,17 @@
 # full provider configuration
 provider "awsappstream" {
-  profile            = "aws-test-account-profile"
-  region             = "eu-central-1" # required
+  profile = "appstream-admin"
+  region  = "eu-central-1"
+
+  retry_mode         = "adaptive"
   retry_max_attempts = 10
   retry_max_backoff  = 30
+
+  default_tags {
+    tags = {
+      environment = "prod"
+      team        = "platform"
+      managed_by  = "terraform"
+    }
+  }
 }

@@ -126,8 +126,10 @@ Authentication and region selection follow the standard AWS SDK behavior.
 				Optional:    true,
 				Description: "Maximum number of attempts to retry AWS AppStream operations. If unset, the AWS SDK default chain is used.",
 				MarkdownDescription: fmt.Sprintf(
-					"The maximum number of retry attempts for AWS AppStream API calls. "+
-						"This controls how many times a failed request is retried before returning an error."+
+					"The maximum number of retry attempts for retryable AWS AppStream API requests. "+
+						"Retries are only performed for retryable errors as determined by the AWS SDK "+
+						"(for example throttling errors, transient network failures, and 5xx service errors). "+
+						"Non-retryable errors such as validation or authorization failures are not retried. "+
 						"If not set, the AWS SDK default retry configuration is used (for example via environment variables such as `AWS_MAX_ATTEMPTS`). "+
 						"**SDK Default:** %d",
 					awsretry.DefaultMaxAttempts,
@@ -138,8 +140,8 @@ Authentication and region selection follow the standard AWS SDK behavior.
 				Optional:    true,
 				Description: "Maximum retry backoff in seconds for AWS AppStream operations. If unset, the AWS SDK default chain is used.",
 				MarkdownDescription: fmt.Sprintf(
-					"The maximum backoff time, in seconds, between retry attempts for AWS AppStream API calls. "+
-						"This value limits the exponential backoff applied by the AWS SDK."+
+					"The maximum backoff time, in seconds, between retry attempts for retryable AWS AppStream API requests. "+
+						"This limits the exponential backoff applied by the AWS SDK for retryable errors only. "+
 						"If not set, the AWS SDK default retry configuration is used. "+
 						"**SDK Default:** %d seconds",
 					int64(awsretry.DefaultMaxBackoff.Seconds()),

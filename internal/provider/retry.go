@@ -28,11 +28,7 @@ func defaultRetryConfig() *retryConfig {
 		timeout:     defaultRetryTimeout,
 		initBackoff: defaultRetryInitBackoff,
 		maxBackoff:  defaultRetryMaxBackoff,
-		retryOnFns: []retryOnFn{
-			isOperationNotPermittedException,
-			isResourceNotFoundException,
-			isEntitlementNotFoundException,
-		},
+		retryOnFns:  []retryOnFn{},
 	}
 }
 

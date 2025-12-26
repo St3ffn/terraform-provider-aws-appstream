@@ -17,7 +17,7 @@ func parseAssociateApplicationEntitlementID(
 ) (stackName, entitlementName, applicationIdentifier string, err error) {
 
 	parts := strings.SplitN(id, "|", 3)
-	if len(parts) != 3 {
+	if len(parts) != 3 || parts[0] == "" || parts[1] == "" || parts[2] == "" {
 		return "", "", "", fmt.Errorf("invalid associate application entitlement ID format")
 	}
 

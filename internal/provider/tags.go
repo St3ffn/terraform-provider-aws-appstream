@@ -12,14 +12,29 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
+type taggingAPI interface {
+	GetResources(
+		ctx context.Context, params *awstaggingapi.GetResourcesInput, optFns ...func(*awstaggingapi.Options),
+	) (*awstaggingapi.GetResourcesOutput, error)
+
+	TagResources(
+		ctx context.Context, params *awstaggingapi.TagResourcesInput, optFns ...func(*awstaggingapi.Options),
+	) (*awstaggingapi.TagResourcesOutput, error)
+
+	UntagResources(
+		ctx context.Context, params *awstaggingapi.UntagResourcesInput, optFns ...func(*awstaggingapi.Options),
+	) (*awstaggingapi.UntagResourcesOutput, error)
+}
+
 type tagManager struct {
-	client      *awstaggingapi.Client
+	client      taggingAPI
 	defaultTags map[string]string
 }
 
-func newTagManager(taggingClient *awstaggingapi.Client, defaultTags map[string]string) *tagManager {
-	return &tagManager{taggingClient, defaultTags}
+func newTagManager(taggingAPI taggingAPI, defaultTags map[string]string) *tagManager {
+	return &tagManager{taggingAPI, defaultTags}
 }
+
 func (tm *tagManager) Read(ctx context.Context, arn string) (types.Map, diag.Diagnostics) {
 	tags, diags := tm.readRaw(ctx, arn)
 	if diags.HasError() {
@@ -68,6 +83,7 @@ func (tm *tagManager) Apply(ctx context.Context, arn string, desired types.Map) 
 	}
 
 	if desired.IsUnknown() {
+		// preserve current remote state
 		return tm.Read(ctx, arn)
 	}
 

@@ -89,6 +89,7 @@ func setStringOrNull(
 	diags *diag.Diagnostics,
 ) types.Set {
 
+	// treat empty and nil slices the same here. this attribute is read-only and does not affect terraform behavior.
 	if len(values) == 0 {
 		return types.SetNull(types.StringType)
 	}

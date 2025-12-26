@@ -14,7 +14,7 @@ func buildAssociateFleetStackID(fleetName, stackName string) string {
 
 func parseAssociateFleetStackID(id string) (fleetName, stackName string, err error) {
 	parts := strings.SplitN(id, "|", 2)
-	if len(parts) != 2 {
+	if len(parts) != 2 || parts[0] == "" || parts[1] == "" {
 		return "", "", fmt.Errorf("invalid associate fleet stack ID format")
 	}
 

@@ -14,7 +14,7 @@ func buildEntitlementID(stackName, name string) string {
 
 func parseEntitlementID(id string) (stackName, name string, err error) {
 	parts := strings.SplitN(id, "|", 2)
-	if len(parts) != 2 {
+	if len(parts) != 2 || parts[0] == "" || parts[1] == "" {
 		return "", "", fmt.Errorf("invalid entitlement ID format")
 	}
 
