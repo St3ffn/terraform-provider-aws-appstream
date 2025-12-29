@@ -115,9 +115,6 @@ resource "awsappstream_stack" "example" {
 Required:
 
 - `endpoint_type` (String) The type of interface endpoint.
-
-Optional:
-
 - `vpce_id` (String) The identifier of the interface VPC endpoint.
 
 

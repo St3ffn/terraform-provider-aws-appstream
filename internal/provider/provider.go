@@ -12,6 +12,7 @@ import (
 	awsretry "github.com/aws/aws-sdk-go-v2/aws/retry"
 	awsconfig "github.com/aws/aws-sdk-go-v2/config"
 	awscredentials "github.com/aws/aws-sdk-go-v2/credentials"
+	"github.com/aws/aws-sdk-go-v2/service/sts"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -22,6 +23,13 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
+	"github.com/st3ffn/terraform-provider-aws-appstream/internal/metadata"
+	"github.com/st3ffn/terraform-provider-aws-appstream/internal/resources/application"
+	"github.com/st3ffn/terraform-provider-aws-appstream/internal/resources/associate_application_entitlement"
+	"github.com/st3ffn/terraform-provider-aws-appstream/internal/resources/associate_fleet_stack"
+	"github.com/st3ffn/terraform-provider-aws-appstream/internal/resources/entitlement"
+	"github.com/st3ffn/terraform-provider-aws-appstream/internal/resources/fleet"
+	"github.com/st3ffn/terraform-provider-aws-appstream/internal/resources/stack"
 )
 
 var (
@@ -35,15 +43,16 @@ type awsAppStreamProvider struct {
 
 // awsAppStreamProviderModel describes the provider data model.
 type awsAppStreamProviderModel struct {
-	AccessKey        types.String      `tfsdk:"access_key"`
-	SecretAccessKey  types.String      `tfsdk:"secret_access_key"`
-	SessionToken     types.String      `tfsdk:"session_token"`
-	Profile          types.String      `tfsdk:"profile"`
-	Region           types.String      `tfsdk:"region"`
-	RetryMode        types.String      `tfsdk:"retry_mode"`
-	RetryMaxAttempts types.Int64       `tfsdk:"retry_max_attempts"`
-	RetryMaxBackoff  types.Int64       `tfsdk:"retry_max_backoff"`
-	DefaultTags      *defaultTagsModel `tfsdk:"default_tags"`
+	AccessKey                 types.String      `tfsdk:"access_key"`
+	SecretAccessKey           types.String      `tfsdk:"secret_access_key"`
+	SessionToken              types.String      `tfsdk:"session_token"`
+	Profile                   types.String      `tfsdk:"profile"`
+	SkipCredentialsValidation types.Bool        `tfsdk:"skip_credentials_validation"`
+	Region                    types.String      `tfsdk:"region"`
+	RetryMode                 types.String      `tfsdk:"retry_mode"`
+	RetryMaxAttempts          types.Int64       `tfsdk:"retry_max_attempts"`
+	RetryMaxBackoff           types.Int64       `tfsdk:"retry_max_backoff"`
+	DefaultTags               *defaultTagsModel `tfsdk:"default_tags"`
 }
 
 type defaultTagsModel struct {
@@ -98,6 +107,12 @@ Authentication and region selection follow the standard AWS SDK behavior.
 				MarkdownDescription: "The name of the AWS CLI profile to use. " +
 					"If not set, the AWS SDK default credential resolution chain is used (environment variables, shared credentials file, EC2/ECS metadata, etc.).",
 				Validators: []validator.String{stringvalidator.LengthAtLeast(1)},
+			},
+			"skip_credentials_validation": schema.BoolAttribute{
+				Optional:    true,
+				Description: "Skip validation of AWS credentials via STS.",
+				MarkdownDescription: "Skips validating AWS credentials using the STS `GetCallerIdentity` call. " +
+					"Useful for testing or for AWS-compatible endpoints that do not support STS.",
 			},
 			"region": schema.StringAttribute{
 				Optional:    true,
@@ -422,6 +437,23 @@ func (p *awsAppStreamProvider) Configure(ctx context.Context, req provider.Confi
 		return
 	}
 
+	skipValidation := false
+	if !config.SkipCredentialsValidation.IsNull() && !config.SkipCredentialsValidation.IsUnknown() {
+		skipValidation = config.SkipCredentialsValidation.ValueBool()
+	}
+
+	if skipValidation {
+		stsClient := sts.NewFromConfig(awscfg)
+		_, err = stsClient.GetCallerIdentity(ctx, &sts.GetCallerIdentityInput{})
+		if err != nil {
+			resp.Diagnostics.AddError(
+				"Invalid AWS Credentials",
+				fmt.Sprintf("Failed to validate AWS credentials: %v", err),
+			)
+			return
+		}
+	}
+
 	defaultTags := map[string]string{}
 
 	if config.DefaultTags != nil && !config.DefaultTags.Tags.IsNull() {
@@ -431,7 +463,7 @@ func (p *awsAppStreamProvider) Configure(ctx context.Context, req provider.Confi
 			return
 		}
 	}
-	meta := newMetadata(awscfg, defaultTags)
+	meta := metadata.NewMetadata(awscfg, defaultTags)
 
 	resp.DataSourceData = meta
 	resp.ResourceData = meta
@@ -441,21 +473,21 @@ func (p *awsAppStreamProvider) Configure(ctx context.Context, req provider.Confi
 
 func (p *awsAppStreamProvider) DataSources(_ context.Context) []func() datasource.DataSource {
 	return []func() datasource.DataSource{
-		NewFleetDataSource,
-		NewStackDataSource,
-		NewEntitlementDataSource,
-		NewApplicationDataSource,
+		fleet.NewDataSource,
+		stack.NewDataSource,
+		entitlement.NewDataSource,
+		application.NewDataSource,
 	}
 }
 
 func (p *awsAppStreamProvider) Resources(_ context.Context) []func() resource.Resource {
 	return []func() resource.Resource{
-		NewFleetResource,
-		NewStackResource,
-		NewEntitlementResource,
-		NewAssociateFleetStackResource,
-		NewAssociateApplicationEntitlementResource,
-		NewApplicationResource,
+		fleet.NewResource,
+		stack.NewResource,
+		entitlement.NewResource,
+		associate_fleet_stack.NewResource,
+		associate_application_entitlement.NewResource,
+		application.NewResource,
 	}
 }
 

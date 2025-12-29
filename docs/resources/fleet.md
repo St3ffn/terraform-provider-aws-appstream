@@ -192,7 +192,7 @@ resource "awsappstream_fleet" "on_demand_multi_session" {
 - `domain_join_info` (Attributes) Specifies the Active Directory domain and organizational unit used to join fleet instances to a Microsoft Active Directory domain. This configuration is not supported for elastic fleets. (see [below for nested schema](#nestedatt--domain_join_info))
 - `enable_default_internet_access` (Boolean) Whether instances in the fleet have access to the internet.
 - `iam_role_arn` (String) The ARN of the IAM role applied to fleet instances.
-- `idle_disconnect_timeout_in_seconds` (Number) The amount of time, in seconds, that a session can remain idle before being disconnected. Specify `0` to disable idle disconnection. Otherwise, specify a value between `60` and `36000`. AWS rounds this value to the nearest whole minute. Values that are not exact multiples of 60 may be normalized by AWS, which can result in persistent diffs until the configuration matches the value returned by the API.
+- `idle_disconnect_timeout_in_seconds` (Number) The amount of time, in seconds, that a session can remain idle before being disconnected. Specify `0` to disable idle disconnection. Otherwise, the value must be a multiple of 60 seconds between 60 and 36000 to avoid AWS rounding behavior.
 - `image_arn` (String) The ARN of the AppStream image used to create the fleet. Either `image_name` or `image_arn` must be specified.
 - `image_name` (String) The name of the AppStream image used to create the fleet. Either `image_name` or `image_arn` must be specified.
 - `max_concurrent_sessions` (Number) The maximum number of concurrent streaming sessions for an elastic fleet. This setting is required for elastic fleets and is not allowed for other fleet types.

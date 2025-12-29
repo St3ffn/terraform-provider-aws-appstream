@@ -62,6 +62,7 @@ provider "awsappstream" {
 	If not set, the AWS SDK default retry configuration is used (for example via environment variables such as `AWS_RETRY_MODE`).
 - `secret_access_key` (String, Sensitive) The AWS secret access key to use for authentication. If not set, the AWS SDK default credential resolution chain is used (environment variables, shared credentials file, EC2/ECS metadata, etc.).
 - `session_token` (String, Sensitive) The AWS session token to use for temporary credentials, such as those obtained via AWS STS. This value is optional and typically only required when using temporary security credentials.If not set, the AWS SDK default credential resolution chain is used.
+- `skip_credentials_validation` (Boolean) Skips validating AWS credentials using the STS `GetCallerIdentity` call. Useful for testing or for AWS-compatible endpoints that do not support STS.
 
 <a id="nestedatt--default_tags"></a>
 ### Nested Schema for `default_tags`

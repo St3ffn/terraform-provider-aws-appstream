@@ -73,6 +73,62 @@ In practice, this means:
 Overall, the provider prioritizes **correctness, consistency, and drift
 resilience** over minimizing API calls.
 
+## Provider Design Philosophy: Attribute Ownership
+
+This provider intentionally follows an **attribute ownership model** that differs from the official Terraform AWS provider.
+
+Only attributes that are **explicitly set by the user in Terraform configuration** are considered managed by Terraform. Attributes that are not configured by the user are treated as **AWS-managed defaults** and are not enforced or reconciled by Terraform.
+
+In practical terms:
+
+- If an attribute is **not set** in the Terraform configuration, the provider:
+    - Does not attempt to normalize it
+    - Does not enforce AWS default values
+    - Does not generate diffs when AWS populates or changes default values
+- If an attribute **is set** by the user, Terraform fully owns it:
+    - The value is sent to AWS
+    - The value is read back from AWS
+    - Drift is detected and corrected if the value changes
+
+This behavior avoids perpetual diffs caused by AWS-side defaults, implicit behavior, or service-specific normalization.
+
+### Examples
+
+Fleet resources:
+- If `image_name` is set and `image_arn` is not, only `image_name` is tracked.
+- If `image_arn` is set, only `image_arn` is tracked.
+- If AWS returns both values, the provider preserves ownership of only the attribute configured by the user.
+
+Stack resources:
+- Optional nested blocks (for example, user settings, application settings, streaming experience settings) are only tracked if explicitly defined.
+- AWS-generated defaults or inferred values are ignored unless the user opts in by defining them.
+
+### Why this design exists
+
+AWS AppStream frequently:
+- Applies implicit defaults
+- Normalizes values
+- Returns additional fields that were never explicitly configured
+
+Tracking all returned fields would lead to:
+- Constant, non-actionable diffs
+- Forced configuration of values users did not intend to manage
+- Reduced clarity around which settings Terraform truly controls
+
+By limiting state ownership to user-defined attributes, this provider:
+- Produces stable plans
+- Avoids perpetual drift
+- Makes ownership boundaries explicit and predictable
+
+### Implications for users
+
+- You are not required to configure every available attribute.
+- AWS defaults are respected unless you choose to override them.
+- If you want Terraform to manage a value, you must explicitly define it.
+- Importing existing resources will populate only user-managed attributes.
+
+This behavior is intentional and applies consistently across resources such as fleets and stacks, and may be extended to additional resources in the future.
+
 ## Retry and Eventual Consistency Handling
 
 AWS AppStream APIs exhibit **eventual consistency** and transient errors,
