@@ -81,6 +81,11 @@ func (r *resource) Update(ctx context.Context, req tfresource.UpdateRequest, res
 		if plan.StorageConnectors.IsNull() {
 			attrToDelete = append(attrToDelete, awstypes.StackAttributeStorageConnectors)
 		} else {
+			attrToDelete = append(
+				attrToDelete,
+				storageConnectorAttributesToDelete(ctx, state.StorageConnectors, plan.StorageConnectors, &resp.Diagnostics)...,
+			)
+
 			input.StorageConnectors = expandStorageConnectors(
 				ctx,
 				plan.StorageConnectors,
