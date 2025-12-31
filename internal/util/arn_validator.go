@@ -13,6 +13,23 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
+func ValidateARNValue(value, service, resourcePrefix string) error {
+	parsed, err := awsarn.Parse(value)
+	if err != nil {
+		return fmt.Errorf("invalid ARN")
+	}
+
+	if service != "" && parsed.Service != service {
+		return fmt.Errorf("expected ARN service %q", service)
+	}
+
+	if resourcePrefix != "" && !strings.HasPrefix(parsed.Resource, resourcePrefix) {
+		return fmt.Errorf("expected ARN resource prefix %q", resourcePrefix)
+	}
+
+	return nil
+}
+
 type arnValidator struct {
 	service        string
 	resourcePrefix string
@@ -37,14 +54,11 @@ func (a arnValidator) ValidateString(
 	ctx context.Context, req validator.StringRequest, resp *validator.StringResponse,
 ) {
 
-	if req.ConfigValue.IsUnknown() || req.ConfigValue.IsNull() {
+	if req.ConfigValue.IsNull() || req.ConfigValue.IsUnknown() {
 		return
 	}
 
-	value := req.ConfigValue.ValueString()
-
-	parsed, err := awsarn.Parse(value)
-	if err != nil {
+	if err := ValidateARNValue(req.ConfigValue.ValueString(), a.service, a.resourcePrefix); err != nil {
 		resp.Diagnostics.Append(
 			validatordiag.InvalidAttributeValueMatchDiagnostic(
 				req.Path,
@@ -52,29 +66,6 @@ func (a arnValidator) ValidateString(
 				req.ConfigValue.ValueString(),
 			),
 		)
-		return
-	}
-
-	if a.service != "" && parsed.Service != a.service {
-		resp.Diagnostics.Append(
-			validatordiag.InvalidAttributeValueMatchDiagnostic(
-				req.Path,
-				a.Description(ctx),
-				value,
-			),
-		)
-		return
-	}
-
-	if a.resourcePrefix != "" && !strings.HasPrefix(parsed.Resource, a.resourcePrefix) {
-		resp.Diagnostics.Append(
-			validatordiag.InvalidAttributeValueMatchDiagnostic(
-				req.Path,
-				a.Description(ctx),
-				value,
-			),
-		)
-		return
 	}
 }
 

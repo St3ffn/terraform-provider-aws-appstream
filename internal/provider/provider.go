@@ -24,6 +24,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/metadata"
+	"github.com/st3ffn/terraform-provider-aws-appstream/internal/resources/app_block"
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/resources/application"
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/resources/associate_application_entitlement"
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/resources/associate_fleet_stack"
@@ -476,6 +477,7 @@ func (p *awsAppStreamProvider) DataSources(_ context.Context) []func() datasourc
 		fleet.NewDataSource,
 		stack.NewDataSource,
 		entitlement.NewDataSource,
+		app_block.NewDataSource,
 		application.NewDataSource,
 	}
 }
@@ -487,6 +489,7 @@ func (p *awsAppStreamProvider) Resources(_ context.Context) []func() resource.Re
 		entitlement.NewResource,
 		associate_fleet_stack.NewResource,
 		associate_application_entitlement.NewResource,
+		app_block.NewResource,
 		application.NewResource,
 	}
 }

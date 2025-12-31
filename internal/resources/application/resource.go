@@ -7,12 +7,12 @@ import (
 	"context"
 	"fmt"
 
-	awsarn "github.com/aws/aws-sdk-go-v2/aws/arn"
 	awsappstream "github.com/aws/aws-sdk-go-v2/service/appstream"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	tfresource "github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/metadata"
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/tags"
+	"github.com/st3ffn/terraform-provider-aws-appstream/internal/util"
 )
 
 var (
@@ -69,10 +69,10 @@ func (r *resource) Configure(_ context.Context, req tfresource.ConfigureRequest,
 }
 
 func (r *resource) ImportState(ctx context.Context, req tfresource.ImportStateRequest, resp *tfresource.ImportStateResponse) {
-	if !awsarn.IsARN(req.ID) {
+	if err := util.ValidateARNValue(req.ID, "appstream", "application/"); err != nil {
 		resp.Diagnostics.AddError(
 			"Unexpected Import Identifier",
-			"Expected import identifier format: <ARN>",
+			fmt.Sprintf("Expected AppStream application ARN: %v", err),
 		)
 		return
 	}

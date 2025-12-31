@@ -20,7 +20,7 @@ resource "awsappstream_stack" "example" {
 ```
 
 ```terraform
-# full resource
+# full stack
 resource "awsappstream_stack" "example" {
   name         = "example-stack"
   display_name = "Example AppStream Stack"

@@ -1,4 +1,4 @@
-# full resource
+# full application
 resource "awsappstream_application" "example" {
   name         = "example-app"
   display_name = "Example Application"
