@@ -32,7 +32,7 @@ For context, [see the open AppStream-related issues](https://github.com/hashicor
 | awsappstream_associate_application_entitlement | ✅        | ❌           |         |
 | awsappstream_app_block                         | ✅        | ✅           |         |
 | awsappstream_application                       | ✅        | ✅           |         |
-| awsappstream_directory_config                  | 🚧       | 🚧          | ✅       |
+| awsappstream_directory_config                  | ✅        | ✅           |         |
 | awsappstream_user                              | 🚧       | 🚧          | ✅       |
 | awsappstream_image_builder                     | 🚧       | 🚧          | ✅       |
 | awsappstream_application_fleet_association     | 🚧       | 🚧          | ✅       |

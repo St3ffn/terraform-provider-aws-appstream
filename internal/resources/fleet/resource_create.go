@@ -135,7 +135,7 @@ func (r *resource) Create(ctx context.Context, req tfresource.CreateRequest, res
 	}
 
 	if newState == nil {
-		if util.IsContextCanceled(ctx.Err()) {
+		if ctx.Err() != nil {
 			return
 		}
 		resp.State.RemoveResource(ctx)

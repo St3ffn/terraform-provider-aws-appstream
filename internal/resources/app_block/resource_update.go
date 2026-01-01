@@ -57,6 +57,9 @@ func (r *resource) Update(ctx context.Context, req tfresource.UpdateRequest, res
 	}
 
 	if newState == nil {
+		if ctx.Err() != nil {
+			return
+		}
 		resp.State.RemoveResource(ctx)
 		return
 	}
