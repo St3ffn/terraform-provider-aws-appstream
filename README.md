@@ -33,10 +33,10 @@ For context, [see the open AppStream-related issues](https://github.com/hashicor
 | awsappstream_app_block                         | ✅        | ✅           |         |
 | awsappstream_application                       | ✅        | ✅           |         |
 | awsappstream_directory_config                  | ✅        | ✅           |         |
-| awsappstream_user                              | 🚧       | 🚧          | ✅       |
-| awsappstream_image_builder                     | 🚧       | 🚧          | ✅       |
-| awsappstream_application_fleet_association     | 🚧       | 🚧          | ✅       |
+| awsappstream_user                              | ✅        | ✅           |         |
 | awsappstream_user_stack_association            | 🚧       | 🚧          | ✅       |
+| awsappstream_application_fleet_association     | 🚧       | 🚧          | ✅       |
+| awsappstream_image_builder                     | 🚧       | 🚧          | ✅       |
 | awsappstream_image                             | ❌        | 🚧          | ✅       |
 
 ## Behavior and Design Principles

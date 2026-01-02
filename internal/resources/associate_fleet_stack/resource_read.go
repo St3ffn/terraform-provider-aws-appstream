@@ -41,7 +41,7 @@ func (r *resource) Read(ctx context.Context, req tfresource.ReadRequest, resp *t
 	}
 
 	if newState == nil {
-		if util.IsContextCanceled(ctx.Err()) {
+		if ctx.Err() != nil {
 			return
 		}
 		resp.State.RemoveResource(ctx)

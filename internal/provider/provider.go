@@ -32,6 +32,7 @@ import (
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/resources/entitlement"
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/resources/fleet"
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/resources/stack"
+	"github.com/st3ffn/terraform-provider-aws-appstream/internal/resources/user"
 )
 
 var (
@@ -481,6 +482,7 @@ func (p *awsAppStreamProvider) DataSources(_ context.Context) []func() datasourc
 		app_block.NewDataSource,
 		application.NewDataSource,
 		directory_config.NewDataSource,
+		user.NewDataSource,
 	}
 }
 
@@ -494,6 +496,7 @@ func (p *awsAppStreamProvider) Resources(_ context.Context) []func() resource.Re
 		app_block.NewResource,
 		application.NewResource,
 		directory_config.NewResource,
+		user.NewResource,
 	}
 }
 

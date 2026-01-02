@@ -32,7 +32,7 @@ func (r *resource) Read(ctx context.Context, req tfresource.ReadRequest, resp *t
 		resp.Diagnostics.AddError(
 			"Invalid Terraform State",
 			"Required attributes stack_name and name are missing from state. "+
-				"This can happen after an incomplete import or a prior provider bug. Re-import or recreate the tfresource.",
+				"This can happen after an incomplete import or a prior provider bug. Re-import or recreate the resource.",
 		)
 		return
 	}
@@ -44,7 +44,7 @@ func (r *resource) Read(ctx context.Context, req tfresource.ReadRequest, resp *t
 	}
 
 	if newState == nil {
-		if util.IsContextCanceled(ctx.Err()) {
+		if ctx.Err() != nil {
 			return
 		}
 		resp.State.RemoveResource(ctx)

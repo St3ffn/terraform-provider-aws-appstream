@@ -21,7 +21,7 @@ func (ds *dataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp
 			"from the stack. This data source can be used to reference entitlements that are managed outside of Terraform.",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description: "Identifier of the entitlement.",
+				Description: "Identifier of the AppStream entitlement.",
 				MarkdownDescription: "A synthetic identifier for the entitlement, composed of the stack name and entitlement name " +
 					"in the format `<stack_name>|<name>`.",
 				Computed: true,

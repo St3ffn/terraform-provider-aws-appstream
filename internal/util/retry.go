@@ -34,21 +34,18 @@ func defaultRetryConfig() *retryConfig {
 
 type RetryOption func(*retryConfig)
 
-//nolint:unused // reserved for future retry configuration options
 func WithTimeout(timeout time.Duration) RetryOption {
 	return func(c *retryConfig) {
 		c.timeout = timeout
 	}
 }
 
-//nolint:unused // reserved for future retry configuration options
 func WithInitBackoff(initBackoff time.Duration) RetryOption {
 	return func(c *retryConfig) {
 		c.initBackoff = initBackoff
 	}
 }
 
-//nolint:unused // reserved for future retry configuration options
 func WithMaxBackoff(maxBackoff time.Duration) RetryOption {
 	return func(c *retryConfig) {
 		c.maxBackoff = maxBackoff

@@ -93,5 +93,5 @@ func (ds *dataSource) Read(ctx context.Context, req datasource.ReadRequest, resp
 		return
 	}
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, state)...)
 }
