@@ -97,10 +97,6 @@ func (r *resource) Create(ctx context.Context, req tfresource.CreateRequest, res
 		)
 
 		if err != nil {
-			if util.IsContextCanceled(err) {
-				return
-			}
-
 			resp.Diagnostics.AddError(
 				"Error Creating AWS AppStream User",
 				fmt.Sprintf("Could not disable user %q with authentication type %q: %v",

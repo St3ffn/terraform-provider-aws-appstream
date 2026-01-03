@@ -43,6 +43,10 @@ func IsResourceAlreadyExists(err error) bool {
 	return IsAWSAPIError(err, "ResourceAlreadyExistsException")
 }
 
+func IsEntitlementAlreadyExists(err error) bool {
+	return IsAWSAPIError(err, "EntitlementAlreadyExistsException")
+}
+
 func IsAppStreamNotFound(err error) bool {
 	return IsAWSAPIError(err, "ResourceNotFoundException", "EntitlementNotFoundException")
 }

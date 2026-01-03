@@ -20,9 +20,13 @@ resource "awsappstream_stack" "test" {
 
 resource "awsappstream_fleet" "test" {
   name          = %q
+  fleet_type   = "ON_DEMAND"
   instance_type = "stream.standard.small"
-  compute_capacity {
-    desired_instances = 1
+
+  image_name = "Amazon-AppStream2-Sample-Image-06-17-2024"
+
+  compute_capacity = {
+    desired_instances = 0
   }
 }
 

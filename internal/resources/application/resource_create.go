@@ -72,17 +72,13 @@ func (r *resource) Create(ctx context.Context, req tfresource.CreateRequest, res
 		},
 		// see https://docs.aws.amazon.com/appstream2/latest/APIReference/API_CreateApplication.html
 		util.WithRetryOnFns(
+			util.IsConcurrentModificationException,
 			util.IsOperationNotPermittedException,
 			util.IsResourceNotFoundException,
-			util.IsConcurrentModificationException,
 		),
 	)
 
 	if err != nil {
-		if util.IsContextCanceled(err) {
-			return
-		}
-
 		if util.IsResourceAlreadyExists(err) {
 			resp.Diagnostics.AddError(
 				"AWS AppStream Application Already Exists",

@@ -81,6 +81,18 @@ func TestErrorPredicates(t *testing.T) {
 			want: false,
 		},
 		{
+			name: "entitlement_already_exists/match",
+			err:  &smithy.GenericAPIError{Code: "EntitlementAlreadyExistsException"},
+			fn:   IsEntitlementAlreadyExists,
+			want: true,
+		},
+		{
+			name: "entitlement_already_exists/no_match",
+			err:  &smithy.GenericAPIError{Code: "other"},
+			fn:   IsEntitlementAlreadyExists,
+			want: false,
+		},
+		{
 			name: "appstream_not_found/resource_not_found",
 			err:  &smithy.GenericAPIError{Code: "ResourceNotFoundException"},
 			fn:   IsAppStreamNotFound,

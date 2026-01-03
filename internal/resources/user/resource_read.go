@@ -70,17 +70,15 @@ func (r *resource) readUser(ctx context.Context, prior resourceModel) (*resource
 		util.WithTimeout(5*time.Minute),
 		util.WithInitBackoff(1*time.Second),
 		util.WithMaxBackoff(10*time.Second),
+		// see https://docs.aws.amazon.com/appstream2/latest/APIReference/API_DescribeUsers.html
 		util.WithRetryOnFns(
-			isUserNotYetVisibleError,
+			util.IsOperationNotPermittedException,
 			util.IsResourceNotFoundException,
+			isUserNotYetVisibleError,
 		),
 	)
 
 	if err != nil {
-		if util.IsContextCanceled(err) {
-			return nil, diags
-		}
-
 		authenticationType := prior.AuthenticationType.ValueString()
 		userName := prior.UserName.ValueString()
 

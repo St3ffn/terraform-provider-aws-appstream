@@ -106,17 +106,18 @@ func TestRetryOn_NonRetryableError(t *testing.T) {
 func TestRetryOn_ContextTimeout(t *testing.T) {
 	ctx := context.Background()
 
+	lastErr := errors.New("last_error")
 	err := RetryOn(
 		ctx,
 		func(context.Context) error {
-			return errors.New("retry")
+			return lastErr
 		},
 		WithRetryOnFns(func(error) bool { return true }),
 		WithTimeout(5*time.Millisecond),
 		WithInitBackoff(1*time.Millisecond),
 	)
 
-	if !errors.Is(err, context.DeadlineExceeded) {
-		t.Fatalf("error = %v, want context deadline exceeded", err)
+	if !errors.Is(err, lastErr) {
+		t.Fatalf("error = %v, want last_error", err)
 	}
 }

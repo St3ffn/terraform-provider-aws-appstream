@@ -1,0 +1,98 @@
+// Copyright (c) St3ffn
+// SPDX-License-Identifier: MPL-2.0
+
+package associate_user_stack
+
+import (
+	"context"
+	"fmt"
+
+	awsappstream "github.com/aws/aws-sdk-go-v2/service/appstream"
+	"github.com/hashicorp/terraform-plugin-framework/path"
+	tfresource "github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/st3ffn/terraform-provider-aws-appstream/internal/metadata"
+)
+
+var (
+	_ tfresource.Resource                   = &resource{}
+	_ tfresource.ResourceWithConfigure      = &resource{}
+	_ tfresource.ResourceWithValidateConfig = &resource{}
+	_ tfresource.ResourceWithImportState    = &resource{}
+)
+
+func NewResource() tfresource.Resource {
+	return &resource{}
+}
+
+type resource struct {
+	appstreamClient *awsappstream.Client
+}
+
+func (r *resource) ValidateConfig(ctx context.Context, req tfresource.ValidateConfigRequest, resp *tfresource.ValidateConfigResponse) {
+	var config model
+
+	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	hasAuthenticationType := !config.AuthenticationType.IsNull() && !config.AuthenticationType.IsUnknown()
+	hasSendEmailNotification := !config.SendEmailNotification.IsNull() && !config.SendEmailNotification.IsUnknown()
+
+	if hasAuthenticationType && hasSendEmailNotification {
+		authenticationType := config.AuthenticationType.ValueString()
+
+		if authenticationType != "USERPOOL" {
+			resp.Diagnostics.AddAttributeError(
+				path.Root("send_email_notification"),
+				"Invalid Configuration",
+				"`send_email_notification` can only be specified when `authentication_type` is set to `USERPOOL`.",
+			)
+		}
+	}
+}
+
+func (r *resource) Metadata(_ context.Context, req tfresource.MetadataRequest, resp *tfresource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_associate_user_stack"
+}
+
+func (r *resource) Configure(_ context.Context, req tfresource.ConfigureRequest, resp *tfresource.ConfigureResponse) {
+	if req.ProviderData == nil {
+		return
+	}
+
+	meta, ok := req.ProviderData.(*metadata.Metadata)
+	if !ok {
+		resp.Diagnostics.AddError(
+			"Unexpected Resource Configure Type",
+			fmt.Sprintf("Expected *Metadata, got: %T. Please report this issue to the provider developers.", req.ProviderData),
+		)
+		return
+	}
+
+	if meta.Appstream == nil {
+		resp.Diagnostics.AddError(
+			"Unexpected Resource Configure Type",
+			"Expected *Metadata.Appstream, got: nil. Please report this issue to the provider developers.",
+		)
+		return
+	}
+
+	r.appstreamClient = meta.Appstream
+}
+
+func (r *resource) ImportState(ctx context.Context, req tfresource.ImportStateRequest, resp *tfresource.ImportStateResponse) {
+	stackName, authenticationType, userName, err := parseID(req.ID)
+	if err != nil {
+		resp.Diagnostics.AddError(
+			"Unexpected Import Identifier",
+			"Expected import identifier format: <stack_name>|<authentication_type>|<user_name>",
+		)
+		return
+	}
+
+	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("stack_name"), stackName)...)
+	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("authentication_type"), authenticationType)...)
+	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("user_name"), userName)...)
+	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("id"), req.ID)...)
+}

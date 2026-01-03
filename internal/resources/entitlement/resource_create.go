@@ -63,11 +63,7 @@ func (r *resource) Create(ctx context.Context, req tfresource.CreateRequest, res
 	)
 
 	if err != nil {
-		if util.IsContextCanceled(err) {
-			return
-		}
-
-		if util.IsResourceAlreadyExists(err) {
+		if util.IsResourceAlreadyExists(err) || util.IsEntitlementAlreadyExists(err) {
 			resp.Diagnostics.AddError(
 				"AWS AppStream Entitlement Already Exists",
 				fmt.Sprintf(

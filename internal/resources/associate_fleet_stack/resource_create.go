@@ -43,17 +43,13 @@ func (r *resource) Create(ctx context.Context, req tfresource.CreateRequest, res
 		},
 		// see https://docs.aws.amazon.com/appstream2/latest/APIReference/API_AssociateFleet.html
 		util.WithRetryOnFns(
+			util.IsConcurrentModificationException,
 			util.IsOperationNotPermittedException,
 			util.IsResourceNotFoundException,
-			util.IsConcurrentModificationException,
 		),
 	)
 
 	if err != nil {
-		if util.IsContextCanceled(err) {
-			return
-		}
-
 		resp.Diagnostics.AddError(
 			"Error Creating AWS AppStream Fleet Stack Association",
 			fmt.Sprintf("Could not associate fleet %q to stack %q: %v",

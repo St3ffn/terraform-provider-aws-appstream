@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	defaultRetryTimeout     = 60 * time.Minute
+	defaultRetryTimeout     = 20 * time.Minute
 	defaultRetryInitBackoff = 1 * time.Second
 	defaultRetryMaxBackoff  = 5 * time.Minute
 )
@@ -77,9 +77,13 @@ func RetryOn(ctx context.Context, call func(context.Context) error, opts ...Retr
 	defer cancel()
 
 	backoff := options.initBackoff
+	var lastErr error
 
 	for {
 		if err := ctx.Err(); err != nil {
+			if lastErr != nil {
+				return lastErr
+			}
 			return err
 		}
 
@@ -92,8 +96,13 @@ func RetryOn(ctx context.Context, call func(context.Context) error, opts ...Retr
 			return err
 		}
 
+		lastErr = err
+
 		select {
 		case <-ctx.Done():
+			if lastErr != nil {
+				return lastErr
+			}
 			return ctx.Err()
 		case <-time.After(backoff):
 		}

@@ -48,17 +48,13 @@ func (r *resource) Create(ctx context.Context, req tfresource.CreateRequest, res
 		},
 		// see https://docs.aws.amazon.com/appstream2/latest/APIReference/API_AssociateApplicationToEntitlement.html
 		util.WithRetryOnFns(
+			util.IsEntitlementNotFoundException,
 			util.IsOperationNotPermittedException,
 			util.IsResourceNotFoundException,
-			util.IsEntitlementNotFoundException,
 		),
 	)
 
 	if err != nil {
-		if util.IsContextCanceled(err) {
-			return
-		}
-
 		resp.Diagnostics.AddError(
 			"Error Creating AWS AppStream Application Entitlement Association",
 			fmt.Sprintf("Could not associate application %q to entitlement %q (stack %q): %v",
