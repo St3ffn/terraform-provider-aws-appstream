@@ -447,7 +447,7 @@ func (p *awsAppStreamProvider) Configure(ctx context.Context, req provider.Confi
 		skipValidation = config.SkipCredentialsValidation.ValueBool()
 	}
 
-	if skipValidation {
+	if !skipValidation {
 		stsClient := sts.NewFromConfig(awscfg)
 		_, err = stsClient.GetCallerIdentity(ctx, &sts.GetCallerIdentityInput{})
 		if err != nil {
