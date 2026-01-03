@@ -56,6 +56,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				MarkdownDescription: "The name of the AppStream image used to create the fleet. " +
 					"Either `image_name` or `image_arn` must be specified.",
 				Optional: true,
+				Computed: true,
 				Validators: []validator.String{
 					stringvalidator.RegexMatches(
 						regexp.MustCompile(`^[a-zA-Z0-9][a-zA-Z0-9_.-]{0,100}$`),
@@ -68,6 +69,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				MarkdownDescription: "The ARN of the AppStream image used to create the fleet. " +
 					"Either `image_name` or `image_arn` must be specified.",
 				Optional: true,
+				Computed: true,
 				Validators: []validator.String{
 					util.ValidARNWithServiceAndResource("appstream", "image/"),
 				},

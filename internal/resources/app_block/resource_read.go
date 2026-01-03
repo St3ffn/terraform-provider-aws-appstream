@@ -94,7 +94,7 @@ func (r *resource) readAppBlock(ctx context.Context, prior model) (*model, diag.
 		SourceS3Location:       flattenSourceS3LocationData(ctx, appBlock.SourceS3Location, &diags),
 		SetupScriptDetails:     flattenScriptDetailsResource(ctx, prior.SetupScriptDetails, appBlock.SetupScriptDetails, &diags),
 		PostSetupScriptDetails: flattenScriptDetailsResource(ctx, prior.PostSetupScriptDetails, appBlock.PostSetupScriptDetails, &diags),
-		PackagingType:          util.FlattenOwnedString(prior.PackagingType, aws.String(string(appBlock.PackagingType))),
+		PackagingType:          util.FlattenStateOwnedString(prior.PackagingType, aws.String(string(appBlock.PackagingType))),
 		Tags:                   types.Map{},
 		ARN:                    util.StringOrNull(appBlock.Arn),
 		CreatedTime:            util.StringFromTime(appBlock.CreatedTime),

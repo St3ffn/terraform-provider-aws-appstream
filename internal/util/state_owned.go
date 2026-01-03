@@ -11,7 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-func FlattenOwnedBool(prior types.Bool, awsValue *bool) types.Bool {
+func FlattenStateOwnedBool(prior types.Bool, awsValue *bool) types.Bool {
 	// user never set it
 	if prior.IsNull() {
 		return types.BoolNull()
@@ -30,7 +30,7 @@ func FlattenOwnedBool(prior types.Bool, awsValue *bool) types.Bool {
 	return types.BoolValue(*awsValue)
 }
 
-func FlattenOwnedInt32(prior types.Int32, awsValue *int32) types.Int32 {
+func FlattenStateOwnedInt32(prior types.Int32, awsValue *int32) types.Int32 {
 	// user never set it
 	if prior.IsNull() {
 		return types.Int32Null()
@@ -49,7 +49,7 @@ func FlattenOwnedInt32(prior types.Int32, awsValue *int32) types.Int32 {
 	return types.Int32Value(*awsValue)
 }
 
-func FlattenOwnedString(prior types.String, awsValue *string) types.String {
+func FlattenStateOwnedString(prior types.String, awsValue *string) types.String {
 	// user never set it
 	if prior.IsNull() {
 		return types.StringNull()
@@ -68,7 +68,7 @@ func FlattenOwnedString(prior types.String, awsValue *string) types.String {
 	return types.StringValue(*awsValue)
 }
 
-func FlattenOwnedStringSet(ctx context.Context, prior types.Set, awsValues []string, diags *diag.Diagnostics) types.Set {
+func FlattenStateOwnedStringSet(ctx context.Context, prior types.Set, awsValues []string, diags *diag.Diagnostics) types.Set {
 	// user never managed this attribute
 	if prior.IsNull() {
 		return types.SetNull(types.StringType)

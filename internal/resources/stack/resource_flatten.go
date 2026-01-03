@@ -113,9 +113,9 @@ func flattenStorageConnectorsResource(
 
 		m := storageConnectorModel{
 			ConnectorType:      types.StringValue(ct),
-			ResourceIdentifier: util.FlattenOwnedString(priorConn.ResourceIdentifier, awsConn.ResourceIdentifier),
-			Domains:            util.FlattenOwnedStringSet(ctx, priorConn.Domains, awsConn.Domains, diags),
-			DomainsRequireAdminConsent: util.FlattenOwnedStringSet(
+			ResourceIdentifier: util.FlattenStateOwnedString(priorConn.ResourceIdentifier, awsConn.ResourceIdentifier),
+			Domains:            util.FlattenStateOwnedStringSet(ctx, priorConn.Domains, awsConn.Domains, diags),
+			DomainsRequireAdminConsent: util.FlattenStateOwnedStringSet(
 				ctx, priorConn.DomainsRequireAdminConsent, awsConn.DomainsRequireAdminConsent, diags,
 			),
 		}
@@ -256,7 +256,7 @@ func flattenApplicationSettingsResource(
 		applicationSettingsObjectType.AttrTypes,
 		applicationSettingsModel{
 			Enabled:       util.BoolOrNull(awsAppSettings.Enabled),
-			SettingsGroup: util.FlattenOwnedString(priorModel.SettingsGroup, awsAppSettings.SettingsGroup),
+			SettingsGroup: util.FlattenStateOwnedString(priorModel.SettingsGroup, awsAppSettings.SettingsGroup),
 			S3BucketName:  util.StringOrNull(awsAppSettings.S3BucketName),
 		},
 	)

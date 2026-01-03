@@ -44,14 +44,15 @@ func TestAccFleet_basic(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "fleet_type", "ON_DEMAND"),
 					resource.TestCheckResourceAttr(resourceName, "instance_type", "stream.standard.small"),
 					resource.TestCheckResourceAttr(resourceName, "compute_capacity.desired_instances", "0"),
+					resource.TestCheckResourceAttr(resourceName, "image_name", "Amazon-AppStream2-Sample-Image-06-17-2024"),
+					resource.TestCheckResourceAttr(resourceName, "image_arn", "arn:aws:appstream:eu-central-1::image/Amazon-AppStream2-Sample-Image-06-17-2024"),
 					resource.TestCheckResourceAttrSet(resourceName, "arn"),
 				),
 			},
 			{
-				ResourceName:            resourceName,
-				ImportState:             true,
-				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"image_name"},
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -84,15 +85,14 @@ func TestAccFleet_imageARN(t *testing.T) {
 			{
 				Config: testAccFleetImageARNConfig(name),
 				Check: resource.ComposeAggregateTestCheckFunc(
-					resource.TestCheckResourceAttrSet(resourceName, "image_arn"),
-					resource.TestCheckNoResourceAttr(resourceName, "image_name"),
+					resource.TestCheckResourceAttr(resourceName, "image_arn", "arn:aws:appstream:eu-central-1::image/Amazon-AppStream2-Sample-Image-06-17-2024"),
+					resource.TestCheckResourceAttr(resourceName, "image_name", "Amazon-AppStream2-Sample-Image-06-17-2024"),
 				),
 			},
 			{
-				ResourceName:            resourceName,
-				ImportState:             true,
-				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"image_arn"},
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -132,6 +132,43 @@ func TestAccFleet_updateDescription(t *testing.T) {
 	})
 }
 
+func testAccFleetUpdateImageName(name string) string {
+	return testhelpers.TestAccProviderBasicConfig() + fmt.Sprintf(`
+resource "awsappstream_fleet" "test" {
+  name          = %q
+  fleet_type    = "ON_DEMAND"
+  instance_type = "stream.standard.small"
+  image_name    = "Amazon-AppStream2-Sample-Image-03-11-2023"
+
+  description = "updated description"
+
+  compute_capacity = {
+    desired_instances = 0
+  }
+}
+`, name)
+}
+
+func TestAccFleet_updateImageName(t *testing.T) {
+	name := acctest.RandomWithPrefix("tf-acc-fleet-update")
+	resourceName := "awsappstream_fleet.test"
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { testhelpers.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{Config: testAccFleetBasicConfig(name)},
+			{
+				Config: testAccFleetUpdateImageName(name),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "image_name", "Amazon-AppStream2-Sample-Image-03-11-2023"),
+					resource.TestCheckResourceAttr(resourceName, "image_arn", "arn:aws:appstream:eu-central-1::image/Amazon-AppStream2-Sample-Image-03-11-2023"),
+				),
+			},
+		},
+	})
+}
+
 func testAccFleetIdleTimeoutConfig(name string) string {
 	return testhelpers.TestAccProviderBasicConfig() + fmt.Sprintf(`
 resource "awsappstream_fleet" "test" {
@@ -159,11 +196,7 @@ func TestAccFleet_idleTimeout(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccFleetIdleTimeoutConfig(name),
-				Check: resource.TestCheckResourceAttr(
-					resourceName,
-					"idle_disconnect_timeout_in_seconds",
-					"600",
-				),
+				Check:  resource.TestCheckResourceAttr(resourceName, "idle_disconnect_timeout_in_seconds", "600"),
 			},
 		},
 	})

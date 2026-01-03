@@ -19,3 +19,18 @@ func FlattenOptionalComputedBool(prior types.Bool, awsValue *bool) types.Bool {
 	}
 	return types.BoolValue(prior.ValueBool())
 }
+
+func FlattenOptionalComputedString(prior types.String, awsValue *string) types.String {
+	if awsValue != nil {
+		return types.StringValue(*awsValue)
+	}
+
+	// if aws didn't return it, keep prior
+	if prior.IsUnknown() {
+		return types.StringUnknown()
+	}
+	if prior.IsNull() {
+		return types.StringNull()
+	}
+	return types.StringValue(prior.ValueString())
+}

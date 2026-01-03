@@ -14,7 +14,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestFlattenOwnedBool(t *testing.T) {
+func TestFlattenStateOwnedBool(t *testing.T) {
 	tests := []struct {
 		name     string
 		prior    types.Bool
@@ -49,13 +49,13 @@ func TestFlattenOwnedBool(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := FlattenOwnedBool(tt.prior, tt.awsValue)
+			got := FlattenStateOwnedBool(tt.prior, tt.awsValue)
 			require.True(t, got.Equal(tt.want), "got %v, want %v", got, tt.want)
 		})
 	}
 }
 
-func TestFlattenOwnedInt32(t *testing.T) {
+func TestFlattenStateOwnedInt32(t *testing.T) {
 	tests := []struct {
 		name     string
 		prior    types.Int32
@@ -90,13 +90,13 @@ func TestFlattenOwnedInt32(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := FlattenOwnedInt32(tt.prior, tt.awsValue)
+			got := FlattenStateOwnedInt32(tt.prior, tt.awsValue)
 			require.True(t, got.Equal(tt.want), "got %v, want %v", got, tt.want)
 		})
 	}
 }
 
-func TestFlattenOwnedString(t *testing.T) {
+func TestFlattenStateOwnedString(t *testing.T) {
 	tests := []struct {
 		name     string
 		prior    types.String
@@ -131,13 +131,13 @@ func TestFlattenOwnedString(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := FlattenOwnedString(tt.prior, tt.awsValue)
+			got := FlattenStateOwnedString(tt.prior, tt.awsValue)
 			require.True(t, got.Equal(tt.want), "got %v, want %v", got, tt.want)
 		})
 	}
 }
 
-func TestFlattenOwnedStringSet(t *testing.T) {
+func TestFlattenStateOwnedStringSet(t *testing.T) {
 	ctx := context.Background()
 
 	tests := []struct {
@@ -197,7 +197,7 @@ func TestFlattenOwnedStringSet(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			var diags diag.Diagnostics
 
-			got := FlattenOwnedStringSet(ctx, tt.prior, tt.awsValues, &diags)
+			got := FlattenStateOwnedStringSet(ctx, tt.prior, tt.awsValues, &diags)
 
 			require.False(t, diags.HasError(), "unexpected diagnostics: %v", diags)
 			require.True(t, got.Equal(tt.want), "got %v, want %v", got, tt.want)

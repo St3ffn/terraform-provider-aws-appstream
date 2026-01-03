@@ -50,15 +50,22 @@ func (r *resource) Update(ctx context.Context, req tfresource.UpdateRequest, res
 
 	input := &awsappstream.UpdateDirectoryConfigInput{
 		DirectoryName: aws.String(name),
-		OrganizationalUnitDistinguishedNames: util.ExpandStringSetOrNil(
-			ctx, plan.OrganizationalUnitDistinguishedNames, &resp.Diagnostics,
-		),
-		ServiceAccountCredentials: expandServiceAccountCredentials(
-			ctx, plan.ServiceAccountCredentials, &resp.Diagnostics,
-		),
-		CertificateBasedAuthProperties: expandCertificateBasedAuthProperties(
+	}
+
+	if !plan.CertificateBasedAuthProperties.IsNull() && !plan.CertificateBasedAuthProperties.IsUnknown() {
+		input.CertificateBasedAuthProperties = expandCertificateBasedAuthProperties(
 			ctx, plan.CertificateBasedAuthProperties, &resp.Diagnostics,
-		),
+		)
+	}
+
+	input.OrganizationalUnitDistinguishedNames = util.ExpandStringSetOrNil(
+		ctx, plan.OrganizationalUnitDistinguishedNames, &resp.Diagnostics,
+	)
+
+	if !plan.ServiceAccountCredentials.IsNull() && !plan.ServiceAccountCredentials.IsUnknown() {
+		input.ServiceAccountCredentials = expandServiceAccountCredentials(
+			ctx, plan.ServiceAccountCredentials, &resp.Diagnostics,
+		)
 	}
 
 	if resp.Diagnostics.HasError() {
