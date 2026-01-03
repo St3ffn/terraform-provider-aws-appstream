@@ -71,12 +71,26 @@ func (r *resource) Create(ctx context.Context, req tfresource.CreateRequest, res
 		return
 	}
 
-	out, err := r.appstreamClient.CreateStack(ctx, input)
-	if err != nil {
-		if util.IsContextCanceled(err) {
-			return
-		}
+	var out *awsappstream.CreateStackOutput
+	err := util.RetryOn(
+		ctx,
+		func(ctx context.Context) error {
+			var err error
+			out, err = r.appstreamClient.CreateStack(ctx, input)
+			return err
+		},
+		util.WithTimeout(createRetryTimeout),
+		util.WithInitBackoff(createRetryInitBackoff),
+		util.WithMaxBackoff(createRetryMaxBackoff),
+		// see https://docs.aws.amazon.com/appstream2/latest/APIReference/API_CreateStack.html
+		util.WithRetryOnFns(
+			util.IsConcurrentModificationException,
+			util.IsOperationNotPermittedException,
+			util.IsResourceNotFoundException,
+		),
+	)
 
+	if err != nil {
 		if util.IsResourceAlreadyExists(err) {
 			resp.Diagnostics.AddError(
 				"AWS AppStream Stack Already Exists",

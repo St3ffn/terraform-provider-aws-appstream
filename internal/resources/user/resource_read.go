@@ -6,7 +6,6 @@ package user
 import (
 	"context"
 	"fmt"
-	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	awsappstream "github.com/aws/aws-sdk-go-v2/service/appstream"
@@ -67,9 +66,9 @@ func (r *resource) readUser(ctx context.Context, prior resourceModel) (*resource
 			state, err = r.readUserOnce(ctx, prior)
 			return err
 		},
-		util.WithTimeout(5*time.Minute),
-		util.WithInitBackoff(1*time.Second),
-		util.WithMaxBackoff(10*time.Second),
+		util.WithTimeout(readRetryTimeout),
+		util.WithInitBackoff(readRetryInitBackoff),
+		util.WithMaxBackoff(readRetryMaxBackoff),
 		// see https://docs.aws.amazon.com/appstream2/latest/APIReference/API_DescribeUsers.html
 		util.WithRetryOnFns(
 			util.IsOperationNotPermittedException,

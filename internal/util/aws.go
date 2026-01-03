@@ -39,6 +39,10 @@ func IsEntitlementNotFoundException(err error) bool {
 	return IsAWSAPIError(err, "EntitlementNotFoundException")
 }
 
+func IsResourceNotAvailableException(err error) bool {
+	return IsAWSAPIError(err, "ResourceNotAvailableException")
+}
+
 func IsResourceAlreadyExists(err error) bool {
 	return IsAWSAPIError(err, "ResourceAlreadyExistsException")
 }

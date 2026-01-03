@@ -64,12 +64,25 @@ func (r *resource) Create(ctx context.Context, req tfresource.CreateRequest, res
 		return
 	}
 
-	out, err := r.appstreamClient.CreateAppBlock(ctx, input)
-	if err != nil {
-		if util.IsContextCanceled(err) {
-			return
-		}
+	var out *awsappstream.CreateAppBlockOutput
+	err := util.RetryOn(
+		ctx,
+		func(ctx context.Context) error {
+			var err error
+			out, err = r.appstreamClient.CreateAppBlock(ctx, input)
+			return err
+		},
+		util.WithTimeout(createRetryTimeout),
+		util.WithInitBackoff(createRetryInitBackoff),
+		util.WithMaxBackoff(createRetryMaxBackoff),
+		// see https://docs.aws.amazon.com/appstream2/latest/APIReference/API_CreateAppBlock.html
+		util.WithRetryOnFns(
+			util.IsConcurrentModificationException,
+			util.IsOperationNotPermittedException,
+		),
+	)
 
+	if err != nil {
 		if util.IsResourceAlreadyExists(err) {
 			resp.Diagnostics.AddError(
 				"AWS AppStream App Block Already Exists",

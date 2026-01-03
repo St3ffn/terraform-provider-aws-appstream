@@ -48,12 +48,22 @@ func (r *resource) Create(ctx context.Context, req tfresource.CreateRequest, res
 		input.MessageAction = awstypes.MessageAction(plan.MessageAction.ValueString())
 	}
 
-	_, err := r.appstreamClient.CreateUser(ctx, input)
-	if err != nil {
-		if util.IsContextCanceled(err) {
-			return
-		}
+	err := util.RetryOn(
+		ctx,
+		func(ctx context.Context) error {
+			_, err := r.appstreamClient.CreateUser(ctx, input)
+			return err
+		},
+		util.WithTimeout(createRetryTimeout),
+		util.WithInitBackoff(createRetryInitBackoff),
+		util.WithMaxBackoff(createRetryMaxBackoff),
+		// see https://docs.aws.amazon.com/appstream2/latest/APIReference/API_CreateUser.html
+		util.WithRetryOnFns(
+			util.IsOperationNotPermittedException,
+		),
+	)
 
+	if err != nil {
 		if util.IsResourceAlreadyExists(err) {
 			resp.Diagnostics.AddError(
 				"AWS AppStream User Already Exists",
@@ -90,6 +100,9 @@ func (r *resource) Create(ctx context.Context, req tfresource.CreateRequest, res
 				})
 				return err
 			},
+			util.WithTimeout(disableRetryTimeout),
+			util.WithInitBackoff(disableRetryInitBackoff),
+			util.WithMaxBackoff(disableRetryMaxBackoff),
 			// see https://docs.aws.amazon.com/appstream2/latest/APIReference/API_DisableUser.html
 			util.WithRetryOnFns(
 				util.IsResourceNotFoundException,

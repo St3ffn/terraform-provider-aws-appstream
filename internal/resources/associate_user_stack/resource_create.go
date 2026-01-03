@@ -7,7 +7,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	awsappstream "github.com/aws/aws-sdk-go-v2/service/appstream"
@@ -77,9 +76,9 @@ func (r *resource) Create(ctx context.Context, req tfresource.CreateRequest, res
 			}
 			return nil
 		},
-		util.WithTimeout(3*time.Minute),
-		util.WithInitBackoff(1*time.Second),
-		util.WithMaxBackoff(30*time.Second),
+		util.WithTimeout(createRetryTimeout),
+		util.WithInitBackoff(createRetryInitBackoff),
+		util.WithMaxBackoff(createRetryMaxBackoff),
 		// see https://docs.aws.amazon.com/appstream2/latest/APIReference/API_BatchAssociateUserStack.html
 		util.WithRetryOnFns(
 			util.IsOperationNotPermittedException,

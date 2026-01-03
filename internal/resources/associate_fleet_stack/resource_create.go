@@ -41,6 +41,9 @@ func (r *resource) Create(ctx context.Context, req tfresource.CreateRequest, res
 			})
 			return err
 		},
+		util.WithTimeout(createRetryTimeout),
+		util.WithInitBackoff(createRetryInitBackoff),
+		util.WithMaxBackoff(createRetryMaxBackoff),
 		// see https://docs.aws.amazon.com/appstream2/latest/APIReference/API_AssociateFleet.html
 		util.WithRetryOnFns(
 			util.IsConcurrentModificationException,

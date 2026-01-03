@@ -69,6 +69,18 @@ func TestErrorPredicates(t *testing.T) {
 			want: false,
 		},
 		{
+			name: "resource_not_available/match",
+			err:  &smithy.GenericAPIError{Code: "ResourceNotAvailableException"},
+			fn:   IsResourceNotAvailableException,
+			want: true,
+		},
+		{
+			name: "resource_not_available/no_match",
+			err:  &smithy.GenericAPIError{Code: "other"},
+			fn:   IsResourceNotAvailableException,
+			want: false,
+		},
+		{
 			name: "resource_already_exists/match",
 			err:  &smithy.GenericAPIError{Code: "ResourceAlreadyExistsException"},
 			fn:   IsResourceAlreadyExists,
