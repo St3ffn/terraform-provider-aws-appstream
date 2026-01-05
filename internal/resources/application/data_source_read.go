@@ -89,7 +89,7 @@ func (ds *dataSource) Read(ctx context.Context, req datasource.ReadRequest, resp
 		Platforms:        flattenPlatforms(ctx, app.Platforms, &resp.Diagnostics),
 		InstanceFamilies: util.SetStringOrNull(ctx, app.InstanceFamilies, &resp.Diagnostics),
 		AppBlockARN:      util.StringOrNull(app.AppBlockArn),
-		Tags:             types.Map{},
+		Tags:             types.MapNull(types.StringType),
 		CreatedTime:      util.StringFromTime(app.CreatedTime),
 	}
 

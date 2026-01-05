@@ -158,3 +158,136 @@ func TestSetStringOrNull(t *testing.T) {
 		})
 	}
 }
+
+func TestSetEnumStringOrNull(t *testing.T) {
+	ctx := context.Background()
+
+	type testEnum string
+
+	const (
+		TestEnumOne testEnum = "ONE"
+		TestEnumTwo testEnum = "TWO"
+	)
+
+	tests := []struct {
+		name  string
+		input []testEnum
+		want  types.Set
+	}{
+		{
+			name:  "nil_slice_returns_null",
+			input: nil,
+			want:  types.SetNull(types.StringType),
+		},
+		{
+			name:  "empty_slice_returns_null",
+			input: []testEnum{},
+			want:  types.SetNull(types.StringType),
+		},
+		{
+			name:  "single_value_returns_set",
+			input: []testEnum{TestEnumOne},
+			want: types.SetValueMust(
+				types.StringType,
+				[]attr.Value{
+					types.StringValue("ONE"),
+				},
+			),
+		},
+		{
+			name:  "multiple_values_returns_set",
+			input: []testEnum{TestEnumOne, TestEnumTwo},
+			want: types.SetValueMust(
+				types.StringType,
+				[]attr.Value{
+					types.StringValue("ONE"),
+					types.StringValue("TWO"),
+				},
+			),
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			var diags diag.Diagnostics
+
+			got := SetEnumStringOrNull(ctx, tt.input, &diags)
+
+			if diags.HasError() {
+				t.Fatalf("unexpected diagnostics: %v", diags)
+			}
+
+			if !got.Equal(tt.want) {
+				t.Fatalf(
+					"SetEnumStringOrNull(%v) = %v, want %v",
+					tt.input,
+					got,
+					tt.want,
+				)
+			}
+		})
+	}
+}
+
+func TestMapStringOrNull(t *testing.T) {
+	ctx := context.Background()
+
+	tests := []struct {
+		name  string
+		input map[string]string
+		want  types.Map
+	}{
+		{
+			name:  "nil_map_returns_null",
+			input: nil,
+			want:  types.MapNull(types.StringType),
+		},
+		{
+			name:  "empty_map_returns_null",
+			input: map[string]string{},
+			want:  types.MapNull(types.StringType),
+		},
+		{
+			name: "single_entry_returns_map",
+			input: map[string]string{
+				"key": "value",
+			},
+			want: types.MapValueMust(
+				types.StringType,
+				map[string]attr.Value{
+					"key": types.StringValue("value"),
+				},
+			),
+		},
+		{
+			name: "multiple_entries_returns_map",
+			input: map[string]string{
+				"one": "1",
+				"two": "2",
+			},
+			want: types.MapValueMust(
+				types.StringType,
+				map[string]attr.Value{
+					"one": types.StringValue("1"),
+					"two": types.StringValue("2"),
+				},
+			),
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			var diags diag.Diagnostics
+
+			got := MapStringOrNull(ctx, tt.input, &diags)
+
+			if diags.HasError() {
+				t.Fatalf("unexpected diagnostics: %v", diags)
+			}
+
+			if !got.Equal(tt.want) {
+				t.Fatalf("MapStringOrNull(%v) = %v, want %v", tt.input, got, tt.want)
+			}
+		})
+	}
+}

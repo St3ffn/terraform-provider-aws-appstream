@@ -95,7 +95,7 @@ func (r *resource) readAppBlock(ctx context.Context, prior model) (*model, diag.
 		SetupScriptDetails:     flattenScriptDetailsResource(ctx, prior.SetupScriptDetails, appBlock.SetupScriptDetails, &diags),
 		PostSetupScriptDetails: flattenScriptDetailsResource(ctx, prior.PostSetupScriptDetails, appBlock.PostSetupScriptDetails, &diags),
 		PackagingType:          util.FlattenStateOwnedString(prior.PackagingType, aws.String(string(appBlock.PackagingType))),
-		Tags:                   types.Map{},
+		Tags:                   types.MapNull(types.StringType),
 		ARN:                    util.StringOrNull(appBlock.Arn),
 		CreatedTime:            util.StringFromTime(appBlock.CreatedTime),
 		AppBlockErrors:         flattenAppBlockErrorsData(ctx, appBlock.AppBlockErrors, &diags),

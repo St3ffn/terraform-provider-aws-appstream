@@ -53,3 +53,38 @@ func SetStringOrNull(ctx context.Context, values []string, diags *diag.Diagnosti
 
 	return setVal
 }
+
+func SetEnumStringOrNull[T ~string](ctx context.Context, values []T, diags *diag.Diagnostics) types.Set {
+	// treat empty and nil slices the same here. this attribute is read-only and does not affect terraform behavior.
+	if len(values) == 0 {
+		return types.SetNull(types.StringType)
+	}
+
+	out := make([]string, 0, len(values))
+	for _, v := range values {
+		out = append(out, string(v))
+	}
+
+	setVal, d := types.SetValueFrom(ctx, types.StringType, out)
+	diags.Append(d...)
+	if diags.HasError() {
+		return types.SetNull(types.StringType)
+	}
+
+	return setVal
+}
+
+func MapStringOrNull(ctx context.Context, m map[string]string, diags *diag.Diagnostics) types.Map {
+	// treat empty and nil map the same here. this attribute is read-only and does not affect terraform behavior.
+	if len(m) == 0 {
+		return types.MapNull(types.StringType)
+	}
+
+	mapVal, d := types.MapValueFrom(ctx, types.StringType, m)
+	diags.Append(d...)
+	if diags.HasError() {
+		return types.MapNull(types.StringType)
+	}
+
+	return mapVal
+}

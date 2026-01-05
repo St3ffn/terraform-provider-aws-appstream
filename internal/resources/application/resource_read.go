@@ -98,7 +98,7 @@ func (r *resource) readApplication(ctx context.Context, arn string) (*model, dia
 		Platforms:        flattenPlatforms(ctx, app.Platforms, &diags),
 		InstanceFamilies: util.SetStringOrNull(ctx, app.InstanceFamilies, &diags),
 		AppBlockARN:      util.StringOrNull(app.AppBlockArn),
-		Tags:             types.Map{},
+		Tags:             types.MapNull(types.StringType),
 		ARN:              util.StringOrNull(app.Arn),
 		CreatedTime:      util.StringFromTime(app.CreatedTime),
 	}

@@ -10,7 +10,7 @@ import (
 )
 
 func TestBuildID(t *testing.T) {
-	require.Equal(t, "AWS_AD|test@test.com", buildID("AWS_AD", "test@test.com"))
+	require.Equal(t, "AWS_AD|test@example.com", buildID("AWS_AD", "test@example.com"))
 }
 
 func TestParseID(t *testing.T) {
@@ -23,14 +23,14 @@ func TestParseID(t *testing.T) {
 	}{
 		{
 			name:                   "valid_id",
-			id:                     "USERPOOL|test@test.com",
+			id:                     "USERPOOL|test@example.com",
 			wantAuthenticationType: "USERPOOL",
-			wantUserName:           "test@test.com",
+			wantUserName:           "test@example.com",
 			wantErr:                false,
 		},
 		{
 			name:    "missing_separator",
-			id:      "USERPOOL-test@test.com",
+			id:      "USERPOOL-test@example.com",
 			wantErr: true,
 		},
 		{
@@ -40,7 +40,7 @@ func TestParseID(t *testing.T) {
 		},
 		{
 			name:    "empty_authentication_type",
-			id:      "|test@test.com",
+			id:      "|test@example.com",
 			wantErr: true,
 		},
 		{

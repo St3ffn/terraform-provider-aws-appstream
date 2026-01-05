@@ -110,7 +110,7 @@ func (r *resource) readFleet(ctx context.Context, prior model) (*model, diag.Dia
 		USBDeviceFilterStrings:         util.SetStringOrNull(ctx, fleet.UsbDeviceFilterStrings, &diags),
 		SessionScriptS3Location:        flattenSessionScriptS3Location(ctx, fleet.SessionScriptS3Location, &diags),
 		RootVolumeConfig:               flattenRootVolumeConfig(ctx, fleet.RootVolumeConfig, &diags),
-		Tags:                           types.Map{},
+		Tags:                           types.MapNull(types.StringType),
 		ARN:                            util.StringOrNull(fleet.Arn),
 		CreatedTime:                    util.StringFromTime(fleet.CreatedTime),
 		FleetErrors:                    flattenFleetErrors(ctx, fleet.FleetErrors, &diags),

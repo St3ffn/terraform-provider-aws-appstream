@@ -35,22 +35,22 @@ type arnValidator struct {
 	resourcePrefix string
 }
 
-func (a arnValidator) Description(_ context.Context) string {
-	if a.service == "" && a.resourcePrefix == "" {
+func (v arnValidator) Description(_ context.Context) string {
+	if v.service == "" && v.resourcePrefix == "" {
 		return "string must be a valid ARN"
 	}
-	if a.resourcePrefix == "" {
-		return fmt.Sprintf("string must be a valid ARN for service %s", a.service)
+	if v.resourcePrefix == "" {
+		return fmt.Sprintf("string must be a valid ARN for service %s", v.service)
 	}
 	return fmt.Sprintf("string must be a valid ARN for service %s with resource prefix %s",
-		a.service, a.resourcePrefix)
+		v.service, v.resourcePrefix)
 }
 
-func (a arnValidator) MarkdownDescription(ctx context.Context) string {
-	return a.Description(ctx)
+func (v arnValidator) MarkdownDescription(ctx context.Context) string {
+	return v.Description(ctx)
 }
 
-func (a arnValidator) ValidateString(
+func (v arnValidator) ValidateString(
 	ctx context.Context, req validator.StringRequest, resp *validator.StringResponse,
 ) {
 
@@ -58,11 +58,11 @@ func (a arnValidator) ValidateString(
 		return
 	}
 
-	if err := ValidateARNValue(req.ConfigValue.ValueString(), a.service, a.resourcePrefix); err != nil {
+	if err := ValidateARNValue(req.ConfigValue.ValueString(), v.service, v.resourcePrefix); err != nil {
 		resp.Diagnostics.Append(
 			validatordiag.InvalidAttributeValueMatchDiagnostic(
 				req.Path,
-				a.Description(ctx),
+				v.Description(ctx),
 				req.ConfigValue.ValueString(),
 			),
 		)

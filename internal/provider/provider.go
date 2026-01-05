@@ -33,6 +33,7 @@ import (
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/resources/directory_config"
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/resources/entitlement"
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/resources/fleet"
+	"github.com/st3ffn/terraform-provider-aws-appstream/internal/resources/image"
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/resources/stack"
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/resources/user"
 )
@@ -485,6 +486,7 @@ func (p *awsAppStreamProvider) DataSources(_ context.Context) []func() datasourc
 		application.NewDataSource,
 		directory_config.NewDataSource,
 		user.NewDataSource,
+		image.NewDataSource,
 	}
 }
 

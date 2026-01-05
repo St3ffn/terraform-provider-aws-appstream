@@ -95,7 +95,7 @@ func (r *resource) readStack(ctx context.Context, prior model) (*model, diag.Dia
 		FeedbackURL:                 util.StringOrNull(stack.FeedbackURL),
 		UserSettings:                flattenUserSettingsResource(ctx, prior.UserSettings, stack.UserSettings, &diags),
 		ApplicationSettings:         flattenApplicationSettingsResource(ctx, prior.ApplicationSettings, stack.ApplicationSettings, &diags),
-		Tags:                        types.Map{},
+		Tags:                        types.MapNull(types.StringType),
 		AccessEndpoints:             flattenAccessEndpointsResource(ctx, prior.AccessEndpoints, stack.AccessEndpoints, &diags),
 		EmbedHostDomains:            util.FlattenStateOwnedStringSet(ctx, prior.EmbedHostDomains, stack.EmbedHostDomains, &diags),
 		StreamingExperienceSettings: flattenStreamingExperienceSettingsResource(ctx, prior.StreamingExperienceSettings, stack.StreamingExperienceSettings, &diags),

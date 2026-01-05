@@ -100,7 +100,7 @@ func (ds *dataSource) Read(ctx context.Context, req datasource.ReadRequest, resp
 		USBDeviceFilterStrings:         util.SetStringOrNull(ctx, fleet.UsbDeviceFilterStrings, &resp.Diagnostics),
 		SessionScriptS3Location:        flattenSessionScriptS3Location(ctx, fleet.SessionScriptS3Location, &resp.Diagnostics),
 		RootVolumeConfig:               flattenRootVolumeConfig(ctx, fleet.RootVolumeConfig, &resp.Diagnostics),
-		Tags:                           types.Map{},
+		Tags:                           types.MapNull(types.StringType),
 		ARN:                            util.StringOrNull(fleet.Arn),
 		CreatedTime:                    util.StringFromTime(fleet.CreatedTime),
 		FleetErrors:                    flattenFleetErrors(ctx, fleet.FleetErrors, &resp.Diagnostics),
