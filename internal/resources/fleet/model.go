@@ -62,6 +62,8 @@ type model struct {
 	ARN types.String `tfsdk:"arn"`
 	// CreatedTime is the timestamp when the fleet was created (computed).
 	CreatedTime types.String `tfsdk:"created_time"`
+	// State is the state of the AppStream fleet (computed).
+	State types.String `tfsdk:"state"`
 	// FleetErrors is the list of errors reported by AWS for the fleet (computed).
 	FleetErrors types.Set `tfsdk:"fleet_errors"`
 }

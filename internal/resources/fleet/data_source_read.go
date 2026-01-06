@@ -103,6 +103,7 @@ func (ds *dataSource) Read(ctx context.Context, req datasource.ReadRequest, resp
 		Tags:                           types.MapNull(types.StringType),
 		ARN:                            util.StringOrNull(fleet.Arn),
 		CreatedTime:                    util.StringFromTime(fleet.CreatedTime),
+		State:                          types.StringValue(string(fleet.State)),
 		FleetErrors:                    flattenFleetErrors(ctx, fleet.FleetErrors, &resp.Diagnostics),
 	}
 

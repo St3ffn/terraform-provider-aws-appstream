@@ -267,6 +267,11 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 					stringplanmodifier.UseStateForUnknown(),
 				},
 			},
+			"state": schema.StringAttribute{
+				Description:         "State of the AppStream app block.",
+				MarkdownDescription: "The state of the AppStream app block.",
+				Computed:            true,
+			},
 			"app_block_errors": schema.SetNestedAttribute{
 				Description: "Errors reported by AWS for the app block.",
 				MarkdownDescription: "Informational list of errors reported by AWS for the app block. " +

@@ -98,6 +98,7 @@ func (r *resource) readAppBlock(ctx context.Context, prior model) (*model, diag.
 		Tags:                   types.MapNull(types.StringType),
 		ARN:                    util.StringOrNull(appBlock.Arn),
 		CreatedTime:            util.StringFromTime(appBlock.CreatedTime),
+		State:                  types.StringValue(string(appBlock.State)),
 		AppBlockErrors:         flattenAppBlockErrorsData(ctx, appBlock.AppBlockErrors, &diags),
 	}
 

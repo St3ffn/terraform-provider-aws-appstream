@@ -217,6 +217,11 @@ func (ds *dataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp
 				MarkdownDescription: "The timestamp when the fleet was created, in RFC 3339 format.",
 				Computed:            true,
 			},
+			"state": schema.StringAttribute{
+				Description:         "State of the AppStream fleet.",
+				MarkdownDescription: "The state of the AppStream fleet.",
+				Computed:            true,
+			},
 			"fleet_errors": schema.SetNestedAttribute{
 				Description:         "Errors reported by AWS for the fleet.",
 				MarkdownDescription: "Informational list of errors reported by AWS for the fleet.",

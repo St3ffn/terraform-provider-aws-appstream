@@ -49,6 +49,7 @@ data "awsappstream_fleet" "example" {
 - `platform` (String) The platform of the fleet.
 - `root_volume_config` (Attributes) The root volume configuration of the fleet, if set. (see [below for nested schema](#nestedatt--root_volume_config))
 - `session_script_s3_location` (Attributes) The S3 location of the session scripts configuration ZIP file, if set. (see [below for nested schema](#nestedatt--session_script_s3_location))
+- `state` (String) The state of the AppStream fleet.
 - `stream_view` (String) Controls which streaming protocol views are enabled.
 - `tags` (Map of String) Tags assigned to the AppStream fleet.
 - `usb_device_filter_strings` (Set of String) USB device filter rules configured for the fleet.

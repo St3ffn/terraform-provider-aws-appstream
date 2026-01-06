@@ -47,6 +47,7 @@ func TestAccFleet_basic(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "image_name", "Amazon-AppStream2-Sample-Image-06-17-2024"),
 					resource.TestCheckResourceAttr(resourceName, "image_arn", "arn:aws:appstream:eu-central-1::image/Amazon-AppStream2-Sample-Image-06-17-2024"),
 					resource.TestCheckResourceAttrSet(resourceName, "arn"),
+					resource.TestCheckResourceAttrSet(resourceName, "state"),
 				),
 			},
 			{

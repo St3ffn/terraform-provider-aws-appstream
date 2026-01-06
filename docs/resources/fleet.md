@@ -212,6 +212,7 @@ resource "awsappstream_fleet" "on_demand_multi_session" {
 - `created_time` (String) The timestamp when the fleet was created, in RFC 3339 format.
 - `fleet_errors` (Attributes Set) Informational list of errors reported by AWS for the fleet. These errors do not affect Terraform lifecycle behavior. (see [below for nested schema](#nestedatt--fleet_errors))
 - `id` (String) A synthetic identifier for the fleet, equal to the fleet name. This value is managed by the provider and cannot be set manually.
+- `state` (String) The state of the AppStream fleet.
 
 <a id="nestedatt--compute_capacity"></a>
 ### Nested Schema for `compute_capacity`

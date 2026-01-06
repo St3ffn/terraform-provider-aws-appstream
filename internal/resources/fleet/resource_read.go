@@ -113,6 +113,7 @@ func (r *resource) readFleet(ctx context.Context, prior model) (*model, diag.Dia
 		Tags:                           types.MapNull(types.StringType),
 		ARN:                            util.StringOrNull(fleet.Arn),
 		CreatedTime:                    util.StringFromTime(fleet.CreatedTime),
+		State:                          types.StringValue(string(fleet.State)),
 		FleetErrors:                    flattenFleetErrors(ctx, fleet.FleetErrors, &diags),
 	}
 

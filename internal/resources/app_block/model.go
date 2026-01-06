@@ -28,6 +28,8 @@ type model struct {
 	ARN types.String `tfsdk:"arn"`
 	// CreatedTime is the timestamp when the app block was created (computed).
 	CreatedTime types.String `tfsdk:"created_time"`
+	// State is the state of the AppStream app block (computed).
+	State types.String `tfsdk:"state"`
 	// AppBlockErrors is the list of errors reported by AWS for the app block (computed).
 	AppBlockErrors types.Set `tfsdk:"app_block_errors"`
 }

@@ -361,6 +361,11 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 					stringplanmodifier.UseStateForUnknown(),
 				},
 			},
+			"state": schema.StringAttribute{
+				Description:         "State of the AppStream fleet.",
+				MarkdownDescription: "The state of the AppStream fleet.",
+				Computed:            true,
+			},
 			"fleet_errors": schema.SetNestedAttribute{
 				Description: "Errors reported by AWS for the fleet.",
 				MarkdownDescription: "Informational list of errors reported by AWS for the fleet. " +

@@ -159,6 +159,11 @@ func (ds *dataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp
 				MarkdownDescription: "The timestamp when the app block was created, in RFC 3339 format.",
 				Computed:            true,
 			},
+			"state": schema.StringAttribute{
+				Description:         "State of the AppStream app block.",
+				MarkdownDescription: "The state of the AppStream app block.",
+				Computed:            true,
+			},
 			"app_block_errors": schema.SetNestedAttribute{
 				Description:         "Errors reported by AWS for the app block.",
 				MarkdownDescription: "Informational list of errors reported by AWS for the app block.",

@@ -88,6 +88,7 @@ func (ds *dataSource) Read(ctx context.Context, req datasource.ReadRequest, resp
 		PackagingType:          types.StringValue(string(appBlock.PackagingType)),
 		Tags:                   types.MapNull(types.StringType),
 		CreatedTime:            util.StringFromTime(appBlock.CreatedTime),
+		State:                  types.StringValue(string(appBlock.State)),
 		AppBlockErrors:         flattenAppBlockErrorsData(ctx, appBlock.AppBlockErrors, &resp.Diagnostics),
 	}
 

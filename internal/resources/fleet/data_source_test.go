@@ -54,6 +54,9 @@ func TestAccFleetDataSource_basic(t *testing.T) {
 					resource.TestCheckResourceAttrSet(
 						"data.awsappstream_fleet.test", "created_time",
 					),
+					resource.TestCheckResourceAttrSet(
+						"data.awsappstream_fleet.test", "state",
+					),
 				),
 			},
 		},

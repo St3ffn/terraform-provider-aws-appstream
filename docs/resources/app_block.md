@@ -113,6 +113,7 @@ resource "awsappstream_app_block" "example" {
 - `arn` (String) The Amazon Resource Name (ARN) of the AppStream app block.
 - `created_time` (String) The timestamp when the app block was created, in RFC 3339 format.
 - `id` (String) The Amazon Resource Name (ARN) of the AppStream app block. This value is managed by the provider and cannot be set manually.
+- `state` (String) The state of the AppStream app block.
 
 <a id="nestedatt--source_s3_location"></a>
 ### Nested Schema for `source_s3_location`
