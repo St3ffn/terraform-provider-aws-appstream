@@ -24,11 +24,11 @@ type model struct {
 	ComputeCapacity types.Object `tfsdk:"compute_capacity"`
 	// VPCConfig specifies the VPC configuration for the fleet (required for elastic fleets).
 	VPCConfig types.Object `tfsdk:"vpc_config"`
-	// MaxUserDurationInSeconds is the maximum streaming session length (optional).
+	// MaxUserDurationInSeconds is the maximum streaming session length (optional, computed).
 	MaxUserDurationInSeconds types.Int32 `tfsdk:"max_user_duration_in_seconds"`
-	// DisconnectTimeoutInSeconds is the time before a disconnected session is terminated (optional).
+	// DisconnectTimeoutInSeconds is the time before a disconnected session is terminated (optional, computed).
 	DisconnectTimeoutInSeconds types.Int32 `tfsdk:"disconnect_timeout_in_seconds"`
-	// IdleDisconnectTimeoutInSeconds is the timeout for idle streaming sessions (optional).
+	// IdleDisconnectTimeoutInSeconds is the timeout for idle streaming sessions (optional, computed).
 	IdleDisconnectTimeoutInSeconds types.Int32 `tfsdk:"idle_disconnect_timeout_in_seconds"`
 	// Description is a description to display for the fleet (optional).
 	Description types.String `tfsdk:"description"`

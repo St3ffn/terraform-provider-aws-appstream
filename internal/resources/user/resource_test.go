@@ -121,7 +121,6 @@ func TestAccUser_enabledToggle(t *testing.T) {
 
 func TestAccUser_noOpPlan(t *testing.T) {
 	userName := acctest.RandomWithPrefix("tf-acc-user") + "@example.com"
-	resourceName := "awsappstream_user.test"
 
 	config := testAccUserBasicConfig(userName)
 
@@ -132,7 +131,6 @@ func TestAccUser_noOpPlan(t *testing.T) {
 			{Config: config},
 			{
 				Config:             config,
-				ResourceName:       resourceName,
 				PlanOnly:           true,
 				ExpectNonEmptyPlan: false,
 			},

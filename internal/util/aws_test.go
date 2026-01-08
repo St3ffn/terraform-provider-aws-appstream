@@ -33,6 +33,12 @@ func TestErrorPredicates(t *testing.T) {
 			want: false,
 		},
 		{
+			name: "operation_not_permitted/no_match_nil",
+			err:  nil,
+			fn:   IsOperationNotPermittedException,
+			want: false,
+		},
+		{
 			name: "resource_not_found/match",
 			err:  &smithy.GenericAPIError{Code: "ResourceNotFoundException"},
 			fn:   IsResourceNotFoundException,
@@ -41,6 +47,12 @@ func TestErrorPredicates(t *testing.T) {
 		{
 			name: "resource_not_found/no_match",
 			err:  &smithy.GenericAPIError{Code: "other"},
+			fn:   IsResourceNotFoundException,
+			want: false,
+		},
+		{
+			name: "resource_not_found/no_match_nil",
+			err:  nil,
 			fn:   IsResourceNotFoundException,
 			want: false,
 		},
@@ -57,6 +69,12 @@ func TestErrorPredicates(t *testing.T) {
 			want: false,
 		},
 		{
+			name: "concurrent_modification/no_match_nil",
+			err:  nil,
+			fn:   IsConcurrentModificationException,
+			want: false,
+		},
+		{
 			name: "entitlement_not_found/match",
 			err:  &smithy.GenericAPIError{Code: "EntitlementNotFoundException"},
 			fn:   IsEntitlementNotFoundException,
@@ -65,6 +83,12 @@ func TestErrorPredicates(t *testing.T) {
 		{
 			name: "entitlement_not_found/no_match",
 			err:  &smithy.GenericAPIError{Code: "other"},
+			fn:   IsEntitlementNotFoundException,
+			want: false,
+		},
+		{
+			name: "entitlement_not_found/no_match_nil",
+			err:  nil,
 			fn:   IsEntitlementNotFoundException,
 			want: false,
 		},
@@ -81,6 +105,12 @@ func TestErrorPredicates(t *testing.T) {
 			want: false,
 		},
 		{
+			name: "resource_not_available/no_match_nil",
+			err:  nil,
+			fn:   IsResourceNotAvailableException,
+			want: false,
+		},
+		{
 			name: "resource_already_exists/match",
 			err:  &smithy.GenericAPIError{Code: "ResourceAlreadyExistsException"},
 			fn:   IsResourceAlreadyExists,
@@ -93,6 +123,12 @@ func TestErrorPredicates(t *testing.T) {
 			want: false,
 		},
 		{
+			name: "resource_already_exists/no_match_nil",
+			err:  nil,
+			fn:   IsResourceAlreadyExists,
+			want: false,
+		},
+		{
 			name: "entitlement_already_exists/match",
 			err:  &smithy.GenericAPIError{Code: "EntitlementAlreadyExistsException"},
 			fn:   IsEntitlementAlreadyExists,
@@ -101,6 +137,12 @@ func TestErrorPredicates(t *testing.T) {
 		{
 			name: "entitlement_already_exists/no_match",
 			err:  &smithy.GenericAPIError{Code: "other"},
+			fn:   IsEntitlementAlreadyExists,
+			want: false,
+		},
+		{
+			name: "entitlement_already_exists/no_match_nil",
+			err:  nil,
 			fn:   IsEntitlementAlreadyExists,
 			want: false,
 		},
@@ -123,14 +165,14 @@ func TestErrorPredicates(t *testing.T) {
 			want: false,
 		},
 		{
-			name: "non_aws_error",
-			err:  errors.New("plain error"),
-			fn:   IsResourceNotFoundException,
+			name: "appstream_not_found/no_match_nil",
+			err:  nil,
+			fn:   IsAppStreamNotFound,
 			want: false,
 		},
 		{
-			name: "nil_error",
-			err:  nil,
+			name: "non_aws_error",
+			err:  errors.New("plain error"),
 			fn:   IsResourceNotFoundException,
 			want: false,
 		},

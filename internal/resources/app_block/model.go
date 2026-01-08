@@ -20,7 +20,7 @@ type model struct {
 	SetupScriptDetails types.Object `tfsdk:"setup_script_details"`
 	// PostSetupScriptDetails specifies the post-setup script configuration (optional).
 	PostSetupScriptDetails types.Object `tfsdk:"post_setup_script_details"`
-	// PackagingType specifies the packaging type of the app block (optional).
+	// PackagingType specifies the packaging type of the app block (optional, computed).
 	PackagingType types.String `tfsdk:"packaging_type"`
 	// Tags is a map of tags assigned to the app block (optional).
 	Tags types.Map `tfsdk:"tags"`

@@ -221,6 +221,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				Description:         "Packaging type of the app block.",
 				MarkdownDescription: "The packaging type of the app block. Valid values are `CUSTOM` or `APPSTREAM2`.",
 				Optional:            true,
+				Computed:            true,
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplace(),
 				},

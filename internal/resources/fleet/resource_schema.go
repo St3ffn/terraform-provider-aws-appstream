@@ -158,6 +158,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				Description:         "Maximum user session duration.",
 				MarkdownDescription: "The maximum length of time that a streaming session can remain active.",
 				Optional:            true,
+				Computed:            true,
 				Validators: []validator.Int32{
 					int32validator.Between(600, 432000),
 				},
@@ -166,6 +167,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				Description:         "Session disconnect timeout.",
 				MarkdownDescription: "The amount of time that a disconnected session is allowed to remain active.",
 				Optional:            true,
+				Computed:            true,
 				Validators: []validator.Int32{
 					int32validator.Between(60, 36000),
 				},
@@ -176,6 +178,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 					"Specify `0` to disable idle disconnection. Otherwise, the value must be a multiple of 60 seconds " +
 					"between 60 and 36000 to avoid AWS rounding behavior.",
 				Optional: true,
+				Computed: true,
 				Validators: []validator.Int32{
 					util.DurationWithStep(60, 36000, 60, true),
 				},
@@ -200,6 +203,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				Description:         "Enable default internet access.",
 				MarkdownDescription: "Whether instances in the fleet have access to the internet.",
 				Optional:            true,
+				Computed:            true,
 			},
 			"domain_join_info": schema.SingleNestedAttribute{
 				Description: "Active Directory domain join configuration.",

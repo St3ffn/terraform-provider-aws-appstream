@@ -83,13 +83,11 @@ func (r *resource) readAssociateUserStack(ctx context.Context, prior model) (*mo
 	userStackAssociations := out.UserStackAssociations[0]
 
 	state := &model{
-		ID:                 types.StringValue(buildID(stackName, authenticationType, userName)),
-		StackName:          types.StringValue(stackName),
-		UserName:           types.StringValue(userName),
-		AuthenticationType: types.StringValue(authenticationType),
-		SendEmailNotification: util.FlattenOptionalComputedBool(
-			prior.SendEmailNotification, userStackAssociations.SendEmailNotification,
-		),
+		ID:                    types.StringValue(buildID(stackName, authenticationType, userName)),
+		StackName:             types.StringValue(stackName),
+		UserName:              types.StringValue(userName),
+		AuthenticationType:    types.StringValue(authenticationType),
+		SendEmailNotification: util.BoolOrNull(userStackAssociations.SendEmailNotification),
 	}
 	return state, diags
 }
