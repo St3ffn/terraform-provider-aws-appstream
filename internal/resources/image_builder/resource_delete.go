@@ -91,11 +91,15 @@ func (r *resource) deleteImageBuilder(ctx context.Context, name string) error {
 				_, err = r.appstreamClient.DeleteImageBuilder(ctx, &awsappstream.DeleteImageBuilderInput{
 					Name: aws.String(name),
 				})
-				if util.IsAppStreamNotFound(err) {
-					// already deleted
-					return nil
+				if err != nil {
+					if util.IsAppStreamNotFound(err) {
+						// already deleted
+						return nil
+					}
+					return err
 				}
-				return err
+				// wait until resource is in state deleting or gone
+				return fmt.Errorf("%w: current=%s", ErrUnexpectedImageBuilderState, state)
 			default:
 				return fmt.Errorf("%w: current=%s", ErrUnexpectedImageBuilderState, state)
 			}
@@ -103,8 +107,15 @@ func (r *resource) deleteImageBuilder(ctx context.Context, name string) error {
 		util.WithTimeout(imageBuilderWaitTimeout),
 		util.WithInitBackoff(imageBuilderWaitInitBackoff),
 		util.WithMaxBackoff(imageBuilderWaitMaxBackoff),
-		util.WithRetryOnFns(func(err error) bool {
-			return errors.Is(err, ErrUnexpectedImageBuilderState)
-		}),
+		// see https://docs.aws.amazon.com/appstream2/latest/APIReference/API_DescribeImageBuilders.html
+		// see https://docs.aws.amazon.com/appstream2/latest/APIReference/API_StopImageBuilder.html
+		// see https://docs.aws.amazon.com/appstream2/latest/APIReference/API_DeleteImageBuilder.html
+		util.WithRetryOnFns(
+			func(err error) bool {
+				return errors.Is(err, ErrUnexpectedImageBuilderState)
+			},
+			util.IsConcurrentModificationException,
+			util.IsOperationNotPermittedException,
+		),
 	)
 }

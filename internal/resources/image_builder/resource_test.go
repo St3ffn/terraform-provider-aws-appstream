@@ -56,74 +56,19 @@ func TestAccImageBuilder_basic(t *testing.T) {
 	})
 }
 
-func testAccImageBuilderImageARNConfig(name string) string {
+func testAccImageBuilderComplexConfig(name string) string {
 	return testhelpers.TestAccProviderBasicConfig() + fmt.Sprintf(`
 resource "awsappstream_image_builder" "test" {
   name          = %q
   instance_type = "stream.standard.small"
   image_arn     = "arn:aws:appstream:eu-central-1::image/AppStream-RockyLinux8-11-10-2025"
-}
-`, name)
-}
 
-func TestAccImageBuilder_imageARN(t *testing.T) {
-	name := acctest.RandomWithPrefix("tf-acc-image-builder-arn")
-	resourceName := "awsappstream_image_builder.test"
-
-	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testhelpers.TestAccPreCheck(t) },
-		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccImageBuilderImageARNConfig(name),
-				Check: resource.ComposeAggregateTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "image_arn", "arn:aws:appstream:eu-central-1::image/AppStream-RockyLinux8-11-10-2025"),
-					resource.TestCheckNoResourceAttr(resourceName, "image_name"),
-				),
-			},
-		},
-	})
-}
-
-func testAccImageBuilderRootVolumeConfig(name string) string {
-	return testhelpers.TestAccProviderBasicConfig() + fmt.Sprintf(`
-resource "awsappstream_image_builder" "test" {
-  name          = %q
-  instance_type = "stream.standard.small"
-  image_name    = "AppStream-RockyLinux8-11-10-2025"
+  description  = "test description"
+  display_name = "Test Builder"
 
   root_volume_config = {
     volume_size_in_gb = 250
   }
-}
-`, name)
-}
-
-func TestAccImageBuilder_rootVolumeConfig(t *testing.T) {
-	name := acctest.RandomWithPrefix("tf-acc-image-builder-rootvol")
-	resourceName := "awsappstream_image_builder.test"
-
-	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testhelpers.TestAccPreCheck(t) },
-		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccImageBuilderRootVolumeConfig(name),
-				Check:  resource.TestCheckResourceAttr(resourceName, "root_volume_config.volume_size_in_gb", "250"),
-			},
-		},
-	})
-}
-
-func testAccImageBuilderDescriptionTagsConfig(name string) string {
-	return testhelpers.TestAccProviderBasicConfig() + fmt.Sprintf(`
-resource "awsappstream_image_builder" "test" {
-  name          = %q
-  instance_type = "stream.standard.small"
-  image_name    = "AppStream-RockyLinux8-11-10-2025"
-
-  description  = "test description"
-  display_name = "Test Builder"
 
   tags = {
     Environment = "test"
@@ -133,8 +78,8 @@ resource "awsappstream_image_builder" "test" {
 `, name)
 }
 
-func TestAccImageBuilder_description(t *testing.T) {
-	name := acctest.RandomWithPrefix("tf-acc-image-builder-desc")
+func TestAccImageBuilder_complex(t *testing.T) {
+	name := acctest.RandomWithPrefix("tf-acc-image-builder-arn")
 	resourceName := "awsappstream_image_builder.test"
 
 	resource.Test(t, resource.TestCase{
@@ -142,10 +87,15 @@ func TestAccImageBuilder_description(t *testing.T) {
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccImageBuilderDescriptionTagsConfig(name),
+				Config: testAccImageBuilderComplexConfig(name),
 				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "instance_type", "stream.standard.small"),
+					resource.TestCheckResourceAttr(resourceName, "image_arn", "arn:aws:appstream:eu-central-1::image/AppStream-RockyLinux8-11-10-2025"),
+					resource.TestCheckNoResourceAttr(resourceName, "image_name"),
 					resource.TestCheckResourceAttr(resourceName, "description", "test description"),
 					resource.TestCheckResourceAttr(resourceName, "display_name", "Test Builder"),
+					resource.TestCheckResourceAttr(resourceName, "root_volume_config.volume_size_in_gb", "250"),
 					resource.TestCheckResourceAttr(resourceName, "tags.Environment", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.Owner", "terraform"),
 				),
