@@ -37,7 +37,8 @@ For context, [see the open AppStream-related issues](https://github.com/hashicor
 | awsappstream_associate_user_stack              | ✅        | ❌           |         |
 | awsappstream_associate_application_fleet       | ✅        | ❌           |         |
 | awsappstream_image                             | ❌        | ✅           |         |
-| awsappstream_image_builder                     | 🚧       | 🚧          | ✅       |
+| awsappstream_image_builder                     | ✅        | ✅           |         |
+| awsappstream_associate_software_image_builder  | 🚧       | 🚧          | ✅       |
 
 ## Behavior and Design Principles
 
