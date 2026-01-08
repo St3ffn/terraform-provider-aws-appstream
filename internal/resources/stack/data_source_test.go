@@ -35,7 +35,9 @@ func TestAccStackDataSource_basic(t *testing.T) {
 				Config: testAccStackWithDataSource(name),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr("data.awsappstream_stack.test", "name", name),
+					resource.TestCheckNoResourceAttr("data.awsappstream_stack.test", "tags"),
 					resource.TestCheckResourceAttrSet("data.awsappstream_stack.test", "arn"),
+					resource.TestCheckResourceAttrSet("data.awsappstream_stack.test", "created_time"),
 					resource.TestCheckResourceAttrSet("data.awsappstream_stack.test", "created_time"),
 				),
 			},
@@ -60,6 +62,11 @@ resource "awsappstream_stack" "test" {
       permission = "ENABLED"
     }
   ]
+
+  tags = {
+    Environment = "test"
+    Owner       = "terraform"
+  }
 }
 
 data "awsappstream_stack" "test" {
@@ -83,6 +90,8 @@ func TestAccStackDataSource_complex(t *testing.T) {
 					resource.TestCheckResourceAttrSet("data.awsappstream_stack.test", "created_time"),
 					resource.TestCheckResourceAttr("data.awsappstream_stack.test", "application_settings.enabled", "false"),
 					resource.TestCheckResourceAttrSet("data.awsappstream_stack.test", "user_settings.#"),
+					resource.TestCheckResourceAttr("data.awsappstream_stack.test", "tags.Environment", "test"),
+					resource.TestCheckResourceAttr("data.awsappstream_stack.test", "tags.Owner", "terraform"),
 				),
 			},
 		},

@@ -37,6 +37,7 @@ func TestAccImageBuilderDataSource_basic(t *testing.T) {
 				Config: testAccImageBuilderWithDataSource(name),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr("data.awsappstream_image_builder.test", "name", name),
+					resource.TestCheckNoResourceAttr("data.awsappstream_image_builder.test", "tags"),
 					resource.TestCheckResourceAttrSet("data.awsappstream_image_builder.test", "arn"),
 					resource.TestCheckResourceAttrSet("data.awsappstream_image_builder.test", "created_time"),
 					resource.TestCheckResourceAttrSet("data.awsappstream_image_builder.test", "platform"),
@@ -48,7 +49,7 @@ func TestAccImageBuilderDataSource_basic(t *testing.T) {
 	})
 }
 
-func testAccImageBuilderWithDataSourceArnAndDescription(name string) string {
+func testAccImageBuilderWithDataSourceArnDescriptionTags(name string) string {
 	return testhelpers.TestAccProviderBasicConfig() + fmt.Sprintf(`
 resource "awsappstream_image_builder" "test" {
   name          = %q
@@ -57,6 +58,11 @@ resource "awsappstream_image_builder" "test" {
 
   description  = "test description"
   display_name = "Test Builder"
+
+  tags = {
+    Environment = "test"
+    Owner       = "terraform"
+  }
 }
 
 data "awsappstream_image_builder" "test" {
@@ -73,27 +79,14 @@ func TestAccImageBuilderDataSource_arn_and_description(t *testing.T) {
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccImageBuilderWithDataSourceArnAndDescription(name),
+				Config: testAccImageBuilderWithDataSourceArnDescriptionTags(name),
 				Check: resource.ComposeAggregateTestCheckFunc(
-					resource.TestCheckResourceAttr(
-						"data.awsappstream_image_builder.test",
-						"image_arn",
-						"arn:aws:appstream:eu-central-1::image/AppStream-RockyLinux8-11-10-2025",
-					),
-					resource.TestCheckNoResourceAttr(
-						"data.awsappstream_image_builder.test",
-						"image_name",
-					),
-					resource.TestCheckResourceAttr(
-						"data.awsappstream_image_builder.test",
-						"description",
-						"test description",
-					),
-					resource.TestCheckResourceAttr(
-						"data.awsappstream_image_builder.test",
-						"display_name",
-						"Test Builder",
-					),
+					resource.TestCheckResourceAttr("data.awsappstream_image_builder.test", "image_arn", "arn:aws:appstream:eu-central-1::image/AppStream-RockyLinux8-11-10-2025"),
+					resource.TestCheckNoResourceAttr("data.awsappstream_image_builder.test", "image_name"),
+					resource.TestCheckResourceAttr("data.awsappstream_image_builder.test", "description", "test description"),
+					resource.TestCheckResourceAttr("data.awsappstream_image_builder.test", "display_name", "Test Builder"),
+					resource.TestCheckResourceAttr("data.awsappstream_image_builder.test", "tags.Environment", "test"),
+					resource.TestCheckResourceAttr("data.awsappstream_image_builder.test", "tags.Owner", "terraform"),
 				),
 			},
 		},

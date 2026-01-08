@@ -39,6 +39,7 @@ func TestAccImageBuilder_basic(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "enable_default_internet_access", "false"),
 					resource.TestCheckResourceAttr(resourceName, "root_volume_config.%", "1"),
 					resource.TestCheckResourceAttrSet(resourceName, "image_arn"),
+					resource.TestCheckNoResourceAttr(resourceName, "tags"),
 					resource.TestCheckResourceAttrSet(resourceName, "arn"),
 					resource.TestCheckResourceAttrSet(resourceName, "created_time"),
 					resource.TestCheckResourceAttrSet(resourceName, "platform"),
@@ -114,7 +115,7 @@ func TestAccImageBuilder_rootVolumeConfig(t *testing.T) {
 	})
 }
 
-func testAccImageBuilderDescriptionConfig(name string) string {
+func testAccImageBuilderDescriptionTagsConfig(name string) string {
 	return testhelpers.TestAccProviderBasicConfig() + fmt.Sprintf(`
 resource "awsappstream_image_builder" "test" {
   name          = %q
@@ -123,6 +124,11 @@ resource "awsappstream_image_builder" "test" {
 
   description  = "test description"
   display_name = "Test Builder"
+
+  tags = {
+    Environment = "test"
+    Owner       = "terraform"
+  }
 }
 `, name)
 }
@@ -136,10 +142,12 @@ func TestAccImageBuilder_description(t *testing.T) {
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccImageBuilderDescriptionConfig(name),
+				Config: testAccImageBuilderDescriptionTagsConfig(name),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "description", "test description"),
 					resource.TestCheckResourceAttr(resourceName, "display_name", "Test Builder"),
+					resource.TestCheckResourceAttr(resourceName, "tags.Environment", "test"),
+					resource.TestCheckResourceAttr(resourceName, "tags.Owner", "terraform"),
 				),
 			},
 		},

@@ -50,6 +50,7 @@ func TestAccFleet_basic(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "max_user_duration_in_seconds", "57600"),
 					resource.TestCheckResourceAttr(resourceName, "disconnect_timeout_in_seconds", "900"),
 					resource.TestCheckResourceAttr(resourceName, "idle_disconnect_timeout_in_seconds", "0"),
+					resource.TestCheckNoResourceAttr(resourceName, "tags"),
 					resource.TestCheckResourceAttrSet(resourceName, "arn"),
 					resource.TestCheckResourceAttrSet(resourceName, "state"),
 				),
@@ -103,7 +104,7 @@ func TestAccFleet_imageARN(t *testing.T) {
 	})
 }
 
-func testAccFleetUpdateDescription(name string) string {
+func testAccFleetUpdateDescriptionTags(name string) string {
 	return testhelpers.TestAccProviderBasicConfig() + fmt.Sprintf(`
 resource "awsappstream_fleet" "test" {
   name          = %q
@@ -115,6 +116,11 @@ resource "awsappstream_fleet" "test" {
 
   compute_capacity = {
     desired_instances = 0
+  }
+
+  tags = {
+    Environment = "test"
+    Owner       = "terraform"
   }
 }
 `, name)
@@ -130,8 +136,12 @@ func TestAccFleet_updateDescription(t *testing.T) {
 		Steps: []resource.TestStep{
 			{Config: testAccFleetBasicConfig(name)},
 			{
-				Config: testAccFleetUpdateDescription(name),
-				Check:  resource.TestCheckResourceAttr(resourceName, "description", "updated description"),
+				Config: testAccFleetUpdateDescriptionTags(name),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "description", "updated description"),
+					resource.TestCheckResourceAttr(resourceName, "tags.Environment", "test"),
+					resource.TestCheckResourceAttr(resourceName, "tags.Owner", "terraform"),
+				),
 			},
 		},
 	})

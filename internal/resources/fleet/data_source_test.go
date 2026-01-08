@@ -24,6 +24,11 @@ resource "awsappstream_fleet" "test" {
   compute_capacity = {
     desired_instances = 0
   }
+
+  tags = {
+    Environment = "test"
+    Owner       = "terraform"
+  }
 }
 
 data "awsappstream_fleet" "test" {
@@ -42,29 +47,17 @@ func TestAccFleetDataSource_basic(t *testing.T) {
 			{
 				Config: testAccFleetWithDataSource(name),
 				Check: resource.ComposeAggregateTestCheckFunc(
-					resource.TestCheckResourceAttr(
-						"data.awsappstream_fleet.test", "name", name,
-					),
-					resource.TestCheckResourceAttr(
-						"data.awsappstream_fleet.test", "fleet_type", "ON_DEMAND",
-					),
-					resource.TestCheckResourceAttr(
-						"data.awsappstream_fleet.test", "enable_default_internet_access", "false"),
-					resource.TestCheckResourceAttr(
-						"data.awsappstream_fleet.test", "max_user_duration_in_seconds", "57600"),
-					resource.TestCheckResourceAttr(
-						"data.awsappstream_fleet.test", "disconnect_timeout_in_seconds", "900"),
-					resource.TestCheckResourceAttr(""+
-						"data.awsappstream_fleet.test", "idle_disconnect_timeout_in_seconds", "0"),
-					resource.TestCheckResourceAttrSet(
-						"data.awsappstream_fleet.test", "arn",
-					),
-					resource.TestCheckResourceAttrSet(
-						"data.awsappstream_fleet.test", "created_time",
-					),
-					resource.TestCheckResourceAttrSet(
-						"data.awsappstream_fleet.test", "state",
-					),
+					resource.TestCheckResourceAttr("data.awsappstream_fleet.test", "name", name),
+					resource.TestCheckResourceAttr("data.awsappstream_fleet.test", "fleet_type", "ON_DEMAND"),
+					resource.TestCheckResourceAttr("data.awsappstream_fleet.test", "enable_default_internet_access", "false"),
+					resource.TestCheckResourceAttr("data.awsappstream_fleet.test", "max_user_duration_in_seconds", "57600"),
+					resource.TestCheckResourceAttr("data.awsappstream_fleet.test", "disconnect_timeout_in_seconds", "900"),
+					resource.TestCheckResourceAttr("data.awsappstream_fleet.test", "idle_disconnect_timeout_in_seconds", "0"),
+					resource.TestCheckResourceAttr("data.awsappstream_fleet.test", "tags.Environment", "test"),
+					resource.TestCheckResourceAttr("data.awsappstream_fleet.test", "tags.Owner", "terraform"),
+					resource.TestCheckResourceAttrSet("data.awsappstream_fleet.test", "arn"),
+					resource.TestCheckResourceAttrSet("data.awsappstream_fleet.test", "created_time"),
+					resource.TestCheckResourceAttrSet("data.awsappstream_fleet.test", "state"),
 				),
 			},
 		},
