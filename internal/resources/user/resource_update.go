@@ -46,7 +46,7 @@ func (r *resource) Update(ctx context.Context, req tfresource.UpdateRequest, res
 		if state.AuthenticationType.ValueString() != authenticationType || state.UserName.ValueString() != userName {
 			resp.Diagnostics.AddError(
 				"Unexpected Update Request",
-				"User identity (authentication_type/user_name) changed during update. This should trigger replacement. Please report this issue.",
+				"User identity (authentication_type|user_name) changed during update. This should trigger replacement. Please report this issue.",
 			)
 			return
 		}

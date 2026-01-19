@@ -12,6 +12,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/stretchr/testify/require"
 )
 
 func TestBoolPointerOrNil(t *testing.T) {
@@ -239,6 +240,115 @@ func TestOptionalStringUpdate(t *testing.T) {
 			if got == nil || *got != *tt.wantValue {
 				t.Fatalf("got %v, want %v", got, tt.wantValue)
 			}
+		})
+	}
+}
+
+func TestDiffStringSets(t *testing.T) {
+	ctx := context.Background()
+
+	tests := []struct {
+		name    string
+		oldSet  types.Set
+		newSet  types.Set
+		wantAdd []string
+		wantRem []string
+	}{
+		{
+			name:   "both_empty",
+			oldSet: types.SetValueMust(types.StringType, []attr.Value{}),
+			newSet: types.SetValueMust(types.StringType, []attr.Value{}),
+		},
+		{
+			name: "only_additions",
+			oldSet: types.SetValueMust(
+				types.StringType,
+				[]attr.Value{types.StringValue("a")},
+			),
+			newSet: types.SetValueMust(
+				types.StringType,
+				[]attr.Value{
+					types.StringValue("a"),
+					types.StringValue("b"),
+					types.StringValue("c"),
+				},
+			),
+			wantAdd: []string{"b", "c"},
+		},
+		{
+			name: "only_removals",
+			oldSet: types.SetValueMust(
+				types.StringType,
+				[]attr.Value{
+					types.StringValue("a"),
+					types.StringValue("b"),
+				},
+			),
+			newSet: types.SetValueMust(
+				types.StringType,
+				[]attr.Value{types.StringValue("a")},
+			),
+			wantRem: []string{"b"},
+		},
+		{
+			name: "add_and_remove",
+			oldSet: types.SetValueMust(
+				types.StringType,
+				[]attr.Value{
+					types.StringValue("a"),
+					types.StringValue("b"),
+				},
+			),
+			newSet: types.SetValueMust(
+				types.StringType,
+				[]attr.Value{
+					types.StringValue("b"),
+					types.StringValue("c"),
+				},
+			),
+			wantAdd: []string{"c"},
+			wantRem: []string{"a"},
+		},
+		{
+			name: "identical_sets",
+			oldSet: types.SetValueMust(
+				types.StringType,
+				[]attr.Value{
+					types.StringValue("a"),
+					types.StringValue("b"),
+				},
+			),
+			newSet: types.SetValueMust(
+				types.StringType,
+				[]attr.Value{
+					types.StringValue("b"),
+					types.StringValue("a"),
+				},
+			),
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			var diags diag.Diagnostics
+
+			added, removed := DiffStringSets(ctx, tt.oldSet, tt.newSet, &diags)
+
+			require.False(t, diags.HasError(), "unexpected diagnostics: %v", diags)
+
+			require.ElementsMatch(
+				t,
+				tt.wantAdd,
+				added,
+				"unexpected added elements",
+			)
+
+			require.ElementsMatch(
+				t,
+				tt.wantRem,
+				removed,
+				"unexpected removed elements",
+			)
 		})
 	}
 }

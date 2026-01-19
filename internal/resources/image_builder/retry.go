@@ -10,7 +10,7 @@ const (
 	createRetryInitBackoff = 10 * time.Second
 	createRetryMaxBackoff  = 2 * time.Minute
 
-	imageBuilderWaitTimeout     = 45 * time.Minute
-	imageBuilderWaitInitBackoff = 30 * time.Second
-	imageBuilderWaitMaxBackoff  = 1 * time.Minute
+	deleteRetryTimeout     = 45 * time.Minute
+	deleteRetryInitBackoff = 30 * time.Second
+	deleteRetryMaxBackoff  = 1 * time.Minute
 )

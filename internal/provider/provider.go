@@ -29,6 +29,7 @@ import (
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/resources/associate_application_entitlement"
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/resources/associate_application_fleet"
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/resources/associate_fleet_stack"
+	"github.com/st3ffn/terraform-provider-aws-appstream/internal/resources/associate_image_builder_software"
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/resources/associate_user_stack"
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/resources/directory_config"
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/resources/entitlement"
@@ -506,6 +507,7 @@ func (p *awsAppStreamProvider) Resources(_ context.Context) []func() resource.Re
 		associate_application_fleet.NewResource,
 		associate_user_stack.NewResource,
 		image_builder.NewResource,
+		associate_image_builder_software.NewResource,
 	}
 }
 

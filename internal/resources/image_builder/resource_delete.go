@@ -104,9 +104,9 @@ func (r *resource) deleteImageBuilder(ctx context.Context, name string) error {
 				return fmt.Errorf("%w: current=%s", ErrUnexpectedImageBuilderState, state)
 			}
 		},
-		util.WithTimeout(imageBuilderWaitTimeout),
-		util.WithInitBackoff(imageBuilderWaitInitBackoff),
-		util.WithMaxBackoff(imageBuilderWaitMaxBackoff),
+		util.WithTimeout(deleteRetryTimeout),
+		util.WithInitBackoff(deleteRetryInitBackoff),
+		util.WithMaxBackoff(deleteRetryMaxBackoff),
 		// see https://docs.aws.amazon.com/appstream2/latest/APIReference/API_DescribeImageBuilders.html
 		// see https://docs.aws.amazon.com/appstream2/latest/APIReference/API_StopImageBuilder.html
 		// see https://docs.aws.amazon.com/appstream2/latest/APIReference/API_DeleteImageBuilder.html

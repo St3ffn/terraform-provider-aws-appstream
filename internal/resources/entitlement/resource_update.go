@@ -46,7 +46,7 @@ func (r *resource) Update(ctx context.Context, req tfresource.UpdateRequest, res
 		if state.StackName.ValueString() != stackName || state.Name.ValueString() != name {
 			resp.Diagnostics.AddError(
 				"Unexpected Update Request",
-				"Entitlement identity (stack_name/name) changed during update. This should trigger replacement. Please report this issue.",
+				"Entitlement identity (stack_name|name) changed during update. This should trigger replacement. Please report this issue.",
 			)
 			return
 		}

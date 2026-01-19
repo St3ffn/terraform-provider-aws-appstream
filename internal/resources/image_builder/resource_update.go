@@ -38,7 +38,7 @@ func (r *resource) Update(ctx context.Context, req tfresource.UpdateRequest, res
 		if state.ID.ValueString() != arn {
 			resp.Diagnostics.AddError(
 				"Unexpected Update Request",
-				"Image builder identity (ARN) changed during update. This should trigger replacement. Please report this issue.",
+				"Image builder identity (name) changed during update. This should trigger replacement. Please report this issue.",
 			)
 			return
 		}

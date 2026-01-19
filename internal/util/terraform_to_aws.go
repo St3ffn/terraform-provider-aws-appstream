@@ -64,3 +64,37 @@ func OptionalStringUpdate(plan types.String, state types.String, setter func(*st
 		setter(&empty)
 	}
 }
+
+func DiffStringSets(ctx context.Context, oldSet, newSet types.Set, diags *diag.Diagnostics) (added, removed []string) {
+	var oldVals, newVals []string
+
+	diags.Append(oldSet.ElementsAs(ctx, &oldVals, false)...)
+	diags.Append(newSet.ElementsAs(ctx, &newVals, false)...)
+	if diags.HasError() {
+		return
+	}
+
+	oldIndex := make(map[string]struct{}, len(oldVals))
+	for _, v := range oldVals {
+		oldIndex[v] = struct{}{}
+	}
+
+	newIndex := make(map[string]struct{}, len(newVals))
+	for _, v := range newVals {
+		newIndex[v] = struct{}{}
+	}
+
+	for v := range newIndex {
+		if _, ok := oldIndex[v]; !ok {
+			added = append(added, v)
+		}
+	}
+
+	for v := range oldIndex {
+		if _, ok := newIndex[v]; !ok {
+			removed = append(removed, v)
+		}
+	}
+
+	return
+}
