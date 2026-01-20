@@ -36,6 +36,7 @@ import (
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/resources/fleet"
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/resources/image"
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/resources/image_builder"
+	"github.com/st3ffn/terraform-provider-aws-appstream/internal/resources/image_permission"
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/resources/stack"
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/resources/user"
 )
@@ -490,6 +491,7 @@ func (p *awsAppStreamProvider) DataSources(_ context.Context) []func() datasourc
 		user.NewDataSource,
 		image.NewDataSource,
 		image_builder.NewDataSource,
+		image_permission.NewDataSource,
 	}
 }
 
@@ -508,6 +510,7 @@ func (p *awsAppStreamProvider) Resources(_ context.Context) []func() resource.Re
 		associate_user_stack.NewResource,
 		image_builder.NewResource,
 		associate_image_builder_software.NewResource,
+		image_permission.NewResource,
 	}
 }
 

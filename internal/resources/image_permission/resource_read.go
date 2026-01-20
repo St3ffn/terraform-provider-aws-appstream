@@ -1,0 +1,101 @@
+// Copyright (c) St3ffn
+// SPDX-License-Identifier: MPL-2.0
+
+package image_permission
+
+import (
+	"context"
+	"fmt"
+
+	"github.com/aws/aws-sdk-go-v2/aws"
+	awsappstream "github.com/aws/aws-sdk-go-v2/service/appstream"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
+	tfresource "github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/st3ffn/terraform-provider-aws-appstream/internal/util"
+)
+
+func (r *resource) Read(ctx context.Context, req tfresource.ReadRequest, resp *tfresource.ReadResponse) {
+	var state resourceModel
+
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	if err := ctx.Err(); err != nil {
+		return
+	}
+
+	if state.Name.IsNull() || state.Name.IsUnknown() ||
+		state.SharedAccountID.IsNull() || state.SharedAccountID.IsUnknown() {
+		resp.Diagnostics.AddError(
+			"Invalid Terraform State",
+			"Required attributes name and shared_account_id are missing from state. "+
+				"This can happen after an incomplete import or a prior provider bug. Re-import or recreate the resource.",
+		)
+		return
+	}
+
+	newState, diags := r.readImagePermission(ctx, state)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	if newState == nil {
+		if ctx.Err() != nil {
+			return
+		}
+		resp.State.RemoveResource(ctx)
+		return
+	}
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, newState)...)
+}
+
+func (r *resource) readImagePermission(ctx context.Context, prior resourceModel) (*resourceModel, diag.Diagnostics) {
+
+	var diags diag.Diagnostics
+
+	name := prior.Name.ValueString()
+	sharedAccountID := prior.SharedAccountID.ValueString()
+
+	out, err := r.appstreamClient.DescribeImagePermissions(ctx, &awsappstream.DescribeImagePermissionsInput{
+		Name:                aws.String(name),
+		SharedAwsAccountIds: []string{sharedAccountID},
+	})
+	if err != nil {
+		if util.IsContextCanceled(err) {
+			return nil, diags
+		}
+
+		if util.IsAppStreamNotFound(err) {
+			return nil, diags
+		}
+
+		diags.AddError(
+			"Error Reading AWS AppStream Image Permission",
+			fmt.Sprintf("Could not read image permission for image %q shared with account %q: %v", name, sharedAccountID, err),
+		)
+		return nil, diags
+	}
+
+	if len(out.SharedImagePermissionsList) == 0 {
+		return nil, diags
+	}
+
+	permissions := out.SharedImagePermissionsList[0]
+	state := &resourceModel{
+		ID:               types.StringValue(buildID(name, sharedAccountID)),
+		Name:             types.StringValue(aws.ToString(out.Name)),
+		SharedAccountID:  types.StringValue(aws.ToString(permissions.SharedAccountId)),
+		ImagePermissions: flattenImagePermissionsResource(ctx, permissions.ImagePermissions, &diags),
+	}
+
+	if diags.HasError() {
+		return nil, diags
+	}
+
+	return state, diags
+}

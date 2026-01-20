@@ -25,7 +25,6 @@ func (r *resource) Create(ctx context.Context, req tfresource.CreateRequest, res
 		return
 	}
 
-	// Validate required attributes
 	if plan.DirectoryName.IsNull() || plan.DirectoryName.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Invalid Terraform Plan",

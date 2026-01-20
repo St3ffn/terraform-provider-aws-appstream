@@ -25,7 +25,6 @@ func (r *resource) Create(ctx context.Context, req tfresource.CreateRequest, res
 		return
 	}
 
-	// Validate required attributes
 	if plan.Name.IsNull() || plan.Name.IsUnknown() ||
 		plan.IconS3Location.IsNull() || plan.IconS3Location.IsUnknown() ||
 		plan.LaunchPath.IsNull() || plan.LaunchPath.IsUnknown() ||
