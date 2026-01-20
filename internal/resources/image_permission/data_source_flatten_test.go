@@ -14,7 +14,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-func TestFlattenImagePermissionEntriesData(t *testing.T) {
+func TestFlattenImagePermissionsData(t *testing.T) {
 	ctx := context.Background()
 
 	tests := []struct {
@@ -111,7 +111,7 @@ func TestFlattenImagePermissionEntriesData(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			var diags diag.Diagnostics
 
-			got := flattenImagePermissionEntriesData(ctx, tt.in, &diags)
+			got := flattenImagePermissionsData(ctx, tt.in, &diags)
 
 			if diags.HasError() {
 				t.Fatalf("unexpected diagnostics: %v", diags)

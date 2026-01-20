@@ -17,7 +17,7 @@ import (
 )
 
 func (r *resource) Read(ctx context.Context, req tfresource.ReadRequest, resp *tfresource.ReadResponse) {
-	var state resourceModel
+	var state model
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
@@ -50,7 +50,7 @@ func (r *resource) Read(ctx context.Context, req tfresource.ReadRequest, resp *t
 	resp.Diagnostics.Append(resp.State.Set(ctx, newState)...)
 }
 
-func (r *resource) readAssociationImageBuilderSoftware(ctx context.Context, prior resourceModel) (*resourceModel, diag.Diagnostics) {
+func (r *resource) readAssociationImageBuilderSoftware(ctx context.Context, prior model) (*model, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
 	imageBuilderARN := prior.ImageBuilderARN.ValueString()
@@ -83,7 +83,7 @@ func (r *resource) readAssociationImageBuilderSoftware(ctx context.Context, prio
 		return nil, diags
 	}
 
-	state := &resourceModel{
+	state := &model{
 		ID:              prior.ImageBuilderARN,
 		ImageBuilderARN: prior.ImageBuilderARN,
 		SoftwareNames:   prior.SoftwareNames,

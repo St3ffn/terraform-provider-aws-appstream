@@ -20,7 +20,7 @@ var imagePermissionEntryObjectType = types.ObjectType{
 	},
 }
 
-func flattenImagePermissionEntriesData(
+func flattenImagePermissionsData(
 	ctx context.Context, awsEntries []awstypes.SharedImagePermissions, diags *diag.Diagnostics,
 ) types.Set {
 
@@ -28,10 +28,10 @@ func flattenImagePermissionEntriesData(
 		return types.SetNull(imagePermissionEntryObjectType)
 	}
 
-	entries := make([]imagePermissionEntryModel, 0, len(awsEntries))
+	entries := make([]imagePermissionModel, 0, len(awsEntries))
 
 	for _, e := range awsEntries {
-		entries = append(entries, imagePermissionEntryModel{
+		entries = append(entries, imagePermissionModel{
 			SharedAccountID:  util.StringOrNull(e.SharedAccountId),
 			ImagePermissions: flattenImagePermissionsResource(ctx, e.ImagePermissions, diags),
 		})

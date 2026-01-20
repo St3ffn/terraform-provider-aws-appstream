@@ -5,7 +5,7 @@ package associate_image_builder_software
 
 import "github.com/hashicorp/terraform-plugin-framework/types"
 
-type resourceModel struct {
+type model struct {
 	// ID is a synthetic identifier composed of "<image_builder_arn>" (computed).
 	ID types.String `tfsdk:"id"`
 	// ImageBuilderARN is the ARN of the AppStream image builder to associate software with (required).

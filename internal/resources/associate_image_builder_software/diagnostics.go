@@ -14,7 +14,7 @@ const (
 	diagnosticUpdate diagnosticMode = "update"
 )
 
-func addDiagnostics(model resourceModel, diags *diag.Diagnostics, mode diagnosticMode) {
+func addDiagnostics(model model, diags *diag.Diagnostics, mode diagnosticMode) {
 	if model.ImageBuilderARN.IsNull() || model.ImageBuilderARN.IsUnknown() {
 
 		switch mode {

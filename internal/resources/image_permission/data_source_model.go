@@ -12,7 +12,7 @@ type dataSourceModel struct {
 	Permissions types.Set `tfsdk:"permissions"`
 }
 
-type imagePermissionEntryModel struct {
+type imagePermissionModel struct {
 	// SharedAccountID is the AWS account ID the image is shared with (computed).
 	SharedAccountID types.String `tfsdk:"shared_account_id"`
 	// ImagePermissions defines how the shared AWS account is allowed to use the image (computed).

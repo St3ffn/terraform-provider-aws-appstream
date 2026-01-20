@@ -1,7 +1,7 @@
 // Copyright (c) St3ffn
 // SPDX-License-Identifier: MPL-2.0
 
-package image_permission
+package software_associations
 
 import (
 	"context"
@@ -26,7 +26,7 @@ type dataSource struct {
 }
 
 func (ds *dataSource) Metadata(_ context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_image_permissions"
+	resp.TypeName = req.ProviderTypeName + "_software_associations"
 }
 
 func (ds *dataSource) Configure(_ context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
