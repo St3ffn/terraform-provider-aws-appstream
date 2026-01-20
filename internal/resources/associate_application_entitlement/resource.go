@@ -13,8 +13,6 @@ import (
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/metadata"
 )
 
-var AppStreamMaxResults int32 = 50
-
 var (
 	_ tfresource.Resource                = &resource{}
 	_ tfresource.ResourceWithConfigure   = &resource{}

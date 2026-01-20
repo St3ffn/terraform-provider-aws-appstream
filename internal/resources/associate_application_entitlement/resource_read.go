@@ -67,7 +67,6 @@ func (r *resource) readAssociateApplicationEntitlement(
 			StackName:       aws.String(stackName),
 			EntitlementName: aws.String(entitlementName),
 			NextToken:       nextToken,
-			MaxResults:      aws.Int32(AppStreamMaxResults),
 		})
 		if err != nil {
 			if util.IsContextCanceled(err) {
