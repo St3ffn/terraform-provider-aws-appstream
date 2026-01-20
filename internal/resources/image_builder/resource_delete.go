@@ -86,7 +86,10 @@ func (r *resource) deleteImageBuilder(ctx context.Context, name string) error {
 				// retry as we just stopped the image builder
 				return fmt.Errorf("%w: current=%s", ErrUnexpectedImageBuilderState, state)
 
-			case awstypes.ImageBuilderStateStopped, awstypes.ImageBuilderStateFailed:
+			case awstypes.ImageBuilderStateStopped, awstypes.ImageBuilderStateFailed,
+				awstypes.ImageBuilderStateSyncingApps, awstypes.ImageBuilderStatePendingSyncingApps,
+				awstypes.ImageBuilderStateUpdating, awstypes.ImageBuilderStateUpdatingAgent,
+				awstypes.ImageBuilderStatePendingQualification, awstypes.ImageBuilderStatePendingImageImport:
 				// deletable state
 				_, err = r.appstreamClient.DeleteImageBuilder(ctx, &awsappstream.DeleteImageBuilderInput{
 					Name: aws.String(name),
@@ -100,6 +103,7 @@ func (r *resource) deleteImageBuilder(ctx context.Context, name string) error {
 				}
 				// wait until resource is in state deleting or gone
 				return fmt.Errorf("%w: current=%s", ErrUnexpectedImageBuilderState, state)
+
 			default:
 				return fmt.Errorf("%w: current=%s", ErrUnexpectedImageBuilderState, state)
 			}
