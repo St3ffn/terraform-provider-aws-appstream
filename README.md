@@ -45,6 +45,7 @@ For context, [see the open AppStream-related issues](https://github.com/hashicor
 | awsappstream_sessions                          | ❌        | ✅           |         |
 | awsappstream_usage_report_subscription         | ✅        | ✅           |         |
 | awsappstream_export_image_task                 | ❌        | ✅           |         |
+| awsappstream_export_image_tasks                | ❌        | ✅           |         |
 
 ## Behavior and Design Principles
 

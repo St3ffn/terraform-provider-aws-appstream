@@ -34,6 +34,7 @@ import (
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/resources/directory_config"
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/resources/entitlement"
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/resources/export_image_task"
+	"github.com/st3ffn/terraform-provider-aws-appstream/internal/resources/export_image_tasks"
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/resources/fleet"
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/resources/image"
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/resources/image_builder"
@@ -500,6 +501,7 @@ func (p *awsAppStreamProvider) DataSources(_ context.Context) []func() datasourc
 		sessions.NewDataSource,
 		usage_report_subscription.NewDataSource,
 		export_image_task.NewDataSource,
+		export_image_tasks.NewDataSource,
 	}
 }
 
