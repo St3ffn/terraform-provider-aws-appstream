@@ -138,6 +138,16 @@ By limiting state ownership to user-defined attributes, this provider:
 
 This behavior is intentional and applies consistently across resources such as fleets and stacks, and may be extended to additional resources in the future.
 
+## Declarative-Only Resource Model (No Action-Based Resources)
+
+This provider intentionally **does not implement action-style Terraform resources**
+for imperative operations such as:
+
+- Starting or stopping fleets
+- Starting or stopping image builders
+- Starting or stopping app block builders
+- Triggering one-shot operational actions
+
 ## Retry and Eventual Consistency Handling
 
 AWS AppStream APIs exhibit **eventual consistency** and transient errors,
