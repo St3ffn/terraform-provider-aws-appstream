@@ -88,7 +88,7 @@ func (r *resource) Create(ctx context.Context, req tfresource.CreateRequest, res
 		}
 
 		resp.Diagnostics.AddError(
-			"Error Creating AWS Directory Config",
+			"Error Creating AWS AppStream Directory Config",
 			fmt.Sprintf("Could not create directory config %q: %v", name, err),
 		)
 		return

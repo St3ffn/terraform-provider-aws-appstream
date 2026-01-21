@@ -253,7 +253,7 @@ func TestFlattenRootVolumeConfig(t *testing.T) {
 	}
 }
 
-func TestFlattenErrors(t *testing.T) {
+func TestFlattenFleetErrors(t *testing.T) {
 	ctx := context.Background()
 
 	tests := []struct {

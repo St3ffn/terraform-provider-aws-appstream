@@ -40,6 +40,7 @@ import (
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/resources/sessions"
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/resources/software_associations"
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/resources/stack"
+	"github.com/st3ffn/terraform-provider-aws-appstream/internal/resources/usage_report_subscription"
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/resources/user"
 )
 
@@ -496,6 +497,7 @@ func (p *awsAppStreamProvider) DataSources(_ context.Context) []func() datasourc
 		image_permission.NewDataSource,
 		software_associations.NewDataSource,
 		sessions.NewDataSource,
+		usage_report_subscription.NewDataSource,
 	}
 }
 
@@ -515,6 +517,7 @@ func (p *awsAppStreamProvider) Resources(_ context.Context) []func() resource.Re
 		image_builder.NewResource,
 		associate_image_builder_software.NewResource,
 		image_permission.NewResource,
+		usage_report_subscription.NewResource,
 	}
 }
 
