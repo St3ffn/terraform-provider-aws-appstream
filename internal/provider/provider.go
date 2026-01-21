@@ -37,6 +37,7 @@ import (
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/resources/image"
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/resources/image_builder"
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/resources/image_permission"
+	"github.com/st3ffn/terraform-provider-aws-appstream/internal/resources/sessions"
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/resources/software_associations"
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/resources/stack"
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/resources/user"
@@ -494,6 +495,7 @@ func (p *awsAppStreamProvider) DataSources(_ context.Context) []func() datasourc
 		image_builder.NewDataSource,
 		image_permission.NewDataSource,
 		software_associations.NewDataSource,
+		sessions.NewDataSource,
 	}
 }
 

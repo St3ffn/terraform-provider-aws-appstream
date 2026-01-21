@@ -42,6 +42,7 @@ For context, [see the open AppStream-related issues](https://github.com/hashicor
 | awsappstream_image_permission                  | ✅        | ❌           |         |
 | awsappstream_image_permissions                 | ❌        | ✅           |         |
 | awsappstream_software_associations             | ❌        | ✅           |         |
+| awsappstream_sessions                          | ❌        | ✅           |         |
 
 ## Behavior and Design Principles
 

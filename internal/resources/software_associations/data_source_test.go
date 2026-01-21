@@ -58,14 +58,8 @@ func TestAccSoftwareAssociationsDataSource_basic(t *testing.T) {
 			{
 				Config: testAccSoftwareAssociationsDataSource_basic(t),
 				Check: resource.ComposeAggregateTestCheckFunc(
-					resource.TestCheckResourceAttrSet(
-						"data.awsappstream_software_associations.test",
-						"associated_resource",
-					),
-					resource.TestCheckNoResourceAttr(
-						"data.awsappstream_software_associations.test",
-						"software_associations.0.software_name",
-					),
+					resource.TestCheckResourceAttrSet("data.awsappstream_software_associations.test", "associated_resource"),
+					resource.TestCheckResourceAttr("data.awsappstream_software_associations.test", "software_associations.#", "0"),
 				),
 			},
 		},
