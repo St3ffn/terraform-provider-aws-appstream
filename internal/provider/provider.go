@@ -26,6 +26,7 @@ import (
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/metadata"
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/resources/app_block"
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/resources/application"
+	"github.com/st3ffn/terraform-provider-aws-appstream/internal/resources/associate_app_block_builder_app_block"
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/resources/associate_application_entitlement"
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/resources/associate_application_fleet"
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/resources/associate_fleet_stack"
@@ -522,6 +523,7 @@ func (p *awsAppStreamProvider) Resources(_ context.Context) []func() resource.Re
 		associate_image_builder_software.NewResource,
 		image_permission.NewResource,
 		usage_report_subscription.NewResource,
+		associate_app_block_builder_app_block.NewResource,
 	}
 }
 
