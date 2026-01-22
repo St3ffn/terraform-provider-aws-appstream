@@ -34,17 +34,6 @@ func (r *resource) Update(ctx context.Context, req tfresource.UpdateRequest, res
 
 	imageBuilderARN := plan.ImageBuilderARN.ValueString()
 
-	// guard against unexpected identity drift
-	if !state.ID.IsNull() && !state.ID.IsUnknown() {
-		if state.ID.ValueString() != imageBuilderARN {
-			resp.Diagnostics.AddError(
-				"Unexpected Update Request",
-				"Association identity (image_builder_arn) changed during update. This should trigger replacement. Please report this issue.",
-			)
-			return
-		}
-	}
-
 	imageBuilderName, err := imageBuilderNameFromARN(imageBuilderARN)
 	if err != nil {
 		resp.Diagnostics.AddError(

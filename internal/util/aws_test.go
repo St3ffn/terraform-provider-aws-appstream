@@ -129,6 +129,24 @@ func TestErrorPredicates(t *testing.T) {
 			want: false,
 		},
 		{
+			name: "resource_in_use/match",
+			err:  &smithy.GenericAPIError{Code: "ResourceInUseException"},
+			fn:   IsResourceInUseException,
+			want: true,
+		},
+		{
+			name: "resource_in_use/no_match",
+			err:  &smithy.GenericAPIError{Code: "other"},
+			fn:   IsResourceInUseException,
+			want: false,
+		},
+		{
+			name: "resource_in_use/no_match_nil",
+			err:  nil,
+			fn:   IsResourceInUseException,
+			want: false,
+		},
+		{
 			name: "entitlement_already_exists/match",
 			err:  &smithy.GenericAPIError{Code: "EntitlementAlreadyExistsException"},
 			fn:   IsEntitlementAlreadyExists,

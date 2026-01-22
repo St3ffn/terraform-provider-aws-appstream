@@ -23,26 +23,15 @@ func (r *resource) Update(ctx context.Context, req tfresource.UpdateRequest, res
 		return
 	}
 
-	if plan.ID.IsNull() || plan.ID.IsUnknown() {
+	if plan.ARN.IsNull() || plan.ARN.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Invalid Terraform Plan",
-			"Cannot update image builder because id must be known.",
+			"Cannot update image builder because arn must be known.",
 		)
 		return
 	}
 
-	arn := plan.ID.ValueString()
-
-	// guard against unexpected identity drift
-	if !state.ID.IsNull() && !state.ID.IsUnknown() {
-		if state.ID.ValueString() != arn {
-			resp.Diagnostics.AddError(
-				"Unexpected Update Request",
-				"Image builder identity (name) changed during update. This should trigger replacement. Please report this issue.",
-			)
-			return
-		}
-	}
+	arn := plan.ARN.ValueString()
 
 	_, tagDiags := r.tags.Apply(ctx, arn, plan.Tags)
 	resp.Diagnostics.Append(tagDiags...)

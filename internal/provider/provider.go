@@ -25,6 +25,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/metadata"
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/resources/app_block"
+	"github.com/st3ffn/terraform-provider-aws-appstream/internal/resources/app_block_builder"
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/resources/application"
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/resources/associate_app_block_builder_app_block"
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/resources/associate_application_entitlement"
@@ -503,6 +504,7 @@ func (p *awsAppStreamProvider) DataSources(_ context.Context) []func() datasourc
 		usage_report_subscription.NewDataSource,
 		export_image_task.NewDataSource,
 		export_image_tasks.NewDataSource,
+		app_block_builder.NewDataSource,
 	}
 }
 
@@ -524,6 +526,7 @@ func (p *awsAppStreamProvider) Resources(_ context.Context) []func() resource.Re
 		image_permission.NewResource,
 		usage_report_subscription.NewResource,
 		associate_app_block_builder_app_block.NewResource,
+		app_block_builder.NewResource,
 	}
 }
 

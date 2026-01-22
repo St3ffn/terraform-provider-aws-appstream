@@ -1,7 +1,7 @@
 // Copyright (c) St3ffn
 // SPDX-License-Identifier: MPL-2.0
 
-package image_permission
+package app_block_builder
 
 import (
 	"context"
@@ -11,6 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	tfresource "github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/metadata"
+	"github.com/st3ffn/terraform-provider-aws-appstream/internal/tags"
 )
 
 var (
@@ -25,10 +26,11 @@ func NewResource() tfresource.Resource {
 
 type resource struct {
 	appstreamClient *awsappstream.Client
+	tags            *tags.TagManager
 }
 
 func (r *resource) Metadata(_ context.Context, req tfresource.MetadataRequest, resp *tfresource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_image_permission"
+	resp.TypeName = req.ProviderTypeName + "_app_block_builder"
 }
 
 func (r *resource) Configure(_ context.Context, req tfresource.ConfigureRequest, resp *tfresource.ConfigureResponse) {
@@ -53,20 +55,27 @@ func (r *resource) Configure(_ context.Context, req tfresource.ConfigureRequest,
 		return
 	}
 
-	r.appstreamClient = meta.Appstream
-}
-
-func (r *resource) ImportState(ctx context.Context, req tfresource.ImportStateRequest, resp *tfresource.ImportStateResponse) {
-	name, sharedAccountID, err := parseID(req.ID)
-	if err != nil {
+	if meta.Tagging == nil {
 		resp.Diagnostics.AddError(
-			"Unexpected Import Identifier",
-			"Expected import identifier format: <image_name>|<shared_account_id>",
+			"Unexpected Resource Configure Type",
+			"Expected *Metadata.Tagging, got: nil. Please report this issue to the provider developers.",
 		)
 		return
 	}
 
-	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("name"), name)...)
-	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("shared_account_id"), sharedAccountID)...)
+	r.appstreamClient = meta.Appstream
+	r.tags = tags.NewTagManager(meta.Tagging, meta.DefaultTags)
+}
+
+func (r *resource) ImportState(ctx context.Context, req tfresource.ImportStateRequest, resp *tfresource.ImportStateResponse) {
+	if req.ID == "" {
+		resp.Diagnostics.AddError(
+			"Unexpected Import Identifier",
+			"Expected import identifier format: <app_block_builder_name>",
+		)
+		return
+	}
+
+	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("name"), req.ID)...)
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("id"), req.ID)...)
 }

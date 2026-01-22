@@ -37,17 +37,6 @@ func (r *resource) Update(ctx context.Context, req tfresource.UpdateRequest, res
 
 	name := plan.DirectoryName.ValueString()
 
-	// guard against unexpected identity drift
-	if !state.DirectoryName.IsNull() && !state.DirectoryName.IsUnknown() {
-		if state.DirectoryName.ValueString() != name {
-			resp.Diagnostics.AddError(
-				"Unexpected Update Request",
-				"Directory config identity (directory_name) changed during update. This should trigger replacement. Please report this issue.",
-			)
-			return
-		}
-	}
-
 	input := &awsappstream.UpdateDirectoryConfigInput{
 		DirectoryName: aws.String(name),
 	}

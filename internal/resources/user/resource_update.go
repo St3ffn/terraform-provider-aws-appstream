@@ -40,18 +40,6 @@ func (r *resource) Update(ctx context.Context, req tfresource.UpdateRequest, res
 	authenticationType := plan.AuthenticationType.ValueString()
 	userName := plan.UserName.ValueString()
 
-	// guard against unexpected identity drift
-	if !state.AuthenticationType.IsNull() && !state.AuthenticationType.IsUnknown() &&
-		!state.UserName.IsNull() && !state.UserName.IsUnknown() {
-		if state.AuthenticationType.ValueString() != authenticationType || state.UserName.ValueString() != userName {
-			resp.Diagnostics.AddError(
-				"Unexpected Update Request",
-				"User identity (authentication_type|user_name) changed during update. This should trigger replacement. Please report this issue.",
-			)
-			return
-		}
-	}
-
 	var err error
 
 	if plan.Enabled.IsNull() || plan.Enabled.IsUnknown() {

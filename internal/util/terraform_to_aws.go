@@ -60,7 +60,7 @@ func OptionalStringUpdate(plan types.String, state types.String, setter func(*st
 		v := plan.ValueString()
 		setter(&v)
 	case plan.IsNull() && !state.IsNull():
-		empty := ""
+		var empty string
 		setter(&empty)
 	}
 }

@@ -40,18 +40,6 @@ func (r *resource) Update(ctx context.Context, req tfresource.UpdateRequest, res
 	stackName := plan.StackName.ValueString()
 	name := plan.Name.ValueString()
 
-	// guard against unexpected identity drift
-	if !state.StackName.IsNull() && !state.StackName.IsUnknown() &&
-		!state.Name.IsNull() && !state.Name.IsUnknown() {
-		if state.StackName.ValueString() != stackName || state.Name.ValueString() != name {
-			resp.Diagnostics.AddError(
-				"Unexpected Update Request",
-				"Entitlement identity (stack_name|name) changed during update. This should trigger replacement. Please report this issue.",
-			)
-			return
-		}
-	}
-
 	if plan.AppVisibility.IsNull() || plan.AppVisibility.IsUnknown() ||
 		plan.Attributes.IsNull() || plan.Attributes.IsUnknown() {
 		resp.Diagnostics.AddError(

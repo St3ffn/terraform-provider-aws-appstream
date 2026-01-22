@@ -31,7 +31,6 @@ resource "awsappstream_image_builder" "example" {
   description   = "Image builder used to create custom AppStream images."
   instance_type = "stream.standard.large"
 
-  # Use image ARN (preferred for long-term stability)
   image_arn = "arn:aws:appstream:eu-west-1:123456789012:image/example-image"
 
   enable_default_internet_access = true

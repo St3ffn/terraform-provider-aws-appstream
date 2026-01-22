@@ -38,17 +38,6 @@ func (r *resource) Update(ctx context.Context, req tfresource.UpdateRequest, res
 
 	name := plan.Name.ValueString()
 
-	// guard against unexpected identity drift
-	if !state.Name.IsNull() && !state.Name.IsUnknown() {
-		if state.Name.ValueString() != name {
-			resp.Diagnostics.AddError(
-				"Unexpected Update Request",
-				"Fleet identity (name) changed during update. This should trigger replacement. Please report this issue.",
-			)
-			return
-		}
-	}
-
 	input := &awsappstream.UpdateFleetInput{
 		Name: aws.String(name),
 	}

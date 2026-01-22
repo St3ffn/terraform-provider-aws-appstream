@@ -47,6 +47,10 @@ func IsResourceAlreadyExists(err error) bool {
 	return IsAWSAPIError(err, "ResourceAlreadyExistsException")
 }
 
+func IsResourceInUseException(err error) bool {
+	return IsAWSAPIError(err, "ResourceInUseException")
+}
+
 func IsEntitlementAlreadyExists(err error) bool {
 	return IsAWSAPIError(err, "EntitlementAlreadyExistsException")
 }

@@ -39,18 +39,6 @@ func (r *resource) Update(ctx context.Context, req tfresource.UpdateRequest, res
 	name := plan.Name.ValueString()
 	sharedAccountID := plan.SharedAccountID.ValueString()
 
-	// guard against unexpected identity drift
-	if !state.Name.IsNull() && !state.Name.IsUnknown() &&
-		!state.SharedAccountID.IsNull() && !state.SharedAccountID.IsUnknown() {
-		if state.Name.ValueString() != name || state.SharedAccountID.ValueString() != sharedAccountID {
-			resp.Diagnostics.AddError(
-				"Unexpected Update Request",
-				"Image permission identity (name|shared_account_id) changed during update. This should trigger replacement. Please report this issue.",
-			)
-			return
-		}
-	}
-
 	input := &awsappstream.UpdateImagePermissionsInput{
 		Name:             aws.String(name),
 		SharedAccountId:  aws.String(sharedAccountID),

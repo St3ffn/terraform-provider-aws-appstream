@@ -47,17 +47,6 @@ func (r *resource) Update(ctx context.Context, req tfresource.UpdateRequest, res
 		return
 	}
 
-	// guard against unexpected identity drift
-	if !state.ID.IsNull() && !state.ID.IsUnknown() {
-		if state.ID.ValueString() != arn {
-			resp.Diagnostics.AddError(
-				"Unexpected Update Request",
-				"Application identity (ARN) changed during update. This should trigger replacement. Please report this issue.",
-			)
-			return
-		}
-	}
-
 	input := &awsappstream.UpdateApplicationInput{
 		Name: aws.String(name),
 	}

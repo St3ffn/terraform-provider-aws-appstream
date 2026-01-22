@@ -33,17 +33,6 @@ func (r *resource) Update(ctx context.Context, req tfresource.UpdateRequest, res
 
 	arn := plan.ID.ValueString()
 
-	// guard against unexpected identity drift
-	if !state.ID.IsNull() && !state.ID.IsUnknown() {
-		if state.ID.ValueString() != arn {
-			resp.Diagnostics.AddError(
-				"Unexpected Update Request",
-				"App block identity (ARN) changed during update. This should trigger replacement. Please report this issue.",
-			)
-			return
-		}
-	}
-
 	_, tagDiags := r.tags.Apply(ctx, arn, plan.Tags)
 	resp.Diagnostics.Append(tagDiags...)
 	if resp.Diagnostics.HasError() {
