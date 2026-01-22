@@ -44,6 +44,7 @@ import (
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/resources/sessions"
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/resources/software_associations"
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/resources/stack"
+	"github.com/st3ffn/terraform-provider-aws-appstream/internal/resources/stack_theme"
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/resources/usage_report_subscription"
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/resources/user"
 )
@@ -505,6 +506,7 @@ func (p *awsAppStreamProvider) DataSources(_ context.Context) []func() datasourc
 		export_image_task.NewDataSource,
 		export_image_tasks.NewDataSource,
 		app_block_builder.NewDataSource,
+		stack_theme.NewDataSource,
 	}
 }
 
@@ -527,6 +529,7 @@ func (p *awsAppStreamProvider) Resources(_ context.Context) []func() resource.Re
 		usage_report_subscription.NewResource,
 		associate_app_block_builder_app_block.NewResource,
 		app_block_builder.NewResource,
+		stack_theme.NewResource,
 	}
 }
 

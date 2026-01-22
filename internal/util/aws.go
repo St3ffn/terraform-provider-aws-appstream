@@ -58,3 +58,15 @@ func IsEntitlementAlreadyExists(err error) bool {
 func IsAppStreamNotFound(err error) bool {
 	return IsAWSAPIError(err, "ResourceNotFoundException", "EntitlementNotFoundException")
 }
+
+func AWSEnumToSlice[T ~string](awsEnumValuesFunc func(T) []T) []string {
+	var zero T
+	enumValues := awsEnumValuesFunc(zero)
+
+	result := make([]string, 0, len(enumValues))
+	for _, value := range enumValues {
+		result = append(result, string(value))
+	}
+
+	return result
+}

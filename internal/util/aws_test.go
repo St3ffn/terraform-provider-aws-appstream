@@ -203,3 +203,24 @@ func TestErrorPredicates(t *testing.T) {
 		})
 	}
 }
+
+type testEnum string
+
+const (
+	testEnumA testEnum = "A"
+	testEnumB testEnum = "B"
+	testEnumC testEnum = "C"
+)
+
+// Values mimics the AWS SDK enum Values() pattern.
+func (testEnum) Values() []testEnum {
+	return []testEnum{
+		testEnumA,
+		testEnumB,
+		testEnumC,
+	}
+}
+
+func TestAWSEnumToSlice(t *testing.T) {
+	require.ElementsMatch(t, []string{"A", "B", "C"}, AWSEnumToSlice(testEnum.Values))
+}

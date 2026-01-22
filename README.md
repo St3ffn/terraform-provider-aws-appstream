@@ -25,26 +25,27 @@ For context, [see the open AppStream-related issues](https://github.com/hashicor
 
 | Name                                               | Resource | Data Source |
 |----------------------------------------------------|----------|-------------|
-| awsappstream_fleet                                 | ✅        | ✅           |
 | awsappstream_stack                                 | ✅        | ✅           |
+| awsappstream_stack_theme                           | ✅        | ✅           |
+| awsappstream_fleet                                 | ✅        | ✅           |
 | awsappstream_associate_fleet_stack                 | ✅        | ❌           |
 | awsappstream_user                                  | ✅        | ✅           |
 | awsappstream_associate_user_stack                  | ✅        | ❌           |
-| awsappstream_entitlement                           | ✅        | ✅           |
+| awsappstream_sessions                              | ❌        | ✅           |
 | awsappstream_application                           | ✅        | ✅           |
+| awsappstream_associate_application_fleet           | ✅        | ❌           |
+| awsappstream_entitlement                           | ✅        | ✅           |
 | awsappstream_associate_application_entitlement     | ✅        | ❌           |
 | awsappstream_app_block                             | ✅        | ✅           |
 | awsappstream_app_block_builder                     | ✅        | ✅           |
 | awsappstream_associate_app_block_builder_app_block | ✅        | ❌           |
 | awsappstream_directory_config                      | ✅        | ✅           |
-| awsappstream_associate_application_fleet           | ✅        | ❌           |
 | awsappstream_image                                 | ❌        | ✅           |
 | awsappstream_image_permission                      | ✅        | ❌           |
 | awsappstream_image_permissions                     | ❌        | ✅           |
 | awsappstream_image_builder                         | ✅        | ✅           |
 | awsappstream_associate_image_builder_software      | ✅        | ❌           |
 | awsappstream_software_associations                 | ❌        | ✅           |
-| awsappstream_sessions                              | ❌        | ✅           |
 | awsappstream_usage_report_subscription             | ✅        | ✅           |
 | awsappstream_export_image_task                     | ❌        | ✅           |
 | awsappstream_export_image_tasks                    | ❌        | ✅           |
