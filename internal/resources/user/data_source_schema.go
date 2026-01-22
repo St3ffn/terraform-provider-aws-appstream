@@ -7,10 +7,12 @@ import (
 	"context"
 	"regexp"
 
+	awstypes "github.com/aws/aws-sdk-go-v2/service/appstream/types"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+	"github.com/st3ffn/terraform-provider-aws-appstream/internal/util"
 )
 
 func (d *dataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp *datasource.SchemaResponse) {
@@ -32,10 +34,7 @@ func (d *dataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp 
 				Required: true,
 				Validators: []validator.String{
 					stringvalidator.OneOf(
-						"API",
-						"SAML",
-						"USERPOOL",
-						"AWS_AD",
+						util.AWSEnumToSlice(awstypes.AuthenticationType.Values)...,
 					),
 				},
 			},

@@ -7,6 +7,7 @@ import (
 	"context"
 	"regexp"
 
+	awstypes "github.com/aws/aws-sdk-go-v2/service/appstream/types"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int32validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/mapvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/setvalidator"
@@ -17,6 +18,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/st3ffn/terraform-provider-aws-appstream/internal/util"
 )
 
 func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *tfresource.SchemaResponse) {
@@ -79,9 +81,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 							Required:            true,
 							Validators: []validator.String{
 								stringvalidator.OneOf(
-									"HOMEFOLDERS",
-									"GOOGLE_DRIVE",
-									"ONE_DRIVE",
+									util.AWSEnumToSlice(awstypes.StorageConnectorType.Values)...,
 								),
 							},
 						},
@@ -151,14 +151,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 							Required:            true,
 							Validators: []validator.String{
 								stringvalidator.OneOf(
-									"CLIPBOARD_COPY_FROM_LOCAL_DEVICE",
-									"CLIPBOARD_COPY_TO_LOCAL_DEVICE",
-									"FILE_UPLOAD",
-									"FILE_DOWNLOAD",
-									"PRINTING_TO_LOCAL_DEVICE",
-									"DOMAIN_PASSWORD_SIGNIN",
-									"DOMAIN_SMART_CARD_SIGNIN",
-									"AUTO_TIME_ZONE_REDIRECTION",
+									util.AWSEnumToSlice(awstypes.Action.Values)...,
 								),
 							},
 						},
@@ -167,7 +160,9 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 							MarkdownDescription: "Specifies whether the action is enabled or disabled.",
 							Required:            true,
 							Validators: []validator.String{
-								stringvalidator.OneOf("ENABLED", "DISABLED"),
+								stringvalidator.OneOf(
+									util.AWSEnumToSlice(awstypes.Permission.Values)...,
+								),
 							},
 						},
 						"maximum_length": schema.Int32Attribute{
@@ -245,7 +240,9 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 							MarkdownDescription: "The type of interface endpoint.",
 							Required:            true,
 							Validators: []validator.String{
-								stringvalidator.OneOf("STREAMING"),
+								stringvalidator.OneOf(
+									util.AWSEnumToSlice(awstypes.AccessEndpointType.Values)...,
+								),
 							},
 						},
 						"vpce_id": schema.StringAttribute{
@@ -285,7 +282,9 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 						MarkdownDescription: "The preferred streaming protocol for the stack.",
 						Optional:            true,
 						Validators: []validator.String{
-							stringvalidator.OneOf("TCP", "UDP"),
+							stringvalidator.OneOf(
+								util.AWSEnumToSlice(awstypes.PreferredProtocol.Values)...,
+							),
 						},
 					},
 				},

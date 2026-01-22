@@ -6,6 +6,7 @@ package directory_config
 import (
 	"context"
 
+	awstypes "github.com/aws/aws-sdk-go-v2/service/appstream/types"
 	"github.com/hashicorp/terraform-plugin-framework-validators/setvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	tfresource "github.com/hashicorp/terraform-plugin-framework/resource"
@@ -103,9 +104,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 						Optional: true,
 						Validators: []validator.String{
 							stringvalidator.OneOf(
-								"DISABLED",
-								"ENABLED",
-								"ENABLED_NO_DIRECTORY_LOGIN_FALLBACK",
+								util.AWSEnumToSlice(awstypes.CertificateBasedAuthStatus.Values)...,
 							),
 						},
 					},

@@ -7,6 +7,7 @@ import (
 	"context"
 	"regexp"
 
+	awstypes "github.com/aws/aws-sdk-go-v2/service/appstream/types"
 	"github.com/hashicorp/terraform-plugin-framework-validators/mapvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/setvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
@@ -140,7 +141,9 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 							MarkdownDescription: "The type of interface endpoint.",
 							Required:            true,
 							Validators: []validator.String{
-								stringvalidator.OneOf("STREAMING"),
+								stringvalidator.OneOf(
+									util.AWSEnumToSlice(awstypes.AccessEndpointType.Values)...,
+								),
 							},
 						},
 						"vpce_id": schema.StringAttribute{

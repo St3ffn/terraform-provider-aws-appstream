@@ -7,6 +7,7 @@ import (
 	"context"
 	"regexp"
 
+	awstypes "github.com/aws/aws-sdk-go-v2/service/appstream/types"
 	"github.com/hashicorp/terraform-plugin-framework-validators/setvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	tfresource "github.com/hashicorp/terraform-plugin-framework/resource"
@@ -14,6 +15,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+	"github.com/st3ffn/terraform-provider-aws-appstream/internal/util"
 )
 
 func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *tfresource.SchemaResponse) {
@@ -77,7 +79,9 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 					"Valid values are `ALL` or `ASSOCIATED`.",
 				Required: true,
 				Validators: []validator.String{
-					stringvalidator.OneOf("ALL", "ASSOCIATED"),
+					stringvalidator.OneOf(
+						util.AWSEnumToSlice(awstypes.AppVisibility.Values)...,
+					),
 				},
 			},
 			"attributes": schema.SetNestedAttribute{

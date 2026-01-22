@@ -7,6 +7,7 @@ import (
 	"context"
 	"regexp"
 
+	awstypes "github.com/aws/aws-sdk-go-v2/service/appstream/types"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int32validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/mapvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
@@ -17,6 +18,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/st3ffn/terraform-provider-aws-appstream/internal/util"
 )
 
 func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *tfresource.SchemaResponse) {
@@ -226,7 +228,9 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 					stringplanmodifier.RequiresReplace(),
 				},
 				Validators: []validator.String{
-					stringvalidator.OneOf("CUSTOM", "APPSTREAM2"),
+					stringvalidator.OneOf(
+						util.AWSEnumToSlice(awstypes.PackagingType.Values)...,
+					),
 				},
 			},
 			"tags": schema.MapAttribute{

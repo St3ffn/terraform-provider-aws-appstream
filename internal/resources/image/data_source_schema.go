@@ -7,6 +7,7 @@ import (
 	"context"
 	"regexp"
 
+	awstypes "github.com/aws/aws-sdk-go-v2/service/appstream/types"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -68,9 +69,7 @@ func (ds *dataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp
 				Computed:            true,
 				Validators: []validator.String{
 					stringvalidator.OneOf(
-						"PUBLIC",
-						"PRIVATE",
-						"SHARED",
+						util.AWSEnumToSlice(awstypes.VisibilityType.Values)...,
 					),
 				},
 			},

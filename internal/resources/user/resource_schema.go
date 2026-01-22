@@ -7,6 +7,7 @@ import (
 	"context"
 	"regexp"
 
+	awstypes "github.com/aws/aws-sdk-go-v2/service/appstream/types"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	tfresource "github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -14,6 +15,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+	"github.com/st3ffn/terraform-provider-aws-appstream/internal/util"
 )
 
 func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *tfresource.SchemaResponse) {
@@ -43,10 +45,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				},
 				Validators: []validator.String{
 					stringvalidator.OneOf(
-						"API",
-						"SAML",
-						"USERPOOL",
-						"AWS_AD",
+						util.AWSEnumToSlice(awstypes.AuthenticationType.Values)...,
 					),
 				},
 			},
@@ -109,8 +108,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				},
 				Validators: []validator.String{
 					stringvalidator.OneOf(
-						"SUPPRESS",
-						"RESEND",
+						util.AWSEnumToSlice(awstypes.MessageAction.Values)...,
 					),
 				},
 			},

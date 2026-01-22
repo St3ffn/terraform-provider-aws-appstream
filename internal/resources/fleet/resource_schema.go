@@ -7,6 +7,7 @@ import (
 	"context"
 	"regexp"
 
+	awstypes "github.com/aws/aws-sdk-go-v2/service/appstream/types"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int32validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/mapvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/setvalidator"
@@ -92,9 +93,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				},
 				Validators: []validator.String{
 					stringvalidator.OneOf(
-						"ON_DEMAND",
-						"ALWAYS_ON",
-						"ELASTIC",
+						util.AWSEnumToSlice(awstypes.FleetType.Values)...,
 					),
 				},
 			},
@@ -240,7 +239,9 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				MarkdownDescription: "Controls which streaming protocol views are enabled.",
 				Optional:            true,
 				Validators: []validator.String{
-					stringvalidator.OneOf("APP", "DESKTOP"),
+					stringvalidator.OneOf(
+						util.AWSEnumToSlice(awstypes.StreamView.Values)...,
+					),
 				},
 			},
 			"platform": schema.StringAttribute{
