@@ -5,6 +5,7 @@ package fleet
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -184,6 +185,28 @@ func (r *resource) Update(ctx context.Context, req tfresource.UpdateRequest, res
 		return
 	}
 
+	mode := updateMode(state, plan)
+
+	switch mode {
+	case fleetUpdateRequiresStop:
+		err := r.ensureStopped(ctx, name)
+		if err != nil {
+			resp.Diagnostics.AddError(
+				"Error Updating AWS AppStream Fleet",
+				fmt.Sprintf("Could not stop fleet %q for update: %v", name, err),
+			)
+			return
+		}
+	case fleetUpdateAllowedRunning:
+		// proceed normally
+	case fleetUpdateForbidden:
+		resp.Diagnostics.AddError(
+			"Error Updating AWS AppStream Fleet",
+			fmt.Sprintf("Could not update fleet %q: fleet cannot be updated in its current state", name),
+		)
+		return
+	}
+
 	out, err := r.appstreamClient.UpdateFleet(ctx, input)
 	if err != nil {
 		if util.IsContextCanceled(err) {
@@ -210,6 +233,17 @@ func (r *resource) Update(ctx context.Context, req tfresource.UpdateRequest, res
 		}
 	}
 
+	if mode == fleetUpdateRequiresStop {
+		err = r.ensureRunning(ctx, name)
+		if err != nil {
+			resp.Diagnostics.AddError(
+				"Error Updating AWS AppStream Fleet",
+				fmt.Sprintf("Could not start fleet %q after successful update: %v", name, err),
+			)
+			return
+		}
+	}
+
 	newState, diags := r.readFleet(ctx, plan)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
@@ -225,4 +259,122 @@ func (r *resource) Update(ctx context.Context, req tfresource.UpdateRequest, res
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, newState)...)
+}
+
+var ErrUnexpectedFleetState = errors.New("unexpected fleet state")
+
+func (r *resource) ensureStopped(ctx context.Context, name string) error {
+	return util.RetryOn(
+		ctx,
+		func(ctx context.Context) error {
+			out, err := r.appstreamClient.DescribeFleets(ctx, &awsappstream.DescribeFleetsInput{
+				Names: []string{name},
+			})
+			if err != nil {
+				if util.IsAppStreamNotFound(err) {
+					return nil
+				}
+				return err
+			}
+
+			if len(out.Fleets) == 0 {
+				return nil
+			}
+
+			state := out.Fleets[0].State
+
+			switch state {
+			case awstypes.FleetStateRunning:
+				// stoppable state
+				_, err = r.appstreamClient.StopFleet(ctx, &awsappstream.StopFleetInput{
+					Name: aws.String(name),
+				})
+				if err != nil {
+					if util.IsAppStreamNotFound(err) {
+						return nil
+					}
+					return err
+				}
+				// retry as we just stopped the fleet
+				return fmt.Errorf("%w: current=%s", ErrUnexpectedFleetState, state)
+
+			case awstypes.FleetStateStopped:
+				// updatable state
+				return nil
+
+			default:
+				return fmt.Errorf("%w: current=%s", ErrUnexpectedFleetState, state)
+			}
+		},
+		util.WithTimeout(updateRetryTimeout),
+		util.WithInitBackoff(updateRetryInitBackoff),
+		util.WithMaxBackoff(updateRetryMaxBackoff),
+		// see https://docs.aws.amazon.com/appstream2/latest/APIReference/API_DescribeFleets.html
+		// see https://docs.aws.amazon.com/appstream2/latest/APIReference/API_StopFleet.html
+		util.WithRetryOnFns(
+			func(err error) bool {
+				return errors.Is(err, ErrUnexpectedFleetState)
+			},
+			util.IsConcurrentModificationException,
+			util.IsOperationNotPermittedException,
+		),
+	)
+}
+
+func (r *resource) ensureRunning(ctx context.Context, name string) error {
+	return util.RetryOn(
+		ctx,
+		func(ctx context.Context) error {
+			out, err := r.appstreamClient.DescribeFleets(ctx, &awsappstream.DescribeFleetsInput{
+				Names: []string{name},
+			})
+			if err != nil {
+				if util.IsAppStreamNotFound(err) {
+					return nil
+				}
+				return err
+			}
+
+			if len(out.Fleets) == 0 {
+				return nil
+			}
+
+			state := out.Fleets[0].State
+
+			switch state {
+			case awstypes.FleetStateStopped:
+				// startable state
+				_, err = r.appstreamClient.StartFleet(ctx, &awsappstream.StartFleetInput{
+					Name: aws.String(name),
+				})
+				if err != nil {
+					if util.IsAppStreamNotFound(err) {
+						return nil
+					}
+					return err
+				}
+				// retry as we just started the fleet
+				return fmt.Errorf("%w: current=%s", ErrUnexpectedFleetState, state)
+
+			case awstypes.FleetStateRunning:
+				// desired state
+				return nil
+
+			default:
+				return fmt.Errorf("%w: current=%s", ErrUnexpectedFleetState, state)
+			}
+		},
+		util.WithTimeout(updateRetryTimeout),
+		util.WithInitBackoff(updateRetryInitBackoff),
+		util.WithMaxBackoff(updateRetryMaxBackoff),
+		// see https://docs.aws.amazon.com/appstream2/latest/APIReference/API_DescribeFleets.html
+		// see https://docs.aws.amazon.com/appstream2/latest/APIReference/API_StartFleet.html
+		util.WithRetryOnFns(
+			func(err error) bool {
+				return errors.Is(err, ErrUnexpectedFleetState)
+			},
+			util.IsConcurrentModificationException,
+			util.IsOperationNotPermittedException,
+		),
+	)
 }

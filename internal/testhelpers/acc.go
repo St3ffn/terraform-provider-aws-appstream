@@ -21,3 +21,7 @@ func TestAccPreCheck(t *testing.T) {
 		t.Fatal("AWS region not set")
 	}
 }
+
+func IsAccTest() bool {
+	return os.Getenv("TF_ACC") != ""
+}

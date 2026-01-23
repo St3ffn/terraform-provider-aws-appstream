@@ -10,8 +10,8 @@ import (
 
 const (
 	defaultRetryTimeout     = 20 * time.Minute
-	defaultRetryInitBackoff = 1 * time.Second
-	defaultRetryMaxBackoff  = 5 * time.Minute
+	defaultRetryInitBackoff = 5 * time.Second
+	defaultRetryMaxBackoff  = 1 * time.Minute
 )
 
 type RetryOnFn func(error) bool

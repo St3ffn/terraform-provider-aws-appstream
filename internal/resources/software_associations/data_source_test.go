@@ -15,6 +15,10 @@ import (
 )
 
 func getAWSAccountInfo(t *testing.T) (accountID, region string) {
+	if !testhelpers.IsAccTest() {
+		t.Skip("Skipping acceptance test unless TF_ACC is set")
+	}
+
 	t.Helper()
 
 	cfg, err := config.LoadDefaultConfig(context.Background())

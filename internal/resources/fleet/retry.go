@@ -8,5 +8,9 @@ import "time"
 const (
 	createRetryTimeout     = 15 * time.Minute
 	createRetryInitBackoff = 10 * time.Second
-	createRetryMaxBackoff  = 2 * time.Minute
+	createRetryMaxBackoff  = 1 * time.Minute
+
+	updateRetryTimeout     = 45 * time.Minute
+	updateRetryInitBackoff = 30 * time.Second
+	updateRetryMaxBackoff  = 1 * time.Minute
 )
