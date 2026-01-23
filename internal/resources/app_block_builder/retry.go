@@ -13,4 +13,8 @@ const (
 	deleteRetryTimeout     = 45 * time.Minute
 	deleteRetryInitBackoff = 30 * time.Second
 	deleteRetryMaxBackoff  = 1 * time.Minute
+
+	updateRetryTimeout     = 45 * time.Minute
+	updateRetryInitBackoff = 30 * time.Second
+	updateRetryMaxBackoff  = 1 * time.Minute
 )

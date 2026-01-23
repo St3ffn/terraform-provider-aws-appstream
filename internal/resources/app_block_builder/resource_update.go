@@ -5,6 +5,7 @@ package app_block_builder
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -102,6 +103,28 @@ func (r *resource) Update(ctx context.Context, req tfresource.UpdateRequest, res
 		return
 	}
 
+	mode := updateMode(state, plan)
+
+	switch mode {
+	case appBlockBuilderUpdateRequiresStop:
+		err := r.ensureStopped(ctx, name)
+		if err != nil {
+			resp.Diagnostics.AddError(
+				"Error Updating AWS AppStream App Block Builder",
+				fmt.Sprintf("Could not stop app block builder %q for update: %v", name, err),
+			)
+			return
+		}
+	case appBlockBuilderUpdateAllowedRunning:
+		// proceed normally
+	case appBlockBuilderUpdateForbidden:
+		resp.Diagnostics.AddError(
+			"Error Updating AWS AppStream App Block Builder",
+			fmt.Sprintf("Could not update app block builder %q: app block builder cannot be updated in its current state", name),
+		)
+		return
+	}
+
 	out, err := r.appstreamClient.UpdateAppBlockBuilder(ctx, input)
 	if err != nil {
 		if util.IsContextCanceled(err) {
@@ -128,6 +151,17 @@ func (r *resource) Update(ctx context.Context, req tfresource.UpdateRequest, res
 		}
 	}
 
+	if mode == appBlockBuilderUpdateRequiresStop {
+		err = r.ensureRunning(ctx, name)
+		if err != nil {
+			resp.Diagnostics.AddError(
+				"Error Updating AWS AppStream App Block Builder",
+				fmt.Sprintf("Could not start app block builder %q after successful update: %v", name, err),
+			)
+			return
+		}
+	}
+
 	newState, diags := r.readAppBlockBuilder(ctx, plan)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
@@ -143,4 +177,120 @@ func (r *resource) Update(ctx context.Context, req tfresource.UpdateRequest, res
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, newState)...)
+}
+
+func (r *resource) ensureStopped(ctx context.Context, name string) error {
+	return util.RetryOn(
+		ctx,
+		func(ctx context.Context) error {
+			out, err := r.appstreamClient.DescribeAppBlockBuilders(ctx, &awsappstream.DescribeAppBlockBuildersInput{
+				Names: []string{name},
+			})
+			if err != nil {
+				if util.IsAppStreamNotFound(err) {
+					return nil
+				}
+				return err
+			}
+
+			if len(out.AppBlockBuilders) == 0 {
+				return nil
+			}
+
+			state := out.AppBlockBuilders[0].State
+
+			switch state {
+			case awstypes.AppBlockBuilderStateRunning:
+				// stoppable state
+				_, err = r.appstreamClient.StopAppBlockBuilder(ctx, &awsappstream.StopAppBlockBuilderInput{
+					Name: aws.String(name),
+				})
+				if err != nil {
+					if util.IsAppStreamNotFound(err) {
+						return nil
+					}
+					return err
+				}
+				// retry as we just stopped the app block builder
+				return fmt.Errorf("%w: current=%s", ErrUnexpectedAppBlockBuilderState, state)
+
+			case awstypes.AppBlockBuilderStateStopped:
+				// updatable state
+				return nil
+
+			default:
+				return fmt.Errorf("%w: current=%s", ErrUnexpectedAppBlockBuilderState, state)
+			}
+		},
+		util.WithTimeout(updateRetryTimeout),
+		util.WithInitBackoff(updateRetryInitBackoff),
+		util.WithMaxBackoff(updateRetryMaxBackoff),
+		// see https://docs.aws.amazon.com/appstream2/latest/APIReference/API_DescribeAppBlockBuilders.html
+		// see https://docs.aws.amazon.com/appstream2/latest/APIReference/API_StopAppBlockBuilder.html
+		util.WithRetryOnFns(
+			func(err error) bool {
+				return errors.Is(err, ErrUnexpectedAppBlockBuilderState)
+			},
+			util.IsConcurrentModificationException,
+			util.IsOperationNotPermittedException,
+		),
+	)
+}
+
+func (r *resource) ensureRunning(ctx context.Context, name string) error {
+	return util.RetryOn(
+		ctx,
+		func(ctx context.Context) error {
+			out, err := r.appstreamClient.DescribeAppBlockBuilders(ctx, &awsappstream.DescribeAppBlockBuildersInput{
+				Names: []string{name},
+			})
+			if err != nil {
+				if util.IsAppStreamNotFound(err) {
+					return nil
+				}
+				return err
+			}
+
+			if len(out.AppBlockBuilders) == 0 {
+				return nil
+			}
+
+			state := out.AppBlockBuilders[0].State
+
+			switch state {
+			case awstypes.AppBlockBuilderStateStopped:
+				// startable state
+				_, err = r.appstreamClient.StartAppBlockBuilder(ctx, &awsappstream.StartAppBlockBuilderInput{
+					Name: aws.String(name),
+				})
+				if err != nil {
+					if util.IsAppStreamNotFound(err) {
+						return nil
+					}
+					return err
+				}
+				// retry as we just started the app block builder
+				return fmt.Errorf("%w: current=%s", ErrUnexpectedAppBlockBuilderState, state)
+
+			case awstypes.AppBlockBuilderStateRunning:
+				// desired state
+				return nil
+
+			default:
+				return fmt.Errorf("%w: current=%s", ErrUnexpectedAppBlockBuilderState, state)
+			}
+		},
+		util.WithTimeout(updateRetryTimeout),
+		util.WithInitBackoff(updateRetryInitBackoff),
+		util.WithMaxBackoff(updateRetryMaxBackoff),
+		// see https://docs.aws.amazon.com/appstream2/latest/APIReference/API_DescribeAppBlockBuilders.html
+		// see https://docs.aws.amazon.com/appstream2/latest/APIReference/API_StartAppBlockBuilder.html
+		util.WithRetryOnFns(
+			func(err error) bool {
+				return errors.Is(err, ErrUnexpectedAppBlockBuilderState)
+			},
+			util.IsConcurrentModificationException,
+			util.IsOperationNotPermittedException,
+		),
+	)
 }
