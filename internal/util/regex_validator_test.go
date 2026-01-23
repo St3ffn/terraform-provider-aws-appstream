@@ -6,6 +6,8 @@ package util
 import "testing"
 
 func TestValidateRegexPattern(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		name    string
 		pattern string
@@ -45,6 +47,8 @@ func TestValidateRegexPattern(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			err := ValidateRegexPattern(tt.pattern)
 
 			if tt.wantErr && err == nil {

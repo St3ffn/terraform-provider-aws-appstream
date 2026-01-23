@@ -15,6 +15,8 @@ import (
 )
 
 func TestFlattenSourceS3LocationData(t *testing.T) {
+	t.Parallel()
+
 	ctx := context.Background()
 
 	tests := []struct {
@@ -73,6 +75,8 @@ func TestFlattenSourceS3LocationData(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			var diags diag.Diagnostics
 
 			got := flattenSourceS3LocationData(ctx, tt.input, &diags)
@@ -91,6 +95,8 @@ func TestFlattenSourceS3LocationData(t *testing.T) {
 }
 
 func TestFlattenScriptDetailsData(t *testing.T) {
+	t.Parallel()
+
 	ctx := context.Background()
 
 	tests := []struct {
@@ -179,6 +185,8 @@ func TestFlattenScriptDetailsData(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			var diags diag.Diagnostics
 
 			got := flattenScriptDetailsData(ctx, tt.input, &diags)
@@ -197,6 +205,8 @@ func TestFlattenScriptDetailsData(t *testing.T) {
 }
 
 func TestFlattenAppBlockErrorsData(t *testing.T) {
+	t.Parallel()
+
 	ctx := context.Background()
 
 	tests := []struct {
@@ -271,6 +281,8 @@ func TestFlattenAppBlockErrorsData(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			var diags diag.Diagnostics
 
 			got := flattenAppBlockErrorsData(ctx, tt.input, &diags)

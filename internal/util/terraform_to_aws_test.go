@@ -16,6 +16,8 @@ import (
 )
 
 func TestBoolPointerOrNil(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		name  string
 		input types.Bool
@@ -29,6 +31,8 @@ func TestBoolPointerOrNil(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			got := BoolPointerOrNil(tt.input)
 
 			if tt.want == nil {
@@ -46,6 +50,8 @@ func TestBoolPointerOrNil(t *testing.T) {
 }
 
 func TestInt32PointerOrNil(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		name  string
 		input types.Int32
@@ -58,6 +64,8 @@ func TestInt32PointerOrNil(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			got := Int32PointerOrNil(tt.input)
 
 			if tt.want == nil {
@@ -75,6 +83,8 @@ func TestInt32PointerOrNil(t *testing.T) {
 }
 
 func TestStringPointerOrNil(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		name  string
 		input types.String
@@ -87,6 +97,8 @@ func TestStringPointerOrNil(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			got := StringPointerOrNil(tt.input)
 
 			if tt.want == nil {
@@ -104,6 +116,8 @@ func TestStringPointerOrNil(t *testing.T) {
 }
 
 func TestExpandStringSetOrNil(t *testing.T) {
+	t.Parallel()
+
 	ctx := context.Background()
 
 	tests := []struct {
@@ -150,6 +164,8 @@ func TestExpandStringSetOrNil(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			var diags diag.Diagnostics
 
 			got := ExpandStringSetOrNil(ctx, tt.input, &diags)
@@ -166,6 +182,8 @@ func TestExpandStringSetOrNil(t *testing.T) {
 }
 
 func TestOptionalStringUpdate(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		name       string
 		plan       types.String
@@ -210,6 +228,8 @@ func TestOptionalStringUpdate(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			var (
 				called bool
 				got    *string
@@ -245,6 +265,8 @@ func TestOptionalStringUpdate(t *testing.T) {
 }
 
 func TestDiffStringSets(t *testing.T) {
+	t.Parallel()
+
 	ctx := context.Background()
 
 	tests := []struct {
@@ -330,6 +352,8 @@ func TestDiffStringSets(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			var diags diag.Diagnostics
 
 			added, removed := DiffStringSets(ctx, tt.oldSet, tt.newSet, &diags)

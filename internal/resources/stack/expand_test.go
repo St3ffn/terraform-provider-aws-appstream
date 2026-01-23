@@ -17,6 +17,8 @@ import (
 )
 
 func TestExpandStorageConnectors(t *testing.T) {
+	t.Parallel()
+
 	ctx := context.Background()
 
 	tests := []struct {
@@ -92,6 +94,8 @@ func TestExpandStorageConnectors(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			var diags diag.Diagnostics
 
 			got := expandStorageConnectors(ctx, tt.input, &diags)
@@ -111,6 +115,8 @@ func TestExpandStorageConnectors(t *testing.T) {
 }
 
 func TestExpandUserSettings(t *testing.T) {
+	t.Parallel()
+
 	ctx := context.Background()
 
 	tests := []struct {
@@ -186,6 +192,8 @@ func TestExpandUserSettings(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			var diags diag.Diagnostics
 
 			got := expandUserSettings(ctx, tt.input, &diags)
@@ -209,6 +217,8 @@ func TestExpandUserSettings(t *testing.T) {
 }
 
 func TestExpandApplicationSettings(t *testing.T) {
+	t.Parallel()
+
 	ctx := context.Background()
 
 	tests := []struct {
@@ -276,6 +286,8 @@ func TestExpandApplicationSettings(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			var diags diag.Diagnostics
 
 			got := expandApplicationSettings(ctx, tt.input, &diags)
@@ -293,6 +305,8 @@ func TestExpandApplicationSettings(t *testing.T) {
 }
 
 func TestExpandAccessEndpoints(t *testing.T) {
+	t.Parallel()
+
 	ctx := context.Background()
 
 	tests := []struct {
@@ -354,6 +368,8 @@ func TestExpandAccessEndpoints(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			var diags diag.Diagnostics
 
 			got := expandAccessEndpoints(ctx, tt.input, &diags)
@@ -377,6 +393,8 @@ func TestExpandAccessEndpoints(t *testing.T) {
 }
 
 func TestExpandStreamingExperienceSettings(t *testing.T) {
+	t.Parallel()
+
 	ctx := context.Background()
 
 	tests := []struct {
@@ -419,6 +437,8 @@ func TestExpandStreamingExperienceSettings(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			var diags diag.Diagnostics
 
 			got := expandStreamingExperienceSettings(ctx, tt.input, &diags)

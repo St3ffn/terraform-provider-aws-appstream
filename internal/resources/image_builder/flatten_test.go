@@ -16,6 +16,8 @@ import (
 )
 
 func TestFlattenVPCConfig(t *testing.T) {
+	t.Parallel()
+
 	ctx := context.Background()
 
 	tests := []struct {
@@ -52,6 +54,8 @@ func TestFlattenVPCConfig(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			var diags diag.Diagnostics
 
 			got := flattenVPCConfig(ctx, tt.in, &diags)
@@ -68,6 +72,8 @@ func TestFlattenVPCConfig(t *testing.T) {
 }
 
 func TestFlattenDomainJoinInfo(t *testing.T) {
+	t.Parallel()
+
 	ctx := context.Background()
 
 	tests := []struct {
@@ -98,6 +104,8 @@ func TestFlattenDomainJoinInfo(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			var diags diag.Diagnostics
 
 			got := flattenDomainJoinInfo(ctx, tt.in, &diags)
@@ -114,6 +122,8 @@ func TestFlattenDomainJoinInfo(t *testing.T) {
 }
 
 func TestFlattenAccessEndpoints(t *testing.T) {
+	t.Parallel()
+
 	ctx := context.Background()
 
 	tests := []struct {
@@ -151,6 +161,8 @@ func TestFlattenAccessEndpoints(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			var diags diag.Diagnostics
 
 			got := flattenAccessEndpoints(ctx, tt.in, &diags)
@@ -167,6 +179,8 @@ func TestFlattenAccessEndpoints(t *testing.T) {
 }
 
 func TestFlattenRootVolumeConfig(t *testing.T) {
+	t.Parallel()
+
 	ctx := context.Background()
 
 	tests := []struct {
@@ -195,6 +209,8 @@ func TestFlattenRootVolumeConfig(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			var diags diag.Diagnostics
 
 			got := flattenRootVolumeConfig(ctx, tt.in, &diags)
@@ -211,6 +227,8 @@ func TestFlattenRootVolumeConfig(t *testing.T) {
 }
 
 func TestFlattenNetworkAccessConfiguration(t *testing.T) {
+	t.Parallel()
+
 	ctx := context.Background()
 
 	tests := []struct {
@@ -246,6 +264,8 @@ func TestFlattenNetworkAccessConfiguration(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			var diags diag.Diagnostics
 
 			got := flattenNetworkAccessConfiguration(ctx, tt.in, &diags)
@@ -262,6 +282,8 @@ func TestFlattenNetworkAccessConfiguration(t *testing.T) {
 }
 
 func TestFlattenStateChangeReason(t *testing.T) {
+	t.Parallel()
+
 	ctx := context.Background()
 
 	tests := []struct {
@@ -292,6 +314,8 @@ func TestFlattenStateChangeReason(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			var diags diag.Diagnostics
 
 			got := flattenStateChangeReason(ctx, tt.in, &diags)
@@ -308,6 +332,8 @@ func TestFlattenStateChangeReason(t *testing.T) {
 }
 
 func TestFlattenImageBuilderErrors(t *testing.T) {
+	t.Parallel()
+
 	ctx := context.Background()
 	ts := time.Now()
 
@@ -348,6 +374,8 @@ func TestFlattenImageBuilderErrors(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			var diags diag.Diagnostics
 
 			got := flattenImageBuilderErrors(ctx, tt.in, &diags)

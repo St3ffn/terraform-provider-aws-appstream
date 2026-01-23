@@ -15,6 +15,8 @@ import (
 )
 
 func TestFlattenStateOwnedBool(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		name     string
 		prior    types.Bool
@@ -49,6 +51,8 @@ func TestFlattenStateOwnedBool(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			got := FlattenStateOwnedBool(tt.prior, tt.awsValue)
 			require.True(t, got.Equal(tt.want), "got %v, want %v", got, tt.want)
 		})
@@ -56,6 +60,8 @@ func TestFlattenStateOwnedBool(t *testing.T) {
 }
 
 func TestFlattenStateOwnedInt32(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		name     string
 		prior    types.Int32
@@ -90,6 +96,8 @@ func TestFlattenStateOwnedInt32(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			got := FlattenStateOwnedInt32(tt.prior, tt.awsValue)
 			require.True(t, got.Equal(tt.want), "got %v, want %v", got, tt.want)
 		})
@@ -97,6 +105,8 @@ func TestFlattenStateOwnedInt32(t *testing.T) {
 }
 
 func TestFlattenStateOwnedString(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		name     string
 		prior    types.String
@@ -131,6 +141,8 @@ func TestFlattenStateOwnedString(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			got := FlattenStateOwnedString(tt.prior, tt.awsValue)
 			require.True(t, got.Equal(tt.want), "got %v, want %v", got, tt.want)
 		})
@@ -138,6 +150,8 @@ func TestFlattenStateOwnedString(t *testing.T) {
 }
 
 func TestFlattenStateOwnedStringSet(t *testing.T) {
+	t.Parallel()
+
 	ctx := context.Background()
 
 	tests := []struct {
@@ -195,6 +209,8 @@ func TestFlattenStateOwnedStringSet(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			var diags diag.Diagnostics
 
 			got := FlattenStateOwnedStringSet(ctx, tt.prior, tt.awsValues, &diags)

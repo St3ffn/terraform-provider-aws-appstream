@@ -14,6 +14,8 @@ import (
 )
 
 func TestFlattenAssociations(t *testing.T) {
+	t.Parallel()
+
 	ctx := context.Background()
 
 	tests := []struct {
@@ -81,6 +83,8 @@ func TestFlattenAssociations(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			var diags diag.Diagnostics
 
 			out := flattenAssociations(ctx, tt.in, &diags)

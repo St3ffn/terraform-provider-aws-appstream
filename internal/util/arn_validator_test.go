@@ -15,6 +15,8 @@ import (
 )
 
 func TestARNValidator_Constructors(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		name      string
 		validator validator.String
@@ -73,6 +75,8 @@ func TestARNValidator_Constructors(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			req := validator.StringRequest{
 				Path:        path.Root("test"),
 				ConfigValue: tt.value,

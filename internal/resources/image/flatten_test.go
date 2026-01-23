@@ -16,6 +16,8 @@ import (
 )
 
 func TestFlattenStateChangeReason(t *testing.T) {
+	t.Parallel()
+
 	ctx := context.Background()
 
 	tests := []struct {
@@ -60,6 +62,8 @@ func TestFlattenStateChangeReason(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			var diags diag.Diagnostics
 
 			got := flattenStateChangeReason(ctx, tt.input, &diags)
@@ -76,6 +80,8 @@ func TestFlattenStateChangeReason(t *testing.T) {
 }
 
 func TestFlattenApplications(t *testing.T) {
+	t.Parallel()
+
 	ctx := context.Background()
 
 	ts := time.Date(2024, 1, 1, 0, 0, 0, 0, time.UTC)
@@ -141,6 +147,8 @@ func TestFlattenApplications(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			var diags diag.Diagnostics
 
 			got := flattenApplications(ctx, tt.input, &diags)
@@ -157,6 +165,8 @@ func TestFlattenApplications(t *testing.T) {
 }
 
 func TestFlattenIconS3Location(t *testing.T) {
+	t.Parallel()
+
 	ctx := context.Background()
 
 	tests := []struct {
@@ -215,6 +225,8 @@ func TestFlattenIconS3Location(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			var diags diag.Diagnostics
 
 			got := flattenIconS3Location(ctx, tt.input, &diags)
@@ -231,6 +243,8 @@ func TestFlattenIconS3Location(t *testing.T) {
 }
 
 func TestFlattenImagePermissions(t *testing.T) {
+	t.Parallel()
+
 	ctx := context.Background()
 
 	tests := []struct {
@@ -275,6 +289,8 @@ func TestFlattenImagePermissions(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			var diags diag.Diagnostics
 
 			got := flattenImagePermissions(ctx, tt.input, &diags)
@@ -291,6 +307,8 @@ func TestFlattenImagePermissions(t *testing.T) {
 }
 
 func TestFlattenImageErrors(t *testing.T) {
+	t.Parallel()
+
 	ctx := context.Background()
 
 	ts := time.Date(2024, 1, 2, 3, 4, 5, 0, time.UTC)
@@ -337,6 +355,8 @@ func TestFlattenImageErrors(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			var diags diag.Diagnostics
 
 			got := flattenImageErrors(ctx, tt.input, &diags)

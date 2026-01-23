@@ -16,6 +16,8 @@ import (
 )
 
 func TestExpandVPCConfig(t *testing.T) {
+	t.Parallel()
+
 	ctx := context.Background()
 
 	tests := []struct {
@@ -74,6 +76,8 @@ func TestExpandVPCConfig(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			var diags diag.Diagnostics
 
 			got := expandVPCConfig(ctx, tt.obj, &diags)
@@ -90,6 +94,8 @@ func TestExpandVPCConfig(t *testing.T) {
 }
 
 func TestExpandDomainJoinInfo(t *testing.T) {
+	t.Parallel()
+
 	ctx := context.Background()
 
 	obj := types.ObjectValueMust(
@@ -121,6 +127,8 @@ func TestExpandDomainJoinInfo(t *testing.T) {
 }
 
 func TestExpandAccessEndpoints(t *testing.T) {
+	t.Parallel()
+
 	ctx := context.Background()
 
 	tests := []struct {
@@ -166,6 +174,8 @@ func TestExpandAccessEndpoints(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			var diags diag.Diagnostics
 
 			got := expandAccessEndpoints(ctx, tt.set, &diags)
@@ -182,6 +192,8 @@ func TestExpandAccessEndpoints(t *testing.T) {
 }
 
 func TestExpandRootVolumeConfig(t *testing.T) {
+	t.Parallel()
+
 	ctx := context.Background()
 
 	tests := []struct {
@@ -215,6 +227,8 @@ func TestExpandRootVolumeConfig(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			var diags diag.Diagnostics
 
 			got := expandRootVolumeConfig(ctx, tt.obj, &diags)

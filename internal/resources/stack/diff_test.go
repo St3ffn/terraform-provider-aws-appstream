@@ -36,6 +36,8 @@ func storageConnectorSet(ctx context.Context, t *testing.T, models []storageConn
 }
 
 func TestStorageConnectorAttributesToDelete(t *testing.T) {
+	t.Parallel()
+
 	ctx := context.Background()
 
 	tests := []struct {
@@ -100,6 +102,8 @@ func TestStorageConnectorAttributesToDelete(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			var diags diag.Diagnostics
 
 			priorSet := storageConnectorSet(ctx, t, tt.prior)
@@ -115,6 +119,8 @@ func TestStorageConnectorAttributesToDelete(t *testing.T) {
 }
 
 func TestStorageConnectorDeleteAttribute(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		name      string
 		input     awstypes.StorageConnectorType
@@ -148,6 +154,8 @@ func TestStorageConnectorDeleteAttribute(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			attr, found := storageConnectorDeleteAttribute(tt.input)
 
 			require.Equal(t, tt.wantFound, found, "unexpected found flag for connector type %q", tt.input)

@@ -10,6 +10,8 @@ import (
 )
 
 func TestBuildID(t *testing.T) {
+	t.Parallel()
+
 	require.Equal(
 		t,
 		"stack1|USERPOOL|user@example.com",
@@ -68,6 +70,8 @@ func TestParseID(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			stack, auth, user, err := parseID(tt.id)
 
 			if tt.wantErr {

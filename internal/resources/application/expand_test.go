@@ -16,6 +16,8 @@ import (
 )
 
 func TestExpandIconS3Location(t *testing.T) {
+	t.Parallel()
+
 	ctx := context.Background()
 
 	tests := []struct {
@@ -81,6 +83,8 @@ func TestExpandIconS3Location(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			var diags diag.Diagnostics
 
 			got := expandIconS3Location(ctx, tt.input, &diags)
@@ -104,6 +108,8 @@ func TestExpandIconS3Location(t *testing.T) {
 }
 
 func TestExpandPlatforms(t *testing.T) {
+	t.Parallel()
+
 	ctx := context.Background()
 
 	tests := []struct {
@@ -155,6 +161,8 @@ func TestExpandPlatforms(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			var diags diag.Diagnostics
 
 			got := expandPlatforms(ctx, tt.input, &diags)

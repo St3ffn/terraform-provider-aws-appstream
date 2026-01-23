@@ -15,6 +15,8 @@ import (
 )
 
 func TestFlattenScriptDetailsResource(t *testing.T) {
+	t.Parallel()
+
 	ctx := context.Background()
 
 	fullAWS := &awstypes.ScriptDetails{
@@ -84,6 +86,8 @@ func TestFlattenScriptDetailsResource(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			var diags diag.Diagnostics
 
 			got := flattenScriptDetailsResource(ctx, tt.prior, tt.aws, &diags)

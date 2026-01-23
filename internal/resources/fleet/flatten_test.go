@@ -15,6 +15,8 @@ import (
 )
 
 func TestFlattenComputeCapacity(t *testing.T) {
+	t.Parallel()
+
 	ctx := context.Background()
 
 	tests := []struct {
@@ -50,6 +52,8 @@ func TestFlattenComputeCapacity(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			var diags diag.Diagnostics
 
 			got := flattenComputeCapacity(ctx, tt.in, &diags)
@@ -66,6 +70,8 @@ func TestFlattenComputeCapacity(t *testing.T) {
 }
 
 func TestFlattenVPCConfig(t *testing.T) {
+	t.Parallel()
+
 	ctx := context.Background()
 
 	tests := []struct {
@@ -102,6 +108,8 @@ func TestFlattenVPCConfig(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			var diags diag.Diagnostics
 
 			got := flattenVPCConfig(ctx, tt.in, &diags)
@@ -118,6 +126,8 @@ func TestFlattenVPCConfig(t *testing.T) {
 }
 
 func TestFlattenDomainJoinInfo(t *testing.T) {
+	t.Parallel()
+
 	ctx := context.Background()
 
 	tests := []struct {
@@ -148,6 +158,8 @@ func TestFlattenDomainJoinInfo(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			var diags diag.Diagnostics
 
 			got := flattenDomainJoinInfo(ctx, tt.in, &diags)
@@ -164,6 +176,8 @@ func TestFlattenDomainJoinInfo(t *testing.T) {
 }
 
 func TestFlattenSessionScriptS3Location(t *testing.T) {
+	t.Parallel()
+
 	ctx := context.Background()
 
 	tests := []struct {
@@ -194,6 +208,8 @@ func TestFlattenSessionScriptS3Location(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			var diags diag.Diagnostics
 
 			got := flattenSessionScriptS3Location(ctx, tt.in, &diags)
@@ -210,6 +226,8 @@ func TestFlattenSessionScriptS3Location(t *testing.T) {
 }
 
 func TestFlattenRootVolumeConfig(t *testing.T) {
+	t.Parallel()
+
 	ctx := context.Background()
 
 	tests := []struct {
@@ -238,6 +256,8 @@ func TestFlattenRootVolumeConfig(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			var diags diag.Diagnostics
 
 			got := flattenRootVolumeConfig(ctx, tt.in, &diags)
@@ -254,6 +274,8 @@ func TestFlattenRootVolumeConfig(t *testing.T) {
 }
 
 func TestFlattenFleetErrors(t *testing.T) {
+	t.Parallel()
+
 	ctx := context.Background()
 
 	tests := []struct {
@@ -291,6 +313,8 @@ func TestFlattenFleetErrors(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			var diags diag.Diagnostics
 
 			got := flattenFleetErrors(ctx, tt.in, &diags)

@@ -156,6 +156,8 @@ func (f *FakeTaggingAPI) UntagResourcesFails(err error) *FakeTaggingAPI {
 }
 
 func TestTagManager_Read(t *testing.T) {
+	t.Parallel()
+
 	ctx := context.Background()
 
 	tests := []struct {
@@ -233,6 +235,8 @@ func TestTagManager_Read(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			fake := NewFakeTaggingAPI()
 			tt.setupClient(fake)
 
@@ -260,6 +264,8 @@ func TestTagManager_Read(t *testing.T) {
 	}
 }
 func TestTagManager_Apply(t *testing.T) {
+	t.Parallel()
+
 	ctx := context.Background()
 	arn := "arn:aws:appstream:eu-central-1:123456789012:stack/test"
 
@@ -430,6 +436,8 @@ func TestTagManager_Apply(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			fake := NewFakeTaggingAPI()
 			if tt.setupClient != nil {
 				tt.setupClient(fake)
@@ -465,6 +473,8 @@ func TestTagManager_Apply(t *testing.T) {
 }
 
 func TestFlattenTags(t *testing.T) {
+	t.Parallel()
+
 	ctx := context.Background()
 
 	tests := []struct {
@@ -513,6 +523,8 @@ func TestFlattenTags(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			var diags diag.Diagnostics
 
 			got := flattenTags(ctx, tt.input, &diags)
@@ -537,6 +549,8 @@ func TestFlattenTags(t *testing.T) {
 }
 
 func TestExpandTags(t *testing.T) {
+	t.Parallel()
+
 	ctx := context.Background()
 
 	tests := []struct {
@@ -585,6 +599,8 @@ func TestExpandTags(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			var diags diag.Diagnostics
 
 			got := expandTags(ctx, tt.input, &diags)
@@ -606,6 +622,8 @@ func TestExpandTags(t *testing.T) {
 }
 
 func TestMergeTags(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		name         string
 		defaultTags  map[string]string
@@ -667,6 +685,8 @@ func TestMergeTags(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			got := mergeTags(tt.defaultTags, tt.resourceTags)
 
 			require.Equal(t, tt.want, got)
@@ -675,6 +695,8 @@ func TestMergeTags(t *testing.T) {
 }
 
 func TestDiffTags(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		name          string
 		current       map[string]string
@@ -742,6 +764,8 @@ func TestDiffTags(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			remove, addUpdate := diffTags(tt.current, tt.desired)
 
 			assert.ElementsMatch(t, tt.wantRemove, remove, "unexpected tags to remove")

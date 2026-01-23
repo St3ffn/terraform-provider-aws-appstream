@@ -17,6 +17,8 @@ import (
 )
 
 func TestFlattenAppBlockErrorsData(t *testing.T) {
+	t.Parallel()
+
 	ctx := context.Background()
 
 	tests := []struct {
@@ -91,6 +93,8 @@ func TestFlattenAppBlockErrorsData(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			var diags diag.Diagnostics
 
 			got := flattenErrorDetailsData(ctx, tt.input, &diags)
@@ -109,6 +113,8 @@ func TestFlattenAppBlockErrorsData(t *testing.T) {
 }
 
 func TestFlattenExportImageTasksData(t *testing.T) {
+	t.Parallel()
+
 	ctx := context.Background()
 	now := time.Now()
 
@@ -143,6 +149,8 @@ func TestFlattenExportImageTasksData(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			var diags diag.Diagnostics
 
 			out := flattenExportImageTasksData(ctx, tt.aws, &diags)

@@ -10,6 +10,8 @@ import (
 )
 
 func TestBuildID(t *testing.T) {
+	t.Parallel()
+
 	require.Equal(t,
 		"fleet1|arn:aws:appstream:eu-west-1:123456789012:application/test-app",
 		buildID("fleet1", "arn:aws:appstream:eu-west-1:123456789012:application/test-app"),
@@ -17,6 +19,8 @@ func TestBuildID(t *testing.T) {
 }
 
 func TestParseID(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		name            string
 		id              string
@@ -55,6 +59,8 @@ func TestParseID(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			fleet, application, err := parseID(tt.id)
 
 			if tt.wantErr {

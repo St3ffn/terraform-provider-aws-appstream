@@ -12,6 +12,8 @@ import (
 )
 
 func TestErrorPredicates(t *testing.T) {
+	t.Parallel()
+
 	type testCase struct {
 		name string
 		err  error
@@ -198,6 +200,8 @@ func TestErrorPredicates(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			got := tt.fn(tt.err)
 			require.Equal(t, tt.want, got)
 		})
@@ -222,5 +226,7 @@ func (testEnum) Values() []testEnum {
 }
 
 func TestAWSEnumToSlice(t *testing.T) {
+	t.Parallel()
+
 	require.ElementsMatch(t, []string{"A", "B", "C"}, AWSEnumToSlice(testEnum.Values))
 }

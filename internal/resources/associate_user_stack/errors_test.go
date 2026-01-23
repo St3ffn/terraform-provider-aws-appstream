@@ -13,6 +13,8 @@ import (
 )
 
 func TestNewUserStackAssociationNotReadyError(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		name       string
 		input      awstypes.UserStackAssociationError
@@ -40,6 +42,8 @@ func TestNewUserStackAssociationNotReadyError(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			err := newUserStackAssociationNotReadyError(tt.input)
 
 			if tt.wantNil {
@@ -55,6 +59,8 @@ func TestNewUserStackAssociationNotReadyError(t *testing.T) {
 }
 
 func TestIsUserStackAssociationNotReadyError(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		name string
 		err  error
@@ -84,6 +90,8 @@ func TestIsUserStackAssociationNotReadyError(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			got := isUserStackAssociationNotReadyError(tt.err)
 			require.Equal(t, tt.want, got)
 		})

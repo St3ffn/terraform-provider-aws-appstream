@@ -12,6 +12,8 @@ import (
 )
 
 func TestIsContextCanceled(t *testing.T) {
+	t.Parallel()
+
 	type testCase struct {
 		name string
 		err  error
@@ -38,6 +40,8 @@ func TestIsContextCanceled(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			got := IsContextCanceled(tt.err)
 			require.Equal(t, tt.want, got)
 		})

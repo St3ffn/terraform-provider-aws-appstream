@@ -12,6 +12,8 @@ import (
 )
 
 func TestChanged_string(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		name   string
 		state  types.String
@@ -28,12 +30,16 @@ func TestChanged_string(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			require.Equal(t, tt.expect, Changed(tt.state, tt.plan))
 		})
 	}
 }
 
 func TestChanged_bool(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		name   string
 		state  types.Bool
@@ -50,12 +56,16 @@ func TestChanged_bool(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			require.Equal(t, tt.expect, Changed(tt.state, tt.plan))
 		})
 	}
 }
 
 func TestChanged_int32(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		name   string
 		state  types.Int32
@@ -72,12 +82,16 @@ func TestChanged_int32(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			require.Equal(t, tt.expect, Changed(tt.state, tt.plan))
 		})
 	}
 }
 
 func TestChanged_set(t *testing.T) {
+	t.Parallel()
+
 	objectType := types.ObjectType{
 		AttrTypes: map[string]attr.Type{
 			"id":   types.StringType,
@@ -171,6 +185,8 @@ func TestChanged_set(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			changed := Changed(tt.state, tt.plan)
 			require.Equal(t, tt.expect, changed)
 		})
@@ -178,6 +194,8 @@ func TestChanged_set(t *testing.T) {
 }
 
 func TestChanged_object(t *testing.T) {
+	t.Parallel()
+
 	attrTypes := map[string]attr.Type{
 		"foo": types.StringType,
 	}
@@ -236,6 +254,8 @@ func TestChanged_object(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			changed := Changed(tt.state, tt.plan)
 			require.Equal(t, tt.expect, changed)
 		})

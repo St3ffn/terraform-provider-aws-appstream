@@ -15,6 +15,8 @@ import (
 )
 
 func TestBoolOrNull(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		name  string
 		input *bool
@@ -27,6 +29,8 @@ func TestBoolOrNull(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			got := BoolOrNull(tt.input)
 
 			if !got.Equal(tt.want) {
@@ -37,6 +41,8 @@ func TestBoolOrNull(t *testing.T) {
 }
 
 func TestInt32OrNull(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		name  string
 		input *int32
@@ -49,6 +55,8 @@ func TestInt32OrNull(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			got := Int32OrNull(tt.input)
 
 			if !got.Equal(tt.want) {
@@ -59,6 +67,8 @@ func TestInt32OrNull(t *testing.T) {
 }
 
 func TestStringOrNull(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		name  string
 		input *string
@@ -71,6 +81,8 @@ func TestStringOrNull(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			got := StringOrNull(tt.input)
 
 			if !got.Equal(tt.want) {
@@ -81,6 +93,8 @@ func TestStringOrNull(t *testing.T) {
 }
 
 func TestStringFromTime(t *testing.T) {
+	t.Parallel()
+
 	t1 := time.Date(2024, 1, 2, 3, 4, 5, 0, time.UTC)
 
 	tests := []struct {
@@ -94,6 +108,8 @@ func TestStringFromTime(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			got := StringFromTime(tt.input)
 
 			if !got.Equal(tt.want) {
@@ -104,6 +120,8 @@ func TestStringFromTime(t *testing.T) {
 }
 
 func TestSetStringOrNull(t *testing.T) {
+	t.Parallel()
+
 	ctx := context.Background()
 
 	tests := []struct {
@@ -144,6 +162,8 @@ func TestSetStringOrNull(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			var diags diag.Diagnostics
 
 			got := SetStringOrNull(ctx, tt.input, &diags)
@@ -160,6 +180,8 @@ func TestSetStringOrNull(t *testing.T) {
 }
 
 func TestSetEnumStringOrNull(t *testing.T) {
+	t.Parallel()
+
 	ctx := context.Background()
 
 	type testEnum string
@@ -209,6 +231,8 @@ func TestSetEnumStringOrNull(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			var diags diag.Diagnostics
 
 			got := SetEnumStringOrNull(ctx, tt.input, &diags)
@@ -230,6 +254,8 @@ func TestSetEnumStringOrNull(t *testing.T) {
 }
 
 func TestMapStringOrNull(t *testing.T) {
+	t.Parallel()
+
 	ctx := context.Background()
 
 	tests := []struct {
@@ -277,6 +303,8 @@ func TestMapStringOrNull(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			var diags diag.Diagnostics
 
 			got := MapStringOrNull(ctx, tt.input, &diags)

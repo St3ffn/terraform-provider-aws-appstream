@@ -16,6 +16,8 @@ import (
 )
 
 func TestExpandSourceS3Location(t *testing.T) {
+	t.Parallel()
+
 	ctx := context.Background()
 
 	tests := []struct {
@@ -98,6 +100,8 @@ func TestExpandSourceS3Location(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			var diags diag.Diagnostics
 
 			got := expandSourceS3Location(ctx, tt.input, &diags)
@@ -121,6 +125,8 @@ func TestExpandSourceS3Location(t *testing.T) {
 }
 
 func TestExpandScriptDetails(t *testing.T) {
+	t.Parallel()
+
 	ctx := context.Background()
 
 	tests := []struct {
@@ -210,6 +216,8 @@ func TestExpandScriptDetails(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			var diags diag.Diagnostics
 
 			got := expandScriptDetails(ctx, tt.input, &diags)

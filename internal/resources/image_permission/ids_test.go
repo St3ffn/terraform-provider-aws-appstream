@@ -10,10 +10,14 @@ import (
 )
 
 func TestBuildID(t *testing.T) {
+	t.Parallel()
+
 	require.Equal(t, "test-image|123456789012", buildID("test-image", "123456789012"))
 }
 
 func TestParseID(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		name                string
 		id                  string
@@ -52,6 +56,8 @@ func TestParseID(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			name, sharedAccountID, err := parseID(tt.id)
 
 			if tt.wantErr {

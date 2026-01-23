@@ -16,6 +16,8 @@ import (
 )
 
 func TestFlattenStorageConnectorsData(t *testing.T) {
+	t.Parallel()
+
 	ctx := context.Background()
 
 	tests := []struct {
@@ -107,6 +109,8 @@ func TestFlattenStorageConnectorsData(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			var diags diag.Diagnostics
 
 			got := flattenStorageConnectorsData(ctx, tt.input, &diags)
@@ -124,6 +128,8 @@ func TestFlattenStorageConnectorsData(t *testing.T) {
 }
 
 func TestFlattenUserSettingsData(t *testing.T) {
+	t.Parallel()
+
 	ctx := context.Background()
 
 	tests := []struct {
@@ -221,6 +227,8 @@ func TestFlattenUserSettingsData(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			var diags diag.Diagnostics
 
 			got := flattenUserSettingsData(ctx, tt.input, &diags)
@@ -238,6 +246,8 @@ func TestFlattenUserSettingsData(t *testing.T) {
 }
 
 func TestFlattenApplicationSettingsData(t *testing.T) {
+	t.Parallel()
+
 	ctx := context.Background()
 
 	tests := []struct {
@@ -300,6 +310,8 @@ func TestFlattenApplicationSettingsData(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			var diags diag.Diagnostics
 
 			got := flattenApplicationSettingsData(ctx, tt.input, &diags)
@@ -320,6 +332,8 @@ func TestFlattenApplicationSettingsData(t *testing.T) {
 }
 
 func TestFlattenAccessEndpointsData(t *testing.T) {
+	t.Parallel()
+
 	ctx := context.Background()
 
 	tests := []struct {
@@ -409,6 +423,8 @@ func TestFlattenAccessEndpointsData(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			var diags diag.Diagnostics
 
 			got := flattenAccessEndpointsData(ctx, tt.input, &diags)
@@ -424,6 +440,8 @@ func TestFlattenAccessEndpointsData(t *testing.T) {
 }
 
 func TestFlattenStreamingExperienceSettingsData(t *testing.T) {
+	t.Parallel()
+
 	ctx := context.Background()
 
 	tests := []struct {
@@ -452,6 +470,8 @@ func TestFlattenStreamingExperienceSettingsData(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			var diags diag.Diagnostics
 
 			got := flattenStreamingExperienceSettingsData(ctx, tt.input, &diags)
@@ -467,6 +487,8 @@ func TestFlattenStreamingExperienceSettingsData(t *testing.T) {
 }
 
 func TestFlattenStackErrorsData(t *testing.T) {
+	t.Parallel()
+
 	ctx := context.Background()
 
 	tests := []struct {
@@ -504,6 +526,8 @@ func TestFlattenStackErrorsData(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			var diags diag.Diagnostics
 
 			got := flattenStackErrorsData(ctx, tt.in, &diags)

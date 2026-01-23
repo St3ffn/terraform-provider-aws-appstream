@@ -17,6 +17,8 @@ import (
 )
 
 func TestFlattenServiceAccountCredentialsResource(t *testing.T) {
+	t.Parallel()
+
 	ctx := context.Background()
 
 	tests := []struct {
@@ -68,6 +70,8 @@ func TestFlattenServiceAccountCredentialsResource(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			var diags diag.Diagnostics
 
 			out := flattenServiceAccountCredentialsResource(ctx, tt.prior, tt.aws, &diags)
@@ -91,6 +95,8 @@ func TestFlattenServiceAccountCredentialsResource(t *testing.T) {
 }
 
 func TestFlattenCertificateBasedAuthPropertiesResource(t *testing.T) {
+	t.Parallel()
+
 	ctx := context.Background()
 
 	tests := []struct {
@@ -139,6 +145,8 @@ func TestFlattenCertificateBasedAuthPropertiesResource(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			var diags diag.Diagnostics
 
 			out := flattenCertificateBasedAuthPropertiesResource(ctx, tt.prior, tt.aws, &diags)

@@ -15,6 +15,8 @@ import (
 )
 
 func TestFlattenS3Location(t *testing.T) {
+	t.Parallel()
+
 	ctx := context.Background()
 
 	tests := []struct {
@@ -59,6 +61,8 @@ func TestFlattenS3Location(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			var diags diag.Diagnostics
 
 			got := flattenS3Location(ctx, tt.in, &diags)
@@ -75,6 +79,8 @@ func TestFlattenS3Location(t *testing.T) {
 }
 
 func TestFlattenFooterLinks(t *testing.T) {
+	t.Parallel()
+
 	ctx := context.Background()
 
 	tests := []struct {
@@ -138,6 +144,8 @@ func TestFlattenFooterLinks(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			var diags diag.Diagnostics
 
 			got := flattenFooterLinks(ctx, tt.in, &diags)

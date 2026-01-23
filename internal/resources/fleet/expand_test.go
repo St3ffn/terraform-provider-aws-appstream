@@ -16,6 +16,8 @@ import (
 )
 
 func TestExpandComputeCapacity(t *testing.T) {
+	t.Parallel()
+
 	ctx := context.Background()
 
 	tests := []struct {
@@ -65,6 +67,8 @@ func TestExpandComputeCapacity(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			var diags diag.Diagnostics
 
 			got := expandComputeCapacity(ctx, tt.obj, &diags)
@@ -81,6 +85,8 @@ func TestExpandComputeCapacity(t *testing.T) {
 }
 
 func TestExpandVPCConfig(t *testing.T) {
+	t.Parallel()
+
 	ctx := context.Background()
 
 	obj := types.ObjectValueMust(
@@ -118,6 +124,8 @@ func TestExpandVPCConfig(t *testing.T) {
 }
 
 func TestExpandDomainJoinInfo(t *testing.T) {
+	t.Parallel()
+
 	ctx := context.Background()
 
 	obj := types.ObjectValueMust(
@@ -145,6 +153,8 @@ func TestExpandDomainJoinInfo(t *testing.T) {
 }
 
 func TestExpandSessionScriptS3Location(t *testing.T) {
+	t.Parallel()
+
 	ctx := context.Background()
 
 	obj := types.ObjectValueMust(
@@ -172,6 +182,8 @@ func TestExpandSessionScriptS3Location(t *testing.T) {
 }
 
 func TestExpandRootVolumeConfig(t *testing.T) {
+	t.Parallel()
+
 	ctx := context.Background()
 
 	tests := []struct {
@@ -205,6 +217,8 @@ func TestExpandRootVolumeConfig(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			var diags diag.Diagnostics
 
 			got := expandRootVolumeConfig(ctx, tt.obj, &diags)

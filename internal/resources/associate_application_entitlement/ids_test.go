@@ -10,6 +10,8 @@ import (
 )
 
 func TestBuildID(t *testing.T) {
+	t.Parallel()
+
 	require.Equal(t,
 		"stack1|entitlement1|app1",
 		buildID("stack1", "entitlement1", "app1"),
@@ -17,6 +19,8 @@ func TestBuildID(t *testing.T) {
 }
 
 func TestParseID(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		name            string
 		id              string
@@ -67,6 +71,8 @@ func TestParseID(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			stack, entitlement, appID, err := parseID(tt.id)
 
 			if tt.wantErr {

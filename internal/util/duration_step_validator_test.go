@@ -15,6 +15,8 @@ import (
 )
 
 func TestDurationStepValidator_ValidateInt32(t *testing.T) {
+	t.Parallel()
+
 	ctx := context.Background()
 
 	v := DurationWithStep(
@@ -90,6 +92,8 @@ func TestDurationStepValidator_ValidateInt32(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+
 			req := validator.Int32Request{
 				ConfigValue: tc.value,
 				Path:        path.Root("idle_disconnect_timeout_in_seconds"),

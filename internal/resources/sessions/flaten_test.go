@@ -16,6 +16,8 @@ import (
 )
 
 func TestFlattenSessions(t *testing.T) {
+	t.Parallel()
+
 	ctx := context.Background()
 
 	startTime := time.Date(2024, 1, 1, 10, 0, 0, 0, time.UTC)
@@ -125,6 +127,8 @@ func TestFlattenSessions(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			var diags diag.Diagnostics
 
 			got := flattenSessions(ctx, tt.in, &diags)
@@ -141,6 +145,8 @@ func TestFlattenSessions(t *testing.T) {
 }
 
 func TestFlattenNetworkAccessConfiguration(t *testing.T) {
+	t.Parallel()
+
 	ctx := context.Background()
 
 	tests := []struct {
@@ -178,6 +184,8 @@ func TestFlattenNetworkAccessConfiguration(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			var diags diag.Diagnostics
 
 			got := flattenNetworkAccessConfiguration(ctx, tt.in, &diags)

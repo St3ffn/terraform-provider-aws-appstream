@@ -16,6 +16,8 @@ import (
 )
 
 func TestExpandEntitlementAttributes(t *testing.T) {
+	t.Parallel()
+
 	ctx := context.Background()
 
 	validSet := types.SetValueMust(
@@ -102,6 +104,8 @@ func TestExpandEntitlementAttributes(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			var diags diag.Diagnostics
 
 			got := expandEntitlementAttributes(ctx, tt.input, &diags)

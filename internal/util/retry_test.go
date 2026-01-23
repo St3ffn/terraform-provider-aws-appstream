@@ -11,6 +11,8 @@ import (
 )
 
 func TestDefaultRetryConfig(t *testing.T) {
+	t.Parallel()
+
 	cfg := defaultRetryConfig()
 
 	if cfg.timeout != defaultRetryTimeout {
@@ -31,6 +33,8 @@ func TestDefaultRetryConfig(t *testing.T) {
 }
 
 func TestRetryOn_SuccessFirstTry(t *testing.T) {
+	t.Parallel()
+
 	ctx := context.Background()
 
 	calls := 0
@@ -49,6 +53,8 @@ func TestRetryOn_SuccessFirstTry(t *testing.T) {
 }
 
 func TestRetryOn_RetryThenSuccess(t *testing.T) {
+	t.Parallel()
+
 	ctx := context.Background()
 
 	calls := 0
@@ -80,6 +86,8 @@ func TestRetryOn_RetryThenSuccess(t *testing.T) {
 }
 
 func TestRetryOn_NonRetryableError(t *testing.T) {
+	t.Parallel()
+
 	ctx := context.Background()
 
 	calls := 0
@@ -104,6 +112,8 @@ func TestRetryOn_NonRetryableError(t *testing.T) {
 }
 
 func TestRetryOn_ContextTimeout(t *testing.T) {
+	t.Parallel()
+
 	ctx := context.Background()
 
 	lastErr := errors.New("last_error")

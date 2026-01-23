@@ -17,6 +17,8 @@ import (
 )
 
 func TestFlattenStorageConnectorsResource(t *testing.T) {
+	t.Parallel()
+
 	ctx := context.Background()
 
 	tests := []struct {
@@ -74,6 +76,8 @@ func TestFlattenStorageConnectorsResource(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			var diags diag.Diagnostics
 
 			out := flattenStorageConnectorsResource(ctx, tt.prior, tt.aws, &diags)
@@ -101,6 +105,8 @@ func TestFlattenStorageConnectorsResource(t *testing.T) {
 }
 
 func TestFlattenUserSettingsResource_basic_mapping(t *testing.T) {
+	t.Parallel()
+
 	ctx := context.Background()
 
 	prior := mustSet(t, userSettingObjectType, []userSettingModel{
@@ -133,6 +139,8 @@ func TestFlattenUserSettingsResource_basic_mapping(t *testing.T) {
 }
 
 func TestFlattenApplicationSettingsResource_computed_bucket_preserved(t *testing.T) {
+	t.Parallel()
+
 	ctx := context.Background()
 
 	prior := mustObject(t, applicationSettingsObjectType.AttrTypes, applicationSettingsModel{
@@ -161,6 +169,8 @@ func TestFlattenApplicationSettingsResource_computed_bucket_preserved(t *testing
 }
 
 func TestFlattenAccessEndpointsResource_basic_mapping(t *testing.T) {
+	t.Parallel()
+
 	ctx := context.Background()
 
 	prior := mustSet(t, accessEndpointObjectType, []accessEndpointModel{
@@ -191,6 +201,8 @@ func TestFlattenAccessEndpointsResource_basic_mapping(t *testing.T) {
 }
 
 func TestFlattenStreamingExperienceSettingsResource_preferred_protocol_from_aws(t *testing.T) {
+	t.Parallel()
+
 	ctx := context.Background()
 
 	prior := mustObject(
