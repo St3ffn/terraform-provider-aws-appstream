@@ -171,3 +171,14 @@ This provider uses a **layered retry approach**:
 
 This ensures Terraform operations converge reliably without requiring
 manual sleeps or explicit dependencies in configuration.
+
+## Acceptance Tests
+
+Some acceptance tests for this provider require manual AWS AppStream prerequisites and are not run automatically.
+
+Before running the acceptance tests, you must set up the required AWS resources.  
+This repository includes a helper script that prepares all necessary prerequisites:
+
+```bash
+./setup-acceptance-tests.sh
+```
