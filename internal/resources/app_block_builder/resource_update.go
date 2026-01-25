@@ -104,12 +104,13 @@ func (r *resource) Update(ctx context.Context, req tfresource.UpdateRequest, res
 		return
 	}
 
-	wasRunning := wantsRunning(awstypes.AppBlockBuilderState(state.State.ValueString()))
+	restartAfter := false
+	var err error
 	mode := updateMode(state, plan)
 
 	switch mode {
 	case appBlockBuilderUpdateRequiresStop:
-		err := r.ensureStopped(ctx, name)
+		restartAfter, err = r.ensureStopped(ctx, name)
 		if err != nil {
 			resp.Diagnostics.AddError(
 				"Error Updating AWS AppStream App Block Builder",
@@ -147,7 +148,7 @@ func (r *resource) Update(ctx context.Context, req tfresource.UpdateRequest, res
 		}
 	}
 
-	if mode == appBlockBuilderUpdateRequiresStop && wasRunning {
+	if mode == appBlockBuilderUpdateRequiresStop && restartAfter {
 		err = r.ensureRunning(ctx, name)
 		if err != nil {
 			resp.Diagnostics.AddError(
@@ -175,12 +176,14 @@ func (r *resource) Update(ctx context.Context, req tfresource.UpdateRequest, res
 	resp.Diagnostics.Append(resp.State.Set(ctx, newState)...)
 }
 
-func wantsRunning(state awstypes.AppBlockBuilderState) bool {
+func wasRunning(state awstypes.AppBlockBuilderState) bool {
 	return state == awstypes.AppBlockBuilderStateRunning || state == awstypes.AppBlockBuilderStateStarting
 }
 
-func (r *resource) ensureStopped(ctx context.Context, name string) error {
-	return util.RetryOn(
+func (r *resource) ensureStopped(ctx context.Context, name string) (restartAfter bool, err error) {
+	stateCaptured := false
+
+	err = util.RetryOn(
 		ctx,
 		func(ctx context.Context) error {
 			out, err := r.appstreamClient.DescribeAppBlockBuilders(ctx, &awsappstream.DescribeAppBlockBuildersInput{
@@ -198,6 +201,11 @@ func (r *resource) ensureStopped(ctx context.Context, name string) error {
 			}
 
 			state := out.AppBlockBuilders[0].State
+
+			if !stateCaptured {
+				restartAfter = wasRunning(state)
+				stateCaptured = true
+			}
 
 			switch state {
 			case awstypes.AppBlockBuilderStateRunning:
@@ -235,6 +243,7 @@ func (r *resource) ensureStopped(ctx context.Context, name string) error {
 			util.IsOperationNotPermittedException,
 		),
 	)
+	return
 }
 
 func (r *resource) ensureRunning(ctx context.Context, name string) error {
