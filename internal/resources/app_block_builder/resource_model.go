@@ -5,7 +5,7 @@ package app_block_builder
 
 import "github.com/hashicorp/terraform-plugin-framework/types"
 
-type model struct {
+type resourceModel struct {
 	// ID is a synthetic identifier composed of "<name>".
 	ID types.String `tfsdk:"id"`
 	// Name is the name of the AppStream app block builder (required).
@@ -28,6 +28,8 @@ type model struct {
 	AccessEndpoints types.Set `tfsdk:"access_endpoints"`
 	// Tags is a map of tags assigned to the app block builder (optional).
 	Tags types.Map `tfsdk:"tags"`
+	// TagsAll is a map of tags, including default tags, assigned to the app block builder (computed).
+	TagsAll types.Map `tfsdk:"tags_all"`
 	// ARN is the ARN of the AppStream app block builder (computed).
 	ARN types.String `tfsdk:"arn"`
 	// CreatedTime is the timestamp when the app block builder was created (computed).

@@ -12,6 +12,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	tfresource "github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/st3ffn/terraform-provider-aws-appstream/internal/tags"
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/util"
 )
 
@@ -113,9 +114,13 @@ func (r *resource) readImageBuilder(ctx context.Context, prior resourceModel) (*
 	}
 
 	if !state.ARN.IsNull() {
-		tags, tagDiags := r.tags.Read(ctx, state.ARN.ValueString())
-		diags.Append(tagDiags...)
-		state.Tags = tags
+		allTags, allTagDiags := r.tags.ReadAll(ctx, state.ARN.ValueString())
+		diags.Append(allTagDiags...)
+		state.TagsAll = allTags
+
+		resourceTags, resourceTagDiags := tags.ResourceTags(ctx, prior.Tags, allTags)
+		diags.Append(resourceTagDiags...)
+		state.Tags = resourceTags
 	}
 
 	if diags.HasError() {

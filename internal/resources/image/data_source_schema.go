@@ -318,8 +318,8 @@ func (ds *dataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp
 				Computed:            true,
 			},
 			"tags": schema.MapAttribute{
-				Description:         "Tags applied to the AppStream image.",
-				MarkdownDescription: "Tags assigned to the AppStream image.",
+				Description:         "Tags applied to the image.",
+				MarkdownDescription: "Tags assigned to the image.",
 				Computed:            true,
 				ElementType:         types.StringType,
 			},

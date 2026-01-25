@@ -46,7 +46,7 @@ data "awsappstream_image_builder" "example" {
 - `root_volume_config` (Attributes) The root volume configuration of the image builder, if set. (see [below for nested schema](#nestedatt--root_volume_config))
 - `state` (String) The state of the AppStream image builder.
 - `state_change_reason` (Attributes) The reason for the most recent image builder state change, if applicable. (see [below for nested schema](#nestedatt--state_change_reason))
-- `tags` (Map of String) Tags assigned to the AppStream image builder.
+- `tags` (Map of String) Tags assigned to the image builder.
 - `vpc_config` (Attributes) The VPC configuration used by the image builder, if applicable. (see [below for nested schema](#nestedatt--vpc_config))
 
 <a id="nestedatt--access_endpoints"></a>

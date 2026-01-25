@@ -13,8 +13,29 @@ var ProtoV6ProviderFactories = map[string]func() (tfprotov6.ProviderServer, erro
 	"awsappstream": providerserver.NewProtocol6WithError(provider.New("test")()),
 }
 
+// TestAccProviderBasicConfig returns a minimal provider configuration
+// without any custom settings or default tags.
 func TestAccProviderBasicConfig() string {
 	return `
 provider "awsappstream" {}
+`
+}
+
+// TestAccProviderTagsConfig returns a provider configuration with default_tags
+// enabled for acceptance tests.
+//
+// The following default tags are defined:
+//   - MANAGED_BY = "terraform"
+//   - BUILD_WITH = "love"
+func TestAccProviderTagsConfig() string {
+	return `
+provider "awsappstream" {
+  default_tags {
+    tags = {
+      MANAGED_BY  = "terraform"
+      BUILD_WITH  = "love"
+    }
+  }
+}
 `
 }

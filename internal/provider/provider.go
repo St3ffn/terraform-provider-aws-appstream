@@ -90,6 +90,22 @@ using Terraform.
 
 Authentication and region selection follow the standard AWS SDK behavior.
 `,
+		Blocks: map[string]schema.Block{
+			"default_tags": schema.SingleNestedBlock{
+				Description: "Default tags to apply to all taggable resources managed by this provider.",
+				MarkdownDescription: "Default tags to apply to all **taggable** resources managed by this provider. " +
+					"Tags defined on individual resources take precedence over these defaults when keys overlap.",
+				Attributes: map[string]schema.Attribute{
+					"tags": schema.MapAttribute{
+						Optional:    true,
+						ElementType: types.StringType,
+						Description: "A map of tags to apply by default.",
+						MarkdownDescription: "A map of tags to apply by default. " +
+							"Resource-level tags override these defaults when the same key is set.",
+					},
+				},
+			},
+		},
 		Attributes: map[string]schema.Attribute{
 			"access_key": schema.StringAttribute{
 				Optional:    true,
@@ -179,21 +195,6 @@ Authentication and region selection follow the standard AWS SDK behavior.
 					int64(awsretry.DefaultMaxBackoff.Seconds()),
 				),
 				Validators: []validator.Int64{int64validator.AtLeast(1)},
-			},
-			"default_tags": schema.SingleNestedAttribute{
-				Optional:    true,
-				Description: "Default tags to apply to all taggable resources managed by this provider.",
-				MarkdownDescription: "Default tags to apply to all **taggable** resources managed by this provider. " +
-					"Tags defined on individual resources take precedence over these defaults when keys overlap.",
-				Attributes: map[string]schema.Attribute{
-					"tags": schema.MapAttribute{
-						Optional:    true,
-						ElementType: types.StringType,
-						Description: "A map of tags to apply by default.",
-						MarkdownDescription: "A map of tags to apply by default. " +
-							"Resource-level tags override these defaults when the same key is set.",
-					},
-				},
 			},
 		},
 	}

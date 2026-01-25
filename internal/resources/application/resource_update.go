@@ -15,8 +15,8 @@ import (
 )
 
 func (r *resource) Update(ctx context.Context, req tfresource.UpdateRequest, resp *tfresource.UpdateResponse) {
-	var plan model
-	var state model
+	var plan resourceModel
+	var state resourceModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
@@ -125,7 +125,7 @@ func (r *resource) Update(ctx context.Context, req tfresource.UpdateRequest, res
 		return
 	}
 
-	newState, diags := r.readApplication(ctx, arn)
+	newState, diags := r.readApplication(ctx, plan)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return

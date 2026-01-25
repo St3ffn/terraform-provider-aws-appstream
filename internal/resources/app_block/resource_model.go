@@ -5,7 +5,7 @@ package app_block
 
 import "github.com/hashicorp/terraform-plugin-framework/types"
 
-type model struct {
+type resourceModel struct {
 	// ID is the ARN of the AppStream app block.
 	ID types.String `tfsdk:"id"`
 	// Name is the name of the AppStream app block (required).
@@ -24,6 +24,8 @@ type model struct {
 	PackagingType types.String `tfsdk:"packaging_type"`
 	// Tags is a map of tags assigned to the app block (optional).
 	Tags types.Map `tfsdk:"tags"`
+	// TagsAll is a map of tags, including default tags, assigned to the app block (computed).
+	TagsAll types.Map `tfsdk:"tags_all"`
 	// ARN is the ARN of the AppStream app block (computed).
 	ARN types.String `tfsdk:"arn"`
 	// CreatedTime is the timestamp when the app block was created (computed).

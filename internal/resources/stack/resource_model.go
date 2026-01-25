@@ -5,7 +5,7 @@ package stack
 
 import "github.com/hashicorp/terraform-plugin-framework/types"
 
-type model struct {
+type resourceModel struct {
 	// ID is a synthetic identifier composed of "<name>".
 	ID types.String `tfsdk:"id"`
 	// Name is the name of the AppStream stack (required).
@@ -24,14 +24,16 @@ type model struct {
 	UserSettings types.Set `tfsdk:"user_settings"`
 	// ApplicationSettings configures application settings persistence for users of this stack (optional).
 	ApplicationSettings types.Object `tfsdk:"application_settings"`
-	// Tags is the resource tags to apply to the stack (optional).
-	Tags types.Map `tfsdk:"tags"`
 	// AccessEndpoints is the list of interface VPC endpoints users of the stack can connect through (optional).
 	AccessEndpoints types.Set `tfsdk:"access_endpoints"`
 	// EmbedHostDomains is the domains where streaming sessions can be embedded in an iframe (optional).
 	EmbedHostDomains types.Set `tfsdk:"embed_host_domains"`
 	// StreamingExperienceSettings is the streaming protocol the stack should prefer (optional).
 	StreamingExperienceSettings types.Object `tfsdk:"streaming_experience_settings"`
+	// Tags is the resource tags to apply to the stack (optional).
+	Tags types.Map `tfsdk:"tags"`
+	// TagsAll is a map of tags, including default tags, assigned to the stack (computed).
+	TagsAll types.Map `tfsdk:"tags_all"`
 	// ARN of the AppStream stack (computed).
 	ARN types.String `tfsdk:"arn"`
 	// CreatedTime is the timestamp when the AppStream stack was created (computed).

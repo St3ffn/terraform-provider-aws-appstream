@@ -38,7 +38,7 @@ data "awsappstream_application" "example" {
 - `launch_path` (String) The path to the application executable within the image.
 - `name` (String) The name of the AppStream application.
 - `platforms` (Set of String) The platforms on which the application can run.
-- `tags` (Map of String) Tags assigned to the AppStream application.
+- `tags` (Map of String) Tags assigned to the application.
 - `working_directory` (String) The working directory of the application, if set.
 
 <a id="nestedatt--icon_s3_location"></a>

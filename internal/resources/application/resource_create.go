@@ -10,11 +10,12 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	awsappstream "github.com/aws/aws-sdk-go-v2/service/appstream"
 	tfresource "github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/util"
 )
 
 func (r *resource) Create(ctx context.Context, req tfresource.CreateRequest, resp *tfresource.CreateResponse) {
-	var plan model
+	var plan resourceModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
@@ -109,7 +110,9 @@ func (r *resource) Create(ctx context.Context, req tfresource.CreateRequest, res
 		}
 	}
 
-	newState, diags := r.readApplication(ctx, aws.ToString(out.Application.Arn))
+	plan.ID = types.StringValue(aws.ToString(out.Application.Arn))
+
+	newState, diags := r.readApplication(ctx, plan)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return

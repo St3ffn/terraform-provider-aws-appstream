@@ -8,6 +8,7 @@ import (
 	"fmt"
 
 	awstaggingapi "github.com/aws/aws-sdk-go-v2/service/resourcegroupstaggingapi"
+	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -35,7 +36,7 @@ func NewTagManager(taggingAPI taggingAPI, defaultTags map[string]string) *TagMan
 	return &TagManager{taggingAPI, defaultTags}
 }
 
-func (tm *TagManager) Read(ctx context.Context, arn string) (types.Map, diag.Diagnostics) {
+func (tm *TagManager) ReadAll(ctx context.Context, arn string) (types.Map, diag.Diagnostics) {
 	tags, diags := tm.readRaw(ctx, arn)
 	if diags.HasError() {
 		return types.MapNull(types.StringType), diags
@@ -84,7 +85,7 @@ func (tm *TagManager) Apply(ctx context.Context, arn string, desired types.Map) 
 
 	if desired.IsUnknown() {
 		// preserve current remote state
-		return tm.Read(ctx, arn)
+		return tm.ReadAll(ctx, arn)
 	}
 
 	current, readDiags := tm.readRaw(ctx, arn)
@@ -171,10 +172,7 @@ func mergeTags(defaultTags, resourceTags map[string]string) map[string]string {
 	return out
 }
 
-func diffTags(
-	current map[string]string, desired map[string]string,
-) (removeKeys []string, addOrUpdate map[string]string) {
-
+func diffTags(current, desired map[string]string) (removeKeys []string, addOrUpdate map[string]string) {
 	addOrUpdate = make(map[string]string)
 
 	for k, v := range current {
@@ -193,4 +191,44 @@ func diffTags(
 	}
 
 	return removeKeys, addOrUpdate
+}
+
+func ResourceTags(ctx context.Context, prior types.Map, all types.Map) (resourceTags types.Map, diags diag.Diagnostics) {
+	// no tags exist, nothing to return
+	if all.IsNull() || all.IsUnknown() {
+		resourceTags = types.MapNull(types.StringType)
+		return
+	}
+
+	allExpanded := expandTags(ctx, all, &diags)
+	if diags.HasError() {
+		return
+	}
+
+	// user never set tags, keep tags null
+	if prior.IsNull() || prior.IsUnknown() {
+		resourceTags = types.MapNull(types.StringType)
+		return
+	}
+
+	priorExpanded := expandTags(ctx, prior, &diags)
+	if diags.HasError() {
+		return
+	}
+
+	// user explicitly set empty tags
+	if len(priorExpanded) == 0 {
+		resourceTags = types.MapValueMust(types.StringType, map[string]attr.Value{})
+		return
+	}
+
+	filtered := make(map[string]string)
+	for k := range priorExpanded {
+		if v, ok := allExpanded[k]; ok {
+			filtered[k] = v
+		}
+	}
+
+	resourceTags = flattenTags(ctx, filtered, &diags)
+	return
 }

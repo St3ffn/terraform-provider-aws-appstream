@@ -139,8 +139,8 @@ func (ds *dataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp
 				},
 			},
 			"tags": schema.MapAttribute{
-				Description:         "Tags applied to the AppStream image builder.",
-				MarkdownDescription: "Tags assigned to the AppStream image builder.",
+				Description:         "Tags applied to the image builder.",
+				MarkdownDescription: "Tags assigned to the image builder.",
 				Computed:            true,
 				ElementType:         types.StringType,
 			},

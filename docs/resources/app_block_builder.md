@@ -86,7 +86,7 @@ resource "awsappstream_app_block_builder" "example" {
 - `display_name` (String) The display name of the app block builder shown in the AppStream user interface.
 - `enable_default_internet_access` (Boolean) Whether the app block builder has access to the internet.
 - `iam_role_arn` (String) The ARN of the IAM role applied to the app block builder.
-- `tags` (Map of String) A map of tags assigned to the AppStream app block builder.
+- `tags` (Map of String) A map of tags assigned to the app block builder.
 
 ### Read-Only
 
@@ -96,6 +96,7 @@ resource "awsappstream_app_block_builder" "example" {
 - `id` (String) A synthetic identifier for the app block builder, equal to the app block builder name. This value is managed by the provider and cannot be set manually.
 - `state` (String) The state of the AppStream app block builder.
 - `state_change_reason` (Attributes) The reason for the most recent app block builder state change, if applicable. (see [below for nested schema](#nestedatt--state_change_reason))
+- `tags_all` (Map of String) A map of tags, including default tags, assigned to the app block builder.
 
 <a id="nestedatt--vpc_config"></a>
 ### Nested Schema for `vpc_config`

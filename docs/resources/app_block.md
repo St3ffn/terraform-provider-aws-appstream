@@ -105,15 +105,16 @@ resource "awsappstream_app_block" "example" {
 - `packaging_type` (String) The packaging type of the app block. Valid values are `CUSTOM` or `APPSTREAM2`.
 - `post_setup_script_details` (Attributes) Specifies a post-setup script that is executed after the app block is created. This configuration is supported only for app blocks with the `APPSTREAM2` packaging type. (see [below for nested schema](#nestedatt--post_setup_script_details))
 - `setup_script_details` (Attributes) Specifies the setup script that is executed when the app block is built. This configuration is required for app blocks with the `CUSTOM` packaging type. (see [below for nested schema](#nestedatt--setup_script_details))
-- `tags` (Map of String) A map of tags assigned to the AppStream app block.
+- `tags` (Map of String) A map of tags assigned to the app block.
 
 ### Read-Only
 
 - `app_block_errors` (Attributes Set) Informational list of errors reported by AWS for the app block. These errors do not affect Terraform lifecycle behavior. (see [below for nested schema](#nestedatt--app_block_errors))
-- `arn` (String) The Amazon Resource Name (ARN) of the AppStream app block.
+- `arn` (String) The Amazon Resource Name (ARN) of the app block.
 - `created_time` (String) The timestamp when the app block was created, in RFC 3339 format.
 - `id` (String) The Amazon Resource Name (ARN) of the AppStream app block. This value is managed by the provider and cannot be set manually.
 - `state` (String) The state of the AppStream app block.
+- `tags_all` (Map of String) A map of tags, including default tags, assigned to the app block.
 
 <a id="nestedatt--source_s3_location"></a>
 ### Nested Schema for `source_s3_location`

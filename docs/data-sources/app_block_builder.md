@@ -40,7 +40,7 @@ data "awsappstream_app_block_builder" "example" {
 - `platform` (String) The operating system platform of the app block builder.
 - `state` (String) The state of the AppStream app block builder.
 - `state_change_reason` (Attributes) The reason for the most recent app block builder state change, if applicable. (see [below for nested schema](#nestedatt--state_change_reason))
-- `tags` (Map of String) Tags assigned to the AppStream app block builder.
+- `tags` (Map of String) Tags assigned to the app block builder.
 - `vpc_config` (Attributes) The VPC configuration used by the app block builder. (see [below for nested schema](#nestedatt--vpc_config))
 
 <a id="nestedatt--access_endpoints"></a>

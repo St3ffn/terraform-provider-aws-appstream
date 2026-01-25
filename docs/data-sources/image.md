@@ -76,7 +76,7 @@ data "awsappstream_image" "latest_private" {
 - `state` (String) The current state of the image.
 - `state_change_reason` (Attributes) The reason for the most recent image state change, if applicable. (see [below for nested schema](#nestedatt--state_change_reason))
 - `supported_instance_families` (Set of String) The instance families supported by the image.
-- `tags` (Map of String) Tags assigned to the AppStream image.
+- `tags` (Map of String) Tags assigned to the image.
 
 <a id="nestedatt--applications"></a>
 ### Nested Schema for `applications`

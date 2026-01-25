@@ -16,7 +16,7 @@ const (
 	fleetUpdateForbidden
 )
 
-func updateMode(state, plan model) fleetUpdateMode {
+func updateMode(state, plan resourceModel) fleetUpdateMode {
 	if plan.State.IsUnknown() {
 		return fleetUpdateForbidden
 	}
@@ -31,7 +31,7 @@ func updateMode(state, plan model) fleetUpdateMode {
 	}
 }
 
-func updateModeAlwaysOnOnDemandFleet(state, plan model) fleetUpdateMode {
+func updateModeAlwaysOnOnDemandFleet(state, plan resourceModel) fleetUpdateMode {
 	// see https://docs.aws.amazon.com/appstream2/latest/APIReference/API_CreateFleet.html
 	// see https://docs.aws.amazon.com/appstream2/latest/APIReference/API_UpdateFleet.html
 
@@ -82,7 +82,7 @@ func updateModeAlwaysOnOnDemandFleet(state, plan model) fleetUpdateMode {
 	return fleetUpdateAllowedRunning
 }
 
-func updateModeElasticFleet(state, plan model) fleetUpdateMode {
+func updateModeElasticFleet(state, plan resourceModel) fleetUpdateMode {
 	// see https://docs.aws.amazon.com/appstream2/latest/APIReference/API_CreateFleet.html
 	// see https://docs.aws.amazon.com/appstream2/latest/APIReference/API_UpdateFleet.html
 

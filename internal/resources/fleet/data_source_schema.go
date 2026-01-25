@@ -202,8 +202,8 @@ func (ds *dataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp
 				},
 			},
 			"tags": schema.MapAttribute{
-				Description:         "Tags applied to the AppStream fleet.",
-				MarkdownDescription: "Tags assigned to the AppStream fleet.",
+				Description:         "Tags applied to the fleet.",
+				MarkdownDescription: "Tags assigned to the fleet.",
 				Computed:            true,
 				ElementType:         types.StringType,
 			},

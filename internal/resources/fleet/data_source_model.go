@@ -5,7 +5,7 @@ package fleet
 
 import "github.com/hashicorp/terraform-plugin-framework/types"
 
-type model struct {
+type dataSourceModel struct {
 	// ID is a synthetic identifier composed of "<name>".
 	ID types.String `tfsdk:"id"`
 	// Name is the name of the AppStream fleet (required).
@@ -66,50 +66,4 @@ type model struct {
 	State types.String `tfsdk:"state"`
 	// FleetErrors is the list of errors reported by AWS for the fleet (computed).
 	FleetErrors types.Set `tfsdk:"fleet_errors"`
-}
-
-type computeCapacityModel struct {
-	// DesiredInstances is the desired number of streaming instances for a
-	// non-elastic fleet. This must be specified for single-session fleets and
-	// cannot be used together with DesiredSessions.
-	DesiredInstances types.Int32 `tfsdk:"desired_instances"`
-	// DesiredSessions is the desired number of concurrent user sessions for a
-	// non-elastic multi-session fleet. This must be specified for multi-session
-	// fleets and cannot be used together with DesiredInstances.
-	DesiredSessions types.Int32 `tfsdk:"desired_sessions"`
-}
-
-type vpcConfigModel struct {
-	// SubnetIDs are the subnet IDs for the fleet.
-	// Required for elastic fleets. At least two subnets in different Availability Zones
-	// must be specified. The Availability Zone requirement is enforced by AWS.
-	SubnetIDs types.Set `tfsdk:"subnet_ids"`
-	// SecurityGroupIDs are the security group IDs for the fleet.
-	SecurityGroupIDs types.Set `tfsdk:"security_group_ids"`
-}
-
-type domainJoinInfoModel struct {
-	// DirectoryName is the name of the Active Directory.
-	DirectoryName types.String `tfsdk:"directory_name"`
-	// OrganizationalUnitDistinguishedName is the OU DN for computer accounts.
-	OrganizationalUnitDistinguishedName types.String `tfsdk:"organizational_unit_distinguished_name"`
-}
-
-type sessionScriptS3LocationModel struct {
-	// S3Bucket is the S3 bucket containing the session script.
-	S3Bucket types.String `tfsdk:"s3_bucket"`
-	// S3Key is the S3 object key of the session script.
-	S3Key types.String `tfsdk:"s3_key"`
-}
-
-type rootVolumeConfigModel struct {
-	// VolumeSizeInGB is the size of the root volume.
-	VolumeSizeInGB types.Int32 `tfsdk:"volume_size_in_gb"`
-}
-
-type fleetErrorModel struct {
-	// ErrorCode is the error code reported by AWS (computed).
-	ErrorCode types.String `tfsdk:"error_code"`
-	// ErrorMessage is the human-readable error message (computed).
-	ErrorMessage types.String `tfsdk:"error_message"`
 }

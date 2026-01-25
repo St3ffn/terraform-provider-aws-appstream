@@ -40,7 +40,7 @@ data "awsappstream_stack" "example" {
 - `stack_errors` (Attributes Set) Informational list of errors reported by AWS for the stack. (see [below for nested schema](#nestedatt--stack_errors))
 - `storage_connectors` (Attributes Set) Storage connectors that are enabled for the stack. (see [below for nested schema](#nestedatt--storage_connectors))
 - `streaming_experience_settings` (Attributes) Preferred streaming protocol configuration for the stack. (see [below for nested schema](#nestedatt--streaming_experience_settings))
-- `tags` (Map of String) Tags assigned to the AppStream stack.
+- `tags` (Map of String) Tags assigned to the stack.
 - `user_settings` (Attributes Set) Actions that are enabled or disabled for users during streaming sessions. (see [below for nested schema](#nestedatt--user_settings))
 
 <a id="nestedatt--access_endpoints"></a>

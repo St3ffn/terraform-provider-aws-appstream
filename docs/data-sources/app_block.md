@@ -38,7 +38,7 @@ data "awsappstream_app_block" "example" {
 - `setup_script_details` (Attributes) Specifies the setup script used to build the app block, if present. (see [below for nested schema](#nestedatt--setup_script_details))
 - `source_s3_location` (Attributes) Specifies the Amazon S3 location that contains the app block source. (see [below for nested schema](#nestedatt--source_s3_location))
 - `state` (String) The state of the AppStream app block.
-- `tags` (Map of String) Tags assigned to the AppStream app block.
+- `tags` (Map of String) Tags assigned to the app block.
 
 <a id="nestedatt--app_block_errors"></a>
 ### Nested Schema for `app_block_errors`

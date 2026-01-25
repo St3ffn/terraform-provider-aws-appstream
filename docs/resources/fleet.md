@@ -202,7 +202,7 @@ resource "awsappstream_fleet" "on_demand_multi_session" {
 - `root_volume_config` (Attributes) Specifies the root volume configuration for fleet instances. (see [below for nested schema](#nestedatt--root_volume_config))
 - `session_script_s3_location` (Attributes) Specifies the S3 location of the session scripts configuration ZIP file. This setting applies only to elastic fleets. (see [below for nested schema](#nestedatt--session_script_s3_location))
 - `stream_view` (String) Controls which streaming protocol views are enabled.
-- `tags` (Map of String) A map of tags assigned to the AppStream fleet.
+- `tags` (Map of String) A map of tags assigned to the fleet.
 - `usb_device_filter_strings` (Set of String) Defines which USB devices can be redirected to streaming sessions when using the Windows native client. This setting is supported only for Windows fleets. For non-Windows platforms or non-native clients, this configuration is accepted by AWS but ignored at runtime.
 - `vpc_config` (Attributes) The VPC configuration used by the fleet. This block is required for elastic fleets. (see [below for nested schema](#nestedatt--vpc_config))
 
@@ -213,6 +213,7 @@ resource "awsappstream_fleet" "on_demand_multi_session" {
 - `fleet_errors` (Attributes Set) Informational list of errors reported by AWS for the fleet. These errors do not affect Terraform lifecycle behavior. (see [below for nested schema](#nestedatt--fleet_errors))
 - `id` (String) A synthetic identifier for the fleet, equal to the fleet name. This value is managed by the provider and cannot be set manually.
 - `state` (String) The state of the AppStream fleet.
+- `tags_all` (Map of String) A map of tags, including default tags, assigned to the fleet.
 
 <a id="nestedatt--compute_capacity"></a>
 ### Nested Schema for `compute_capacity`

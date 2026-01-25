@@ -15,7 +15,7 @@ const (
 	appBlockBuilderUpdateForbidden
 )
 
-func updateMode(state, plan model) appBlockBuilderUpdateMode {
+func updateMode(state, plan resourceModel) appBlockBuilderUpdateMode {
 	if plan.State.IsUnknown() {
 		return appBlockBuilderUpdateForbidden
 	}

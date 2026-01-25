@@ -99,7 +99,7 @@ resource "awsappstream_stack" "example" {
 - `redirect_url` (String) The URL users are redirected to after their AppStream streaming session ends.
 - `storage_connectors` (Attributes Set) Storage connectors that enable persistent storage for users of the stack. (see [below for nested schema](#nestedatt--storage_connectors))
 - `streaming_experience_settings` (Attributes) Controls the preferred streaming protocol for the stack. (see [below for nested schema](#nestedatt--streaming_experience_settings))
-- `tags` (Map of String) A map of tags assigned to the AppStream stack.
+- `tags` (Map of String) A map of tags assigned to the stack.
 - `user_settings` (Attributes Set) Actions that are enabled or disabled for users during streaming sessions. (see [below for nested schema](#nestedatt--user_settings))
 
 ### Read-Only
@@ -108,6 +108,7 @@ resource "awsappstream_stack" "example" {
 - `created_time` (String) The timestamp when the stack was created, in RFC 3339 format.
 - `id` (String) A synthetic identifier for the stack, equal to the stack name. This value is managed by the provider and cannot be set manually.
 - `stack_errors` (Attributes Set) Informational list of errors reported by AWS for the stack. These errors do not affect Terraform lifecycle behavior. (see [below for nested schema](#nestedatt--stack_errors))
+- `tags_all` (Map of String) A map of tags, including default tags, assigned to the stack.
 
 <a id="nestedatt--access_endpoints"></a>
 ### Nested Schema for `access_endpoints`

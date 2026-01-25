@@ -235,7 +235,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 			},
 			"tags": schema.MapAttribute{
 				Description:         "Tags applied to the app block.",
-				MarkdownDescription: "A map of tags assigned to the AppStream app block.",
+				MarkdownDescription: "A map of tags assigned to the app block.",
 				Optional:            true,
 				ElementType:         types.StringType,
 				Validators: []validator.Map{
@@ -256,9 +256,15 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 					),
 				},
 			},
+			"tags_all": schema.MapAttribute{
+				Description:         "All tags applied to the app block.",
+				MarkdownDescription: "A map of tags, including default tags, assigned to the app block.",
+				Computed:            true,
+				ElementType:         types.StringType,
+			},
 			"arn": schema.StringAttribute{
 				Description:         "ARN of the AppStream app block.",
-				MarkdownDescription: "The Amazon Resource Name (ARN) of the AppStream app block.",
+				MarkdownDescription: "The Amazon Resource Name (ARN) of the app block.",
 				Computed:            true,
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.UseStateForUnknown(),

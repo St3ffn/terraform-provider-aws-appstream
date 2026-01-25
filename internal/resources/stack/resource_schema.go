@@ -203,29 +203,6 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 					},
 				},
 			},
-			"tags": schema.MapAttribute{
-				Description:         "Tags applied to the AppStream stack.",
-				MarkdownDescription: "A map of tags assigned to the AppStream stack.",
-				Optional:            true,
-				ElementType:         types.StringType,
-				Validators: []validator.Map{
-					mapvalidator.SizeAtMost(50),
-					mapvalidator.KeysAre(
-						stringvalidator.LengthBetween(1, 128),
-						stringvalidator.RegexMatches(
-							regexp.MustCompile(`^[\p{L}\p{Z}\p{N}_.:/=+\-@]*$`),
-							"must match ^[\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*$",
-						),
-					),
-					mapvalidator.ValueStringsAre(
-						stringvalidator.LengthAtMost(256),
-						stringvalidator.RegexMatches(
-							regexp.MustCompile(`^([\p{L}\p{Z}\p{N}_.:/=+\-@]*)$`),
-							"must match ^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$",
-						),
-					),
-				},
-			},
 			"access_endpoints": schema.SetNestedAttribute{
 				Description:         "VPC access endpoints for the stack.",
 				MarkdownDescription: "Interface VPC endpoints through which users can connect to the stack.",
@@ -288,6 +265,35 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 						},
 					},
 				},
+			},
+			"tags": schema.MapAttribute{
+				Description:         "Tags applied to the stack.",
+				MarkdownDescription: "A map of tags assigned to the stack.",
+				Optional:            true,
+				ElementType:         types.StringType,
+				Validators: []validator.Map{
+					mapvalidator.SizeAtMost(50),
+					mapvalidator.KeysAre(
+						stringvalidator.LengthBetween(1, 128),
+						stringvalidator.RegexMatches(
+							regexp.MustCompile(`^[\p{L}\p{Z}\p{N}_.:/=+\-@]*$`),
+							"must match ^[\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*$",
+						),
+					),
+					mapvalidator.ValueStringsAre(
+						stringvalidator.LengthAtMost(256),
+						stringvalidator.RegexMatches(
+							regexp.MustCompile(`^([\p{L}\p{Z}\p{N}_.:/=+\-@]*)$`),
+							"must match ^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$",
+						),
+					),
+				},
+			},
+			"tags_all": schema.MapAttribute{
+				Description:         "All tags applied to the stack.",
+				MarkdownDescription: "A map of tags, including default tags, assigned to the stack.",
+				Computed:            true,
+				ElementType:         types.StringType,
 			},
 			"arn": schema.StringAttribute{
 				Description:         "ARN of the AppStream stack.",

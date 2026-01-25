@@ -328,8 +328,8 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				},
 			},
 			"tags": schema.MapAttribute{
-				Description:         "Tags applied to the AppStream fleet.",
-				MarkdownDescription: "A map of tags assigned to the AppStream fleet.",
+				Description:         "Tags applied to the fleet.",
+				MarkdownDescription: "A map of tags assigned to the fleet.",
 				Optional:            true,
 				ElementType:         types.StringType,
 				Validators: []validator.Map{
@@ -349,6 +349,12 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 						),
 					),
 				},
+			},
+			"tags_all": schema.MapAttribute{
+				Description:         "All tags applied to the fleet.",
+				MarkdownDescription: "A map of tags, including default tags, assigned to the fleet.",
+				Computed:            true,
+				ElementType:         types.StringType,
 			},
 			"arn": schema.StringAttribute{
 				Description:         "ARN of the AppStream fleet.",

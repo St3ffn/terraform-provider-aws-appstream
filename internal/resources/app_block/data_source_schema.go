@@ -150,7 +150,7 @@ func (ds *dataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp
 			},
 			"tags": schema.MapAttribute{
 				Description:         "Tags applied to the app block.",
-				MarkdownDescription: "Tags assigned to the AppStream app block.",
+				MarkdownDescription: "Tags assigned to the app block.",
 				Computed:            true,
 				ElementType:         types.StringType,
 			},

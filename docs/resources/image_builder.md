@@ -92,7 +92,7 @@ resource "awsappstream_image_builder" "example" {
 - `image_arn` (String) The ARN of the AppStream image used to create the image builder. Either `image_name` or `image_arn` must be specified.
 - `image_name` (String) The name of the AppStream image used to create the image builder. Either `image_name` or `image_arn` must be specified.
 - `root_volume_config` (Attributes) Specifies the root volume configuration for the image builder. (see [below for nested schema](#nestedatt--root_volume_config))
-- `tags` (Map of String) A map of tags assigned to the AppStream image builder.
+- `tags` (Map of String) A map of tags assigned to the image builder.
 - `vpc_config` (Attributes) The VPC configuration used by the image builder. Image builders use exactly one subnet. (see [below for nested schema](#nestedatt--vpc_config))
 
 ### Read-Only
@@ -106,6 +106,7 @@ resource "awsappstream_image_builder" "example" {
 - `platform` (String) The operating system platform of the image builder.
 - `state` (String) The state of the AppStream image builder.
 - `state_change_reason` (Attributes) The reason for the most recent image builder state change, if applicable. (see [below for nested schema](#nestedatt--state_change_reason))
+- `tags_all` (Map of String) A map of tags, including default tags, assigned to the image builder.
 
 <a id="nestedatt--access_endpoints"></a>
 ### Nested Schema for `access_endpoints`

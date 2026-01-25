@@ -89,7 +89,7 @@ resource "awsappstream_application" "example" {
 - `description` (String) The application description, if set. Must be 256 characters or fewer.
 - `display_name` (String) The name displayed to users in the AppStream application catalog.
 - `launch_parameters` (String) The parameters passed to the application at launch.
-- `tags` (Map of String) A map of tags assigned to the AppStream application.
+- `tags` (Map of String) A map of tags assigned to the application.
 - `working_directory` (String) The working directory of the application.
 
 ### Read-Only
@@ -97,6 +97,7 @@ resource "awsappstream_application" "example" {
 - `arn` (String) The Amazon Resource Name (ARN) of the AppStream application.
 - `created_time` (String) The timestamp when the application was created, in RFC 3339 format.
 - `id` (String) The Amazon Resource Name (ARN) of the AppStream application. This value is managed by the provider and cannot be set manually.
+- `tags_all` (Map of String) A map of tags, including default tags, assigned to the application.
 
 <a id="nestedatt--icon_s3_location"></a>
 ### Nested Schema for `icon_s3_location`

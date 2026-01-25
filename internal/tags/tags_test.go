@@ -155,7 +155,7 @@ func (f *FakeTaggingAPI) UntagResourcesFails(err error) *FakeTaggingAPI {
 	return f
 }
 
-func TestTagManager_Read(t *testing.T) {
+func TestTagManager_ReadAll(t *testing.T) {
 	t.Parallel()
 
 	ctx := context.Background()
@@ -242,7 +242,7 @@ func TestTagManager_Read(t *testing.T) {
 
 			tm := NewTagManager(fake, nil)
 
-			got, diags := tm.Read(ctx, tt.arn)
+			got, diags := tm.ReadAll(ctx, tt.arn)
 
 			if tt.wantError {
 				if !diags.HasError() {
@@ -258,7 +258,7 @@ func TestTagManager_Read(t *testing.T) {
 
 			require.Truef(
 				t, got.Equal(tt.want),
-				"Read(%q) mismatch\nGot:  %#v\nWant: %#v", tt.arn, got, tt.want,
+				"ReadAll(%q) mismatch\nGot:  %#v\nWant: %#v", tt.arn, got, tt.want,
 			)
 		})
 	}
@@ -771,6 +771,124 @@ func TestDiffTags(t *testing.T) {
 			assert.ElementsMatch(t, tt.wantRemove, remove, "unexpected tags to remove")
 
 			assert.Equal(t, tt.wantAddUpdate, addUpdate, "unexpected tags to add/update")
+		})
+	}
+}
+
+func TestResourceTags(t *testing.T) {
+	t.Parallel()
+
+	ctx := context.Background()
+
+	tests := []struct {
+		name      string
+		prior     types.Map
+		all       types.Map
+		want      types.Map
+		wantError bool
+	}{
+		{
+			name: "all_null_returns_null",
+			prior: types.MapValueMust(types.StringType, map[string]attr.Value{
+				"env": types.StringValue("prod"),
+			}),
+			all:  types.MapNull(types.StringType),
+			want: types.MapNull(types.StringType),
+		},
+		{
+			name: "all_unknown_returns_null",
+			prior: types.MapValueMust(types.StringType, map[string]attr.Value{
+				"env": types.StringValue("prod"),
+			}),
+			all:  types.MapUnknown(types.StringType),
+			want: types.MapNull(types.StringType),
+		},
+		{
+			name:  "prior_null_returns_null",
+			prior: types.MapNull(types.StringType),
+			all: types.MapValueMust(types.StringType, map[string]attr.Value{
+				"env": types.StringValue("test"),
+			}),
+			want: types.MapNull(types.StringType),
+		},
+		{
+			name:  "prior_unknown_returns_null",
+			prior: types.MapUnknown(types.StringType),
+			all: types.MapValueMust(types.StringType, map[string]attr.Value{
+				"env": types.StringValue("test"),
+			}),
+			want: types.MapNull(types.StringType),
+		},
+		{
+			name:  "explicit_empty_prior_returns_empty_map",
+			prior: types.MapValueMust(types.StringType, map[string]attr.Value{}),
+			all: types.MapValueMust(types.StringType, map[string]attr.Value{
+				"env": types.StringValue("test"),
+			}),
+			want: types.MapValueMust(types.StringType, map[string]attr.Value{}),
+		},
+		{
+			name: "resource_overrides_default",
+			prior: types.MapValueMust(types.StringType, map[string]attr.Value{
+				"ENV": types.StringValue("prod"),
+			}),
+			all: types.MapValueMust(types.StringType, map[string]attr.Value{
+				"ENV":  types.StringValue("prod"), // override
+				"TEAM": types.StringValue("core"), // default
+			}),
+			want: types.MapValueMust(types.StringType, map[string]attr.Value{
+				"ENV": types.StringValue("prod"),
+			}),
+		},
+		{
+			name: "partial_overlap_filters_correctly",
+			prior: types.MapValueMust(types.StringType, map[string]attr.Value{
+				"env":  types.StringValue("prod"),
+				"team": types.StringValue("platform"),
+			}),
+			all: types.MapValueMust(types.StringType, map[string]attr.Value{
+				"env":        types.StringValue("prod"),
+				"team":       types.StringValue("platform"),
+				"managed_by": types.StringValue("terraform"),
+			}),
+			want: types.MapValueMust(types.StringType, map[string]attr.Value{
+				"env":  types.StringValue("prod"),
+				"team": types.StringValue("platform"),
+			}),
+		},
+		{
+			name: "prior_key_missing_from_all_is_ignored",
+			prior: types.MapValueMust(types.StringType, map[string]attr.Value{
+				"env": types.StringValue("prod"),
+			}),
+			all: types.MapValueMust(types.StringType, map[string]attr.Value{
+				"managed_by": types.StringValue("terraform"),
+			}),
+			want: types.MapNull(types.StringType),
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			got, diags := ResourceTags(ctx, tt.prior, tt.all)
+
+			if tt.wantError {
+				require.True(t, diags.HasError(), "expected diagnostics error")
+				return
+			}
+
+			require.Falsef(
+				t, diags.HasError(),
+				"unexpected diagnostics: %v", diags,
+			)
+
+			require.Truef(
+				t, got.Equal(tt.want),
+				"ResourceTags mismatch\nGot:  %#v\nWant: %#v",
+				got, tt.want,
+			)
 		})
 	}
 }

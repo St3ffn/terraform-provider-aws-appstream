@@ -15,7 +15,7 @@ import (
 )
 
 func (ds *dataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var config model
+	var config dataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
 	if resp.Diagnostics.HasError() {
@@ -76,7 +76,7 @@ func (ds *dataSource) Read(ctx context.Context, req datasource.ReadRequest, resp
 		return
 	}
 
-	state := &model{
+	state := &dataSourceModel{
 		ID:                     types.StringValue(aws.ToString(appBlock.Arn)),
 		ARN:                    types.StringValue(aws.ToString(appBlock.Arn)),
 		Name:                   types.StringValue(aws.ToString(appBlock.Name)),
@@ -93,7 +93,7 @@ func (ds *dataSource) Read(ctx context.Context, req datasource.ReadRequest, resp
 	}
 
 	if !state.ARN.IsNull() {
-		tags, diags := ds.tags.Read(ctx, state.ARN.ValueString())
+		tags, diags := ds.tags.ReadAll(ctx, state.ARN.ValueString())
 		resp.Diagnostics.Append(diags...)
 		state.Tags = tags
 	}

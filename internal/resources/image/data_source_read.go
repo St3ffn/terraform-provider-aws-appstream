@@ -96,7 +96,7 @@ func (ds *dataSource) Read(ctx context.Context, req datasource.ReadRequest, resp
 	}
 
 	if !state.ARN.IsNull() && selected.Visibility != awstypes.VisibilityTypePublic {
-		tags, diags := ds.tags.Read(ctx, state.ARN.ValueString())
+		tags, diags := ds.tags.ReadAll(ctx, state.ARN.ValueString())
 		resp.Diagnostics.Append(diags...)
 		state.Tags = tags
 	}

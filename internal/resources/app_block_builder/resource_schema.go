@@ -158,8 +158,8 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				},
 			},
 			"tags": schema.MapAttribute{
-				Description:         "Tags applied to the AppStream app block builder.",
-				MarkdownDescription: "A map of tags assigned to the AppStream app block builder.",
+				Description:         "Tags applied to the app block builder.",
+				MarkdownDescription: "A map of tags assigned to the app block builder.",
 				Optional:            true,
 				ElementType:         types.StringType,
 				Validators: []validator.Map{
@@ -179,6 +179,12 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 						),
 					),
 				},
+			},
+			"tags_all": schema.MapAttribute{
+				Description:         "All tags applied to the app block builder.",
+				MarkdownDescription: "A map of tags, including default tags, assigned to the app block builder.",
+				Computed:            true,
+				ElementType:         types.StringType,
 			},
 			"arn": schema.StringAttribute{
 				Description:         "ARN of the AppStream app block builder.",

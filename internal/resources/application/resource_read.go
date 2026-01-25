@@ -12,11 +12,12 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	tfresource "github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/st3ffn/terraform-provider-aws-appstream/internal/tags"
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/util"
 )
 
 func (r *resource) Read(ctx context.Context, req tfresource.ReadRequest, resp *tfresource.ReadResponse) {
-	var state model
+	var state resourceModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
@@ -36,9 +37,7 @@ func (r *resource) Read(ctx context.Context, req tfresource.ReadRequest, resp *t
 		return
 	}
 
-	arn := state.ID.ValueString()
-
-	newState, diags := r.readApplication(ctx, arn)
+	newState, diags := r.readApplication(ctx, state)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -55,8 +54,10 @@ func (r *resource) Read(ctx context.Context, req tfresource.ReadRequest, resp *t
 	resp.Diagnostics.Append(resp.State.Set(ctx, newState)...)
 }
 
-func (r *resource) readApplication(ctx context.Context, arn string) (*model, diag.Diagnostics) {
+func (r *resource) readApplication(ctx context.Context, prior resourceModel) (*resourceModel, diag.Diagnostics) {
 	var diags diag.Diagnostics
+
+	arn := prior.ID.ValueString()
 
 	out, err := r.appstreamClient.DescribeApplications(ctx, &awsappstream.DescribeApplicationsInput{
 		Arns: []string{arn},
@@ -86,7 +87,7 @@ func (r *resource) readApplication(ctx context.Context, arn string) (*model, dia
 		return nil, diags
 	}
 
-	state := &model{
+	state := &resourceModel{
 		ID:               types.StringValue(aws.ToString(app.Arn)),
 		Name:             types.StringValue(aws.ToString(app.Name)),
 		DisplayName:      util.StringOrNull(app.DisplayName),
@@ -104,9 +105,13 @@ func (r *resource) readApplication(ctx context.Context, arn string) (*model, dia
 	}
 
 	if !state.ARN.IsNull() {
-		tags, tagDiags := r.tags.Read(ctx, state.ARN.ValueString())
-		diags.Append(tagDiags...)
-		state.Tags = tags
+		allTags, allTagDiags := r.tags.ReadAll(ctx, state.ARN.ValueString())
+		diags.Append(allTagDiags...)
+		state.TagsAll = allTags
+
+		resourceTags, resourceTagDiags := tags.ResourceTags(ctx, prior.Tags, allTags)
+		diags.Append(resourceTagDiags...)
+		state.Tags = resourceTags
 	}
 
 	if diags.HasError() {

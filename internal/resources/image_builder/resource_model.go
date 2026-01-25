@@ -38,6 +38,8 @@ type resourceModel struct {
 	RootVolumeConfig types.Object `tfsdk:"root_volume_config"`
 	// Tags is a map of tags assigned to the image builder (optional).
 	Tags types.Map `tfsdk:"tags"`
+	// TagsAll is a map of tags, including default tags, assigned to the image builder (computed).
+	TagsAll types.Map `tfsdk:"tags_all"`
 	// ARN is the ARN of the AppStream image builder (computed).
 	ARN types.String `tfsdk:"arn"`
 	// CreatedTime is the timestamp when the image builder was created (computed).
