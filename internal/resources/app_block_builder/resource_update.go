@@ -7,6 +7,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	awsappstream "github.com/aws/aws-sdk-go-v2/service/appstream"
@@ -103,6 +104,7 @@ func (r *resource) Update(ctx context.Context, req tfresource.UpdateRequest, res
 		return
 	}
 
+	wasRunning := wantsRunning(awstypes.AppBlockBuilderState(state.State.ValueString()))
 	mode := updateMode(state, plan)
 
 	switch mode {
@@ -117,12 +119,6 @@ func (r *resource) Update(ctx context.Context, req tfresource.UpdateRequest, res
 		}
 	case appBlockBuilderUpdateAllowedRunning:
 		// proceed normally
-	case appBlockBuilderUpdateForbidden:
-		resp.Diagnostics.AddError(
-			"Error Updating AWS AppStream App Block Builder",
-			fmt.Sprintf("Could not update app block builder %q: app block builder cannot be updated in its current state", name),
-		)
-		return
 	}
 
 	out, err := r.appstreamClient.UpdateAppBlockBuilder(ctx, input)
@@ -151,7 +147,7 @@ func (r *resource) Update(ctx context.Context, req tfresource.UpdateRequest, res
 		}
 	}
 
-	if mode == appBlockBuilderUpdateRequiresStop {
+	if mode == appBlockBuilderUpdateRequiresStop && wasRunning {
 		err = r.ensureRunning(ctx, name)
 		if err != nil {
 			resp.Diagnostics.AddError(
@@ -177,6 +173,10 @@ func (r *resource) Update(ctx context.Context, req tfresource.UpdateRequest, res
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, newState)...)
+}
+
+func wantsRunning(state awstypes.AppBlockBuilderState) bool {
+	return state == awstypes.AppBlockBuilderStateRunning || state == awstypes.AppBlockBuilderStateStarting
 }
 
 func (r *resource) ensureStopped(ctx context.Context, name string) error {
@@ -248,6 +248,7 @@ func (r *resource) ensureRunning(ctx context.Context, name string) error {
 				if util.IsAppStreamNotFound(err) {
 					return nil
 				}
+
 				return err
 			}
 
@@ -267,6 +268,14 @@ func (r *resource) ensureRunning(ctx context.Context, name string) error {
 					if util.IsAppStreamNotFound(err) {
 						return nil
 					}
+
+					// app block builders cannot be started without an app block association.
+					// if the association was removed externally, keep the builder stopped.
+					if util.IsResourceNotAvailableException(err) &&
+						strings.Contains(err.Error(), "Unassociated AppBlock Builder cannot be started.") {
+						return nil
+					}
+
 					return err
 				}
 				// retry as we just started the app block builder

@@ -91,6 +91,7 @@ func (ds *dataSource) Read(ctx context.Context, req datasource.ReadRequest, resp
 		ARN:                         util.StringOrNull(appBlockBuilder.Arn),
 		CreatedTime:                 util.StringFromTime(appBlockBuilder.CreatedTime),
 		State:                       types.StringValue(string(appBlockBuilder.State)),
+		StateChangeReason:           flattenStateChangeReason(ctx, appBlockBuilder.StateChangeReason, &resp.Diagnostics),
 		AppBlockBuilderErrors:       flattenAppBlockBuilderErrors(ctx, appBlockBuilder.AppBlockBuilderErrors, &resp.Diagnostics),
 	}
 

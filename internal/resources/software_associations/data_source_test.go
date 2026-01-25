@@ -4,7 +4,6 @@
 package software_associations_test
 
 import (
-	"context"
 	"fmt"
 	"testing"
 
@@ -21,14 +20,14 @@ func getAWSAccountInfo(t *testing.T) (accountID, region string) {
 
 	t.Helper()
 
-	cfg, err := config.LoadDefaultConfig(context.Background())
+	cfg, err := config.LoadDefaultConfig(t.Context())
 	if err != nil {
 		t.Fatalf("failed to load AWS config: %v", err)
 	}
 
 	stsClient := sts.NewFromConfig(cfg)
 
-	out, err := stsClient.GetCallerIdentity(context.Background(), &sts.GetCallerIdentityInput{})
+	out, err := stsClient.GetCallerIdentity(t.Context(), &sts.GetCallerIdentityInput{})
 	if err != nil {
 		t.Fatalf("failed to get caller identity: %v", err)
 	}

@@ -12,14 +12,9 @@ type appBlockBuilderUpdateMode int
 const (
 	appBlockBuilderUpdateAllowedRunning appBlockBuilderUpdateMode = iota
 	appBlockBuilderUpdateRequiresStop
-	appBlockBuilderUpdateForbidden
 )
 
 func updateMode(state, plan resourceModel) appBlockBuilderUpdateMode {
-	if plan.State.IsUnknown() {
-		return appBlockBuilderUpdateForbidden
-	}
-
 	// see https://docs.aws.amazon.com/appstream2/latest/APIReference/API_CreateAppBlockBuilder.html
 	// see https://docs.aws.amazon.com/appstream2/latest/APIReference/API_UpdateAppBlockBuilder.html
 
