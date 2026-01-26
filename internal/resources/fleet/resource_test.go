@@ -60,6 +60,11 @@ func TestAccFleet_basic(t *testing.T) {
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
+			{
+				Config:             testAccFleetBasicConfig(fleetName),
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: false,
+			},
 		},
 	})
 }
@@ -105,7 +110,7 @@ func TestAccFleet_imageARN(t *testing.T) {
 }
 
 func testAccFleetUpdateDescriptionTags(name string) string {
-	return testhelpers.TestAccProviderBasicConfig() + fmt.Sprintf(`
+	return testhelpers.TestAccProviderTagsConfig() + fmt.Sprintf(`
 resource "awsappstream_fleet" "test" {
   name          = %q
   fleet_type    = "ON_DEMAND"
@@ -126,7 +131,7 @@ resource "awsappstream_fleet" "test" {
 `, name)
 }
 
-func TestAccFleet_updateDescription(t *testing.T) {
+func TestAccFleet_updateDescriptionTags(t *testing.T) {
 	name := acctest.RandomWithPrefix("tf-acc-fleet-update")
 	resourceName := "awsappstream_fleet.test"
 
@@ -141,6 +146,10 @@ func TestAccFleet_updateDescription(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "description", "updated description"),
 					resource.TestCheckResourceAttr(resourceName, "tags.Environment", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.Owner", "terraform"),
+					resource.TestCheckResourceAttr(resourceName, "tags_all.Environment", "test"),
+					resource.TestCheckResourceAttr(resourceName, "tags_all.Owner", "terraform"),
+					resource.TestCheckResourceAttr(resourceName, "tags_all.MANAGED_BY", "terraform"),
+					resource.TestCheckResourceAttr(resourceName, "tags_all.BUILD_WITH", "love"),
 				),
 			},
 		},

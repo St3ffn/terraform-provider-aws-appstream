@@ -13,7 +13,7 @@ import (
 )
 
 func testAccFleetWithDataSource(name string) string {
-	return testhelpers.TestAccProviderBasicConfig() + fmt.Sprintf(`
+	return testhelpers.TestAccProviderTagsConfig() + fmt.Sprintf(`
 resource "awsappstream_fleet" "test" {
   name          = %q
   fleet_type    = "ON_DEMAND"
@@ -55,38 +55,14 @@ func TestAccFleetDataSource_basic(t *testing.T) {
 					resource.TestCheckResourceAttr("data.awsappstream_fleet.test", "idle_disconnect_timeout_in_seconds", "0"),
 					resource.TestCheckResourceAttr("data.awsappstream_fleet.test", "tags.Environment", "test"),
 					resource.TestCheckResourceAttr("data.awsappstream_fleet.test", "tags.Owner", "terraform"),
+					resource.TestCheckResourceAttr("data.awsappstream_fleet.test", "tags.MANAGED_BY", "terraform"),
+					resource.TestCheckResourceAttr("data.awsappstream_fleet.test", "tags.BUILD_WITH", "love"),
 					resource.TestCheckResourceAttrSet("data.awsappstream_fleet.test", "arn"),
 					resource.TestCheckResourceAttrSet("data.awsappstream_fleet.test", "created_time"),
 					resource.TestCheckResourceAttrSet("data.awsappstream_fleet.test", "state"),
-				),
-			},
-		},
-	})
-}
-
-func TestAccFleetDataSource_computed(t *testing.T) {
-	name := acctest.RandomWithPrefix("tf-acc-fleet-ds-computed")
-
-	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testhelpers.TestAccPreCheck(t) },
-		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccFleetWithDataSource(name),
-				Check: resource.ComposeAggregateTestCheckFunc(
-					resource.TestCheckResourceAttr(
-						"data.awsappstream_fleet.test",
-						"compute_capacity.desired_instances",
-						"0",
-					),
-					resource.TestCheckNoResourceAttr(
-						"data.awsappstream_fleet.test",
-						"vpc_config",
-					),
-					resource.TestCheckNoResourceAttr(
-						"data.awsappstream_fleet.test",
-						"domain_join_info",
-					),
+					resource.TestCheckResourceAttr("data.awsappstream_fleet.test", "compute_capacity.desired_instances", "0"),
+					resource.TestCheckNoResourceAttr("data.awsappstream_fleet.test", "vpc_config"),
+					resource.TestCheckNoResourceAttr("data.awsappstream_fleet.test", "domain_join_info"),
 				),
 			},
 		},

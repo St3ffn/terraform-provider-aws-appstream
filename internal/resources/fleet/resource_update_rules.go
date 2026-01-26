@@ -17,10 +17,6 @@ const (
 )
 
 func updateMode(state, plan resourceModel) fleetUpdateMode {
-	if plan.State.IsUnknown() {
-		return fleetUpdateForbidden
-	}
-
 	switch awstypes.FleetType(plan.FleetType.ValueString()) {
 	case awstypes.FleetTypeAlwaysOn, awstypes.FleetTypeOnDemand:
 		return updateModeAlwaysOnOnDemandFleet(state, plan)

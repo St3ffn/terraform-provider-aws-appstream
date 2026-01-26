@@ -185,11 +185,13 @@ func (r *resource) Update(ctx context.Context, req tfresource.UpdateRequest, res
 		return
 	}
 
+	restartAfter := false
+	var err error
 	mode := updateMode(state, plan)
 
 	switch mode {
 	case fleetUpdateRequiresStop:
-		err := r.ensureStopped(ctx, name)
+		restartAfter, err = r.ensureStopped(ctx, name)
 		if err != nil {
 			resp.Diagnostics.AddError(
 				"Error Updating AWS AppStream Fleet",
@@ -233,7 +235,7 @@ func (r *resource) Update(ctx context.Context, req tfresource.UpdateRequest, res
 		}
 	}
 
-	if mode == fleetUpdateRequiresStop {
+	if mode == fleetUpdateRequiresStop && restartAfter {
 		err = r.ensureRunning(ctx, name)
 		if err != nil {
 			resp.Diagnostics.AddError(
@@ -261,10 +263,16 @@ func (r *resource) Update(ctx context.Context, req tfresource.UpdateRequest, res
 	resp.Diagnostics.Append(resp.State.Set(ctx, newState)...)
 }
 
+func wasRunning(state awstypes.FleetState) bool {
+	return state == awstypes.FleetStateRunning || state == awstypes.FleetStateStarting
+}
+
 var ErrUnexpectedFleetState = errors.New("unexpected fleet state")
 
-func (r *resource) ensureStopped(ctx context.Context, name string) error {
-	return util.RetryOn(
+func (r *resource) ensureStopped(ctx context.Context, name string) (restartAfter bool, err error) {
+	stateCaptured := false
+
+	err = util.RetryOn(
 		ctx,
 		func(ctx context.Context) error {
 			out, err := r.appstreamClient.DescribeFleets(ctx, &awsappstream.DescribeFleetsInput{
@@ -282,6 +290,11 @@ func (r *resource) ensureStopped(ctx context.Context, name string) error {
 			}
 
 			state := out.Fleets[0].State
+
+			if !stateCaptured {
+				restartAfter = wasRunning(state)
+				stateCaptured = true
+			}
 
 			switch state {
 			case awstypes.FleetStateRunning:
@@ -319,6 +332,7 @@ func (r *resource) ensureStopped(ctx context.Context, name string) error {
 			util.IsOperationNotPermittedException,
 		),
 	)
+	return
 }
 
 func (r *resource) ensureRunning(ctx context.Context, name string) error {
