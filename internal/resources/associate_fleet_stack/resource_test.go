@@ -59,6 +59,11 @@ func TestAccAssociateFleetStack_basic(t *testing.T) {
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
+			{
+				Config:             testAccAssociateFleetStackBasicConfig(fleetName, stackName),
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: false,
+			},
 		},
 	})
 }

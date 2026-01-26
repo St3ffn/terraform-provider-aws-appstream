@@ -63,6 +63,11 @@ func TestAccAssociateApplicationEntitlement_basic(t *testing.T) {
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
+			{
+				Config:             testAccAssociateApplicationEntitlementBasicConfig(stackName, entitlementName, applicationName),
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: false,
+			},
 		},
 	})
 }

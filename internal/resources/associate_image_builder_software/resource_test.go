@@ -64,6 +64,11 @@ func TestAccAssociateImageBuilderSoftware_basic(t *testing.T) {
 					"deploy",
 				},
 			},
+			{
+				Config:             testAccAssociateImageBuilderSoftwareBasicConfig(name),
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: false,
+			},
 		},
 	})
 }

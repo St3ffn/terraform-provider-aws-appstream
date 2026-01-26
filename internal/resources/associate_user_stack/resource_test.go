@@ -56,6 +56,11 @@ func TestAccAssociateUserStack_basic(t *testing.T) {
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
+			{
+				Config:             testAccAssociateUserStackBasicConfig(stackName, userName),
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: false,
+			},
 		},
 	})
 }

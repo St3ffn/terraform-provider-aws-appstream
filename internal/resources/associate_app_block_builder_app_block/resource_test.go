@@ -77,26 +77,6 @@ func TestAccAppBlockBuilderAssociation_basic(t *testing.T) {
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
-		},
-	})
-}
-
-func TestAccAppBlockBuilderAssociation_noopPlan(t *testing.T) {
-	vpcInfo, err := testhelpers.GetDefaultVPCInfo(t)
-	if err != nil {
-		t.Fatalf("failed to get default VPC info: %v", err)
-	}
-
-	builderName := acctest.RandomWithPrefix("tf-acc-app-block-builder")
-	appBlockName := acctest.RandomWithPrefix("tf-acc-app-block")
-
-	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:                 func() { testhelpers.TestAccPreCheck(t) },
-		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccAppBlockBuilderAssociationBasicConfig(builderName, appBlockName, vpcInfo.SubnetIDs[:2]),
-			},
 			{
 				Config:             testAccAppBlockBuilderAssociationBasicConfig(builderName, appBlockName, vpcInfo.SubnetIDs[:2]),
 				PlanOnly:           true,

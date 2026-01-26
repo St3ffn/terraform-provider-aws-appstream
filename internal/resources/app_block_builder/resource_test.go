@@ -204,7 +204,7 @@ resource "awsappstream_app_block_builder" "test" {
 func TestAccAppBlockBuilder_tags(t *testing.T) {
 	vpcInfo, err := testhelpers.GetDefaultVPCInfo(t)
 	if err != nil {
-		t.Fatal(err)
+		t.Fatalf("failed to get default VPC info: %v", err)
 	}
 
 	name := acctest.RandomWithPrefix("tf-acc-app-block-builder-tags")
