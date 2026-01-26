@@ -30,7 +30,7 @@ func TestAccStack_basic(t *testing.T) {
 	name := acctest.RandomWithPrefix("tf-acc-stack-basic")
 	resourceName := "awsappstream_stack.test"
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:                 func() { testhelpers.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -55,12 +55,17 @@ func TestAccStack_basic(t *testing.T) {
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
+			{
+				Config:             testAccStackBasicConfig(name),
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: false,
+			},
 		},
 	})
 }
 
 func testAccStackTagsConfig(name string) string {
-	return testhelpers.TestAccProviderBasicConfig() +
+	return testhelpers.TestAccProviderTagsConfig() +
 		testAccStackResource(name, `
   tags = {
     Environment = "test"
@@ -73,7 +78,7 @@ func TestAccStack_tags(t *testing.T) {
 	name := acctest.RandomWithPrefix("tf-acc-stack-tags")
 	resourceName := "awsappstream_stack.test"
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:                 func() { testhelpers.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -82,6 +87,10 @@ func TestAccStack_tags(t *testing.T) {
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "tags.Environment", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.Owner", "terraform"),
+					resource.TestCheckResourceAttr(resourceName, "tags_all.Environment", "test"),
+					resource.TestCheckResourceAttr(resourceName, "tags_all.Owner", "terraform"),
+					resource.TestCheckResourceAttr(resourceName, "tags_all.MANAGED_BY", "terraform"),
+					resource.TestCheckResourceAttr(resourceName, "tags_all.BUILD_WITH", "love"),
 				),
 			},
 		},
@@ -99,7 +108,7 @@ func TestAccStack_updateDescription(t *testing.T) {
 	name := acctest.RandomWithPrefix("tf-acc-stack-update")
 	resourceName := "awsappstream_stack.test"
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:                 func() { testhelpers.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -167,7 +176,7 @@ func TestAccStack_complex(t *testing.T) {
 	name := acctest.RandomWithPrefix("tf-acc-stack-complex")
 	resourceName := "awsappstream_stack.test"
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:                 func() { testhelpers.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -231,7 +240,7 @@ func TestAccStack_storageConnector(t *testing.T) {
 	name := acctest.RandomWithPrefix("tf-acc-stack-storage")
 	resourceName := "awsappstream_stack.test"
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:                 func() { testhelpers.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -277,7 +286,7 @@ func TestAccStack_userSettingsMaximumLength(t *testing.T) {
 	name := acctest.RandomWithPrefix("tf-acc-stack-maxlen")
 	resourceName := "awsappstream_stack.test"
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:                 func() { testhelpers.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -314,7 +323,7 @@ func TestAccStack_embedHostDomains(t *testing.T) {
 	name := acctest.RandomWithPrefix("tf-acc-stack-embed")
 	resourceName := "awsappstream_stack.test"
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:                 func() { testhelpers.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{

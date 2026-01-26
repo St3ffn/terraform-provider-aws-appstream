@@ -32,8 +32,6 @@ type dataSourceModel struct {
 	StreamingExperienceSettings types.Object `tfsdk:"streaming_experience_settings"`
 	// Tags is the resource tags to apply to the stack (computed).
 	Tags types.Map `tfsdk:"tags"`
-	// TagsAll is a map of tags, including default tags, assigned to the stack (computed).
-	TagsAll types.Map `tfsdk:"tags_all"`
 	// ARN of the AppStream stack (computed).
 	ARN types.String `tfsdk:"arn"`
 	// CreatedTime is the timestamp when the AppStream stack was created (computed).

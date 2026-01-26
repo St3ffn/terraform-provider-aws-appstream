@@ -20,6 +20,8 @@ resource "awsappstream_stack" "test" {
 
 data "awsappstream_stack" "test" {
   name = awsappstream_stack.test.name
+
+  depends_on = [awsappstream_stack.test]
 }
 `, name)
 }
@@ -27,7 +29,7 @@ data "awsappstream_stack" "test" {
 func TestAccStackDataSource_basic(t *testing.T) {
 	name := acctest.RandomWithPrefix("tf-acc-stack-ds-basic")
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:                 func() { testhelpers.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -46,7 +48,7 @@ func TestAccStackDataSource_basic(t *testing.T) {
 }
 
 func testAccStackWithDataSourceComplex(name string) string {
-	return testhelpers.TestAccProviderBasicConfig() + fmt.Sprintf(`
+	return testhelpers.TestAccProviderTagsConfig() + fmt.Sprintf(`
 resource "awsappstream_stack" "test" {
   name = %q
 
@@ -71,6 +73,8 @@ resource "awsappstream_stack" "test" {
 
 data "awsappstream_stack" "test" {
   name = awsappstream_stack.test.name
+
+  depends_on = [awsappstream_stack.test]
 }
 `, name)
 }
@@ -78,7 +82,7 @@ data "awsappstream_stack" "test" {
 func TestAccStackDataSource_complex(t *testing.T) {
 	name := acctest.RandomWithPrefix("tf-acc-stack-ds-complex")
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:                 func() { testhelpers.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -92,6 +96,8 @@ func TestAccStackDataSource_complex(t *testing.T) {
 					resource.TestCheckResourceAttrSet("data.awsappstream_stack.test", "user_settings.#"),
 					resource.TestCheckResourceAttr("data.awsappstream_stack.test", "tags.Environment", "test"),
 					resource.TestCheckResourceAttr("data.awsappstream_stack.test", "tags.Owner", "terraform"),
+					resource.TestCheckResourceAttr("data.awsappstream_stack.test", "tags.MANAGED_BY", "terraform"),
+					resource.TestCheckResourceAttr("data.awsappstream_stack.test", "tags.BUILD_WITH", "love"),
 				),
 			},
 		},
