@@ -43,28 +43,28 @@ func (r *resource) ValidateConfig(ctx context.Context, req tfresource.ValidateCo
 	hasImageName := !config.ImageName.IsNull() && !config.ImageName.IsUnknown()
 	hasImageArn := !config.ImageARN.IsNull() && !config.ImageARN.IsUnknown()
 
-	// can either have image name or image arn
-	switch {
-	case hasImageName && hasImageArn:
-		resp.Diagnostics.AddAttributeError(
-			path.Root("image_name"),
-			"Invalid Image Configuration",
-			"Only one of `image_name` or `image_arn` may be specified.",
-		)
-
-	case !hasImageName && !hasImageArn:
-		resp.Diagnostics.AddAttributeError(
-			path.Root("image_name"),
-			"Missing Required Attribute",
-			"Either `image_name` or `image_arn` must be specified.",
-		)
-	}
-
 	fleetType := config.FleetType.ValueString()
-
 	switch fleetType {
 
 	case string(awstypes.FleetTypeElastic):
+		// elastic fleets do not support image_name
+		if hasImageName {
+			resp.Diagnostics.AddAttributeError(
+				path.Root("image_name"),
+				"Invalid Configuration",
+				"`image_name` cannot be specified for elastic fleets.",
+			)
+		}
+
+		// elastic fleets do not support image_arn
+		if hasImageArn {
+			resp.Diagnostics.AddAttributeError(
+				path.Root("image_arn"),
+				"Invalid Configuration",
+				"`image_arn` cannot be specified for elastic fleets.",
+			)
+		}
+
 		// elastic fleets scale by sessions, not instances
 		if config.MaxConcurrentSessions.IsNull() {
 			resp.Diagnostics.AddAttributeError(
@@ -89,6 +89,15 @@ func (r *resource) ValidateConfig(ctx context.Context, req tfresource.ValidateCo
 				path.Root("compute_capacity"),
 				"Invalid Configuration",
 				"`compute_capacity` cannot be specified for elastic fleets.",
+			)
+		}
+
+		// elastic fleets always require platform
+		if config.Platform.IsNull() {
+			resp.Diagnostics.AddAttributeError(
+				path.Root("platform"),
+				"Missing Required Attribute",
+				"`platform` must be specified for elastic fleets.",
 			)
 		}
 
@@ -138,6 +147,23 @@ func (r *resource) ValidateConfig(ctx context.Context, req tfresource.ValidateCo
 		}
 
 	case string(awstypes.FleetTypeOnDemand), string(awstypes.FleetTypeAlwaysOn):
+		// can either have image name or image arn
+		switch {
+		case hasImageName && hasImageArn:
+			resp.Diagnostics.AddAttributeError(
+				path.Root("image_name"),
+				"Invalid Image Configuration",
+				"Only one of `image_name` or `image_arn` may be specified.",
+			)
+
+		case !hasImageName && !hasImageArn:
+			resp.Diagnostics.AddAttributeError(
+				path.Root("image_name"),
+				"Missing Required Attribute",
+				"Either `image_name` or `image_arn` must be specified.",
+			)
+		}
+
 		// session-based scaling is exclusive to elastic fleets
 		if !config.MaxConcurrentSessions.IsNull() {
 			resp.Diagnostics.AddAttributeError(

@@ -55,6 +55,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 			"image_name": schema.StringAttribute{
 				Description: "Name of the AppStream image.",
 				MarkdownDescription: "The name of the AppStream image used to create the fleet. " +
+					"This attribute is supported only for non-elastic fleets. " +
 					"Either `image_name` or `image_arn` must be specified.",
 				Optional: true,
 				Computed: true,
@@ -68,6 +69,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 			"image_arn": schema.StringAttribute{
 				Description: "ARN of the AppStream image.",
 				MarkdownDescription: "The ARN of the AppStream image used to create the fleet. " +
+					"This attribute is supported only for non-elastic fleets. " +
 					"Either `image_name` or `image_arn` must be specified.",
 				Optional: true,
 				Computed: true,
@@ -246,7 +248,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 			},
 			"platform": schema.StringAttribute{
 				Description: "Fleet platform.",
-				MarkdownDescription: "The platform of the fleet. This attribute is optional and primarily used " +
+				MarkdownDescription: "The platform of the fleet. This attribute is optional but required " +
 					"for elastic fleets. If not specified, the platform is inferred from the image.",
 				Optional: true,
 				Validators: []validator.String{

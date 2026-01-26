@@ -193,12 +193,12 @@ resource "awsappstream_fleet" "on_demand_multi_session" {
 - `enable_default_internet_access` (Boolean) Whether instances in the fleet have access to the internet.
 - `iam_role_arn` (String) The ARN of the IAM role applied to fleet instances.
 - `idle_disconnect_timeout_in_seconds` (Number) The amount of time, in seconds, that a session can remain idle before being disconnected. Specify `0` to disable idle disconnection. Otherwise, the value must be a multiple of 60 seconds between 60 and 36000 to avoid AWS rounding behavior.
-- `image_arn` (String) The ARN of the AppStream image used to create the fleet. Either `image_name` or `image_arn` must be specified.
-- `image_name` (String) The name of the AppStream image used to create the fleet. Either `image_name` or `image_arn` must be specified.
+- `image_arn` (String) The ARN of the AppStream image used to create the fleet. This attribute is supported only for non-elastic fleets. Either `image_name` or `image_arn` must be specified.
+- `image_name` (String) The name of the AppStream image used to create the fleet. This attribute is supported only for non-elastic fleets. Either `image_name` or `image_arn` must be specified.
 - `max_concurrent_sessions` (Number) The maximum number of concurrent streaming sessions for an elastic fleet. This setting is required for elastic fleets and is not allowed for other fleet types.
 - `max_sessions_per_instance` (Number) The maximum number of user sessions allowed per fleet instance. This setting applies only to multi-session fleets.
 - `max_user_duration_in_seconds` (Number) The maximum length of time that a streaming session can remain active.
-- `platform` (String) The platform of the fleet. This attribute is optional and primarily used for elastic fleets. If not specified, the platform is inferred from the image.
+- `platform` (String) The platform of the fleet. This attribute is optional but required for elastic fleets. If not specified, the platform is inferred from the image.
 - `root_volume_config` (Attributes) Specifies the root volume configuration for fleet instances. (see [below for nested schema](#nestedatt--root_volume_config))
 - `session_script_s3_location` (Attributes) Specifies the S3 location of the session scripts configuration ZIP file. This setting applies only to elastic fleets. (see [below for nested schema](#nestedatt--session_script_s3_location))
 - `stream_view` (String) Controls which streaming protocol views are enabled.
