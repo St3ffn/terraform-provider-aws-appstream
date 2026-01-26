@@ -14,6 +14,8 @@ APP_BLOCK_VHD_FILENAME="appblock.vhd"
 APP_BLOCK_SETUP_SCRIPT_FILENAME="app_block_setup.sh"
 APP_BLOCK_POST_SETUP_SCRIPT_FILENAME="app_block_post_setup.sh"
 
+APPLICATION_ICON_FILENAME="application_icon.png"
+
 echo "Setting up AppStream acceptance test prerequisites"
 echo "Account: $ACCOUNT_ID"
 echo "Region:  $REGION"
@@ -147,4 +149,22 @@ EOF
   aws s3 cp "$APP_BLOCK_POST_SETUP_SCRIPT_FILE" "$BUCKET_URI/$APP_BLOCK_POST_SETUP_SCRIPT_FILENAME"
 
   echo "✓ $APP_BLOCK_POST_SETUP_SCRIPT_FILENAME uploaded"
+fi
+
+# Create application icon if missing
+APPLICATION_ICON_FILE="${TMP_DIR}/${APPLICATION_ICON_FILENAME}"
+
+if aws s3api head-object --bucket "$BUCKET_NAME" --key "$APPLICATION_ICON_FILENAME" >/dev/null 2>&1; then
+  echo "✓ $APPLICATION_ICON_FILENAME already exists in bucket"
+else
+  echo "→ Creating $APPLICATION_ICON_FILENAME..."
+
+  cat <<'EOF' | base64 --decode > "$APPLICATION_ICON_FILE"
+iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO7+ZxkAAAAASUVORK5CYII=
+EOF
+
+  echo "→ Uploading $APPLICATION_ICON_FILENAME..."
+  aws s3 cp "$APPLICATION_ICON_FILE" "$BUCKET_URI/$APPLICATION_ICON_FILENAME"
+
+  echo "✓ $APPLICATION_ICON_FILENAME uploaded"
 fi
