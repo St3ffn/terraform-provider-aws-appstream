@@ -29,7 +29,7 @@ data "awsappstream_image_builder" "test" {
 func TestAccImageBuilderDataSource_basic(t *testing.T) {
 	name := acctest.RandomWithPrefix("tf-acc-image-builder-ds-basic")
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:                 func() { testhelpers.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -50,7 +50,7 @@ func TestAccImageBuilderDataSource_basic(t *testing.T) {
 }
 
 func testAccImageBuilderWithDataSourceArnDescriptionTags(name string) string {
-	return testhelpers.TestAccProviderBasicConfig() + fmt.Sprintf(`
+	return testhelpers.TestAccProviderTagsConfig() + fmt.Sprintf(`
 resource "awsappstream_image_builder" "test" {
   name          = %q
   instance_type = "stream.standard.small"
@@ -74,7 +74,7 @@ data "awsappstream_image_builder" "test" {
 func TestAccImageBuilderDataSource_arn_and_description(t *testing.T) {
 	name := acctest.RandomWithPrefix("tf-acc-image-builder-ds-desc")
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:                 func() { testhelpers.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -87,6 +87,8 @@ func TestAccImageBuilderDataSource_arn_and_description(t *testing.T) {
 					resource.TestCheckResourceAttr("data.awsappstream_image_builder.test", "display_name", "Test Builder"),
 					resource.TestCheckResourceAttr("data.awsappstream_image_builder.test", "tags.Environment", "test"),
 					resource.TestCheckResourceAttr("data.awsappstream_image_builder.test", "tags.Owner", "terraform"),
+					resource.TestCheckResourceAttr("data.awsappstream_image_builder.test", "tags.MANAGED_BY", "terraform"),
+					resource.TestCheckResourceAttr("data.awsappstream_image_builder.test", "tags.BUILD_WITH", "love"),
 				),
 			},
 		},

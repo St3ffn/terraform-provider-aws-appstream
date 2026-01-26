@@ -46,7 +46,7 @@ func TestAccAssociateApplicationEntitlement_basic(t *testing.T) {
 
 	resourceName := "awsappstream_associate_application_entitlement.test"
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:                 func() { testhelpers.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{

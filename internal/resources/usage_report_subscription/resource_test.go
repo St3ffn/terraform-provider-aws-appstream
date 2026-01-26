@@ -19,7 +19,7 @@ resource "awsappstream_usage_report_subscription" "test" {}
 func TestAccUsageReportSubscription_basic(t *testing.T) {
 	resourceName := "awsappstream_usage_report_subscription.test"
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:                 func() { testhelpers.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -41,7 +41,6 @@ func TestAccUsageReportSubscription_basic(t *testing.T) {
 				),
 			},
 			{
-				// ensure no-op plan
 				Config:             testAccUsageReportSubscriptionBasicConfig(),
 				PlanOnly:           true,
 				ExpectNonEmptyPlan: false,

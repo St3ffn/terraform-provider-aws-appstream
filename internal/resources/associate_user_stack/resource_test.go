@@ -37,7 +37,7 @@ func TestAccAssociateUserStack_basic(t *testing.T) {
 
 	resourceName := "awsappstream_associate_user_stack.test"
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:                 func() { testhelpers.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -87,7 +87,7 @@ func TestAccAssociateUserStack_sendEmailNotification(t *testing.T) {
 
 	resourceName := "awsappstream_associate_user_stack.test"
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:                 func() { testhelpers.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{

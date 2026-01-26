@@ -31,7 +31,7 @@ func TestAccUser_basic(t *testing.T) {
 	userName := acctest.RandomWithPrefix("tf-acc-user") + "@example.com"
 	resourceName := "awsappstream_user.test"
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:                 func() { testhelpers.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -72,7 +72,7 @@ func TestAccUser_namesAndMessageAction(t *testing.T) {
 	userName := acctest.RandomWithPrefix("tf-acc-user") + "@example.com"
 	resourceName := "awsappstream_user.test"
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:                 func() { testhelpers.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -99,7 +99,7 @@ func TestAccUser_enabledToggle(t *testing.T) {
 	userName := acctest.RandomWithPrefix("tf-acc-user") + "@example.com"
 	resourceName := "awsappstream_user.test"
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:                 func() { testhelpers.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -124,7 +124,7 @@ func TestAccUser_noOpPlan(t *testing.T) {
 
 	config := testAccUserBasicConfig(userName)
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:                 func() { testhelpers.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{

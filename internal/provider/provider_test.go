@@ -11,7 +11,7 @@ import (
 )
 
 func TestAccProvider_basic(t *testing.T) {
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		PreCheck: func() {
 			testhelpers.TestAccPreCheck(t)

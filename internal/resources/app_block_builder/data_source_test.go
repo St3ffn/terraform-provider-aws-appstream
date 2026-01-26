@@ -45,7 +45,7 @@ func TestAccAppBlockBuilderDataSource_basic(t *testing.T) {
 
 	name := acctest.RandomWithPrefix("tf-acc-app-block-builder-ds-basic")
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:                 func() { testhelpers.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{

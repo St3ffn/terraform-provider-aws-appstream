@@ -43,7 +43,7 @@ func TestAccAssociateFleetStack_basic(t *testing.T) {
 
 	resourceName := "awsappstream_associate_fleet_stack.test"
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:                 func() { testhelpers.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{

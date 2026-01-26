@@ -49,7 +49,7 @@ data "awsappstream_app_block" "test" {
 func TestAccAppBlockDataSource_basic(t *testing.T) {
 	name := acctest.RandomWithPrefix("tf-acc-app-block-ds-basic")
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:                 func() { testhelpers.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{

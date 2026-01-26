@@ -42,16 +42,18 @@ data "awsappstream_entitlement" "test" {
 func TestAccEntitlementDataSource_basic(t *testing.T) {
 	name := acctest.RandomWithPrefix("tf-acc-entitlement-ds")
 	stackName := acctest.RandomWithPrefix("tf-acc-entitlement-stack-ds")
+	description := "Acceptance test entitlement"
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:                 func() { testhelpers.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccEntitlementWithDataSource(name, stackName, "Acceptance test entitlement"),
+				Config: testAccEntitlementWithDataSource(name, stackName, description),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr("data.awsappstream_entitlement.test", "name", name),
 					resource.TestCheckResourceAttr("data.awsappstream_entitlement.test", "stack_name", stackName),
+					resource.TestCheckResourceAttr("data.awsappstream_entitlement.test", "description", description),
 					resource.TestCheckResourceAttr("data.awsappstream_entitlement.test", "app_visibility", "ALL"),
 					resource.TestCheckResourceAttr("data.awsappstream_entitlement.test", "attributes.#", "1"),
 					resource.TestCheckTypeSetElemNestedAttrs(
@@ -63,32 +65,6 @@ func TestAccEntitlementDataSource_basic(t *testing.T) {
 						},
 					),
 					resource.TestCheckResourceAttrSet("data.awsappstream_entitlement.test", "created_time"),
-				),
-			},
-		},
-	})
-}
-
-func TestAccEntitlementDataSource_withDescription(t *testing.T) {
-	name := acctest.RandomWithPrefix("tf-acc-entitlement-ds-desc")
-	stackName := acctest.RandomWithPrefix("tf-acc-entitlement-stack-ds-desc")
-
-	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testhelpers.TestAccPreCheck(t) },
-		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccEntitlementWithDataSource(
-					name,
-					stackName,
-					"entitlement description",
-				),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(
-						"data.awsappstream_entitlement.test",
-						"description",
-						"entitlement description",
-					),
 				),
 			},
 		},

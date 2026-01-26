@@ -30,7 +30,7 @@ func TestAccUserDataSource_basic(t *testing.T) {
 	userName := acctest.RandomWithPrefix("tf-acc-user") + "@example.com"
 	resourceName := "data.awsappstream_user.test"
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:                 func() { testhelpers.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{

@@ -43,16 +43,12 @@ func TestAccEntitlement_basic(t *testing.T) {
 	stackName := acctest.RandomWithPrefix("tf-acc-entitlement-stack")
 	resourceName := "awsappstream_entitlement.test"
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:                 func() { testhelpers.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccEntitlementBasicConfig(
-					name,
-					stackName,
-					"Acceptance test entitlement",
-				),
+				Config: testAccEntitlementBasicConfig(name, stackName, "Acceptance test entitlement"),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "stack_name", stackName),
@@ -69,26 +65,15 @@ func TestAccEntitlement_basic(t *testing.T) {
 					resource.TestCheckResourceAttrSet(resourceName, "created_time"),
 				),
 			},
-		},
-	})
-}
-
-func TestAccEntitlement_import(t *testing.T) {
-	name := acctest.RandomWithPrefix("tf-acc-entitlement-import")
-	stackName := acctest.RandomWithPrefix("tf-acc-entitlement-stack-import")
-	resourceName := "awsappstream_entitlement.test"
-
-	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testhelpers.TestAccPreCheck(t) },
-		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccEntitlementBasicConfig(name, stackName, "Acceptance test entitlement"),
-			},
 			{
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
+			},
+			{
+				Config:             testAccEntitlementBasicConfig(name, stackName, "Acceptance test entitlement"),
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: false,
 			},
 		},
 	})
@@ -99,7 +84,7 @@ func TestAccEntitlement_updateDescription(t *testing.T) {
 	stackName := acctest.RandomWithPrefix("tf-acc-entitlement-stack-update")
 	resourceName := "awsappstream_entitlement.test"
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:                 func() { testhelpers.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
