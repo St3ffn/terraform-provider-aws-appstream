@@ -29,7 +29,7 @@ data "awsappstream_image_builder" "test" {
 func TestAccImageBuilderDataSource_basic(t *testing.T) {
 	name := acctest.RandomWithPrefix("tf-acc-image-builder-ds-basic")
 
-	resource.ParallelTest(t, resource.TestCase{
+	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testhelpers.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{

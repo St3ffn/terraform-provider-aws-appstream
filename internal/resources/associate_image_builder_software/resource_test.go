@@ -34,7 +34,7 @@ func TestAccAssociateImageBuilderSoftware_basic(t *testing.T) {
 
 	resourceName := "awsappstream_associate_image_builder_software.test"
 
-	resource.ParallelTest(t, resource.TestCase{
+	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testhelpers.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -95,7 +95,7 @@ func TestAccAssociateImageBuilderSoftware_update(t *testing.T) {
 	name := acctest.RandomWithPrefix("tf-acc-imgb-update")
 	resourceName := "awsappstream_associate_image_builder_software.test"
 
-	resource.ParallelTest(t, resource.TestCase{
+	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testhelpers.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -134,7 +134,7 @@ func TestAccAssociateImageBuilderSoftware_deploy(t *testing.T) {
 	name := acctest.RandomWithPrefix("tf-acc-imgb-deploy")
 	resourceName := "awsappstream_associate_image_builder_software.test"
 
-	resource.ParallelTest(t, resource.TestCase{
+	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testhelpers.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{

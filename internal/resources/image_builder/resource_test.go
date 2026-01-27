@@ -26,7 +26,7 @@ func TestAccImageBuilder_basic(t *testing.T) {
 	name := acctest.RandomWithPrefix("tf-acc-image-builder")
 	resourceName := "awsappstream_image_builder.test"
 
-	resource.ParallelTest(t, resource.TestCase{
+	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testhelpers.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -87,7 +87,7 @@ func TestAccImageBuilder_complex(t *testing.T) {
 	name := acctest.RandomWithPrefix("tf-acc-image-builder-arn")
 	resourceName := "awsappstream_image_builder.test"
 
-	resource.ParallelTest(t, resource.TestCase{
+	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testhelpers.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
