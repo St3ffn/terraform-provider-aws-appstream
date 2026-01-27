@@ -5,7 +5,6 @@ package image_builder
 
 import (
 	"context"
-	"errors"
 	"fmt"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -47,8 +46,6 @@ func (r *resource) Delete(ctx context.Context, req tfresource.DeleteRequest, res
 	}
 }
 
-var ErrUnexpectedImageBuilderState = errors.New("unexpected image builder state")
-
 func (r *resource) deleteImageBuilder(ctx context.Context, name string) error {
 	return util.RetryOn(
 		ctx,
@@ -84,7 +81,7 @@ func (r *resource) deleteImageBuilder(ctx context.Context, name string) error {
 					return err
 				}
 				// retry as we just stopped the image builder
-				return fmt.Errorf("%w: current=%s", ErrUnexpectedImageBuilderState, state)
+				return fmt.Errorf("%w: current=%s", errUnexpectedImageBuilderState, state)
 
 			case awstypes.ImageBuilderStateStopped, awstypes.ImageBuilderStateFailed,
 				awstypes.ImageBuilderStateSyncingApps, awstypes.ImageBuilderStatePendingSyncingApps,
@@ -102,10 +99,10 @@ func (r *resource) deleteImageBuilder(ctx context.Context, name string) error {
 					return err
 				}
 				// wait until resource is in state deleting or gone
-				return fmt.Errorf("%w: current=%s", ErrUnexpectedImageBuilderState, state)
+				return fmt.Errorf("%w: current=%s", errUnexpectedImageBuilderState, state)
 
 			default:
-				return fmt.Errorf("%w: current=%s", ErrUnexpectedImageBuilderState, state)
+				return fmt.Errorf("%w: current=%s", errUnexpectedImageBuilderState, state)
 			}
 		},
 		util.WithTimeout(deleteRetryTimeout),
@@ -115,9 +112,7 @@ func (r *resource) deleteImageBuilder(ctx context.Context, name string) error {
 		// see https://docs.aws.amazon.com/appstream2/latest/APIReference/API_StopImageBuilder.html
 		// see https://docs.aws.amazon.com/appstream2/latest/APIReference/API_DeleteImageBuilder.html
 		util.WithRetryOnFns(
-			func(err error) bool {
-				return errors.Is(err, ErrUnexpectedImageBuilderState)
-			},
+			isUnexpectedImageBuilderStateError,
 			util.IsConcurrentModificationException,
 			util.IsOperationNotPermittedException,
 		),

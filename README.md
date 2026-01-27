@@ -39,7 +39,7 @@ For context, [see the open AppStream-related issues](https://github.com/hashicor
 | awsappstream_app_block                             | ✅        | ✅           |
 | awsappstream_app_block_builder                     | ✅        | ✅           |
 | awsappstream_associate_app_block_builder_app_block | ✅        | ❌           |
-| awsappstream_directory_config                      | ✅        | ✅           |
+| awsappstream_directory_config                      | ✅        | ❌           |
 | awsappstream_image                                 | ❌        | ✅           |
 | awsappstream_image_permission                      | ✅        | ❌           |
 | awsappstream_image_permissions                     | ❌        | ✅           |

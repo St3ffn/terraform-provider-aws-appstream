@@ -5,7 +5,6 @@ package app_block_builder
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"strings"
 
@@ -220,14 +219,14 @@ func (r *resource) ensureStopped(ctx context.Context, name string) (restartAfter
 					return err
 				}
 				// retry as we just stopped the app block builder
-				return fmt.Errorf("%w: current=%s", ErrUnexpectedAppBlockBuilderState, state)
+				return fmt.Errorf("%w: current=%s", errUnexpectedAppBlockBuilderState, state)
 
 			case awstypes.AppBlockBuilderStateStopped:
 				// updatable state
 				return nil
 
 			default:
-				return fmt.Errorf("%w: current=%s", ErrUnexpectedAppBlockBuilderState, state)
+				return fmt.Errorf("%w: current=%s", errUnexpectedAppBlockBuilderState, state)
 			}
 		},
 		util.WithTimeout(updateRetryTimeout),
@@ -236,9 +235,7 @@ func (r *resource) ensureStopped(ctx context.Context, name string) (restartAfter
 		// see https://docs.aws.amazon.com/appstream2/latest/APIReference/API_DescribeAppBlockBuilders.html
 		// see https://docs.aws.amazon.com/appstream2/latest/APIReference/API_StopAppBlockBuilder.html
 		util.WithRetryOnFns(
-			func(err error) bool {
-				return errors.Is(err, ErrUnexpectedAppBlockBuilderState)
-			},
+			isUnexpectedAppBlockBuilderStateError,
 			util.IsConcurrentModificationException,
 			util.IsOperationNotPermittedException,
 		),
@@ -288,14 +285,14 @@ func (r *resource) ensureRunning(ctx context.Context, name string) error {
 					return err
 				}
 				// retry as we just started the app block builder
-				return fmt.Errorf("%w: current=%s", ErrUnexpectedAppBlockBuilderState, state)
+				return fmt.Errorf("%w: current=%s", errUnexpectedAppBlockBuilderState, state)
 
 			case awstypes.AppBlockBuilderStateRunning:
 				// desired state
 				return nil
 
 			default:
-				return fmt.Errorf("%w: current=%s", ErrUnexpectedAppBlockBuilderState, state)
+				return fmt.Errorf("%w: current=%s", errUnexpectedAppBlockBuilderState, state)
 			}
 		},
 		util.WithTimeout(updateRetryTimeout),
@@ -304,9 +301,7 @@ func (r *resource) ensureRunning(ctx context.Context, name string) error {
 		// see https://docs.aws.amazon.com/appstream2/latest/APIReference/API_DescribeAppBlockBuilders.html
 		// see https://docs.aws.amazon.com/appstream2/latest/APIReference/API_StartAppBlockBuilder.html
 		util.WithRetryOnFns(
-			func(err error) bool {
-				return errors.Is(err, ErrUnexpectedAppBlockBuilderState)
-			},
+			isUnexpectedAppBlockBuilderStateError,
 			util.IsConcurrentModificationException,
 			util.IsOperationNotPermittedException,
 		),

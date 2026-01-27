@@ -5,7 +5,6 @@ package app_block_builder
 
 import (
 	"context"
-	"errors"
 	"fmt"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -47,8 +46,6 @@ func (r *resource) Delete(ctx context.Context, req tfresource.DeleteRequest, res
 	}
 }
 
-var ErrUnexpectedAppBlockBuilderState = errors.New("unexpected app block builder state")
-
 func (r *resource) deleteAppBlockBuilder(ctx context.Context, name string) error {
 	return util.RetryOn(
 		ctx,
@@ -84,7 +81,7 @@ func (r *resource) deleteAppBlockBuilder(ctx context.Context, name string) error
 					return err
 				}
 				// retry as we just stopped the app block builder
-				return fmt.Errorf("%w: current=%s", ErrUnexpectedAppBlockBuilderState, state)
+				return fmt.Errorf("%w: current=%s", errUnexpectedAppBlockBuilderState, state)
 
 			case awstypes.AppBlockBuilderStateStopped:
 				// deletable state
@@ -99,10 +96,10 @@ func (r *resource) deleteAppBlockBuilder(ctx context.Context, name string) error
 					return err
 				}
 				// wait until resource is gone
-				return fmt.Errorf("%w: current=%s", ErrUnexpectedAppBlockBuilderState, state)
+				return fmt.Errorf("%w: current=%s", errUnexpectedAppBlockBuilderState, state)
 
 			default:
-				return fmt.Errorf("%w: current=%s", ErrUnexpectedAppBlockBuilderState, state)
+				return fmt.Errorf("%w: current=%s", errUnexpectedAppBlockBuilderState, state)
 			}
 		},
 		util.WithTimeout(deleteRetryTimeout),
@@ -112,9 +109,7 @@ func (r *resource) deleteAppBlockBuilder(ctx context.Context, name string) error
 		// see https://docs.aws.amazon.com/appstream2/latest/APIReference/API_StopAppBlockBuilder.html
 		// see https://docs.aws.amazon.com/appstream2/latest/APIReference/API_DeleteAppBlockBuilder.html
 		util.WithRetryOnFns(
-			func(err error) bool {
-				return errors.Is(err, ErrUnexpectedAppBlockBuilderState)
-			},
+			isUnexpectedAppBlockBuilderStateError,
 			util.IsConcurrentModificationException,
 			util.IsOperationNotPermittedException,
 			util.IsResourceInUseException,

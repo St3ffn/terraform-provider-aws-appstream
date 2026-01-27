@@ -65,16 +65,14 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				MarkdownDescription: "Specifies the credentials of the Active Directory service account used " +
 					"by AppStream fleets and image builders to join the domain. " +
 					"These credentials are write-only and are not returned by AWS after creation.",
-				Optional:  true,
-				Sensitive: true,
+				Required: true,
 				Attributes: map[string]schema.Attribute{
 					"account_name": schema.StringAttribute{
 						Description: "Service account user name.",
 						MarkdownDescription: "The user name of the Active Directory service account. " +
 							"This account must have permissions to create computer objects, join computers to the domain, " +
 							"and reset passwords for computer objects in the specified organizational units.",
-						Required:  true,
-						Sensitive: true,
+						Required: true,
 						Validators: []validator.String{
 							stringvalidator.LengthAtLeast(1),
 						},

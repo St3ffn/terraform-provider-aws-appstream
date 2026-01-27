@@ -53,16 +53,25 @@ resource "awsappstream_directory_config" "example" {
 
 - `directory_name` (String) The fully qualified domain name of the Microsoft Active Directory (for example, `corp.example.com`). Changing this value forces the directory config to be replaced.
 - `organizational_unit_distinguished_names` (Set of String) The distinguished names of the organizational units used for computer accounts. These OUs must allow computer objects to be created and managed by the AppStream service account.
+- `service_account_credentials` (Attributes) Specifies the credentials of the Active Directory service account used by AppStream fleets and image builders to join the domain. These credentials are write-only and are not returned by AWS after creation. (see [below for nested schema](#nestedatt--service_account_credentials))
 
 ### Optional
 
 - `certificate_based_auth_properties` (Attributes) Specifies certificate-based authentication settings used to authenticate SAML 2.0 identity provider users to Active Directory domain-joined streaming instances. (see [below for nested schema](#nestedatt--certificate_based_auth_properties))
-- `service_account_credentials` (Attributes, Sensitive) Specifies the credentials of the Active Directory service account used by AppStream fleets and image builders to join the domain. These credentials are write-only and are not returned by AWS after creation. (see [below for nested schema](#nestedatt--service_account_credentials))
 
 ### Read-Only
 
 - `created_time` (String) The timestamp when the directory configuration was created, in RFC 3339 format.
 - `id` (String) A synthetic identifier for the directory config, equal to the directory name. This value is managed by the provider and cannot be set manually.
+
+<a id="nestedatt--service_account_credentials"></a>
+### Nested Schema for `service_account_credentials`
+
+Required:
+
+- `account_name` (String) The user name of the Active Directory service account. This account must have permissions to create computer objects, join computers to the domain, and reset passwords for computer objects in the specified organizational units.
+- `account_password` (String, Sensitive) The password for the Active Directory service account. This value is sensitive and is never returned by AWS.
+
 
 <a id="nestedatt--certificate_based_auth_properties"></a>
 ### Nested Schema for `certificate_based_auth_properties`
@@ -71,15 +80,6 @@ Optional:
 
 - `certificate_authority_arn` (String) The ARN of the AWS Certificate Manager Private Certificate Authority used for certificate-based authentication.
 - `status` (String) Controls whether certificate-based authentication is enabled. Valid values are `DISABLED`, `ENABLED`, or `ENABLED_NO_DIRECTORY_LOGIN_FALLBACK`.
-
-
-<a id="nestedatt--service_account_credentials"></a>
-### Nested Schema for `service_account_credentials`
-
-Required:
-
-- `account_name` (String, Sensitive) The user name of the Active Directory service account. This account must have permissions to create computer objects, join computers to the domain, and reset passwords for computer objects in the specified organizational units.
-- `account_password` (String, Sensitive) The password for the Active Directory service account. This value is sensitive and is never returned by AWS.
 
 ## Import
 

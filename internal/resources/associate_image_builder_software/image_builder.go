@@ -5,15 +5,12 @@ package associate_image_builder_software
 
 import (
 	"context"
-	"errors"
 	"fmt"
 
 	awsappstream "github.com/aws/aws-sdk-go-v2/service/appstream"
 	awstypes "github.com/aws/aws-sdk-go-v2/service/appstream/types"
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/util"
 )
-
-var ErrUnexpectedImageBuilderState = errors.New("unexpected image builder state")
 
 func (r *resource) waitForImageBuilderAssociable(ctx context.Context, name string) error {
 	return util.RetryOn(
@@ -38,7 +35,7 @@ func (r *resource) waitForImageBuilderAssociable(ctx context.Context, name strin
 			case awstypes.ImageBuilderStateFailed, awstypes.ImageBuilderStateDeleting:
 				return fmt.Errorf("image builder is in non-associable state %q", state)
 			default:
-				return fmt.Errorf("%w: current=%s", ErrUnexpectedImageBuilderState, state)
+				return fmt.Errorf("%w: current=%s", errUnexpectedImageBuilderState, state)
 			}
 		},
 		util.WithTimeout(waitAssociableRetryTimeout),
@@ -46,9 +43,7 @@ func (r *resource) waitForImageBuilderAssociable(ctx context.Context, name strin
 		util.WithMaxBackoff(waitAssociableRetryMaxBackoff),
 		// see https://docs.aws.amazon.com/appstream2/latest/APIReference/API_DescribeImageBuilders.html
 		util.WithRetryOnFns(
-			func(err error) bool {
-				return errors.Is(err, ErrUnexpectedImageBuilderState)
-			},
+			isUnexpectedImageBuilderStateError,
 		),
 	)
 }

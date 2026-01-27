@@ -1,3 +1,6 @@
+// Copyright (c) St3ffn
+// SPDX-License-Identifier: MPL-2.0
+
 package stack_theme_test
 
 import (

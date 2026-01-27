@@ -496,7 +496,6 @@ func (p *awsAppStreamProvider) DataSources(_ context.Context) []func() datasourc
 		entitlement.NewDataSource,
 		app_block.NewDataSource,
 		application.NewDataSource,
-		directory_config.NewDataSource,
 		user.NewDataSource,
 		image.NewDataSource,
 		image_builder.NewDataSource,

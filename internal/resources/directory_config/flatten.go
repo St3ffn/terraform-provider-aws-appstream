@@ -10,6 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/util"
 )
 
@@ -27,7 +28,7 @@ var certificateBasedAuthPropertiesObjectType = types.ObjectType{
 	},
 }
 
-func flattenServiceAccountCredentialsResource(
+func flattenServiceAccountCredentials(
 	ctx context.Context, prior types.Object, awsCreds *awstypes.ServiceAccountCredentials, diags *diag.Diagnostics,
 ) types.Object {
 
@@ -46,13 +47,19 @@ func flattenServiceAccountCredentialsResource(
 		return types.ObjectNull(serviceAccountCredentialsObjectType.AttrTypes)
 	}
 
+	var priorProps serviceAccountCredentialsModel
+	diags.Append(prior.As(ctx, &priorProps, basetypes.ObjectAsOptions{})...)
+	if diags.HasError() {
+		return types.ObjectNull(serviceAccountCredentialsObjectType.AttrTypes)
+	}
+
 	// normal reconcile
 	obj, d := types.ObjectValueFrom(
 		ctx,
 		serviceAccountCredentialsObjectType.AttrTypes,
 		serviceAccountCredentialsModel{
 			AccountName:     util.StringOrNull(awsCreds.AccountName),
-			AccountPassword: util.StringOrNull(awsCreds.AccountPassword),
+			AccountPassword: priorProps.AccountPassword,
 		},
 	)
 	diags.Append(d...)
@@ -63,26 +70,14 @@ func flattenServiceAccountCredentialsResource(
 	return obj
 }
 
-func flattenCertificateBasedAuthPropertiesResource(
-	ctx context.Context, prior types.Object, awsProps *awstypes.CertificateBasedAuthProperties, diags *diag.Diagnostics,
+func flattenCertificateBasedAuthProperties(
+	ctx context.Context, awsProps *awstypes.CertificateBasedAuthProperties, diags *diag.Diagnostics,
 ) types.Object {
 
-	// user never managed it
-	if prior.IsNull() {
-		return types.ObjectNull(certificateBasedAuthPropertiesObjectType.AttrTypes)
-	}
-
-	// planning phase
-	if prior.IsUnknown() {
-		return types.ObjectUnknown(certificateBasedAuthPropertiesObjectType.AttrTypes)
-	}
-
-	// user managed it, AWS no longer has it: drift
 	if awsProps == nil {
 		return types.ObjectNull(certificateBasedAuthPropertiesObjectType.AttrTypes)
 	}
 
-	// normal reconcile
 	obj, d := types.ObjectValueFrom(
 		ctx,
 		certificateBasedAuthPropertiesObjectType.AttrTypes,
