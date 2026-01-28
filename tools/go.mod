@@ -3,7 +3,7 @@ module tools
 go 1.25.6
 
 require (
-	github.com/hashicorp/copywrite v0.22.0
+	github.com/hashicorp/copywrite v0.24.0
 	github.com/hashicorp/terraform-plugin-docs v0.24.0
 )
 
@@ -19,7 +19,7 @@ require (
 	github.com/apparentlymart/go-textseg/v15 v15.0.0 // indirect
 	github.com/armon/go-radix v1.0.0 // indirect
 	github.com/bgentry/speakeasy v0.2.0 // indirect
-	github.com/bmatcuk/doublestar/v4 v4.9.2 // indirect
+	github.com/bmatcuk/doublestar/v4 v4.10.0 // indirect
 	github.com/bradleyfalzon/ghinstallation/v2 v2.17.0 // indirect
 	github.com/cli/go-gh/v2 v2.13.0 // indirect
 	github.com/cli/safeexec v1.0.1 // indirect
