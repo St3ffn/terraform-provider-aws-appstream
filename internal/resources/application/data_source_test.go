@@ -12,21 +12,21 @@ import (
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/testhelpers"
 )
 
-func testAccApplicationWithDataSource(appBlockName, applicationName string) string {
+func testAccApplicationWithDataSource(appBlockName, applicationName, bucketName string) string {
 	return testhelpers.TestAccProviderTagsConfig() + fmt.Sprintf(`
 resource "awsappstream_app_block" "test" {
-  name = %q
+  name = %[1]q
 
   packaging_type = "CUSTOM"
 
   source_s3_location = {
-    s3_bucket = "appstream-acc-test-bucket"
+    s3_bucket = %[3]q
     s3_key    = "appblock.vhd"
   }
 
   setup_script_details = {
     script_s3_location = {
-      s3_bucket = "appstream-acc-test-bucket"
+      s3_bucket = %[3]q
       s3_key    = "app_block_setup.sh"
     }
 
@@ -36,13 +36,13 @@ resource "awsappstream_app_block" "test" {
 }
 
 resource "awsappstream_application" "test" {
-  name = "%s"
+  name = "%[2]s"
 
   display_name = "Test Application"
   description  = "Application data source test"
 
   icon_s3_location = {
-    s3_bucket = "appstream-acc-test-bucket"
+    s3_bucket = %[3]q
     s3_key    = "application_icon.png"
   }
 
@@ -66,19 +66,20 @@ data "awsappstream_application" "test" {
 
   depends_on = [awsappstream_application.test]
 }
-`, appBlockName, applicationName)
+`, appBlockName, applicationName, bucketName)
 }
 
 func TestAccApplicationDataSource_basic(t *testing.T) {
+	testCtx := testhelpers.AccTestContextFromEnv(t)
+
 	appBlockName := acctest.RandomWithPrefix("tf-acc-app-block-ds")
 	applicationName := acctest.RandomWithPrefix("tf-acc-application-ds")
 
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:                 func() { testhelpers.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccApplicationWithDataSource(appBlockName, applicationName),
+				Config: testAccApplicationWithDataSource(appBlockName, applicationName, testCtx.BucketName),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr("data.awsappstream_application.test", "name", applicationName),
 					resource.TestCheckResourceAttr("data.awsappstream_application.test", "display_name", "Test Application"),

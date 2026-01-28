@@ -38,19 +38,16 @@ data "awsappstream_app_block_builder" "test" {
 }
 
 func TestAccAppBlockBuilderDataSource_basic(t *testing.T) {
-	vpcInfo, err := testhelpers.GetDefaultVPCInfo(t)
-	if err != nil {
-		t.Fatalf("failed to get default VPC info: %v", err)
-	}
+	testCtx := testhelpers.AccTestContextFromEnv(t)
+	vpc := testCtx.DefaultVPCInfo(t)
 
 	name := acctest.RandomWithPrefix("tf-acc-app-block-builder-ds-basic")
 
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:                 func() { testhelpers.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccAppBlockBuilderWithDataSource(name, vpcInfo.SubnetIDs[:2]),
+				Config: testAccAppBlockBuilderWithDataSource(name, vpc.SubnetIDs[:2]),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr("data.awsappstream_app_block_builder.test", "name", name),
 					resource.TestCheckResourceAttr("data.awsappstream_app_block_builder.test", "instance_type", "stream.standard.small"),

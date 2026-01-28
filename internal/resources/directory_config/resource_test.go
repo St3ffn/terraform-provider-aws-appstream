@@ -29,6 +29,8 @@ resource "awsappstream_directory_config" "test" {
 }
 
 func TestAccDirectoryConfig_basic(t *testing.T) {
+	testhelpers.AccTestContextFromEnv(t)
+
 	name := acctest.RandomWithPrefix("tf-acc-directory-config") + ".example.com"
 	resourceName := "awsappstream_directory_config.test"
 
@@ -37,7 +39,6 @@ func TestAccDirectoryConfig_basic(t *testing.T) {
 	password := "password"
 
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:                 func() { testhelpers.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
@@ -70,6 +71,8 @@ func TestAccDirectoryConfig_basic(t *testing.T) {
 }
 
 func TestAccDirectoryConfig_complex(t *testing.T) {
+	testhelpers.AccTestContextFromEnv(t)
+
 	name := acctest.RandomWithPrefix("tf-acc-directory-config") + ".example.com"
 	resourceName := "awsappstream_directory_config.test"
 
@@ -83,7 +86,6 @@ func TestAccDirectoryConfig_complex(t *testing.T) {
 	password2 := "password2"
 
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:                 func() { testhelpers.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{

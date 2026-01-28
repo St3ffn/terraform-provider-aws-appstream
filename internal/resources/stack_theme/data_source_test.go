@@ -12,10 +12,10 @@ import (
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/testhelpers"
 )
 
-func testAccStackThemeWithDataSource(stackName string) string {
+func testAccStackThemeWithDataSource(stackName, bucketName string) string {
 	return testhelpers.TestAccProviderBasicConfig() + fmt.Sprintf(`
 resource "awsappstream_stack" "test" {
-  name = %q
+  name = %[1]q
 }
 
 resource "awsappstream_stack_theme" "test" {
@@ -24,12 +24,12 @@ resource "awsappstream_stack_theme" "test" {
   theme_styling = "BLUE"
 
   organization_logo_s3_location = {
-    s3_bucket = "appstream-acc-test-bucket"
+    s3_bucket = %[2]q
     s3_key    = "application_icon.png"
   }
 
   favicon_s3_location = {
-    s3_bucket = "appstream-acc-test-bucket"
+    s3_bucket = %[2]q
     s3_key    = "application_icon.png"
   }
 
@@ -46,18 +46,19 @@ data "awsappstream_stack_theme" "test" {
 
   depends_on = [awsappstream_stack_theme.test]
 }
-`, stackName)
+`, stackName, bucketName)
 }
 
 func TestAccStackThemeDataSource_basic(t *testing.T) {
+	testCtx := testhelpers.AccTestContextFromEnv(t)
+
 	stackName := acctest.RandomWithPrefix("tf-acc-stack-ds")
 
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:                 func() { testhelpers.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccStackThemeWithDataSource(stackName),
+				Config: testAccStackThemeWithDataSource(stackName, testCtx.BucketName),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr("data.awsappstream_stack_theme.test", "stack_name", stackName),
 					resource.TestCheckResourceAttr("data.awsappstream_stack_theme.test", "title_text", "Terraform DS Test"),

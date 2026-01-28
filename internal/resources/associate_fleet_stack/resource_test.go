@@ -15,11 +15,11 @@ import (
 func testAccAssociateFleetStackBasicConfig(fleetName, stackName string) string {
 	return testhelpers.TestAccProviderBasicConfig() + fmt.Sprintf(`
 resource "awsappstream_stack" "test" {
-  name = %q
+  name = %[2]q
 }
 
 resource "awsappstream_fleet" "test" {
-  name          = %q
+  name          = %[1]q
   fleet_type   = "ON_DEMAND"
   instance_type = "stream.standard.small"
 
@@ -34,17 +34,18 @@ resource "awsappstream_associate_fleet_stack" "test" {
   fleet_name = awsappstream_fleet.test.name
   stack_name = awsappstream_stack.test.name
 }
-`, stackName, fleetName)
+`, fleetName, stackName)
 }
 
 func TestAccAssociateFleetStack_basic(t *testing.T) {
+	testhelpers.AccTestContextFromEnv(t)
+
 	stackName := acctest.RandomWithPrefix("tf-acc-stack")
 	fleetName := acctest.RandomWithPrefix("tf-acc-fleet")
 
 	resourceName := "awsappstream_associate_fleet_stack.test"
 
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:                 func() { testhelpers.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{

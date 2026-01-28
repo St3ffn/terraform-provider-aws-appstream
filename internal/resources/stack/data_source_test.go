@@ -27,10 +27,11 @@ data "awsappstream_stack" "test" {
 }
 
 func TestAccStackDataSource_basic(t *testing.T) {
+	testhelpers.AccTestContextFromEnv(t)
+
 	name := acctest.RandomWithPrefix("tf-acc-stack-ds-basic")
 
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:                 func() { testhelpers.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
@@ -80,10 +81,11 @@ data "awsappstream_stack" "test" {
 }
 
 func TestAccStackDataSource_complex(t *testing.T) {
+	testhelpers.AccTestContextFromEnv(t)
+
 	name := acctest.RandomWithPrefix("tf-acc-stack-ds-complex")
 
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:                 func() { testhelpers.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{

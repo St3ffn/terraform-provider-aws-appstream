@@ -27,10 +27,11 @@ data "awsappstream_image_builder" "test" {
 }
 
 func TestAccImageBuilderDataSource_basic(t *testing.T) {
+	testhelpers.AccTestContextFromEnv(t)
+
 	name := acctest.RandomWithPrefix("tf-acc-image-builder-ds-basic")
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testhelpers.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
@@ -49,12 +50,12 @@ func TestAccImageBuilderDataSource_basic(t *testing.T) {
 	})
 }
 
-func testAccImageBuilderWithDataSourceArnDescriptionTags(name string) string {
+func testAccImageBuilderWithDataSourceArnDescriptionTags(region, name string) string {
 	return testhelpers.TestAccProviderTagsConfig() + fmt.Sprintf(`
 resource "awsappstream_image_builder" "test" {
   name          = %q
   instance_type = "stream.standard.small"
-  image_arn     = "arn:aws:appstream:eu-central-1::image/AppStream-RockyLinux8-11-10-2025"
+  image_arn     = "arn:aws:appstream:%s::image/AppStream-RockyLinux8-11-10-2025"
 
   description  = "test description"
   display_name = "Test Builder"
@@ -68,20 +69,21 @@ resource "awsappstream_image_builder" "test" {
 data "awsappstream_image_builder" "test" {
   name = awsappstream_image_builder.test.name
 }
-`, name)
+`, name, region)
 }
 
 func TestAccImageBuilderDataSource_arn_and_description(t *testing.T) {
+	testCtx := testhelpers.AccTestContextFromEnv(t)
+
 	name := acctest.RandomWithPrefix("tf-acc-image-builder-ds-desc")
 
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:                 func() { testhelpers.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccImageBuilderWithDataSourceArnDescriptionTags(name),
+				Config: testAccImageBuilderWithDataSourceArnDescriptionTags(testCtx.Region, name),
 				Check: resource.ComposeAggregateTestCheckFunc(
-					resource.TestCheckResourceAttr("data.awsappstream_image_builder.test", "image_arn", "arn:aws:appstream:eu-central-1::image/AppStream-RockyLinux8-11-10-2025"),
+					resource.TestCheckResourceAttr("data.awsappstream_image_builder.test", "image_arn", fmt.Sprintf("arn:aws:appstream:%s::image/AppStream-RockyLinux8-11-10-2025", testCtx.Region)),
 					resource.TestCheckNoResourceAttr("data.awsappstream_image_builder.test", "image_name"),
 					resource.TestCheckResourceAttr("data.awsappstream_image_builder.test", "description", "test description"),
 					resource.TestCheckResourceAttr("data.awsappstream_image_builder.test", "display_name", "Test Builder"),

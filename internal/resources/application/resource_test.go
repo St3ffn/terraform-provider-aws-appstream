@@ -12,21 +12,21 @@ import (
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/testhelpers"
 )
 
-func testAccApplicationBasicConfig(appBlockName, applicationName string) string {
+func testAccApplicationBasicConfig(appBlockName, applicationName, bucketName string) string {
 	return testhelpers.TestAccProviderBasicConfig() + fmt.Sprintf(`
 resource "awsappstream_app_block" "test" {
-  name = %q
+  name = %[1]q
 
   packaging_type = "CUSTOM"
 
   source_s3_location = {
-    s3_bucket = "appstream-acc-test-bucket"
+    s3_bucket = %[3]q
     s3_key    = "appblock.vhd"
   }
 
   setup_script_details = {
     script_s3_location = {
-      s3_bucket = "appstream-acc-test-bucket"
+      s3_bucket = %[3]q
       s3_key    = "app_block_setup.sh"
     }
 
@@ -36,10 +36,10 @@ resource "awsappstream_app_block" "test" {
 }
 
 resource "awsappstream_application" "test" {
-  name = "%s"
+  name = %[2]q
 
   icon_s3_location = {
-    s3_bucket = "appstream-acc-test-bucket"
+    s3_bucket = %[3]q
     s3_key    = "application_icon.png"
   }
 
@@ -50,21 +50,22 @@ resource "awsappstream_application" "test" {
 
   app_block_arn = awsappstream_app_block.test.arn
 }
-`, appBlockName, applicationName)
+`, appBlockName, applicationName, bucketName)
 }
 
 func TestAccApplication_basic(t *testing.T) {
+	testCtx := testhelpers.AccTestContextFromEnv(t)
+
 	appBlockName := acctest.RandomWithPrefix("tf-acc-app-block")
 	applicationName := acctest.RandomWithPrefix("tf-acc-application")
 
 	resourceName := "awsappstream_application.test"
 
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:                 func() { testhelpers.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccApplicationBasicConfig(appBlockName, applicationName),
+				Config: testAccApplicationBasicConfig(appBlockName, applicationName, testCtx.BucketName),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", applicationName),
 					resource.TestCheckResourceAttr(resourceName, "launch_path", "/app/app"),
@@ -83,7 +84,7 @@ func TestAccApplication_basic(t *testing.T) {
 				ImportStateVerify: true,
 			},
 			{
-				Config:             testAccApplicationBasicConfig(appBlockName, applicationName),
+				Config:             testAccApplicationBasicConfig(appBlockName, applicationName, testCtx.BucketName),
 				PlanOnly:           true,
 				ExpectNonEmptyPlan: false,
 			},
@@ -91,21 +92,21 @@ func TestAccApplication_basic(t *testing.T) {
 	})
 }
 
-func testAccApplicationComplexConfig(appBlockName, applicationName string) string {
+func testAccApplicationComplexConfig(appBlockName, applicationName, bucketName string) string {
 	return testhelpers.TestAccProviderBasicConfig() + fmt.Sprintf(`
 resource "awsappstream_app_block" "test" {
-  name = %q
+  name = %[1]q
 
   packaging_type = "CUSTOM"
 
   source_s3_location = {
-    s3_bucket = "appstream-acc-test-bucket"
+    s3_bucket = %[3]q
     s3_key    = "appblock.vhd"
   }
 
   setup_script_details = {
     script_s3_location = {
-      s3_bucket = "appstream-acc-test-bucket"
+      s3_bucket = %[3]q
       s3_key    = "app_block_setup.sh"
     }
 
@@ -115,13 +116,13 @@ resource "awsappstream_app_block" "test" {
 }
 
 resource "awsappstream_application" "test" {
-  name = "%s"
+  name = %[2]q
 
   display_name = "Test Application"
   description  = "Complex acceptance test"
 
   icon_s3_location = {
-    s3_bucket = "appstream-acc-test-bucket"
+    s3_bucket = %[3]q
     s3_key    = "application_icon.png"
   }
 
@@ -139,24 +140,24 @@ resource "awsappstream_application" "test" {
     Owner       = "terraform"
   }
 }
-`, appBlockName, applicationName)
+`, appBlockName, applicationName, bucketName)
 }
 
-func testAccApplicationComplexConfigUpdated(appBlockName, applicationName string) string {
+func testAccApplicationComplexConfigUpdated(appBlockName, applicationName, bucketName string) string {
 	return testhelpers.TestAccProviderBasicConfig() + fmt.Sprintf(`
 resource "awsappstream_app_block" "test" {
-  name = %q
+  name = %[1]q
 
   packaging_type = "CUSTOM"
 
   source_s3_location = {
-    s3_bucket = "appstream-acc-test-bucket"
+    s3_bucket = %[3]q
     s3_key    = "appblock.vhd"
   }
 
   setup_script_details = {
     script_s3_location = {
-      s3_bucket = "appstream-acc-test-bucket"
+      s3_bucket = %[3]q
       s3_key    = "app_block_setup.sh"
     }
 
@@ -166,13 +167,13 @@ resource "awsappstream_app_block" "test" {
 }
 
 resource "awsappstream_application" "test" {
-  name = "%s"
+  name = %[2]q
 
   display_name = "Updated Application"
   description  = "Updated complex acceptance test"
 
   icon_s3_location = {
-    s3_bucket = "appstream-acc-test-bucket"
+    s3_bucket = %[3]q
     s3_key    = "application_icon.png"
   }
 
@@ -190,21 +191,22 @@ resource "awsappstream_application" "test" {
     Team        = "platform"
   }
 }
-`, appBlockName, applicationName)
+`, appBlockName, applicationName, bucketName)
 }
 
 func TestAccApplication_complex(t *testing.T) {
+	testCtx := testhelpers.AccTestContextFromEnv(t)
+
 	appBlockName := acctest.RandomWithPrefix("tf-acc-app-block")
 	applicationName := acctest.RandomWithPrefix("tf-acc-application")
 
 	resourceName := "awsappstream_application.test"
 
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:                 func() { testhelpers.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccApplicationComplexConfig(appBlockName, applicationName),
+				Config: testAccApplicationComplexConfig(appBlockName, applicationName, testCtx.BucketName),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "display_name", "Test Application"),
 					resource.TestCheckResourceAttr(resourceName, "description", "Complex acceptance test"),
@@ -217,7 +219,7 @@ func TestAccApplication_complex(t *testing.T) {
 				),
 			},
 			{
-				Config: testAccApplicationComplexConfigUpdated(appBlockName, applicationName),
+				Config: testAccApplicationComplexConfigUpdated(appBlockName, applicationName, testCtx.BucketName),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "display_name", "Updated Application"),
 					resource.TestCheckResourceAttr(resourceName, "description", "Updated complex acceptance test"),
@@ -233,21 +235,21 @@ func TestAccApplication_complex(t *testing.T) {
 	})
 }
 
-func testAccApplicationTagsConfig(appBlockName, applicationName string) string {
+func testAccApplicationTagsConfig(appBlockName, applicationName, bucketName string) string {
 	return testhelpers.TestAccProviderTagsConfig() + fmt.Sprintf(`
 resource "awsappstream_app_block" "test" {
-  name = %q
+  name = %[1]q
 
   packaging_type = "CUSTOM"
 
   source_s3_location = {
-    s3_bucket = "appstream-acc-test-bucket"
+    s3_bucket = %[3]q
     s3_key    = "appblock.vhd"
   }
 
   setup_script_details = {
     script_s3_location = {
-      s3_bucket = "appstream-acc-test-bucket"
+      s3_bucket = %[3]q
       s3_key    = "app_block_setup.sh"
     }
 
@@ -257,10 +259,10 @@ resource "awsappstream_app_block" "test" {
 }
 
 resource "awsappstream_application" "test" {
-  name = "%s"
+  name = %[2]q
 
   icon_s3_location = {
-    s3_bucket = "appstream-acc-test-bucket"
+    s3_bucket = %[3]q
     s3_key    = "application_icon.png"
   }
 
@@ -275,21 +277,22 @@ resource "awsappstream_application" "test" {
     Environment = "test"
   }
 }
-`, appBlockName, applicationName)
+`, appBlockName, applicationName, bucketName)
 }
 
 func TestAccApplication_tags(t *testing.T) {
+	testCtx := testhelpers.AccTestContextFromEnv(t)
+
 	appBlockName := acctest.RandomWithPrefix("tf-acc-app-block")
 	applicationName := acctest.RandomWithPrefix("tf-acc-application")
 
 	resourceName := "awsappstream_application.test"
 
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:                 func() { testhelpers.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccApplicationTagsConfig(appBlockName, applicationName),
+				Config: testAccApplicationTagsConfig(appBlockName, applicationName, testCtx.BucketName),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "tags.Environment", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags_all.Environment", "test"),

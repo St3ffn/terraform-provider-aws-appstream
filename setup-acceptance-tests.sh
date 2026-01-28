@@ -4,10 +4,16 @@
 
 set -euo pipefail
 
-REGION="${AWS_REGION:-eu-central-1}"
+REGION="${AWS_REGION:-${AWS_DEFAULT_REGION:-}}"
+
+if [[ -z "$REGION" ]]; then
+  echo "ERROR: AWS_REGION or AWS_DEFAULT_REGION must be set"
+  exit 1
+fi
+
 ACCOUNT_ID="$(aws sts get-caller-identity --query Account --output text)"
 
-BUCKET_NAME="appstream-acc-test-bucket"
+BUCKET_NAME="appstream-acc-test-bucket-${ACCOUNT_ID}-${REGION}"
 BUCKET_URI="s3://$BUCKET_NAME"
 
 APP_BLOCK_VHD_FILENAME="appblock.vhd"
@@ -27,10 +33,14 @@ if aws s3api head-bucket --bucket "$BUCKET_NAME" >/dev/null 2>&1; then
   echo "✓ Bucket exists"
 else
   echo "→ Creating bucket..."
-  aws s3api create-bucket \
-    --bucket "$BUCKET_NAME" \
-    --region "$REGION" \
-    --create-bucket-configuration LocationConstraint="$REGION"
+  if [[ "$REGION" == "us-east-1" ]]; then
+    aws s3api create-bucket \
+      --bucket "$BUCKET_NAME"
+  else
+    aws s3api create-bucket \
+      --bucket "$BUCKET_NAME" \
+      --create-bucket-configuration LocationConstraint="$REGION"
+  fi
   echo "→ Created bucket"
 fi
 

@@ -29,12 +29,13 @@ resource "awsappstream_fleet" "test" {
 }
 
 func TestAccFleet_basic(t *testing.T) {
+	testCtx := testhelpers.AccTestContextFromEnv(t)
+
 	fleetName := acctest.RandomWithPrefix("tf-acc-fleet")
 
 	resourceName := "awsappstream_fleet.test"
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testhelpers.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
@@ -45,7 +46,7 @@ func TestAccFleet_basic(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "instance_type", "stream.standard.small"),
 					resource.TestCheckResourceAttr(resourceName, "compute_capacity.desired_instances", "0"),
 					resource.TestCheckResourceAttr(resourceName, "image_name", "Amazon-AppStream2-Sample-Image-06-17-2024"),
-					resource.TestCheckResourceAttr(resourceName, "image_arn", "arn:aws:appstream:eu-central-1::image/Amazon-AppStream2-Sample-Image-06-17-2024"),
+					resource.TestCheckResourceAttr(resourceName, "image_arn", fmt.Sprintf("arn:aws:appstream:%s::image/Amazon-AppStream2-Sample-Image-06-17-2024", testCtx.Region)),
 					resource.TestCheckResourceAttr(resourceName, "enable_default_internet_access", "false"),
 					resource.TestCheckResourceAttr(resourceName, "max_user_duration_in_seconds", "57600"),
 					resource.TestCheckResourceAttr(resourceName, "disconnect_timeout_in_seconds", "900"),
@@ -69,34 +70,35 @@ func TestAccFleet_basic(t *testing.T) {
 	})
 }
 
-func testAccFleetImageARNConfig(name string) string {
+func testAccFleetImageARNConfig(region, name string) string {
 	return testhelpers.TestAccProviderBasicConfig() + fmt.Sprintf(`
 resource "awsappstream_fleet" "test" {
-  name          = %q
+  name          = %[2]q
   fleet_type    = "ON_DEMAND"
   instance_type = "stream.standard.small"
 
-  image_arn = "arn:aws:appstream:eu-central-1::image/Amazon-AppStream2-Sample-Image-06-17-2024"
+  image_arn = "arn:aws:appstream:%[1]s::image/Amazon-AppStream2-Sample-Image-06-17-2024"
 
   compute_capacity = {
     desired_instances = 0
   }
 }
-`, name)
+`, region, name)
 }
 
 func TestAccFleet_imageARN(t *testing.T) {
+	testCtx := testhelpers.AccTestContextFromEnv(t)
+
 	name := acctest.RandomWithPrefix("tf-acc-fleet-imgarn")
 	resourceName := "awsappstream_fleet.test"
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testhelpers.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccFleetImageARNConfig(name),
+				Config: testAccFleetImageARNConfig(testCtx.Region, name),
 				Check: resource.ComposeAggregateTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "image_arn", "arn:aws:appstream:eu-central-1::image/Amazon-AppStream2-Sample-Image-06-17-2024"),
+					resource.TestCheckResourceAttr(resourceName, "image_arn", fmt.Sprintf("arn:aws:appstream:%s::image/Amazon-AppStream2-Sample-Image-06-17-2024", testCtx.Region)),
 					resource.TestCheckResourceAttr(resourceName, "image_name", "Amazon-AppStream2-Sample-Image-06-17-2024"),
 				),
 			},
@@ -132,11 +134,12 @@ resource "awsappstream_fleet" "test" {
 }
 
 func TestAccFleet_updateDescriptionTags(t *testing.T) {
+	testhelpers.AccTestContextFromEnv(t)
+
 	name := acctest.RandomWithPrefix("tf-acc-fleet-update")
 	resourceName := "awsappstream_fleet.test"
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testhelpers.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{Config: testAccFleetBasicConfig(name)},
@@ -174,11 +177,12 @@ resource "awsappstream_fleet" "test" {
 }
 
 func TestAccFleet_updateImageName(t *testing.T) {
+	testCtx := testhelpers.AccTestContextFromEnv(t)
+
 	name := acctest.RandomWithPrefix("tf-acc-fleet-update")
 	resourceName := "awsappstream_fleet.test"
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testhelpers.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{Config: testAccFleetBasicConfig(name)},
@@ -186,7 +190,7 @@ func TestAccFleet_updateImageName(t *testing.T) {
 				Config: testAccFleetUpdateImageName(name),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "image_name", "Amazon-AppStream2-Sample-Image-03-11-2023"),
-					resource.TestCheckResourceAttr(resourceName, "image_arn", "arn:aws:appstream:eu-central-1::image/Amazon-AppStream2-Sample-Image-03-11-2023"),
+					resource.TestCheckResourceAttr(resourceName, "image_arn", fmt.Sprintf("arn:aws:appstream:%s::image/Amazon-AppStream2-Sample-Image-03-11-2023", testCtx.Region)),
 				),
 			},
 		},
@@ -211,11 +215,12 @@ resource "awsappstream_fleet" "test" {
 }
 
 func TestAccFleet_idleTimeout(t *testing.T) {
+	testhelpers.AccTestContextFromEnv(t)
+
 	name := acctest.RandomWithPrefix("tf-acc-fleet-idle")
 	resourceName := "awsappstream_fleet.test"
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testhelpers.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{

@@ -17,10 +17,11 @@ resource "awsappstream_usage_report_subscription" "test" {}
 }
 
 func TestAccUsageReportSubscription_basic(t *testing.T) {
+	testhelpers.AccTestContextFromEnv(t)
+
 	resourceName := "awsappstream_usage_report_subscription.test"
 
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:                 func() { testhelpers.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{

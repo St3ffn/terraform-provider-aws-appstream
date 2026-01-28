@@ -11,11 +11,10 @@ import (
 )
 
 func TestAccProvider_basic(t *testing.T) {
+	testhelpers.AccTestContextFromEnv(t)
+
 	resource.ParallelTest(t, resource.TestCase{
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
-		PreCheck: func() {
-			testhelpers.TestAccPreCheck(t)
-		},
 		Steps: []resource.TestStep{
 			{
 				Config: testhelpers.TestAccProviderBasicConfig(),

@@ -27,11 +27,12 @@ func testAccStackBasicConfig(name string) string {
 }
 
 func TestAccStack_basic(t *testing.T) {
+	testhelpers.AccTestContextFromEnv(t)
+
 	name := acctest.RandomWithPrefix("tf-acc-stack-basic")
 	resourceName := "awsappstream_stack.test"
 
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:                 func() { testhelpers.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
@@ -75,11 +76,12 @@ func testAccStackTagsConfig(name string) string {
 }
 
 func TestAccStack_tags(t *testing.T) {
+	testhelpers.AccTestContextFromEnv(t)
+
 	name := acctest.RandomWithPrefix("tf-acc-stack-tags")
 	resourceName := "awsappstream_stack.test"
 
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:                 func() { testhelpers.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
@@ -105,11 +107,12 @@ func testAccStackDescriptionConfig(name, description string) string {
 }
 
 func TestAccStack_updateDescription(t *testing.T) {
+	testhelpers.AccTestContextFromEnv(t)
+
 	name := acctest.RandomWithPrefix("tf-acc-stack-update")
 	resourceName := "awsappstream_stack.test"
 
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:                 func() { testhelpers.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{Config: testAccStackBasicConfig(name)},
@@ -173,11 +176,12 @@ resource "awsappstream_stack" "test" {
 }
 
 func TestAccStack_complex(t *testing.T) {
+	testhelpers.AccTestContextFromEnv(t)
+
 	name := acctest.RandomWithPrefix("tf-acc-stack-complex")
 	resourceName := "awsappstream_stack.test"
 
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:                 func() { testhelpers.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
@@ -237,11 +241,12 @@ resource "awsappstream_stack" "test" {
 }
 
 func TestAccStack_storageConnector(t *testing.T) {
+	testhelpers.AccTestContextFromEnv(t)
+
 	name := acctest.RandomWithPrefix("tf-acc-stack-storage")
 	resourceName := "awsappstream_stack.test"
 
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:                 func() { testhelpers.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
@@ -283,11 +288,12 @@ resource "awsappstream_stack" "test" {
 }
 
 func TestAccStack_userSettingsMaximumLength(t *testing.T) {
+	testhelpers.AccTestContextFromEnv(t)
+
 	name := acctest.RandomWithPrefix("tf-acc-stack-maxlen")
 	resourceName := "awsappstream_stack.test"
 
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:                 func() { testhelpers.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
@@ -320,11 +326,12 @@ resource "awsappstream_stack" "test" {
 }
 
 func TestAccStack_embedHostDomains(t *testing.T) {
+	testhelpers.AccTestContextFromEnv(t)
+
 	name := acctest.RandomWithPrefix("tf-acc-stack-embed")
 	resourceName := "awsappstream_stack.test"
 
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:                 func() { testhelpers.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{

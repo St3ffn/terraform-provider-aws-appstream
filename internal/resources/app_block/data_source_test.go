@@ -12,19 +12,19 @@ import (
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/testhelpers"
 )
 
-func testAccAppBlockWithDataSource(name string) string {
+func testAccAppBlockWithDataSource(name, bucketName string) string {
 	return testhelpers.TestAccProviderTagsConfig() + fmt.Sprintf(`
 resource "awsappstream_app_block" "test" {
-  name = %q
+  name = %[1]q
 
   source_s3_location = {
-    s3_bucket = "appstream-acc-test-bucket"
+    s3_bucket = %[2]q
     s3_key    = "appblock.vhd"
   }
 
   setup_script_details = {
     script_s3_location = {
-      s3_bucket = "appstream-acc-test-bucket"
+      s3_bucket = %[2]q
       s3_key    = "app_block_setup.sh"
     }
 
@@ -43,22 +43,23 @@ data "awsappstream_app_block" "test" {
   
   depends_on = [awsappstream_app_block.test]
 }
-`, name)
+`, name, bucketName)
 }
 
 func TestAccAppBlockDataSource_basic(t *testing.T) {
+	testCtx := testhelpers.AccTestContextFromEnv(t)
+
 	name := acctest.RandomWithPrefix("tf-acc-app-block-ds-basic")
 
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:                 func() { testhelpers.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccAppBlockWithDataSource(name),
+				Config: testAccAppBlockWithDataSource(name, testCtx.BucketName),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr("data.awsappstream_app_block.test", "name", name),
 					resource.TestCheckResourceAttr("data.awsappstream_app_block.test", "packaging_type", "CUSTOM"),
-					resource.TestCheckResourceAttr("data.awsappstream_app_block.test", "source_s3_location.s3_bucket", "appstream-acc-test-bucket"),
+					resource.TestCheckResourceAttr("data.awsappstream_app_block.test", "source_s3_location.s3_bucket", testCtx.BucketName),
 					resource.TestCheckResourceAttr("data.awsappstream_app_block.test", "tags.Environment", "test"),
 					resource.TestCheckResourceAttr("data.awsappstream_app_block.test", "tags.Owner", "terraform"),
 					resource.TestCheckResourceAttr("data.awsappstream_app_block.test", "tags.MANAGED_BY", "terraform"),

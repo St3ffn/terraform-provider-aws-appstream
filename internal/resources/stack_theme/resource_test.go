@@ -12,10 +12,10 @@ import (
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/testhelpers"
 )
 
-func testAccStackThemeBasicConfig(stackName string) string {
+func testAccStackThemeBasicConfig(stackName, bucketName string) string {
 	return testhelpers.TestAccProviderBasicConfig() + fmt.Sprintf(`
 resource "awsappstream_stack" "test" {
-  name = %q
+  name = %[1]q
 }
 
 resource "awsappstream_stack_theme" "test" {
@@ -24,29 +24,30 @@ resource "awsappstream_stack_theme" "test" {
   theme_styling = "BLUE"
 
   organization_logo_s3_location = {
-    s3_bucket = "appstream-acc-test-bucket"
+    s3_bucket = %[2]q
     s3_key    = "application_icon.png"
   }
 
   favicon_s3_location = {
-    s3_bucket = "appstream-acc-test-bucket"
+    s3_bucket = %[2]q
     s3_key    = "application_icon.png"
   }
 }
-`, stackName)
+`, stackName, bucketName)
 }
 
 func TestAccStackTheme_basic(t *testing.T) {
+	testCtx := testhelpers.AccTestContextFromEnv(t)
+
 	stackName := acctest.RandomWithPrefix("tf-acc-stack")
 
 	resourceName := "awsappstream_stack_theme.test"
 
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:                 func() { testhelpers.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccStackThemeBasicConfig(stackName),
+				Config: testAccStackThemeBasicConfig(stackName, testCtx.BucketName),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "stack_name", stackName),
 					resource.TestCheckResourceAttr(resourceName, "title_text", "Terraform Acceptance Test"),
@@ -69,7 +70,7 @@ func TestAccStackTheme_basic(t *testing.T) {
 				},
 			},
 			{
-				Config:             testAccStackThemeBasicConfig(stackName),
+				Config:             testAccStackThemeBasicConfig(stackName, testCtx.BucketName),
 				PlanOnly:           true,
 				ExpectNonEmptyPlan: false,
 			},
@@ -77,10 +78,10 @@ func TestAccStackTheme_basic(t *testing.T) {
 	})
 }
 
-func testAccStackThemeComplexConfig(stackName string) string {
+func testAccStackThemeComplexConfig(stackName, bucketName string) string {
 	return testhelpers.TestAccProviderBasicConfig() + fmt.Sprintf(`
 resource "awsappstream_stack" "test" {
-  name = %q
+  name = %[1]q
 }
 
 resource "awsappstream_stack_theme" "test" {
@@ -89,12 +90,12 @@ resource "awsappstream_stack_theme" "test" {
   theme_styling = "BLUE"
 
   organization_logo_s3_location = {
-    s3_bucket = "appstream-acc-test-bucket"
+    s3_bucket = %[2]q
     s3_key    = "application_icon.png"
   }
 
   favicon_s3_location = {
-    s3_bucket = "appstream-acc-test-bucket"
+    s3_bucket = %[2]q
     s3_key    = "application_icon.png"
   }
 
@@ -109,13 +110,13 @@ resource "awsappstream_stack_theme" "test" {
     }
   ]
 }
-`, stackName)
+`, stackName, bucketName)
 }
 
-func testAccStackThemeComplexConfigUpdated(stackName string) string {
+func testAccStackThemeComplexConfigUpdated(stackName, bucketName string) string {
 	return testhelpers.TestAccProviderBasicConfig() + fmt.Sprintf(`
 resource "awsappstream_stack" "test" {
-  name = %q
+  name = %[1]q
 }
 
 resource "awsappstream_stack_theme" "test" {
@@ -124,12 +125,12 @@ resource "awsappstream_stack_theme" "test" {
   theme_styling = "BLUE"
 
   organization_logo_s3_location = {
-    s3_bucket = "appstream-acc-test-bucket"
+    s3_bucket = %[2]q
     s3_key    = "application_icon.png"
   }
 
   favicon_s3_location = {
-    s3_bucket = "appstream-acc-test-bucket"
+    s3_bucket = %[2]q
     s3_key    = "application_icon.png"
   }
 
@@ -140,13 +141,13 @@ resource "awsappstream_stack_theme" "test" {
     }
   ]
 }
-`, stackName)
+`, stackName, bucketName)
 }
 
-func testAccStackThemeComplexConfigNoFooter(stackName string) string {
+func testAccStackThemeComplexConfigNoFooter(stackName, bucketName string) string {
 	return testhelpers.TestAccProviderBasicConfig() + fmt.Sprintf(`
 resource "awsappstream_stack" "test" {
-  name = %q
+  name = %[1]q
 }
 
 resource "awsappstream_stack_theme" "test" {
@@ -155,29 +156,30 @@ resource "awsappstream_stack_theme" "test" {
   theme_styling = "BLUE"
 
   organization_logo_s3_location = {
-    s3_bucket = "appstream-acc-test-bucket"
+    s3_bucket = %[2]q
     s3_key    = "application_icon.png"
   }
 
   favicon_s3_location = {
-    s3_bucket = "appstream-acc-test-bucket"
+    s3_bucket = %[2]q
     s3_key    = "application_icon.png"
   }
 }
-`, stackName)
+`, stackName, bucketName)
 }
 
 func TestAccStackTheme_complex(t *testing.T) {
+	testCtx := testhelpers.AccTestContextFromEnv(t)
+
 	stackName := acctest.RandomWithPrefix("tf-acc-stack")
 
 	resourceName := "awsappstream_stack_theme.test"
 
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:                 func() { testhelpers.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccStackThemeComplexConfig(stackName),
+				Config: testAccStackThemeComplexConfig(stackName, testCtx.BucketName),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "footer_links.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "footer_links.0.display_name", "Documentation"),
@@ -185,7 +187,7 @@ func TestAccStackTheme_complex(t *testing.T) {
 				),
 			},
 			{
-				Config: testAccStackThemeComplexConfigUpdated(stackName),
+				Config: testAccStackThemeComplexConfigUpdated(stackName, testCtx.BucketName),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "title_text", "Terraform Complex Test Updated"),
 					resource.TestCheckResourceAttr(resourceName, "footer_links.#", "1"),
@@ -193,7 +195,7 @@ func TestAccStackTheme_complex(t *testing.T) {
 				),
 			},
 			{
-				Config: testAccStackThemeComplexConfigNoFooter(stackName),
+				Config: testAccStackThemeComplexConfigNoFooter(stackName, testCtx.BucketName),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckNoResourceAttr(resourceName, "footer_links")),
 			},

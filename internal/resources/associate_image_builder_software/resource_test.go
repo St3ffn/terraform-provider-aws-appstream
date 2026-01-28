@@ -30,12 +30,13 @@ resource "awsappstream_associate_image_builder_software" "test" {
 }
 
 func TestAccAssociateImageBuilderSoftware_basic(t *testing.T) {
+	testhelpers.AccTestContextFromEnv(t)
+
 	name := acctest.RandomWithPrefix("tf-acc-imgb")
 
 	resourceName := "awsappstream_associate_image_builder_software.test"
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testhelpers.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
@@ -92,11 +93,12 @@ resource "awsappstream_associate_image_builder_software" "test" {
 }
 
 func TestAccAssociateImageBuilderSoftware_update(t *testing.T) {
+	testhelpers.AccTestContextFromEnv(t)
+
 	name := acctest.RandomWithPrefix("tf-acc-imgb-update")
 	resourceName := "awsappstream_associate_image_builder_software.test"
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testhelpers.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
@@ -131,11 +133,12 @@ resource "awsappstream_associate_image_builder_software" "test" {
 }
 
 func TestAccAssociateImageBuilderSoftware_deploy(t *testing.T) {
+	testhelpers.AccTestContextFromEnv(t)
+
 	name := acctest.RandomWithPrefix("tf-acc-imgb-deploy")
 	resourceName := "awsappstream_associate_image_builder_software.test"
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testhelpers.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{

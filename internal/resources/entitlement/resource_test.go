@@ -39,12 +39,13 @@ resource "awsappstream_entitlement" "test" {
  */
 
 func TestAccEntitlement_basic(t *testing.T) {
+	testhelpers.AccTestContextFromEnv(t)
+
 	name := acctest.RandomWithPrefix("tf-acc-entitlement")
 	stackName := acctest.RandomWithPrefix("tf-acc-entitlement-stack")
 	resourceName := "awsappstream_entitlement.test"
 
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:                 func() { testhelpers.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
@@ -80,12 +81,13 @@ func TestAccEntitlement_basic(t *testing.T) {
 }
 
 func TestAccEntitlement_updateDescription(t *testing.T) {
+	testhelpers.AccTestContextFromEnv(t)
+
 	name := acctest.RandomWithPrefix("tf-acc-entitlement-update")
 	stackName := acctest.RandomWithPrefix("tf-acc-entitlement-stack-update")
 	resourceName := "awsappstream_entitlement.test"
 
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:                 func() { testhelpers.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{

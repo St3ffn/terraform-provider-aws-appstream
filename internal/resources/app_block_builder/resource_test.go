@@ -27,20 +27,17 @@ resource "awsappstream_app_block_builder" "test" {
 }
 
 func TestAccAppBlockBuilder_basic(t *testing.T) {
-	vpcInfo, err := testhelpers.GetDefaultVPCInfo(t)
-	if err != nil {
-		t.Fatalf("failed to get default VPC info: %v", err)
-	}
+	testCtx := testhelpers.AccTestContextFromEnv(t)
+	vpc := testCtx.DefaultVPCInfo(t)
 
 	name := acctest.RandomWithPrefix("tf-acc-app-block-builder")
 	resourceName := "awsappstream_app_block_builder.test"
 
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:                 func() { testhelpers.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccAppBlockBuilderBasicConfig(name, vpcInfo.SubnetIDs[:2]),
+				Config: testAccAppBlockBuilderBasicConfig(name, vpc.SubnetIDs[:2]),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "instance_type", "stream.standard.small"),
@@ -112,20 +109,17 @@ resource "awsappstream_app_block_builder" "test" {
 }
 
 func TestAccAppBlockBuilder_complex(t *testing.T) {
-	vpcInfo, err := testhelpers.GetDefaultVPCInfo(t)
-	if err != nil {
-		t.Fatalf("failed to get default VPC info: %v", err)
-	}
+	testCtx := testhelpers.AccTestContextFromEnv(t)
+	vpc := testCtx.DefaultVPCInfo(t)
 
 	name := acctest.RandomWithPrefix("tf-acc-app-block-builder")
 	resourceName := "awsappstream_app_block_builder.test"
 
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:                 func() { testhelpers.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccAppBlockBuilderComplexConfig(name, vpcInfo.SubnetIDs[:2]),
+				Config: testAccAppBlockBuilderComplexConfig(name, vpc.SubnetIDs[:2]),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "display_name", "Test App Block Builder"),
@@ -144,7 +138,7 @@ func TestAccAppBlockBuilder_complex(t *testing.T) {
 				),
 			},
 			{
-				Config: testAccAppBlockBuilderComplexConfigUpdated(name, vpcInfo.SubnetIDs[:2]),
+				Config: testAccAppBlockBuilderComplexConfigUpdated(name, vpc.SubnetIDs[:2]),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "display_name", "Updated App Block Builder"),
 					resource.TestCheckResourceAttr(resourceName, "description", "Updated complex acceptance test"),
@@ -160,22 +154,19 @@ func TestAccAppBlockBuilder_complex(t *testing.T) {
 }
 
 func TestAccAppBlockBuilder_noopPlan(t *testing.T) {
-	vpcInfo, err := testhelpers.GetDefaultVPCInfo(t)
-	if err != nil {
-		t.Fatalf("failed to get default VPC info: %v", err)
-	}
+	testCtx := testhelpers.AccTestContextFromEnv(t)
+	vpc := testCtx.DefaultVPCInfo(t)
 
 	name := acctest.RandomWithPrefix("tf-acc-app-block-builder")
 
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:                 func() { testhelpers.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccAppBlockBuilderBasicConfig(name, vpcInfo.SubnetIDs[:2]),
+				Config: testAccAppBlockBuilderBasicConfig(name, vpc.SubnetIDs[:2]),
 			},
 			{
-				Config:             testAccAppBlockBuilderBasicConfig(name, vpcInfo.SubnetIDs[:2]),
+				Config:             testAccAppBlockBuilderBasicConfig(name, vpc.SubnetIDs[:2]),
 				PlanOnly:           true,
 				ExpectNonEmptyPlan: false,
 			},
@@ -202,20 +193,17 @@ resource "awsappstream_app_block_builder" "test" {
 }
 
 func TestAccAppBlockBuilder_tags(t *testing.T) {
-	vpcInfo, err := testhelpers.GetDefaultVPCInfo(t)
-	if err != nil {
-		t.Fatalf("failed to get default VPC info: %v", err)
-	}
+	testCtx := testhelpers.AccTestContextFromEnv(t)
+	vpc := testCtx.DefaultVPCInfo(t)
 
 	name := acctest.RandomWithPrefix("tf-acc-app-block-builder-tags")
 	resourceName := "awsappstream_app_block_builder.test"
 
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:                 func() { testhelpers.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccAppBlockBuilderTagsConfig(name, vpcInfo.SubnetIDs[:2]),
+				Config: testAccAppBlockBuilderTagsConfig(name, vpc.SubnetIDs[:2]),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "tags.Environment", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags_all.Environment", "test"),
