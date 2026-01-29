@@ -50,7 +50,7 @@ data "awsappstream_stack_theme" "test" {
 }
 
 func TestAccStackThemeDataSource_basic(t *testing.T) {
-	testCtx := testhelpers.AccTestContextFromEnv(t)
+	testEnv := testhelpers.LoadAccTestEnv(t)
 
 	stackName := acctest.RandomWithPrefix("tf-acc-stack-ds")
 
@@ -58,7 +58,7 @@ func TestAccStackThemeDataSource_basic(t *testing.T) {
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccStackThemeWithDataSource(stackName, testCtx.BucketName),
+				Config: testAccStackThemeWithDataSource(stackName, testEnv.BucketName),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr("data.awsappstream_stack_theme.test", "stack_name", stackName),
 					resource.TestCheckResourceAttr("data.awsappstream_stack_theme.test", "title_text", "Terraform DS Test"),

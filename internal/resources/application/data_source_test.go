@@ -70,7 +70,7 @@ data "awsappstream_application" "test" {
 }
 
 func TestAccApplicationDataSource_basic(t *testing.T) {
-	testCtx := testhelpers.AccTestContextFromEnv(t)
+	testEnv := testhelpers.LoadAccTestEnv(t)
 
 	appBlockName := acctest.RandomWithPrefix("tf-acc-app-block-ds")
 	applicationName := acctest.RandomWithPrefix("tf-acc-application-ds")
@@ -79,7 +79,7 @@ func TestAccApplicationDataSource_basic(t *testing.T) {
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccApplicationWithDataSource(appBlockName, applicationName, testCtx.BucketName),
+				Config: testAccApplicationWithDataSource(appBlockName, applicationName, testEnv.BucketName),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr("data.awsappstream_application.test", "name", applicationName),
 					resource.TestCheckResourceAttr("data.awsappstream_application.test", "display_name", "Test Application"),

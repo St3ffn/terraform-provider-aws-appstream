@@ -20,13 +20,13 @@ data "awsappstream_software_associations" "test" {
 }
 
 func TestAccSoftwareAssociationsDataSource_basic(t *testing.T) {
-	testCtx := testhelpers.AccTestContextFromEnv(t)
+	testEnv := testhelpers.LoadAccTestEnv(t)
 
 	resource.ParallelTest(t, resource.TestCase{
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccSoftwareAssociationsDataSource_basic(testCtx.Region, testCtx.AccountID),
+				Config: testAccSoftwareAssociationsDataSource_basic(testEnv.Region, testEnv.AccountID),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttrSet("data.awsappstream_software_associations.test", "associated_resource"),
 					resource.TestCheckResourceAttr("data.awsappstream_software_associations.test", "software_associations.#", "0"),

@@ -27,15 +27,15 @@ data "awsappstream_image" "test" {
 }
 
 func TestAccImageDataSource_basicByARN(t *testing.T) {
-	testCtx := testhelpers.AccTestContextFromEnv(t)
+	testEnv := testhelpers.LoadAccTestEnv(t)
 
 	resource.ParallelTest(t, resource.TestCase{
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccImageDataSourceByARN(testCtx.Region),
+				Config: testAccImageDataSourceByARN(testEnv.Region),
 				Check: resource.ComposeAggregateTestCheckFunc(
-					resource.TestCheckResourceAttr("data.awsappstream_image.test", "arn", testAccPublicImageARN(testCtx.Region)),
+					resource.TestCheckResourceAttr("data.awsappstream_image.test", "arn", testAccPublicImageARN(testEnv.Region)),
 					resource.TestCheckResourceAttr("data.awsappstream_image.test", "name", testAccPublicImageName),
 					resource.TestCheckResourceAttr("data.awsappstream_image.test", "visibility", "PUBLIC"),
 					resource.TestCheckResourceAttrSet("data.awsappstream_image.test", "created_time"),
@@ -57,7 +57,7 @@ data "awsappstream_image" "test" {
 }
 
 func TestAccImageDataSource_basicByName(t *testing.T) {
-	testCtx := testhelpers.AccTestContextFromEnv(t)
+	testEnv := testhelpers.LoadAccTestEnv(t)
 
 	resource.ParallelTest(t, resource.TestCase{
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
@@ -65,7 +65,7 @@ func TestAccImageDataSource_basicByName(t *testing.T) {
 			{
 				Config: testAccImageDataSourceByName(),
 				Check: resource.ComposeAggregateTestCheckFunc(
-					resource.TestCheckResourceAttr("data.awsappstream_image.test", "arn", testAccPublicImageARN(testCtx.Region)),
+					resource.TestCheckResourceAttr("data.awsappstream_image.test", "arn", testAccPublicImageARN(testEnv.Region)),
 					resource.TestCheckResourceAttr("data.awsappstream_image.test", "name", testAccPublicImageName),
 					resource.TestCheckResourceAttr("data.awsappstream_image.test", "visibility", "PUBLIC"),
 					resource.TestCheckResourceAttrSet("data.awsappstream_image.test", "created_time"),
@@ -87,7 +87,7 @@ data "awsappstream_image" "test" {
 }
 
 func TestAccImageDataSource_byRegexMostRecent(t *testing.T) {
-	testCtx := testhelpers.AccTestContextFromEnv(t)
+	testEnv := testhelpers.LoadAccTestEnv(t)
 
 	resource.ParallelTest(t, resource.TestCase{
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
@@ -95,7 +95,7 @@ func TestAccImageDataSource_byRegexMostRecent(t *testing.T) {
 			{
 				Config: testAccImageDataSourceByRegexMostRecent(),
 				Check: resource.ComposeAggregateTestCheckFunc(
-					resource.TestCheckResourceAttr("data.awsappstream_image.test", "arn", testAccPublicImageARN(testCtx.Region)),
+					resource.TestCheckResourceAttr("data.awsappstream_image.test", "arn", testAccPublicImageARN(testEnv.Region)),
 					resource.TestCheckResourceAttr("data.awsappstream_image.test", "name", testAccPublicImageName),
 					resource.TestCheckResourceAttr("data.awsappstream_image.test", "visibility", "PUBLIC"),
 					resource.TestCheckResourceAttrSet("data.awsappstream_image.test", "created_time"),
@@ -117,7 +117,7 @@ data "awsappstream_image" "test" {
 }
 
 func TestAccImageDataSource_byRegexMultipleFails(t *testing.T) {
-	testhelpers.AccTestContextFromEnv(t)
+	testhelpers.LoadAccTestEnv(t)
 
 	resource.ParallelTest(t, resource.TestCase{
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,

@@ -21,7 +21,7 @@ data "awsappstream_usage_report_subscription" "test" {
 }
 
 func TestAccUsageReportSubscriptionDataSource_basic(t *testing.T) {
-	testhelpers.AccTestContextFromEnv(t)
+	testhelpers.LoadAccTestEnv(t)
 
 	resource.ParallelTest(t, resource.TestCase{
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,

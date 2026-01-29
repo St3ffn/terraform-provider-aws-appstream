@@ -38,8 +38,8 @@ data "awsappstream_app_block_builder" "test" {
 }
 
 func TestAccAppBlockBuilderDataSource_basic(t *testing.T) {
-	testCtx := testhelpers.AccTestContextFromEnv(t)
-	vpc := testCtx.DefaultVPCInfo(t)
+	testEnv := testhelpers.LoadAccTestEnv(t)
+	vpc := testEnv.DefaultVPCInfo(t)
 
 	name := acctest.RandomWithPrefix("tf-acc-app-block-builder-ds-basic")
 

@@ -32,7 +32,7 @@ resource "awsappstream_associate_user_stack" "test" {
 }
 
 func TestAccAssociateUserStack_basic(t *testing.T) {
-	testhelpers.AccTestContextFromEnv(t)
+	testhelpers.LoadAccTestEnv(t)
 
 	stackName := acctest.RandomWithPrefix("tf-acc-stack")
 	userName := acctest.RandomWithPrefix("tf-acc-user") + "@example.com"
@@ -88,7 +88,7 @@ resource "awsappstream_associate_user_stack" "test" {
 }
 
 func TestAccAssociateUserStack_sendEmailNotification(t *testing.T) {
-	testhelpers.AccTestContextFromEnv(t)
+	testhelpers.LoadAccTestEnv(t)
 
 	stackName := acctest.RandomWithPrefix("tf-acc-stack")
 	userName := acctest.RandomWithPrefix("tf-acc-user") + "@example.com"

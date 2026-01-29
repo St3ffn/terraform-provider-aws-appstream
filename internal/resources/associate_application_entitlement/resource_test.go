@@ -40,7 +40,7 @@ resource "awsappstream_associate_application_entitlement" "test" {
 }
 
 func TestAccAssociateApplicationEntitlement_basic(t *testing.T) {
-	testhelpers.AccTestContextFromEnv(t)
+	testhelpers.LoadAccTestEnv(t)
 
 	stackName := acctest.RandomWithPrefix("tf-acc-stack")
 	entitlementName := acctest.RandomWithPrefix("tf-acc-entitlement")

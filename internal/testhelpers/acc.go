@@ -21,12 +21,12 @@ import (
 // and region to avoid collisions across environments.
 const BucketPrefix = "appstream-acc-test-bucket"
 
-// AccTestContext contains common, environment-derived information used by
+// AccTestEnv contains common, environment-derived information used by
 // Terraform acceptance tests.
 //
 // It centralizes AWS-related context such as region, account ID, and shared
 // resource names to avoid repeated environment lookups across tests.
-type AccTestContext struct {
+type AccTestEnv struct {
 	// Region is the AWS region resolved from the environment and SDK config.
 	Region string
 	// AccountID is the AWS account ID resolved via STS GetCallerIdentity.
@@ -36,7 +36,7 @@ type AccTestContext struct {
 	BucketName string
 }
 
-// AccTestContextFromEnv initializes and returns an AccTestContext based on the
+// LoadAccTestEnv initializes and returns an AccTestEnv based on the
 // current process environment and AWS SDK configuration.
 //
 // The function:
@@ -47,7 +47,7 @@ type AccTestContext struct {
 //
 // This helper should be called once per acceptance test and reused for
 // all test configuration and assertions.
-func AccTestContextFromEnv(t *testing.T) *AccTestContext {
+func LoadAccTestEnv(t *testing.T) *AccTestEnv {
 	if os.Getenv("TF_ACC") == "" {
 		t.Skip("skipping acceptance test unless TF_ACC is set")
 	}
@@ -87,7 +87,7 @@ func AccTestContextFromEnv(t *testing.T) *AccTestContext {
 	accountID := *out.Account
 	region := cfg.Region
 
-	return &AccTestContext{
+	return &AccTestEnv{
 		Region:     region,
 		AccountID:  accountID,
 		BucketName: fmt.Sprintf("%s-%s-%s", BucketPrefix, accountID, region),
@@ -108,16 +108,16 @@ type DefaultVPCInfo struct {
 }
 
 // DefaultVPCInfo retrieves information about the default VPC in the AWS account
-// and region associated with the AccTestContext.
+// and region associated with the AccTestEnv.
 //
 // The function:
-//   - Uses the region stored in the AccTestContext
+//   - Uses the region stored in the AccTestEnv
 //   - Requires that a default VPC exists
 //   - Requires that the default VPC has at least two subnets
 //
 // The test fails immediately if these conditions are not met, as they are
 // mandatory for many AppStream acceptance tests.
-func (ctx *AccTestContext) DefaultVPCInfo(t *testing.T) *DefaultVPCInfo {
+func (ctx *AccTestEnv) DefaultVPCInfo(t *testing.T) *DefaultVPCInfo {
 	t.Helper()
 
 	cfg, err := config.LoadDefaultConfig(t.Context(), config.WithRegion(ctx.Region))

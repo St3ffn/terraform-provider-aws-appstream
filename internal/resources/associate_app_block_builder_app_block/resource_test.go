@@ -52,8 +52,8 @@ resource "awsappstream_associate_app_block_builder_app_block" "test" {
 }
 
 func TestAccAppBlockBuilderAssociation_basic(t *testing.T) {
-	testCtx := testhelpers.AccTestContextFromEnv(t)
-	vpc := testCtx.DefaultVPCInfo(t)
+	testEnv := testhelpers.LoadAccTestEnv(t)
+	vpc := testEnv.DefaultVPCInfo(t)
 
 	builderName := acctest.RandomWithPrefix("tf-acc-app-block-builder")
 	appBlockName := acctest.RandomWithPrefix("tf-acc-app-block")
@@ -64,7 +64,7 @@ func TestAccAppBlockBuilderAssociation_basic(t *testing.T) {
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccAppBlockBuilderAssociationBasicConfig(builderName, appBlockName, vpc.SubnetIDs[:2], testCtx.BucketName),
+				Config: testAccAppBlockBuilderAssociationBasicConfig(builderName, appBlockName, vpc.SubnetIDs[:2], testEnv.BucketName),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "app_block_builder_name", builderName),
 					resource.TestCheckResourceAttrSet(resourceName, "app_block_arn"),
@@ -77,7 +77,7 @@ func TestAccAppBlockBuilderAssociation_basic(t *testing.T) {
 				ImportStateVerify: true,
 			},
 			{
-				Config:             testAccAppBlockBuilderAssociationBasicConfig(builderName, appBlockName, vpc.SubnetIDs[:2], testCtx.BucketName),
+				Config:             testAccAppBlockBuilderAssociationBasicConfig(builderName, appBlockName, vpc.SubnetIDs[:2], testEnv.BucketName),
 				PlanOnly:           true,
 				ExpectNonEmptyPlan: false,
 			},

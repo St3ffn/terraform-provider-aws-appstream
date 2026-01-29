@@ -30,7 +30,7 @@ resource "awsappstream_associate_image_builder_software" "test" {
 }
 
 func TestAccAssociateImageBuilderSoftware_basic(t *testing.T) {
-	testhelpers.AccTestContextFromEnv(t)
+	testhelpers.LoadAccTestEnv(t)
 
 	name := acctest.RandomWithPrefix("tf-acc-imgb")
 
@@ -93,7 +93,7 @@ resource "awsappstream_associate_image_builder_software" "test" {
 }
 
 func TestAccAssociateImageBuilderSoftware_update(t *testing.T) {
-	testhelpers.AccTestContextFromEnv(t)
+	testhelpers.LoadAccTestEnv(t)
 
 	name := acctest.RandomWithPrefix("tf-acc-imgb-update")
 	resourceName := "awsappstream_associate_image_builder_software.test"
@@ -133,7 +133,7 @@ resource "awsappstream_associate_image_builder_software" "test" {
 }
 
 func TestAccAssociateImageBuilderSoftware_deploy(t *testing.T) {
-	testhelpers.AccTestContextFromEnv(t)
+	testhelpers.LoadAccTestEnv(t)
 
 	name := acctest.RandomWithPrefix("tf-acc-imgb-deploy")
 	resourceName := "awsappstream_associate_image_builder_software.test"

@@ -28,7 +28,7 @@ func testAccUserBasicConfig(userName string) string {
 }
 
 func TestAccUser_basic(t *testing.T) {
-	testhelpers.AccTestContextFromEnv(t)
+	testhelpers.LoadAccTestEnv(t)
 
 	userName := acctest.RandomWithPrefix("tf-acc-user") + "@example.com"
 	resourceName := "awsappstream_user.test"
@@ -70,7 +70,7 @@ func testAccUserWithNamesConfig(userName string) string {
 }
 
 func TestAccUser_namesAndMessageAction(t *testing.T) {
-	testhelpers.AccTestContextFromEnv(t)
+	testhelpers.LoadAccTestEnv(t)
 
 	userName := acctest.RandomWithPrefix("tf-acc-user") + "@example.com"
 	resourceName := "awsappstream_user.test"
@@ -98,7 +98,7 @@ func testAccUserEnabledConfig(userName string, enabled bool) string {
 }
 
 func TestAccUser_enabledToggle(t *testing.T) {
-	testhelpers.AccTestContextFromEnv(t)
+	testhelpers.LoadAccTestEnv(t)
 
 	userName := acctest.RandomWithPrefix("tf-acc-user") + "@example.com"
 	resourceName := "awsappstream_user.test"
@@ -123,7 +123,7 @@ func TestAccUser_enabledToggle(t *testing.T) {
 }
 
 func TestAccUser_noOpPlan(t *testing.T) {
-	testhelpers.AccTestContextFromEnv(t)
+	testhelpers.LoadAccTestEnv(t)
 
 	userName := acctest.RandomWithPrefix("tf-acc-user") + "@example.com"
 

@@ -40,7 +40,7 @@ data "awsappstream_entitlement" "test" {
 }
 
 func TestAccEntitlementDataSource_basic(t *testing.T) {
-	testhelpers.AccTestContextFromEnv(t)
+	testhelpers.LoadAccTestEnv(t)
 
 	name := acctest.RandomWithPrefix("tf-acc-entitlement-ds")
 	stackName := acctest.RandomWithPrefix("tf-acc-entitlement-stack-ds")

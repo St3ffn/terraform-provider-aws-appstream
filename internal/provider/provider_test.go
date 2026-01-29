@@ -11,7 +11,7 @@ import (
 )
 
 func TestAccProvider_basic(t *testing.T) {
-	testhelpers.AccTestContextFromEnv(t)
+	testhelpers.LoadAccTestEnv(t)
 
 	resource.ParallelTest(t, resource.TestCase{
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,

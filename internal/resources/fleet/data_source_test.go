@@ -38,7 +38,7 @@ data "awsappstream_fleet" "test" {
 }
 
 func TestAccFleetDataSource_basic(t *testing.T) {
-	testhelpers.AccTestContextFromEnv(t)
+	testhelpers.LoadAccTestEnv(t)
 
 	name := acctest.RandomWithPrefix("tf-acc-fleet-ds-basic")
 

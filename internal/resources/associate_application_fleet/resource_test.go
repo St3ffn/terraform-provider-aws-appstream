@@ -75,8 +75,8 @@ resource "awsappstream_associate_application_fleet" "test" {
 }
 
 func TestAccAssociateApplicationFleet_basic(t *testing.T) {
-	testCtx := testhelpers.AccTestContextFromEnv(t)
-	vpc := testCtx.DefaultVPCInfo(t)
+	testEnv := testhelpers.LoadAccTestEnv(t)
+	vpc := testEnv.DefaultVPCInfo(t)
 
 	appBlockName := acctest.RandomWithPrefix("tf-acc-app-block")
 	applicationName := acctest.RandomWithPrefix("tf-acc-application")
@@ -88,7 +88,7 @@ func TestAccAssociateApplicationFleet_basic(t *testing.T) {
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccAssociateApplicationFleetBasicConfig(appBlockName, applicationName, fleetName, vpc.SubnetIDs[:2], testCtx.BucketName),
+				Config: testAccAssociateApplicationFleetBasicConfig(appBlockName, applicationName, fleetName, vpc.SubnetIDs[:2], testEnv.BucketName),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "fleet_name", fleetName),
 					resource.TestCheckResourceAttrSet(resourceName, "application_arn"),
@@ -101,7 +101,7 @@ func TestAccAssociateApplicationFleet_basic(t *testing.T) {
 				ImportStateVerify: true,
 			},
 			{
-				Config:             testAccAssociateApplicationFleetBasicConfig(appBlockName, applicationName, fleetName, vpc.SubnetIDs[:2], testCtx.BucketName),
+				Config:             testAccAssociateApplicationFleetBasicConfig(appBlockName, applicationName, fleetName, vpc.SubnetIDs[:2], testEnv.BucketName),
 				PlanOnly:           true,
 				ExpectNonEmptyPlan: false,
 			},

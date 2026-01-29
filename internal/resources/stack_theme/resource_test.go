@@ -37,7 +37,7 @@ resource "awsappstream_stack_theme" "test" {
 }
 
 func TestAccStackTheme_basic(t *testing.T) {
-	testCtx := testhelpers.AccTestContextFromEnv(t)
+	testEnv := testhelpers.LoadAccTestEnv(t)
 
 	stackName := acctest.RandomWithPrefix("tf-acc-stack")
 
@@ -47,7 +47,7 @@ func TestAccStackTheme_basic(t *testing.T) {
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccStackThemeBasicConfig(stackName, testCtx.BucketName),
+				Config: testAccStackThemeBasicConfig(stackName, testEnv.BucketName),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "stack_name", stackName),
 					resource.TestCheckResourceAttr(resourceName, "title_text", "Terraform Acceptance Test"),
@@ -70,7 +70,7 @@ func TestAccStackTheme_basic(t *testing.T) {
 				},
 			},
 			{
-				Config:             testAccStackThemeBasicConfig(stackName, testCtx.BucketName),
+				Config:             testAccStackThemeBasicConfig(stackName, testEnv.BucketName),
 				PlanOnly:           true,
 				ExpectNonEmptyPlan: false,
 			},
@@ -169,7 +169,7 @@ resource "awsappstream_stack_theme" "test" {
 }
 
 func TestAccStackTheme_complex(t *testing.T) {
-	testCtx := testhelpers.AccTestContextFromEnv(t)
+	testEnv := testhelpers.LoadAccTestEnv(t)
 
 	stackName := acctest.RandomWithPrefix("tf-acc-stack")
 
@@ -179,7 +179,7 @@ func TestAccStackTheme_complex(t *testing.T) {
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccStackThemeComplexConfig(stackName, testCtx.BucketName),
+				Config: testAccStackThemeComplexConfig(stackName, testEnv.BucketName),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "footer_links.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "footer_links.0.display_name", "Documentation"),
@@ -187,7 +187,7 @@ func TestAccStackTheme_complex(t *testing.T) {
 				),
 			},
 			{
-				Config: testAccStackThemeComplexConfigUpdated(stackName, testCtx.BucketName),
+				Config: testAccStackThemeComplexConfigUpdated(stackName, testEnv.BucketName),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "title_text", "Terraform Complex Test Updated"),
 					resource.TestCheckResourceAttr(resourceName, "footer_links.#", "1"),
@@ -195,7 +195,7 @@ func TestAccStackTheme_complex(t *testing.T) {
 				),
 			},
 			{
-				Config: testAccStackThemeComplexConfigNoFooter(stackName, testCtx.BucketName),
+				Config: testAccStackThemeComplexConfigNoFooter(stackName, testEnv.BucketName),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckNoResourceAttr(resourceName, "footer_links")),
 			},

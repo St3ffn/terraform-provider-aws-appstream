@@ -29,7 +29,7 @@ resource "awsappstream_fleet" "test" {
 }
 
 func TestAccFleet_basic(t *testing.T) {
-	testCtx := testhelpers.AccTestContextFromEnv(t)
+	testEnv := testhelpers.LoadAccTestEnv(t)
 
 	fleetName := acctest.RandomWithPrefix("tf-acc-fleet")
 
@@ -46,7 +46,7 @@ func TestAccFleet_basic(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "instance_type", "stream.standard.small"),
 					resource.TestCheckResourceAttr(resourceName, "compute_capacity.desired_instances", "0"),
 					resource.TestCheckResourceAttr(resourceName, "image_name", "Amazon-AppStream2-Sample-Image-06-17-2024"),
-					resource.TestCheckResourceAttr(resourceName, "image_arn", fmt.Sprintf("arn:aws:appstream:%s::image/Amazon-AppStream2-Sample-Image-06-17-2024", testCtx.Region)),
+					resource.TestCheckResourceAttr(resourceName, "image_arn", fmt.Sprintf("arn:aws:appstream:%s::image/Amazon-AppStream2-Sample-Image-06-17-2024", testEnv.Region)),
 					resource.TestCheckResourceAttr(resourceName, "enable_default_internet_access", "false"),
 					resource.TestCheckResourceAttr(resourceName, "max_user_duration_in_seconds", "57600"),
 					resource.TestCheckResourceAttr(resourceName, "disconnect_timeout_in_seconds", "900"),
@@ -87,7 +87,7 @@ resource "awsappstream_fleet" "test" {
 }
 
 func TestAccFleet_imageARN(t *testing.T) {
-	testCtx := testhelpers.AccTestContextFromEnv(t)
+	testEnv := testhelpers.LoadAccTestEnv(t)
 
 	name := acctest.RandomWithPrefix("tf-acc-fleet-imgarn")
 	resourceName := "awsappstream_fleet.test"
@@ -96,9 +96,9 @@ func TestAccFleet_imageARN(t *testing.T) {
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccFleetImageARNConfig(testCtx.Region, name),
+				Config: testAccFleetImageARNConfig(testEnv.Region, name),
 				Check: resource.ComposeAggregateTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "image_arn", fmt.Sprintf("arn:aws:appstream:%s::image/Amazon-AppStream2-Sample-Image-06-17-2024", testCtx.Region)),
+					resource.TestCheckResourceAttr(resourceName, "image_arn", fmt.Sprintf("arn:aws:appstream:%s::image/Amazon-AppStream2-Sample-Image-06-17-2024", testEnv.Region)),
 					resource.TestCheckResourceAttr(resourceName, "image_name", "Amazon-AppStream2-Sample-Image-06-17-2024"),
 				),
 			},
@@ -134,7 +134,7 @@ resource "awsappstream_fleet" "test" {
 }
 
 func TestAccFleet_updateDescriptionTags(t *testing.T) {
-	testhelpers.AccTestContextFromEnv(t)
+	testhelpers.LoadAccTestEnv(t)
 
 	name := acctest.RandomWithPrefix("tf-acc-fleet-update")
 	resourceName := "awsappstream_fleet.test"
@@ -177,7 +177,7 @@ resource "awsappstream_fleet" "test" {
 }
 
 func TestAccFleet_updateImageName(t *testing.T) {
-	testCtx := testhelpers.AccTestContextFromEnv(t)
+	testEnv := testhelpers.LoadAccTestEnv(t)
 
 	name := acctest.RandomWithPrefix("tf-acc-fleet-update")
 	resourceName := "awsappstream_fleet.test"
@@ -190,7 +190,7 @@ func TestAccFleet_updateImageName(t *testing.T) {
 				Config: testAccFleetUpdateImageName(name),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "image_name", "Amazon-AppStream2-Sample-Image-03-11-2023"),
-					resource.TestCheckResourceAttr(resourceName, "image_arn", fmt.Sprintf("arn:aws:appstream:%s::image/Amazon-AppStream2-Sample-Image-03-11-2023", testCtx.Region)),
+					resource.TestCheckResourceAttr(resourceName, "image_arn", fmt.Sprintf("arn:aws:appstream:%s::image/Amazon-AppStream2-Sample-Image-03-11-2023", testEnv.Region)),
 				),
 			},
 		},
@@ -215,7 +215,7 @@ resource "awsappstream_fleet" "test" {
 }
 
 func TestAccFleet_idleTimeout(t *testing.T) {
-	testhelpers.AccTestContextFromEnv(t)
+	testhelpers.LoadAccTestEnv(t)
 
 	name := acctest.RandomWithPrefix("tf-acc-fleet-idle")
 	resourceName := "awsappstream_fleet.test"

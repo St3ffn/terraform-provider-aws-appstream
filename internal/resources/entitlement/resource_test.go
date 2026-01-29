@@ -39,7 +39,7 @@ resource "awsappstream_entitlement" "test" {
  */
 
 func TestAccEntitlement_basic(t *testing.T) {
-	testhelpers.AccTestContextFromEnv(t)
+	testhelpers.LoadAccTestEnv(t)
 
 	name := acctest.RandomWithPrefix("tf-acc-entitlement")
 	stackName := acctest.RandomWithPrefix("tf-acc-entitlement-stack")
@@ -81,7 +81,7 @@ func TestAccEntitlement_basic(t *testing.T) {
 }
 
 func TestAccEntitlement_updateDescription(t *testing.T) {
-	testhelpers.AccTestContextFromEnv(t)
+	testhelpers.LoadAccTestEnv(t)
 
 	name := acctest.RandomWithPrefix("tf-acc-entitlement-update")
 	stackName := acctest.RandomWithPrefix("tf-acc-entitlement-stack-update")

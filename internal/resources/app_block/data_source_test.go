@@ -47,7 +47,7 @@ data "awsappstream_app_block" "test" {
 }
 
 func TestAccAppBlockDataSource_basic(t *testing.T) {
-	testCtx := testhelpers.AccTestContextFromEnv(t)
+	testEnv := testhelpers.LoadAccTestEnv(t)
 
 	name := acctest.RandomWithPrefix("tf-acc-app-block-ds-basic")
 
@@ -55,11 +55,11 @@ func TestAccAppBlockDataSource_basic(t *testing.T) {
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccAppBlockWithDataSource(name, testCtx.BucketName),
+				Config: testAccAppBlockWithDataSource(name, testEnv.BucketName),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr("data.awsappstream_app_block.test", "name", name),
 					resource.TestCheckResourceAttr("data.awsappstream_app_block.test", "packaging_type", "CUSTOM"),
-					resource.TestCheckResourceAttr("data.awsappstream_app_block.test", "source_s3_location.s3_bucket", testCtx.BucketName),
+					resource.TestCheckResourceAttr("data.awsappstream_app_block.test", "source_s3_location.s3_bucket", testEnv.BucketName),
 					resource.TestCheckResourceAttr("data.awsappstream_app_block.test", "tags.Environment", "test"),
 					resource.TestCheckResourceAttr("data.awsappstream_app_block.test", "tags.Owner", "terraform"),
 					resource.TestCheckResourceAttr("data.awsappstream_app_block.test", "tags.MANAGED_BY", "terraform"),

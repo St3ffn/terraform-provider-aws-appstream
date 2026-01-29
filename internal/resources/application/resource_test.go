@@ -54,7 +54,7 @@ resource "awsappstream_application" "test" {
 }
 
 func TestAccApplication_basic(t *testing.T) {
-	testCtx := testhelpers.AccTestContextFromEnv(t)
+	testEnv := testhelpers.LoadAccTestEnv(t)
 
 	appBlockName := acctest.RandomWithPrefix("tf-acc-app-block")
 	applicationName := acctest.RandomWithPrefix("tf-acc-application")
@@ -65,7 +65,7 @@ func TestAccApplication_basic(t *testing.T) {
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccApplicationBasicConfig(appBlockName, applicationName, testCtx.BucketName),
+				Config: testAccApplicationBasicConfig(appBlockName, applicationName, testEnv.BucketName),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", applicationName),
 					resource.TestCheckResourceAttr(resourceName, "launch_path", "/app/app"),
@@ -84,7 +84,7 @@ func TestAccApplication_basic(t *testing.T) {
 				ImportStateVerify: true,
 			},
 			{
-				Config:             testAccApplicationBasicConfig(appBlockName, applicationName, testCtx.BucketName),
+				Config:             testAccApplicationBasicConfig(appBlockName, applicationName, testEnv.BucketName),
 				PlanOnly:           true,
 				ExpectNonEmptyPlan: false,
 			},
@@ -195,7 +195,7 @@ resource "awsappstream_application" "test" {
 }
 
 func TestAccApplication_complex(t *testing.T) {
-	testCtx := testhelpers.AccTestContextFromEnv(t)
+	testEnv := testhelpers.LoadAccTestEnv(t)
 
 	appBlockName := acctest.RandomWithPrefix("tf-acc-app-block")
 	applicationName := acctest.RandomWithPrefix("tf-acc-application")
@@ -206,7 +206,7 @@ func TestAccApplication_complex(t *testing.T) {
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccApplicationComplexConfig(appBlockName, applicationName, testCtx.BucketName),
+				Config: testAccApplicationComplexConfig(appBlockName, applicationName, testEnv.BucketName),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "display_name", "Test Application"),
 					resource.TestCheckResourceAttr(resourceName, "description", "Complex acceptance test"),
@@ -219,7 +219,7 @@ func TestAccApplication_complex(t *testing.T) {
 				),
 			},
 			{
-				Config: testAccApplicationComplexConfigUpdated(appBlockName, applicationName, testCtx.BucketName),
+				Config: testAccApplicationComplexConfigUpdated(appBlockName, applicationName, testEnv.BucketName),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "display_name", "Updated Application"),
 					resource.TestCheckResourceAttr(resourceName, "description", "Updated complex acceptance test"),
@@ -281,7 +281,7 @@ resource "awsappstream_application" "test" {
 }
 
 func TestAccApplication_tags(t *testing.T) {
-	testCtx := testhelpers.AccTestContextFromEnv(t)
+	testEnv := testhelpers.LoadAccTestEnv(t)
 
 	appBlockName := acctest.RandomWithPrefix("tf-acc-app-block")
 	applicationName := acctest.RandomWithPrefix("tf-acc-application")
@@ -292,7 +292,7 @@ func TestAccApplication_tags(t *testing.T) {
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccApplicationTagsConfig(appBlockName, applicationName, testCtx.BucketName),
+				Config: testAccApplicationTagsConfig(appBlockName, applicationName, testEnv.BucketName),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "tags.Environment", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags_all.Environment", "test"),

@@ -38,7 +38,7 @@ resource "awsappstream_associate_fleet_stack" "test" {
 }
 
 func TestAccAssociateFleetStack_basic(t *testing.T) {
-	testhelpers.AccTestContextFromEnv(t)
+	testhelpers.LoadAccTestEnv(t)
 
 	stackName := acctest.RandomWithPrefix("tf-acc-stack")
 	fleetName := acctest.RandomWithPrefix("tf-acc-fleet")

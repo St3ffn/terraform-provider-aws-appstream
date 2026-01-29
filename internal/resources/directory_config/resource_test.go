@@ -29,7 +29,7 @@ resource "awsappstream_directory_config" "test" {
 }
 
 func TestAccDirectoryConfig_basic(t *testing.T) {
-	testhelpers.AccTestContextFromEnv(t)
+	testhelpers.LoadAccTestEnv(t)
 
 	name := acctest.RandomWithPrefix("tf-acc-directory-config") + ".example.com"
 	resourceName := "awsappstream_directory_config.test"
@@ -71,7 +71,7 @@ func TestAccDirectoryConfig_basic(t *testing.T) {
 }
 
 func TestAccDirectoryConfig_complex(t *testing.T) {
-	testhelpers.AccTestContextFromEnv(t)
+	testhelpers.LoadAccTestEnv(t)
 
 	name := acctest.RandomWithPrefix("tf-acc-directory-config") + ".example.com"
 	resourceName := "awsappstream_directory_config.test"

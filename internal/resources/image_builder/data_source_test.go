@@ -27,7 +27,7 @@ data "awsappstream_image_builder" "test" {
 }
 
 func TestAccImageBuilderDataSource_basic(t *testing.T) {
-	testhelpers.AccTestContextFromEnv(t)
+	testhelpers.LoadAccTestEnv(t)
 
 	name := acctest.RandomWithPrefix("tf-acc-image-builder-ds-basic")
 
@@ -73,7 +73,7 @@ data "awsappstream_image_builder" "test" {
 }
 
 func TestAccImageBuilderDataSource_arn_and_description(t *testing.T) {
-	testCtx := testhelpers.AccTestContextFromEnv(t)
+	testEnv := testhelpers.LoadAccTestEnv(t)
 
 	name := acctest.RandomWithPrefix("tf-acc-image-builder-ds-desc")
 
@@ -81,9 +81,9 @@ func TestAccImageBuilderDataSource_arn_and_description(t *testing.T) {
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccImageBuilderWithDataSourceArnDescriptionTags(testCtx.Region, name),
+				Config: testAccImageBuilderWithDataSourceArnDescriptionTags(testEnv.Region, name),
 				Check: resource.ComposeAggregateTestCheckFunc(
-					resource.TestCheckResourceAttr("data.awsappstream_image_builder.test", "image_arn", fmt.Sprintf("arn:aws:appstream:%s::image/AppStream-RockyLinux8-11-10-2025", testCtx.Region)),
+					resource.TestCheckResourceAttr("data.awsappstream_image_builder.test", "image_arn", fmt.Sprintf("arn:aws:appstream:%s::image/AppStream-RockyLinux8-11-10-2025", testEnv.Region)),
 					resource.TestCheckNoResourceAttr("data.awsappstream_image_builder.test", "image_name"),
 					resource.TestCheckResourceAttr("data.awsappstream_image_builder.test", "description", "test description"),
 					resource.TestCheckResourceAttr("data.awsappstream_image_builder.test", "display_name", "Test Builder"),

@@ -36,7 +36,7 @@ resource "awsappstream_app_block" "test" {
 }
 
 func TestAccAppBlock_basic(t *testing.T) {
-	testCtx := testhelpers.AccTestContextFromEnv(t)
+	testEnv := testhelpers.LoadAccTestEnv(t)
 
 	name := acctest.RandomWithPrefix("tf-acc-app-block")
 	resourceName := "awsappstream_app_block.test"
@@ -45,11 +45,11 @@ func TestAccAppBlock_basic(t *testing.T) {
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccAppBlockBasicConfig(name, testCtx.BucketName),
+				Config: testAccAppBlockBasicConfig(name, testEnv.BucketName),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "packaging_type", "CUSTOM"),
-					resource.TestCheckResourceAttr(resourceName, "source_s3_location.s3_bucket", testCtx.BucketName),
+					resource.TestCheckResourceAttr(resourceName, "source_s3_location.s3_bucket", testEnv.BucketName),
 					resource.TestCheckResourceAttr(resourceName, "source_s3_location.s3_key", "appblock.vhd"),
 					resource.TestCheckResourceAttr(resourceName, "setup_script_details.executable_path", "/bin/bash"),
 					resource.TestCheckResourceAttr(resourceName, "setup_script_details.timeout_in_seconds", "60"),
@@ -141,7 +141,7 @@ resource "awsappstream_app_block" "test" {
 }
 
 func TestAccAppBlock_complex(t *testing.T) {
-	testCtx := testhelpers.AccTestContextFromEnv(t)
+	testEnv := testhelpers.LoadAccTestEnv(t)
 
 	name := acctest.RandomWithPrefix("tf-acc-app-block-complex")
 	resourceName := "awsappstream_app_block.test"
@@ -150,13 +150,13 @@ func TestAccAppBlock_complex(t *testing.T) {
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccAppBlockComplexConfig(name, testCtx.BucketName),
+				Config: testAccAppBlockComplexConfig(name, testEnv.BucketName),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "display_name", "Test App Block"),
 					resource.TestCheckResourceAttr(resourceName, "description", "Complex acceptance test"),
 					resource.TestCheckResourceAttr(resourceName, "packaging_type", "CUSTOM"),
-					resource.TestCheckResourceAttr(resourceName, "source_s3_location.s3_bucket", testCtx.BucketName),
+					resource.TestCheckResourceAttr(resourceName, "source_s3_location.s3_bucket", testEnv.BucketName),
 					resource.TestCheckResourceAttr(resourceName, "source_s3_location.s3_key", "appblock.vhd"),
 					resource.TestCheckResourceAttr(resourceName, "setup_script_details.executable_path", "/bin/bash"),
 					resource.TestCheckResourceAttr(resourceName, "setup_script_details.executable_parameters", "-e"),
@@ -171,7 +171,7 @@ func TestAccAppBlock_complex(t *testing.T) {
 				),
 			},
 			{
-				Config: testAccAppBlockComplexConfigUpdated(name, testCtx.BucketName),
+				Config: testAccAppBlockComplexConfigUpdated(name, testEnv.BucketName),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "display_name", "Updated App Block"),
 					resource.TestCheckResourceAttr(resourceName, "description", "Updated complex acceptance test"),
@@ -188,7 +188,7 @@ func TestAccAppBlock_complex(t *testing.T) {
 }
 
 func TestAccAppBlock_noopPlan(t *testing.T) {
-	testCtx := testhelpers.AccTestContextFromEnv(t)
+	testEnv := testhelpers.LoadAccTestEnv(t)
 
 	name := acctest.RandomWithPrefix("tf-acc-app-block-noop")
 
@@ -196,10 +196,10 @@ func TestAccAppBlock_noopPlan(t *testing.T) {
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccAppBlockBasicConfig(name, testCtx.BucketName),
+				Config: testAccAppBlockBasicConfig(name, testEnv.BucketName),
 			},
 			{
-				Config:             testAccAppBlockBasicConfig(name, testCtx.BucketName),
+				Config:             testAccAppBlockBasicConfig(name, testEnv.BucketName),
 				PlanOnly:           true,
 				ExpectNonEmptyPlan: false,
 			},
@@ -239,7 +239,7 @@ resource "awsappstream_app_block" "test" {
 }
 
 func TestAccAppBlock_appstream2(t *testing.T) {
-	testCtx := testhelpers.AccTestContextFromEnv(t)
+	testEnv := testhelpers.LoadAccTestEnv(t)
 
 	name := acctest.RandomWithPrefix("tf-acc-app-block-appstream2")
 	resourceName := "awsappstream_app_block.test"
@@ -248,7 +248,7 @@ func TestAccAppBlock_appstream2(t *testing.T) {
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccAppBlockAppStream2Config(name, testCtx.BucketName),
+				Config: testAccAppBlockAppStream2Config(name, testEnv.BucketName),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "packaging_type", "APPSTREAM2"),
 					resource.TestCheckResourceAttr(resourceName, "post_setup_script_details.executable_path", "/bin/bash"),
@@ -290,7 +290,7 @@ resource "awsappstream_app_block" "test" {
 }
 
 func TestAccAppBlock_tags(t *testing.T) {
-	testCtx := testhelpers.AccTestContextFromEnv(t)
+	testEnv := testhelpers.LoadAccTestEnv(t)
 
 	name := acctest.RandomWithPrefix("tf-acc-app-block-tags")
 	resourceName := "awsappstream_app_block.test"
@@ -299,7 +299,7 @@ func TestAccAppBlock_tags(t *testing.T) {
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccAppBlockTagsConfig(name, testCtx.BucketName),
+				Config: testAccAppBlockTagsConfig(name, testEnv.BucketName),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "tags.Environment", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags_all.Environment", "test"),

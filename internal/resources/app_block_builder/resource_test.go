@@ -27,8 +27,8 @@ resource "awsappstream_app_block_builder" "test" {
 }
 
 func TestAccAppBlockBuilder_basic(t *testing.T) {
-	testCtx := testhelpers.AccTestContextFromEnv(t)
-	vpc := testCtx.DefaultVPCInfo(t)
+	testEnv := testhelpers.LoadAccTestEnv(t)
+	vpc := testEnv.DefaultVPCInfo(t)
 
 	name := acctest.RandomWithPrefix("tf-acc-app-block-builder")
 	resourceName := "awsappstream_app_block_builder.test"
@@ -109,8 +109,8 @@ resource "awsappstream_app_block_builder" "test" {
 }
 
 func TestAccAppBlockBuilder_complex(t *testing.T) {
-	testCtx := testhelpers.AccTestContextFromEnv(t)
-	vpc := testCtx.DefaultVPCInfo(t)
+	testEnv := testhelpers.LoadAccTestEnv(t)
+	vpc := testEnv.DefaultVPCInfo(t)
 
 	name := acctest.RandomWithPrefix("tf-acc-app-block-builder")
 	resourceName := "awsappstream_app_block_builder.test"
@@ -154,8 +154,8 @@ func TestAccAppBlockBuilder_complex(t *testing.T) {
 }
 
 func TestAccAppBlockBuilder_noopPlan(t *testing.T) {
-	testCtx := testhelpers.AccTestContextFromEnv(t)
-	vpc := testCtx.DefaultVPCInfo(t)
+	testEnv := testhelpers.LoadAccTestEnv(t)
+	vpc := testEnv.DefaultVPCInfo(t)
 
 	name := acctest.RandomWithPrefix("tf-acc-app-block-builder")
 
@@ -193,8 +193,8 @@ resource "awsappstream_app_block_builder" "test" {
 }
 
 func TestAccAppBlockBuilder_tags(t *testing.T) {
-	testCtx := testhelpers.AccTestContextFromEnv(t)
-	vpc := testCtx.DefaultVPCInfo(t)
+	testEnv := testhelpers.LoadAccTestEnv(t)
+	vpc := testEnv.DefaultVPCInfo(t)
 
 	name := acctest.RandomWithPrefix("tf-acc-app-block-builder-tags")
 	resourceName := "awsappstream_app_block_builder.test"

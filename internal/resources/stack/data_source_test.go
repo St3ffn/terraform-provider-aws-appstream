@@ -27,7 +27,7 @@ data "awsappstream_stack" "test" {
 }
 
 func TestAccStackDataSource_basic(t *testing.T) {
-	testhelpers.AccTestContextFromEnv(t)
+	testhelpers.LoadAccTestEnv(t)
 
 	name := acctest.RandomWithPrefix("tf-acc-stack-ds-basic")
 
@@ -81,7 +81,7 @@ data "awsappstream_stack" "test" {
 }
 
 func TestAccStackDataSource_complex(t *testing.T) {
-	testhelpers.AccTestContextFromEnv(t)
+	testhelpers.LoadAccTestEnv(t)
 
 	name := acctest.RandomWithPrefix("tf-acc-stack-ds-complex")
 

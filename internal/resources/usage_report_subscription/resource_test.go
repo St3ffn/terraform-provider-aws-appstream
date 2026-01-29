@@ -17,7 +17,7 @@ resource "awsappstream_usage_report_subscription" "test" {}
 }
 
 func TestAccUsageReportSubscription_basic(t *testing.T) {
-	testhelpers.AccTestContextFromEnv(t)
+	testhelpers.LoadAccTestEnv(t)
 
 	resourceName := "awsappstream_usage_report_subscription.test"
 
