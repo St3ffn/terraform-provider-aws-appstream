@@ -7,6 +7,9 @@ import (
 	_ "github.com/hashicorp/terraform-plugin-docs/cmd/tfplugindocs"
 )
 
+// Generate license
+//go:generate go run github.com/hashicorp/copywrite license -d .. --config ../.copywrite.hcl
+
 // Generate copyright headers
 //go:generate go run github.com/hashicorp/copywrite headers -d .. --config ../.copywrite.hcl
 
