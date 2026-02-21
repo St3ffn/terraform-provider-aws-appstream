@@ -27,7 +27,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 			"Optionally, a software deployment can be triggered after the association is created.",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description: "Identifier of the image builder software association.",
+				Description: "Identifier of the Image Builder software association.",
 				MarkdownDescription: "A synthetic identifier for the association, equal to the image builder ARN. " +
 					"This value is managed by the provider and cannot be set manually.",
 				Computed: true,
@@ -36,7 +36,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				},
 			},
 			"image_builder_arn": schema.StringAttribute{
-				Description: "ARN of the AppStream image builder.",
+				Description: "ARN of the AppStream Image Builder.",
 				MarkdownDescription: "The ARN of the AppStream image builder to which the software is associated. " +
 					"Changing this value forces the association to be replaced.",
 				Required: true,
@@ -48,7 +48,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				},
 			},
 			"software_names": schema.SetAttribute{
-				Description: "Software names associated with the image builder.",
+				Description: "Software names associated with the Image Builder.",
 				MarkdownDescription: "A set of license-included software package names to associate with the AppStream " +
 					"image builder. Changes to this set result in software being associated or disassociated accordingly.",
 				Required:    true,

@@ -53,6 +53,8 @@ func (r *resource) Update(ctx context.Context, req tfresource.UpdateRequest, res
 		input.DisplayName = v
 	})
 
+	input.DisableIMDSV1 = util.BoolPointerOrNil(plan.DisableIMDSV1)
+
 	input.EnableDefaultInternetAccess = util.BoolPointerOrNil(plan.EnableDefaultInternetAccess)
 
 	if plan.InstanceType.IsNull() {

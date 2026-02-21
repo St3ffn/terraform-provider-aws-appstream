@@ -104,6 +104,12 @@ func (r *resource) Update(ctx context.Context, req tfresource.UpdateRequest, res
 		input.EnableDefaultInternetAccess = plan.EnableDefaultInternetAccess.ValueBoolPointer()
 	}
 
+	if plan.DisableIMDSV1.IsNull() {
+		// no delete support
+	} else if !plan.DisableIMDSV1.IsUnknown() {
+		input.DisableIMDSV1 = plan.DisableIMDSV1.ValueBoolPointer()
+	}
+
 	if plan.ComputeCapacity.IsNull() {
 		// no delete support
 	} else if !plan.ComputeCapacity.IsUnknown() {

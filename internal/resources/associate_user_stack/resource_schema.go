@@ -25,7 +25,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 			"This resource represents the relationship only and does not create or manage the underlying user or stack.",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description: "Identifier of the AppStream user-stack association.",
+				Description: "Identifier of the AppStream User-Stack Association.",
 				MarkdownDescription: "A synthetic identifier for the association, composed of the stack name, " +
 					"authentication type, and user name. This value is managed by the provider and cannot be set manually.",
 				Computed: true,
@@ -34,7 +34,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				},
 			},
 			"stack_name": schema.StringAttribute{
-				Description: "Name of the AppStream stack.",
+				Description: "Name of the AppStream Stack.",
 				MarkdownDescription: "The name of the AppStream stack to associate with the user. " +
 					"Changing this value forces the association to be replaced.",
 				Required: true,
@@ -62,7 +62,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				},
 			},
 			"authentication_type": schema.StringAttribute{
-				Description: "Authentication type for the user.",
+				Description: "Authentication type for the User.",
 				MarkdownDescription: "The authentication type used by the user. " +
 					"Changing this value forces the association to be replaced. " +
 					"Valid values are `API`, `SAML`, `USERPOOL`, or `AWS_AD`.",
@@ -77,7 +77,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				},
 			},
 			"send_email_notification": schema.BoolAttribute{
-				Description: "Whether to send a welcome email to the user.",
+				Description: "Whether to send a welcome email to the User.",
 				MarkdownDescription: "Specifies whether a welcome email is sent to the user after the association is created. " +
 					"This option is only applicable when `authentication_type` is `USERPOOL`. " +
 					"For other authentication types, the user must already exist and this value is ignored. " +

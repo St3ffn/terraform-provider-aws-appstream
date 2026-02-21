@@ -21,12 +21,12 @@ func (ds *dataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp
 			"that is managed outside of Terraform.",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description:         "Identifier of the AppStream application.",
+				Description:         "Identifier of the AppStream Application.",
 				MarkdownDescription: "The Amazon Resource Name (ARN) of the AppStream application.",
 				Computed:            true,
 			},
 			"arn": schema.StringAttribute{
-				Description:         "ARN of the AppStream application.",
+				Description:         "ARN of the AppStream Application.",
 				MarkdownDescription: "The Amazon Resource Name (ARN) of the AppStream application.",
 				Required:            true,
 				Validators: []validator.String{
@@ -34,17 +34,17 @@ func (ds *dataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp
 				},
 			},
 			"name": schema.StringAttribute{
-				Description:         "Name of the AppStream application.",
+				Description:         "Name of the AppStream Application.",
 				MarkdownDescription: "The name of the AppStream application.",
 				Computed:            true,
 			},
 			"display_name": schema.StringAttribute{
-				Description:         "Display name of the application.",
+				Description:         "Display name of the Application.",
 				MarkdownDescription: "The name displayed to users in the AppStream application catalog, if set.",
 				Computed:            true,
 			},
 			"description": schema.StringAttribute{
-				Description:         "Description of the application.",
+				Description:         "Description of the Application.",
 				MarkdownDescription: "The application description, if set.",
 				Computed:            true,
 			},
@@ -98,13 +98,13 @@ func (ds *dataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp
 				Computed:            true,
 			},
 			"tags": schema.MapAttribute{
-				Description:         "Tags applied to the application.",
+				Description:         "Tags applied to the Application.",
 				MarkdownDescription: "Tags assigned to the application.",
 				Computed:            true,
 				ElementType:         types.StringType,
 			},
 			"created_time": schema.StringAttribute{
-				Description:         "Time the application was created.",
+				Description:         "Time the Application was created.",
 				MarkdownDescription: "The timestamp when the application was created, in RFC 3339 format.",
 				Computed:            true,
 			},

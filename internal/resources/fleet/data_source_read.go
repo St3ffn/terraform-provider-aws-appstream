@@ -90,6 +90,7 @@ func (ds *dataSource) Read(ctx context.Context, req datasource.ReadRequest, resp
 		IdleDisconnectTimeoutInSeconds: util.Int32OrNull(fleet.IdleDisconnectTimeoutInSeconds),
 		Description:                    util.StringOrNull(fleet.Description),
 		DisplayName:                    util.StringOrNull(fleet.DisplayName),
+		DisableIMDSV1:                  util.BoolOrNull(fleet.DisableIMDSV1),
 		EnableDefaultInternetAccess:    util.BoolOrNull(fleet.EnableDefaultInternetAccess),
 		DomainJoinInfo:                 flattenDomainJoinInfo(ctx, fleet.DomainJoinInfo, &resp.Diagnostics),
 		IAMRoleARN:                     util.StringOrNull(fleet.IamRoleArn),

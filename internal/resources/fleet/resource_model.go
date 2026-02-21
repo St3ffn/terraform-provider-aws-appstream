@@ -34,6 +34,8 @@ type resourceModel struct {
 	Description types.String `tfsdk:"description"`
 	// DisplayName is the fleet name shown to users (optional).
 	DisplayName types.String `tfsdk:"display_name"`
+	// DisableIMDSV1 specifies whether the fleet has disabled IMDSv1 and IMDSv2 is enforced (optional, computed).
+	DisableIMDSV1 types.Bool `tfsdk:"disable_imds_v1"`
 	// EnableDefaultInternetAccess enables outbound internet access (optional).
 	EnableDefaultInternetAccess types.Bool `tfsdk:"enable_default_internet_access"`
 	// DomainJoinInfo specifies Active Directory domain join configuration (Windows fleets only).

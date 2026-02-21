@@ -32,7 +32,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 			"and capturing the resulting configuration.",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description: "Identifier of the AppStream image builder.",
+				Description: "Identifier of the AppStream Image Builder.",
 				MarkdownDescription: "A synthetic identifier for the image builder, equal to the image builder name. " +
 					"This value is managed by the provider and cannot be set manually.",
 				Computed: true,
@@ -41,7 +41,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				},
 			},
 			"name": schema.StringAttribute{
-				Description: "Name of the AppStream image builder.",
+				Description: "Name of the AppStream Image Builder.",
 				MarkdownDescription: "The name of the AppStream image builder. " +
 					"Changing this value forces the image builder to be replaced.",
 				Required: true,
@@ -56,7 +56,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				},
 			},
 			"image_name": schema.StringAttribute{
-				Description: "Name of the AppStream image.",
+				Description: "Name of the AppStream Image.",
 				MarkdownDescription: "The name of the AppStream image used to create the image builder. " +
 					"Either `image_name` or `image_arn` must be specified.",
 				Optional: true,
@@ -71,7 +71,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				},
 			},
 			"image_arn": schema.StringAttribute{
-				Description: "ARN of the AppStream image.",
+				Description: "ARN of the AppStream Image.",
 				MarkdownDescription: "The ARN of the AppStream image used to create the image builder. " +
 					"Either `image_name` or `image_arn` must be specified.",
 				Optional: true,
@@ -84,7 +84,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				},
 			},
 			"instance_type": schema.StringAttribute{
-				Description:         "Instance type for the image builder.",
+				Description:         "Instance type for the Image Builder.",
 				MarkdownDescription: "The instance type used when launching the image builder.",
 				Required:            true,
 				PlanModifiers: []planmodifier.String{
@@ -106,7 +106,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				},
 			},
 			"display_name": schema.StringAttribute{
-				Description:         "Display name of the image builder.",
+				Description:         "Display name of the Image Builder.",
 				MarkdownDescription: "The display name of the image builder shown in the AppStream user interface.",
 				Optional:            true,
 				PlanModifiers: []planmodifier.String{
@@ -116,8 +116,19 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 					stringvalidator.LengthAtMost(100),
 				},
 			},
+			"disable_imds_v1": schema.BoolAttribute{
+				Description: "Disable IMDSv1 and enforce IMDSv2 for the AppStream Image Builder.",
+				MarkdownDescription: "Whether Instance Metadata Service Version 1 (IMDSv1) is disabled for the " +
+					"AppStream image builder. If `true`, only IMDSv2 is enabled. " +
+					"If `false`, both IMDSv1 and IMDSv2 are enabled.",
+				Optional: true,
+				Computed: true,
+				PlanModifiers: []planmodifier.Bool{
+					boolplanmodifier.RequiresReplace(),
+				},
+			},
 			"vpc_config": schema.SingleNestedAttribute{
-				Description: "VPC configuration for the image builder.",
+				Description: "VPC configuration for the Image Builder.",
 				MarkdownDescription: "The VPC configuration used by the image builder. " +
 					"Image builders use exactly one subnet.",
 				Optional: true,
@@ -205,7 +216,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				},
 			},
 			"access_endpoints": schema.SetNestedAttribute{
-				Description:         "VPC access endpoints for the image builder.",
+				Description:         "VPC access endpoints for the Image Builder.",
 				MarkdownDescription: "Interface VPC endpoints through which administrators can connect to the image builder.",
 				Optional:            true,
 				PlanModifiers: []planmodifier.Set{
@@ -258,7 +269,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				},
 			},
 			"tags": schema.MapAttribute{
-				Description:         "Tags applied to the image builder.",
+				Description:         "Tags applied to the Image Builder.",
 				MarkdownDescription: "A map of tags assigned to the image builder.",
 				Optional:            true,
 				ElementType:         types.StringType,
@@ -281,13 +292,13 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				},
 			},
 			"tags_all": schema.MapAttribute{
-				Description:         "All tags applied to the image builder.",
+				Description:         "All tags applied to the Image Builder.",
 				MarkdownDescription: "A map of tags, including default tags, assigned to the image builder.",
 				Computed:            true,
 				ElementType:         types.StringType,
 			},
 			"arn": schema.StringAttribute{
-				Description:         "ARN of the AppStream image builder.",
+				Description:         "ARN of the AppStream Image Builder.",
 				MarkdownDescription: "The Amazon Resource Name (ARN) of the AppStream image builder.",
 				Computed:            true,
 				PlanModifiers: []planmodifier.String{
@@ -295,7 +306,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				},
 			},
 			"created_time": schema.StringAttribute{
-				Description:         "Time the image builder was created.",
+				Description:         "Time the Image Builder was created.",
 				MarkdownDescription: "The timestamp when the image builder was created, in RFC 3339 format.",
 				Computed:            true,
 				PlanModifiers: []planmodifier.String{
@@ -336,7 +347,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				Computed:            true,
 			},
 			"state": schema.StringAttribute{
-				Description:         "State of the AppStream image builder.",
+				Description:         "State of the AppStream Image Builder.",
 				MarkdownDescription: "The state of the AppStream image builder.",
 				Computed:            true,
 			},
@@ -358,7 +369,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				},
 			},
 			"image_builder_errors": schema.SetNestedAttribute{
-				Description: "Errors reported by AWS for the image builder.",
+				Description: "Errors reported by AWS for the Image Builder.",
 				MarkdownDescription: "Informational list of errors reported by AWS for the image builder. " +
 					"These errors do not affect Terraform lifecycle behavior.",
 				Computed: true,

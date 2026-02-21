@@ -83,6 +83,7 @@ func (ds *dataSource) Read(ctx context.Context, req datasource.ReadRequest, resp
 		Platform:                    types.StringValue(string(appBlockBuilder.Platform)),
 		Description:                 util.StringOrNull(appBlockBuilder.Description),
 		DisplayName:                 util.StringOrNull(appBlockBuilder.DisplayName),
+		DisableIMDSV1:               util.BoolOrNull(appBlockBuilder.DisableIMDSV1),
 		VPCConfig:                   flattenVPCConfig(ctx, appBlockBuilder.VpcConfig, &resp.Diagnostics),
 		IAMRoleARN:                  util.StringOrNull(appBlockBuilder.IamRoleArn),
 		EnableDefaultInternetAccess: util.BoolOrNull(appBlockBuilder.EnableDefaultInternetAccess),

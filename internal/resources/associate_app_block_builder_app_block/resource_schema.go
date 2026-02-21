@@ -23,7 +23,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 			"This resource represents the relationship only and does not create or manage the underlying app block builder or app block.",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description: "Identifier of the AppStream app block builder–app block association.",
+				Description: "Identifier of the AppStream App Block Builder–App Block association.",
 				MarkdownDescription: "A synthetic identifier for the association, composed of the app block builder name and app block ARN. " +
 					"This value is managed by the provider and cannot be set manually.",
 				Computed: true,
@@ -32,7 +32,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				},
 			},
 			"app_block_builder_name": schema.StringAttribute{
-				Description: "Name of the AppStream app block builder.",
+				Description: "Name of the AppStream App Block Builder.",
 				MarkdownDescription: "The name of the AppStream app block builder to associate with the app block. " +
 					"Changing this value forces the association to be replaced.",
 				Required: true,
@@ -47,7 +47,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				},
 			},
 			"app_block_arn": schema.StringAttribute{
-				Description: "ARN of the AppStream app block.",
+				Description: "ARN of the AppStream App Block.",
 				MarkdownDescription: "The ARN of the AppStream app block to associate with the app block builder. " +
 					"Changing this value forces the association to be replaced.",
 				Required: true,

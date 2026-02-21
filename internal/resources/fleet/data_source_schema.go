@@ -21,12 +21,12 @@ func (ds *dataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp
 			"This data source can be used to reference an existing AppStream fleet that is managed outside of Terraform.",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description:         "Identifier of the AppStream fleet.",
+				Description:         "Identifier of the AppStream Fleet.",
 				MarkdownDescription: "A synthetic identifier for the fleet, equal to the fleet name.",
 				Computed:            true,
 			},
 			"name": schema.StringAttribute{
-				Description:         "Name of the AppStream fleet.",
+				Description:         "Name of the AppStream Fleet.",
 				MarkdownDescription: "The name of the AppStream fleet to read.",
 				Required:            true,
 				Validators: []validator.String{
@@ -37,22 +37,22 @@ func (ds *dataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp
 				},
 			},
 			"image_name": schema.StringAttribute{
-				Description:         "Name of the AppStream image.",
+				Description:         "Name of the AppStream Image.",
 				MarkdownDescription: "The name of the AppStream image used to create the fleet, if set.",
 				Computed:            true,
 			},
 			"image_arn": schema.StringAttribute{
-				Description:         "ARN of the AppStream image.",
+				Description:         "ARN of the AppStream Image.",
 				MarkdownDescription: "The ARN of the AppStream image used to create the fleet, if set.",
 				Computed:            true,
 			},
 			"instance_type": schema.StringAttribute{
-				Description:         "EC2 instance type for fleet instances.",
+				Description:         "EC2 instance type for Fleet instances.",
 				MarkdownDescription: "The EC2 instance type used by the fleet.",
 				Computed:            true,
 			},
 			"fleet_type": schema.StringAttribute{
-				Description:         "Type of the AppStream fleet.",
+				Description:         "Type of the AppStream Fleet.",
 				MarkdownDescription: "The fleet type. Valid values are `ON_DEMAND`, `ALWAYS_ON`, or `ELASTIC`.",
 				Computed:            true,
 			},
@@ -63,7 +63,7 @@ func (ds *dataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp
 				Computed: true,
 				Attributes: map[string]schema.Attribute{
 					"desired_instances": schema.Int32Attribute{
-						Description:         "Desired number of fleet instances.",
+						Description:         "Desired number of Fleet instances.",
 						MarkdownDescription: "The desired number of streaming instances for a single-session fleet.",
 						Computed:            true,
 					},
@@ -75,7 +75,7 @@ func (ds *dataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp
 				},
 			},
 			"vpc_config": schema.SingleNestedAttribute{
-				Description: "VPC configuration for the fleet.",
+				Description: "VPC configuration for the Fleet.",
 				MarkdownDescription: "The VPC configuration used by the fleet, if applicable. " +
 					"This configuration is present for elastic fleets.",
 				Computed: true,
@@ -110,14 +110,21 @@ func (ds *dataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp
 				Computed:            true,
 			},
 			"description": schema.StringAttribute{
-				Description:         "Description of the AppStream fleet.",
+				Description:         "Description of the AppStream Fleet.",
 				MarkdownDescription: "The fleet description, if set.",
 				Computed:            true,
 			},
 			"display_name": schema.StringAttribute{
-				Description:         "Display name of the AppStream fleet.",
+				Description:         "Display name of the AppStream Fleet.",
 				MarkdownDescription: "The name displayed to users in the AppStream user interface.",
 				Computed:            true,
+			},
+			"disable_imds_v1": schema.BoolAttribute{
+				Description: "Disable IMDSv1 and enforce IMDSv2 for the AppStream Fleet.",
+				MarkdownDescription: "Whether Instance Metadata Service Version 1 (IMDSv1) is disabled for the " +
+					"AppStream fleet. If `true`, only IMDSv2 is enabled. " +
+					"If `false`, both IMDSv1 and IMDSv2 are enabled.",
+				Computed: true,
 			},
 			"enable_default_internet_access": schema.BoolAttribute{
 				Description:         "Enable default internet access.",
@@ -202,28 +209,28 @@ func (ds *dataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp
 				},
 			},
 			"tags": schema.MapAttribute{
-				Description:         "Tags applied to the fleet.",
+				Description:         "Tags applied to the Fleet.",
 				MarkdownDescription: "Tags assigned to the fleet.",
 				Computed:            true,
 				ElementType:         types.StringType,
 			},
 			"arn": schema.StringAttribute{
-				Description:         "ARN of the AppStream fleet.",
+				Description:         "ARN of the AppStream Fleet.",
 				MarkdownDescription: "The Amazon Resource Name (ARN) of the AppStream fleet.",
 				Computed:            true,
 			},
 			"created_time": schema.StringAttribute{
-				Description:         "Time the fleet was created.",
+				Description:         "Time the Fleet was created.",
 				MarkdownDescription: "The timestamp when the fleet was created, in RFC 3339 format.",
 				Computed:            true,
 			},
 			"state": schema.StringAttribute{
-				Description:         "State of the AppStream fleet.",
+				Description:         "State of the AppStream Fleet.",
 				MarkdownDescription: "The state of the AppStream fleet.",
 				Computed:            true,
 			},
 			"fleet_errors": schema.SetNestedAttribute{
-				Description:         "Errors reported by AWS for the fleet.",
+				Description:         "Errors reported by AWS for the Fleet.",
 				MarkdownDescription: "Informational list of errors reported by AWS for the fleet.",
 				Computed:            true,
 				NestedObject: schema.NestedAttributeObject{

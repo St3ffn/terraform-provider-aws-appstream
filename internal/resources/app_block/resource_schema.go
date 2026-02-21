@@ -30,7 +30,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 			"App blocks can be referenced by multiple AppStream applications.",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description: "Identifier of the AppStream app block.",
+				Description: "Identifier of the AppStream App Block.",
 				MarkdownDescription: "The Amazon Resource Name (ARN) of the AppStream app block. " +
 					"This value is managed by the provider and cannot be set manually.",
 				Computed: true,
@@ -39,7 +39,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				},
 			},
 			"name": schema.StringAttribute{
-				Description: "Name of the AppStream app block.",
+				Description: "Name of the AppStream App Block.",
 				MarkdownDescription: "The name of the AppStream app block. " +
 					"Changing this value forces the app block to be replaced.",
 				Required: true,
@@ -54,7 +54,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				},
 			},
 			"display_name": schema.StringAttribute{
-				Description:         "Display name of the app block.",
+				Description:         "Display name of the App Block.",
 				MarkdownDescription: "The display name of the AppStream app block.",
 				Optional:            true,
 				PlanModifiers: []planmodifier.String{
@@ -65,7 +65,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				},
 			},
 			"description": schema.StringAttribute{
-				Description:         "Description of the app block.",
+				Description:         "Description of the App Block.",
 				MarkdownDescription: "The AppStream app block description, if set. Must be 256 characters or fewer.",
 				Optional:            true,
 				PlanModifiers: []planmodifier.String{
@@ -76,7 +76,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				},
 			},
 			"source_s3_location": schema.SingleNestedAttribute{
-				Description: "Source S3 location of the app block.",
+				Description: "Source S3 location of the App Block.",
 				MarkdownDescription: "Specifies the Amazon S3 location that contains the app block source. " +
 					"Depending on the packaging type, this can be an application package (VHD) or " +
 					"source content used to build the app block.",
@@ -220,7 +220,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				},
 			},
 			"packaging_type": schema.StringAttribute{
-				Description:         "Packaging type of the app block.",
+				Description:         "Packaging type of the App Block.",
 				MarkdownDescription: "The packaging type of the app block. Valid values are `CUSTOM` or `APPSTREAM2`.",
 				Optional:            true,
 				Computed:            true,
@@ -234,7 +234,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				},
 			},
 			"tags": schema.MapAttribute{
-				Description:         "Tags applied to the app block.",
+				Description:         "Tags applied to the App Block.",
 				MarkdownDescription: "A map of tags assigned to the app block.",
 				Optional:            true,
 				ElementType:         types.StringType,
@@ -257,13 +257,13 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				},
 			},
 			"tags_all": schema.MapAttribute{
-				Description:         "All tags applied to the app block.",
+				Description:         "All tags applied to the App Block.",
 				MarkdownDescription: "A map of tags, including default tags, assigned to the app block.",
 				Computed:            true,
 				ElementType:         types.StringType,
 			},
 			"arn": schema.StringAttribute{
-				Description:         "ARN of the AppStream app block.",
+				Description:         "ARN of the AppStream App Block.",
 				MarkdownDescription: "The Amazon Resource Name (ARN) of the app block.",
 				Computed:            true,
 				PlanModifiers: []planmodifier.String{
@@ -271,7 +271,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				},
 			},
 			"created_time": schema.StringAttribute{
-				Description:         "Time the app block was created.",
+				Description:         "Time the App Block was created.",
 				MarkdownDescription: "The timestamp when the app block was created, in RFC 3339 format.",
 				Computed:            true,
 				PlanModifiers: []planmodifier.String{
@@ -279,12 +279,12 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				},
 			},
 			"state": schema.StringAttribute{
-				Description:         "State of the AppStream app block.",
+				Description:         "State of the AppStream App Block.",
 				MarkdownDescription: "The state of the AppStream app block.",
 				Computed:            true,
 			},
 			"app_block_errors": schema.SetNestedAttribute{
-				Description: "Errors reported by AWS for the app block.",
+				Description: "Errors reported by AWS for the App Block.",
 				MarkdownDescription: "Informational list of errors reported by AWS for the app block. " +
 					"These errors do not affect Terraform lifecycle behavior.",
 				Computed: true,

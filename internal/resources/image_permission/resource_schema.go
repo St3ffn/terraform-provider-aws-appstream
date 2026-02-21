@@ -25,7 +25,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 			"for fleets, image builders, or both.",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description: "Identifier of the AppStream image permission.",
+				Description: "Identifier of the AppStream Image Permission.",
 				MarkdownDescription: "A synthetic identifier for the image permission, composed of the image name " +
 					"and the shared AWS account ID. " +
 					"This value is managed by the provider and cannot be set manually.",
@@ -35,7 +35,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				},
 			},
 			"name": schema.StringAttribute{
-				Description: "Name of the AppStream image.",
+				Description: "Name of the AppStream Image.",
 				MarkdownDescription: "The name of the private AppStream image for which permissions are managed. " +
 					"Changing this value forces the image permission to be replaced.",
 				Required: true,
@@ -71,13 +71,13 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				Required: true,
 				Attributes: map[string]schema.Attribute{
 					"allow_fleet": schema.BoolAttribute{
-						Description: "Allow image usage for fleets.",
+						Description: "Allow image usage for Fleets.",
 						MarkdownDescription: "Whether the image can be used to create or update AppStream fleets " +
 							"in the shared AWS account.",
 						Required: true,
 					},
 					"allow_image_builder": schema.BoolAttribute{
-						Description: "Allow image usage for image builders.",
+						Description: "Allow image usage for Image Builders.",
 						MarkdownDescription: "Whether the image can be used to create AppStream image builders " +
 							"in the shared AWS account.",
 						Required: true,

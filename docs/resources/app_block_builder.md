@@ -83,6 +83,7 @@ resource "awsappstream_app_block_builder" "example" {
 
 - `access_endpoints` (Attributes Set) Interface VPC endpoints through which administrators can connect to the app block builder. (see [below for nested schema](#nestedatt--access_endpoints))
 - `description` (String) The app block builder description, if set.
+- `disable_imds_v1` (Boolean) Whether Instance Metadata Service Version 1 (IMDSv1) is disabled for the AppStream app block builder. If `true`, only IMDSv2 is enabled. If `false`, both IMDSv1 and IMDSv2 are enabled.
 - `display_name` (String) The display name of the app block builder shown in the AppStream user interface.
 - `enable_default_internet_access` (Boolean) Whether the app block builder has access to the internet.
 - `iam_role_arn` (String) The ARN of the IAM role applied to the app block builder.

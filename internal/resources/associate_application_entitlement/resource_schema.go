@@ -22,7 +22,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 			"This resource represents the relationship only and does not create or manage the underlying application, entitlement, or stack.",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description: "Identifier of the application entitlement association.",
+				Description: "Identifier of the Application Entitlement Association.",
 				MarkdownDescription: "A synthetic identifier for the association, " +
 					"composed of the stack name, entitlement name, and application identifier. " +
 					"This value is managed by the provider and cannot be set manually.",

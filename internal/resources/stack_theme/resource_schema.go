@@ -25,7 +25,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 			"including colors, title text, footer links, and branding assets such as logos and favicons.",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description: "Identifier of the AppStream stack theme.",
+				Description: "Identifier of the AppStream Stack Theme.",
 				MarkdownDescription: "A synthetic identifier for the stack theme, equal to the stack name. " +
 					"This value is managed by the provider and cannot be set manually.",
 				Computed: true,
@@ -34,7 +34,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				},
 			},
 			"stack_name": schema.StringAttribute{
-				Description: "Name of the AppStream stack.",
+				Description: "Name of the AppStream Stack.",
 				MarkdownDescription: "The name of the AppStream stack that the theme is applied to. " +
 					"Changing this value forces the theme to be replaced.",
 				Required: true,
@@ -141,12 +141,12 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				},
 			},
 			"state": schema.StringAttribute{
-				Description:         "State of the stack theme.",
+				Description:         "State of the Stack Theme.",
 				MarkdownDescription: "The current state of the AppStream stack theme.",
 				Computed:            true,
 			},
 			"created_time": schema.StringAttribute{
-				Description:         "Time the stack theme was created.",
+				Description:         "Time the Stack Theme was created.",
 				MarkdownDescription: "The timestamp when the stack theme was created, in RFC 3339 format.",
 				Computed:            true,
 				PlanModifiers: []planmodifier.String{

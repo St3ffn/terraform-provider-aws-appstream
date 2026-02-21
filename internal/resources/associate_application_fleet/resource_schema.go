@@ -23,7 +23,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 			"This resource represents the relationship only and does not create or manage the underlying application or fleet.",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description: "Identifier of the AppStream application-fleet association.",
+				Description: "Identifier of the AppStream Application-Fleet Association.",
 				MarkdownDescription: "A synthetic identifier for the association, composed of the fleet name and application ARN. " +
 					"This value is managed by the provider and cannot be set manually.",
 				Computed: true,
@@ -32,7 +32,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				},
 			},
 			"fleet_name": schema.StringAttribute{
-				Description: "Name of the AppStream fleet.",
+				Description: "Name of the AppStream Fleet.",
 				MarkdownDescription: "The name of the AppStream fleet to associate with the application. " +
 					"Changing this value forces the association to be replaced.",
 				Required: true,
@@ -47,7 +47,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				},
 			},
 			"application_arn": schema.StringAttribute{
-				Description: "ARN of the AppStream application.",
+				Description: "ARN of the AppStream Application.",
 				MarkdownDescription: "The ARN of the AppStream application to associate with the fleet. " +
 					"Changing this value forces the association to be replaced.",
 				Required: true,

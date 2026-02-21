@@ -23,12 +23,12 @@ func (ds *dataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp
 			"or inspect error details if the export fails.",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description:         "Identifier of the export image task.",
+				Description:         "Identifier of the Export Image Task.",
 				MarkdownDescription: "A synthetic identifier for the export image task, equal to the task ID.",
 				Computed:            true,
 			},
 			"task_id": schema.StringAttribute{
-				Description:         "Export image task ID.",
+				Description:         "Export Image Task ID.",
 				MarkdownDescription: "The unique identifier of the export image task.",
 				Required:            true,
 				Validators: []validator.String{
@@ -39,7 +39,7 @@ func (ds *dataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp
 				},
 			},
 			"image_arn": schema.StringAttribute{
-				Description:         "ARN of the exported AppStream image.",
+				Description:         "ARN of the exported AppStream Image.",
 				MarkdownDescription: "The Amazon Resource Name (ARN) of the AppStream Applications image being exported.",
 				Computed:            true,
 			},

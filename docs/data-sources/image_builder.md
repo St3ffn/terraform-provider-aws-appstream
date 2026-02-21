@@ -32,6 +32,7 @@ data "awsappstream_image_builder" "example" {
 - `arn` (String) The Amazon Resource Name (ARN) of the AppStream image builder.
 - `created_time` (String) The timestamp when the image builder was created, in RFC 3339 format.
 - `description` (String) The image builder description, if set.
+- `disable_imds_v1` (Boolean) Whether Instance Metadata Service Version 1 (IMDSv1) is disabled for the AppStream image builder. If `true`, only IMDSv2 is enabled. If `false`, both IMDSv1 and IMDSv2 are enabled.
 - `display_name` (String) The name displayed to users in the AppStream user interface.
 - `domain_join_info` (Attributes) The Active Directory configuration used by the image builder, if applicable. (see [below for nested schema](#nestedatt--domain_join_info))
 - `enable_default_internet_access` (Boolean) Whether the image builder has access to the internet.

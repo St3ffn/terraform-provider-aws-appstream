@@ -21,12 +21,12 @@ func (ds *dataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp
 			"that is managed outside of Terraform.",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description:         "Identifier of the AppStream app block.",
+				Description:         "Identifier of the AppStream App Block.",
 				MarkdownDescription: "The Amazon Resource Name (ARN) of the AppStream app block.",
 				Computed:            true,
 			},
 			"arn": schema.StringAttribute{
-				Description:         "ARN of the AppStream app block.",
+				Description:         "ARN of the AppStream App Block.",
 				MarkdownDescription: "The Amazon Resource Name (ARN) of the AppStream app block.",
 				Required:            true,
 				Validators: []validator.String{
@@ -34,22 +34,22 @@ func (ds *dataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp
 				},
 			},
 			"name": schema.StringAttribute{
-				Description:         "Name of the AppStream app block.",
+				Description:         "Name of the AppStream App Block.",
 				MarkdownDescription: "The name of the AppStream app block.",
 				Computed:            true,
 			},
 			"display_name": schema.StringAttribute{
-				Description:         "Display name of the app block.",
+				Description:         "Display name of the App Block.",
 				MarkdownDescription: "The display name of the AppStream app block, if set.",
 				Computed:            true,
 			},
 			"description": schema.StringAttribute{
-				Description:         "Description of the app block.",
+				Description:         "Description of the App Block.",
 				MarkdownDescription: "The app block description, if set.",
 				Computed:            true,
 			},
 			"source_s3_location": schema.SingleNestedAttribute{
-				Description:         "Source S3 location of the app block.",
+				Description:         "Source S3 location of the App Block.",
 				MarkdownDescription: "Specifies the Amazon S3 location that contains the app block source.",
 				Computed:            true,
 				Attributes: map[string]schema.Attribute{
@@ -144,28 +144,28 @@ func (ds *dataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp
 				},
 			},
 			"packaging_type": schema.StringAttribute{
-				Description:         "Packaging type of the app block.",
+				Description:         "Packaging type of the App Block.",
 				MarkdownDescription: "The packaging type of the app block.",
 				Computed:            true,
 			},
 			"tags": schema.MapAttribute{
-				Description:         "Tags applied to the app block.",
+				Description:         "Tags applied to the App Block.",
 				MarkdownDescription: "Tags assigned to the app block.",
 				Computed:            true,
 				ElementType:         types.StringType,
 			},
 			"created_time": schema.StringAttribute{
-				Description:         "Time the app block was created.",
+				Description:         "Time the App Block was created.",
 				MarkdownDescription: "The timestamp when the app block was created, in RFC 3339 format.",
 				Computed:            true,
 			},
 			"state": schema.StringAttribute{
-				Description:         "State of the AppStream app block.",
+				Description:         "State of the AppStream App Block.",
 				MarkdownDescription: "The state of the AppStream app block.",
 				Computed:            true,
 			},
 			"app_block_errors": schema.SetNestedAttribute{
-				Description:         "Errors reported by AWS for the app block.",
+				Description:         "Errors reported by AWS for the App Block.",
 				MarkdownDescription: "Informational list of errors reported by AWS for the app block.",
 				Computed:            true,
 				NestedObject: schema.NestedAttributeObject{

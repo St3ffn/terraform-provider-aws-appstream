@@ -29,7 +29,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 			"for streaming instances that host AppStream user sessions.",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description: "Identifier of the AppStream fleet.",
+				Description: "Identifier of the AppStream Fleet.",
 				MarkdownDescription: "A synthetic identifier for the fleet, equal to the fleet name. " +
 					"This value is managed by the provider and cannot be set manually.",
 				Computed: true,
@@ -38,7 +38,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				},
 			},
 			"name": schema.StringAttribute{
-				Description: "Name of the AppStream fleet.",
+				Description: "Name of the AppStream Fleet.",
 				MarkdownDescription: "The name of the AppStream fleet. " +
 					"Changing this value forces the fleet to be replaced.",
 				Required: true,
@@ -53,7 +53,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				},
 			},
 			"image_name": schema.StringAttribute{
-				Description: "Name of the AppStream image.",
+				Description: "Name of the AppStream Image.",
 				MarkdownDescription: "The name of the AppStream image used to create the fleet. " +
 					"This attribute is supported only for non-elastic fleets. " +
 					"Either `image_name` or `image_arn` must be specified.",
@@ -67,7 +67,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				},
 			},
 			"image_arn": schema.StringAttribute{
-				Description: "ARN of the AppStream image.",
+				Description: "ARN of the AppStream Image.",
 				MarkdownDescription: "The ARN of the AppStream image used to create the fleet. " +
 					"This attribute is supported only for non-elastic fleets. " +
 					"Either `image_name` or `image_arn` must be specified.",
@@ -78,7 +78,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				},
 			},
 			"instance_type": schema.StringAttribute{
-				Description: "EC2 instance type for fleet instances.",
+				Description: "EC2 instance type for Fleet instances.",
 				MarkdownDescription: "The EC2 instance type used by the fleet. " +
 					"This field is required for non-elastic fleets.",
 				Required: true,
@@ -87,7 +87,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				},
 			},
 			"fleet_type": schema.StringAttribute{
-				Description:         "Type of the AppStream fleet.",
+				Description:         "Type of the AppStream Fleet.",
 				MarkdownDescription: "The fleet type. Valid values are `ON_DEMAND`, `ALWAYS_ON`, or `ELASTIC`.",
 				Required:            true,
 				PlanModifiers: []planmodifier.String{
@@ -107,7 +107,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
 					"desired_instances": schema.Int32Attribute{
-						Description:         "Desired number of fleet instances.",
+						Description:         "Desired number of Fleet instances.",
 						MarkdownDescription: "The desired number of streaming instances for a single-session fleet.",
 						Optional:            true,
 						Validators: []validator.Int32{
@@ -125,7 +125,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				},
 			},
 			"vpc_config": schema.SingleNestedAttribute{
-				Description: "VPC configuration for the fleet.",
+				Description: "VPC configuration for the Fleet.",
 				MarkdownDescription: "The VPC configuration used by the fleet. " +
 					"This block is required for elastic fleets.",
 				Optional: true,
@@ -185,7 +185,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				},
 			},
 			"description": schema.StringAttribute{
-				Description:         "Description of the AppStream fleet.",
+				Description:         "Description of the AppStream Fleet.",
 				MarkdownDescription: "The fleet description, if set.",
 				Optional:            true,
 				Validators: []validator.String{
@@ -193,12 +193,20 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				},
 			},
 			"display_name": schema.StringAttribute{
-				Description:         "Display name of the AppStream fleet.",
+				Description:         "Display name of the AppStream Fleet.",
 				MarkdownDescription: "The name displayed to users in the AppStream user interface.",
 				Optional:            true,
 				Validators: []validator.String{
 					stringvalidator.LengthAtMost(100),
 				},
+			},
+			"disable_imds_v1": schema.BoolAttribute{
+				Description: "Disable IMDSv1 and enforce IMDSv2 for the AppStream Fleet.",
+				MarkdownDescription: "Whether Instance Metadata Service Version 1 (IMDSv1) is disabled for the " +
+					"AppStream fleet. If `true`, only IMDSv2 is enabled. " +
+					"If `false`, both IMDSv1 and IMDSv2 are enabled.",
+				Optional: true,
+				Computed: true,
 			},
 			"enable_default_internet_access": schema.BoolAttribute{
 				Description:         "Enable default internet access.",
@@ -330,7 +338,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				},
 			},
 			"tags": schema.MapAttribute{
-				Description:         "Tags applied to the fleet.",
+				Description:         "Tags applied to the Fleet.",
 				MarkdownDescription: "A map of tags assigned to the fleet.",
 				Optional:            true,
 				ElementType:         types.StringType,
@@ -353,13 +361,13 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				},
 			},
 			"tags_all": schema.MapAttribute{
-				Description:         "All tags applied to the fleet.",
+				Description:         "All tags applied to the Fleet.",
 				MarkdownDescription: "A map of tags, including default tags, assigned to the fleet.",
 				Computed:            true,
 				ElementType:         types.StringType,
 			},
 			"arn": schema.StringAttribute{
-				Description:         "ARN of the AppStream fleet.",
+				Description:         "ARN of the AppStream Fleet.",
 				MarkdownDescription: "The Amazon Resource Name (ARN) of the AppStream fleet.",
 				Computed:            true,
 				PlanModifiers: []planmodifier.String{
@@ -367,7 +375,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				},
 			},
 			"created_time": schema.StringAttribute{
-				Description:         "Time the fleet was created.",
+				Description:         "Time the Fleet was created.",
 				MarkdownDescription: "The timestamp when the fleet was created, in RFC 3339 format.",
 				Computed:            true,
 				PlanModifiers: []planmodifier.String{
@@ -375,12 +383,12 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				},
 			},
 			"state": schema.StringAttribute{
-				Description:         "State of the AppStream fleet.",
+				Description:         "State of the AppStream Fleet.",
 				MarkdownDescription: "The state of the AppStream fleet.",
 				Computed:            true,
 			},
 			"fleet_errors": schema.SetNestedAttribute{
-				Description: "Errors reported by AWS for the fleet.",
+				Description: "Errors reported by AWS for the Fleet.",
 				MarkdownDescription: "Informational list of errors reported by AWS for the fleet. " +
 					"These errors do not affect Terraform lifecycle behavior.",
 				Computed: true,

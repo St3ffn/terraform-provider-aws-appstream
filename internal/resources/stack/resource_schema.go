@@ -29,7 +29,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 			"including storage, networking, user actions, and application settings persistence.",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description: "Identifier of the AppStream stack.",
+				Description: "Identifier of the AppStream Stack.",
 				MarkdownDescription: "A synthetic identifier for the stack, equal to the stack name. " +
 					"This value is managed by the provider and cannot be set manually.",
 				Computed: true,
@@ -38,7 +38,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				},
 			},
 			"name": schema.StringAttribute{
-				Description: "Name of the AppStream stack.",
+				Description: "Name of the AppStream Stack.",
 				MarkdownDescription: "The name of the AppStream stack. " +
 					"Changing this value forces the stack to be replaced.",
 				Required: true,
@@ -53,7 +53,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				},
 			},
 			"description": schema.StringAttribute{
-				Description: "Description of the AppStream stack.",
+				Description: "Description of the AppStream Stack.",
 				MarkdownDescription: "The stack description, if set. " +
 					"Must be 256 characters or fewer.",
 				Optional: true,
@@ -62,7 +62,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				},
 			},
 			"display_name": schema.StringAttribute{
-				Description:         "Display name of the AppStream stack.",
+				Description:         "Display name of the AppStream Stack.",
 				MarkdownDescription: "The name displayed to users in the AppStream user interface.",
 				Optional:            true,
 				Validators: []validator.String{
@@ -70,7 +70,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				},
 			},
 			"storage_connectors": schema.SetNestedAttribute{
-				Description:         "Storage connectors for the stack.",
+				Description:         "Storage connectors for the Stack.",
 				MarkdownDescription: "Storage connectors that enable persistent storage for users of the stack.",
 				Optional:            true,
 				NestedObject: schema.NestedAttributeObject{
@@ -129,7 +129,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				},
 			},
 			"feedback_url": schema.StringAttribute{
-				Description:         "Feedback URL for the stack.",
+				Description:         "Feedback URL for the Stack.",
 				MarkdownDescription: "The URL users are redirected to after clicking the **Send Feedback** link.",
 				Optional:            true,
 				Validators: []validator.String{
@@ -204,7 +204,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				},
 			},
 			"access_endpoints": schema.SetNestedAttribute{
-				Description:         "VPC access endpoints for the stack.",
+				Description:         "VPC access endpoints for the Stack.",
 				MarkdownDescription: "Interface VPC endpoints through which users can connect to the stack.",
 				Optional:            true,
 				Validators: []validator.Set{
@@ -267,7 +267,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				},
 			},
 			"tags": schema.MapAttribute{
-				Description:         "Tags applied to the stack.",
+				Description:         "Tags applied to the Stack.",
 				MarkdownDescription: "A map of tags assigned to the stack.",
 				Optional:            true,
 				ElementType:         types.StringType,
@@ -290,13 +290,13 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				},
 			},
 			"tags_all": schema.MapAttribute{
-				Description:         "All tags applied to the stack.",
+				Description:         "All tags applied to the Stack.",
 				MarkdownDescription: "A map of tags, including default tags, assigned to the stack.",
 				Computed:            true,
 				ElementType:         types.StringType,
 			},
 			"arn": schema.StringAttribute{
-				Description:         "ARN of the AppStream stack.",
+				Description:         "ARN of the AppStream Stack.",
 				MarkdownDescription: "The Amazon Resource Name (ARN) of the AppStream stack.",
 				Computed:            true,
 				PlanModifiers: []planmodifier.String{
@@ -304,7 +304,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				},
 			},
 			"created_time": schema.StringAttribute{
-				Description:         "Time the stack was created.",
+				Description:         "Time the Stack was created.",
 				MarkdownDescription: "The timestamp when the stack was created, in RFC 3339 format.",
 				Computed:            true,
 				PlanModifiers: []planmodifier.String{
@@ -312,7 +312,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				},
 			},
 			"stack_errors": schema.SetNestedAttribute{
-				Description: "Errors reported by AWS for the stack.",
+				Description: "Errors reported by AWS for the Stack.",
 				MarkdownDescription: "Informational list of errors reported by AWS for the stack. " +
 					"These errors do not affect Terraform lifecycle behavior.",
 				Computed: true,

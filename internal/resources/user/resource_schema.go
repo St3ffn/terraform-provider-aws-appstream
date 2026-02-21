@@ -26,7 +26,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 			"Users can be enabled or disabled and are associated with exactly one authentication type.",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description: "Identifier of the AppStream user.",
+				Description: "Identifier of the AppStream User.",
 				MarkdownDescription: "A synthetic identifier for the user, composed of the authentication type and user name. " +
 					"This value is managed by the provider and cannot be set manually.",
 				Computed: true,
@@ -35,7 +35,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				},
 			},
 			"authentication_type": schema.StringAttribute{
-				Description: "Authentication type for the user.",
+				Description: "Authentication type for the User.",
 				MarkdownDescription: "The authentication type used by the user. " +
 					"Changing this value forces the user to be replaced. " +
 					"Valid values are `API`, `SAML`, `USERPOOL`, or `AWS_AD`.",
@@ -67,7 +67,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				},
 			},
 			"first_name": schema.StringAttribute{
-				Description:         "First name of the user.",
+				Description:         "First name of the User.",
 				MarkdownDescription: "The first (given) name of the user.",
 				Optional:            true,
 				PlanModifiers: []planmodifier.String{
@@ -82,7 +82,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				},
 			},
 			"last_name": schema.StringAttribute{
-				Description:         "Last name of the user.",
+				Description:         "Last name of the User.",
 				MarkdownDescription: "The last (family) name of the user.",
 				Optional:            true,
 				PlanModifiers: []planmodifier.String{
@@ -113,7 +113,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				},
 			},
 			"enabled": schema.BoolAttribute{
-				Description: "Whether the user is enabled.",
+				Description: "Whether the User is enabled.",
 				MarkdownDescription: "Specifies whether the user is enabled. " +
 					"Defaults to `true` if not explicitly set. " +
 					"Disabling a user prevents login without deleting the user.",
@@ -128,7 +128,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				Computed: true,
 			},
 			"arn": schema.StringAttribute{
-				Description:         "ARN of the AppStream user.",
+				Description:         "ARN of the AppStream User.",
 				MarkdownDescription: "The Amazon Resource Name (ARN) of the AppStream user.",
 				Computed:            true,
 				PlanModifiers: []planmodifier.String{
@@ -136,7 +136,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				},
 			},
 			"created_time": schema.StringAttribute{
-				Description:         "Time the user was created.",
+				Description:         "Time the User was created.",
 				MarkdownDescription: "The timestamp when the user was created, in RFC 3339 format.",
 				Computed:            true,
 				PlanModifiers: []planmodifier.String{

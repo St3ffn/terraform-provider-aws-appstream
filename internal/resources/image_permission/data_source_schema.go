@@ -21,7 +21,7 @@ func (ds *dataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp
 			"and how those accounts are permitted to use the image.",
 		Attributes: map[string]schema.Attribute{
 			"name": schema.StringAttribute{
-				Description:         "Name of the AppStream image.",
+				Description:         "Name of the AppStream Image.",
 				MarkdownDescription: "The name of the private AppStream image for which permissions are read.",
 				Required:            true,
 				Validators: []validator.String{
@@ -48,12 +48,12 @@ func (ds *dataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp
 							Computed:            true,
 							Attributes: map[string]schema.Attribute{
 								"allow_fleet": schema.BoolAttribute{
-									Description:         "Allow image usage for fleets.",
+									Description:         "Allow image usage for Fleets.",
 									MarkdownDescription: "Whether the image can be used to create or update AppStream fleets.",
 									Computed:            true,
 								},
 								"allow_image_builder": schema.BoolAttribute{
-									Description:         "Allow image usage for image builders.",
+									Description:         "Allow image usage for Image Builders.",
 									MarkdownDescription: "Whether the image can be used to create AppStream image builders.",
 									Computed:            true,
 								},

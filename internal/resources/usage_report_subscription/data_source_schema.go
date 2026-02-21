@@ -35,7 +35,7 @@ func (ds *dataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp
 				Computed:            true,
 			},
 			"subscription_errors": schema.SetNestedAttribute{
-				Description:         "Errors reported for the usage report subscription.",
+				Description:         "Errors reported for the Usage Report Subscription.",
 				MarkdownDescription: "Errors returned by AWS if usage reports could not be generated.",
 				Computed:            true,
 				NestedObject: schema.NestedAttributeObject{

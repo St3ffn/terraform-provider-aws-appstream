@@ -83,6 +83,7 @@ func (ds *dataSource) Read(ctx context.Context, req datasource.ReadRequest, resp
 		InstanceType:                util.StringOrNull(imageBuilder.InstanceType),
 		Description:                 util.StringOrNull(imageBuilder.Description),
 		DisplayName:                 util.StringOrNull(imageBuilder.DisplayName),
+		DisableIMDSV1:               util.BoolOrNull(imageBuilder.DisableIMDSV1),
 		VPCConfig:                   flattenVPCConfig(ctx, imageBuilder.VpcConfig, &resp.Diagnostics),
 		IAMRoleARN:                  util.StringOrNull(imageBuilder.IamRoleArn),
 		EnableDefaultInternetAccess: util.BoolOrNull(imageBuilder.EnableDefaultInternetAccess),

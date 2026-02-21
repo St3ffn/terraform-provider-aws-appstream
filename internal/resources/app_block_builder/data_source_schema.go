@@ -21,12 +21,12 @@ func (ds *dataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp
 			"This data source can be used to reference an existing AppStream app block builder that is managed outside of Terraform.",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description:         "Identifier of the AppStream app block builder.",
+				Description:         "Identifier of the AppStream App Block Builder.",
 				MarkdownDescription: "A synthetic identifier for the app block builder, equal to the app block builder name.",
 				Computed:            true,
 			},
 			"name": schema.StringAttribute{
-				Description:         "Name of the AppStream app block builder.",
+				Description:         "Name of the AppStream App Block Builder.",
 				MarkdownDescription: "The name of the AppStream app block builder to read.",
 				Required:            true,
 				Validators: []validator.String{
@@ -37,7 +37,7 @@ func (ds *dataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp
 				},
 			},
 			"instance_type": schema.StringAttribute{
-				Description:         "Instance type for the app block builder.",
+				Description:         "Instance type for the App Block Builder.",
 				MarkdownDescription: "The instance type used when launching the app block builder.",
 				Computed:            true,
 			},
@@ -47,17 +47,24 @@ func (ds *dataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp
 				Computed:            true,
 			},
 			"description": schema.StringAttribute{
-				Description:         "Description of the AppStream app block builder.",
+				Description:         "Description of the AppStream App Block Builder.",
 				MarkdownDescription: "The app block builder description, if set.",
 				Computed:            true,
 			},
 			"display_name": schema.StringAttribute{
-				Description:         "Display name of the AppStream app block builder.",
+				Description:         "Display name of the AppStream App Block Builder.",
 				MarkdownDescription: "The display name of the app block builder shown in the AppStream user interface.",
 				Computed:            true,
 			},
+			"disable_imds_v1": schema.BoolAttribute{
+				Description: "Disable IMDSv1 and enforce IMDSv2 for the AppStream App Block Builder.",
+				MarkdownDescription: "Whether Instance Metadata Service Version 1 (IMDSv1) is disabled for the " +
+					"AppStream app block builder. If `true`, only IMDSv2 is enabled. " +
+					"If `false`, both IMDSv1 and IMDSv2 are enabled.",
+				Computed: true,
+			},
 			"vpc_config": schema.SingleNestedAttribute{
-				Description:         "VPC configuration for the app block builder.",
+				Description:         "VPC configuration for the App Block Builder.",
 				MarkdownDescription: "The VPC configuration used by the app block builder.",
 				Computed:            true,
 				Attributes: map[string]schema.Attribute{
@@ -86,7 +93,7 @@ func (ds *dataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp
 				Computed:            true,
 			},
 			"access_endpoints": schema.SetNestedAttribute{
-				Description:         "VPC access endpoints for the app block builder.",
+				Description:         "VPC access endpoints for the App Block Builder.",
 				MarkdownDescription: "Interface VPC endpoints through which administrators can connect to the app block builder.",
 				Computed:            true,
 				NestedObject: schema.NestedAttributeObject{
@@ -105,23 +112,23 @@ func (ds *dataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp
 				},
 			},
 			"tags": schema.MapAttribute{
-				Description:         "Tags applied to the app block builder.",
+				Description:         "Tags applied to the App Block Builder.",
 				MarkdownDescription: "Tags assigned to the app block builder.",
 				Computed:            true,
 				ElementType:         types.StringType,
 			},
 			"arn": schema.StringAttribute{
-				Description:         "ARN of the AppStream app block builder.",
+				Description:         "ARN of the AppStream App Block Builder.",
 				MarkdownDescription: "The Amazon Resource Name (ARN) of the AppStream app block builder.",
 				Computed:            true,
 			},
 			"created_time": schema.StringAttribute{
-				Description:         "Time the app block builder was created.",
+				Description:         "Time the App Block Builder was created.",
 				MarkdownDescription: "The timestamp when the app block builder was created, in RFC 3339 format.",
 				Computed:            true,
 			},
 			"state": schema.StringAttribute{
-				Description:         "State of the AppStream app block builder.",
+				Description:         "State of the AppStream App Block Builder.",
 				MarkdownDescription: "The state of the AppStream app block builder.",
 				Computed:            true,
 			},
@@ -143,7 +150,7 @@ func (ds *dataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp
 				},
 			},
 			"app_block_builder_errors": schema.SetNestedAttribute{
-				Description:         "Errors reported by AWS for the app block builder.",
+				Description:         "Errors reported by AWS for the App Block Builder.",
 				MarkdownDescription: "Informational list of errors reported by AWS for the app block builder.",
 				Computed:            true,
 				NestedObject: schema.NestedAttributeObject{

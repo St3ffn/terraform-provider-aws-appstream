@@ -21,12 +21,12 @@ func (ds *dataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp
 			"This data source can be used to reference an existing AppStream stack that is managed outside of Terraform.",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description:         "Identifier of the AppStream stack.",
+				Description:         "Identifier of the AppStream Stack.",
 				MarkdownDescription: "A synthetic identifier for the stack, equal to the stack name.",
 				Computed:            true,
 			},
 			"name": schema.StringAttribute{
-				Description:         "Name of the AppStream stack.",
+				Description:         "Name of the AppStream Stack.",
 				MarkdownDescription: "The name of the AppStream stack to read.",
 				Required:            true,
 				Validators: []validator.String{
@@ -37,17 +37,17 @@ func (ds *dataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp
 				},
 			},
 			"description": schema.StringAttribute{
-				Description:         "Description of the AppStream stack.",
+				Description:         "Description of the AppStream Stack.",
 				MarkdownDescription: "The stack description, if set.",
 				Computed:            true,
 			},
 			"display_name": schema.StringAttribute{
-				Description:         "Display name of the AppStream stack.",
+				Description:         "Display name of the AppStream Stack.",
 				MarkdownDescription: "The name displayed to users in the AppStream user interface.",
 				Computed:            true,
 			},
 			"storage_connectors": schema.SetNestedAttribute{
-				Description:         "Storage connectors for the stack.",
+				Description:         "Storage connectors for the Stack.",
 				MarkdownDescription: "Storage connectors that are enabled for the stack.",
 				Computed:            true,
 				NestedObject: schema.NestedAttributeObject{
@@ -83,7 +83,7 @@ func (ds *dataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp
 				Computed:            true,
 			},
 			"feedback_url": schema.StringAttribute{
-				Description:         "Feedback URL for the stack.",
+				Description:         "Feedback URL for the Stack.",
 				MarkdownDescription: "The URL users are redirected to after clicking the **Send Feedback** link.",
 				Computed:            true,
 			},
@@ -134,13 +134,13 @@ func (ds *dataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp
 				},
 			},
 			"tags": schema.MapAttribute{
-				Description:         "Tags applied to the stack.",
+				Description:         "Tags applied to the Stack.",
 				MarkdownDescription: "Tags assigned to the stack.",
 				Computed:            true,
 				ElementType:         types.StringType,
 			},
 			"access_endpoints": schema.SetNestedAttribute{
-				Description:         "VPC access endpoints for the stack.",
+				Description:         "VPC access endpoints for the Stack.",
 				MarkdownDescription: "Interface VPC endpoints through which users can connect to the stack.",
 				Computed:            true,
 				NestedObject: schema.NestedAttributeObject{
@@ -177,17 +177,17 @@ func (ds *dataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp
 				},
 			},
 			"arn": schema.StringAttribute{
-				Description:         "ARN of the AppStream stack.",
+				Description:         "ARN of the AppStream Stack.",
 				MarkdownDescription: "The Amazon Resource Name (ARN) of the AppStream stack.",
 				Computed:            true,
 			},
 			"created_time": schema.StringAttribute{
-				Description:         "Time the stack was created.",
+				Description:         "Time the Stack was created.",
 				MarkdownDescription: "The timestamp when the stack was created, in RFC 3339 format.",
 				Computed:            true,
 			},
 			"stack_errors": schema.SetNestedAttribute{
-				Description:         "Errors reported by AWS for the stack.",
+				Description:         "Errors reported by AWS for the Stack.",
 				MarkdownDescription: "Informational list of errors reported by AWS for the stack.",
 				Computed:            true,
 				NestedObject: schema.NestedAttributeObject{

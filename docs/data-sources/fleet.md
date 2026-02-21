@@ -31,6 +31,7 @@ data "awsappstream_fleet" "example" {
 - `compute_capacity` (Attributes) Describes the compute capacity configuration of the fleet, if applicable. For non-elastic fleets, either instance-based or session-based capacity is returned. (see [below for nested schema](#nestedatt--compute_capacity))
 - `created_time` (String) The timestamp when the fleet was created, in RFC 3339 format.
 - `description` (String) The fleet description, if set.
+- `disable_imds_v1` (Boolean) Whether Instance Metadata Service Version 1 (IMDSv1) is disabled for the AppStream fleet. If `true`, only IMDSv2 is enabled. If `false`, both IMDSv1 and IMDSv2 are enabled.
 - `disconnect_timeout_in_seconds` (Number) The amount of time that a disconnected session is allowed to remain active.
 - `display_name` (String) The name displayed to users in the AppStream user interface.
 - `domain_join_info` (Attributes) The Active Directory configuration used by the fleet, if applicable. (see [below for nested schema](#nestedatt--domain_join_info))

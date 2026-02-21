@@ -21,7 +21,7 @@ func (ds *dataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp
 			"from the stack. This data source can be used to reference entitlements that are managed outside of Terraform.",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description: "Identifier of the AppStream entitlement.",
+				Description: "Identifier of the AppStream Entitlement.",
 				MarkdownDescription: "A synthetic identifier for the entitlement, composed of the stack name and entitlement name " +
 					"in the format `<stack_name>|<name>`.",
 				Computed: true,
@@ -49,12 +49,12 @@ func (ds *dataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp
 				},
 			},
 			"description": schema.StringAttribute{
-				Description:         "Description of the entitlement.",
+				Description:         "Description of the Entitlement.",
 				MarkdownDescription: "The entitlement description, if set.",
 				Computed:            true,
 			},
 			"app_visibility": schema.StringAttribute{
-				Description: "Visibility of applications for this entitlement.",
+				Description: "Visibility of applications for this Entitlement.",
 				MarkdownDescription: "Controls which applications are visible to users who match the entitlement attributes. " +
 					"Valid values are `ALL` or `ASSOCIATED`.",
 				Computed: true,
@@ -82,7 +82,7 @@ func (ds *dataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp
 				},
 			},
 			"created_time": schema.StringAttribute{
-				Description: "Time the entitlement was created.",
+				Description: "Time the Entitlement was created.",
 				MarkdownDescription: "The timestamp when the entitlement was created, in RFC 3339 format " +
 					"(for example, `2024-01-09T14:32:11Z`).",
 				Computed: true,

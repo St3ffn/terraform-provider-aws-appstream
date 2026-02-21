@@ -23,7 +23,7 @@ func (ds *dataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp
 			"This data source is read-only and can be used for observability, monitoring, and debugging purposes.",
 		Attributes: map[string]schema.Attribute{
 			"stack_name": schema.StringAttribute{
-				Description:         "Name of the AppStream stack.",
+				Description:         "Name of the AppStream Stack.",
 				MarkdownDescription: "The name of the AppStream stack for which streaming sessions are listed.",
 				Required:            true,
 				Validators: []validator.String{
@@ -34,7 +34,7 @@ func (ds *dataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp
 				},
 			},
 			"fleet_name": schema.StringAttribute{
-				Description:         "Name of the AppStream fleet.",
+				Description:         "Name of the AppStream Fleet.",
 				MarkdownDescription: "The name of the AppStream fleet for which streaming sessions are listed.",
 				Required:            true,
 				Validators: []validator.String{

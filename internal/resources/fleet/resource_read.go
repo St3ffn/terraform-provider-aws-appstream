@@ -101,6 +101,7 @@ func (r *resource) readFleet(ctx context.Context, prior resourceModel) (*resourc
 		IdleDisconnectTimeoutInSeconds: util.Int32OrNull(fleet.IdleDisconnectTimeoutInSeconds),
 		Description:                    util.StringOrNull(fleet.Description),
 		DisplayName:                    util.StringOrNull(fleet.DisplayName),
+		DisableIMDSV1:                  util.BoolOrNull(fleet.DisableIMDSV1),
 		EnableDefaultInternetAccess:    util.BoolOrNull(fleet.EnableDefaultInternetAccess),
 		DomainJoinInfo:                 flattenDomainJoinInfo(ctx, fleet.DomainJoinInfo, &diags),
 		IAMRoleARN:                     util.StringOrNull(fleet.IamRoleArn),

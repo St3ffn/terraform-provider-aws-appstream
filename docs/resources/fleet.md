@@ -187,6 +187,7 @@ resource "awsappstream_fleet" "on_demand_multi_session" {
 
 - `compute_capacity` (Attributes) Specifies the desired capacity for the fleet. Exactly one of `desired_instances` or `desired_sessions` must be specified for non-elastic fleets. These attributes are mutually exclusive. (see [below for nested schema](#nestedatt--compute_capacity))
 - `description` (String) The fleet description, if set.
+- `disable_imds_v1` (Boolean) Whether Instance Metadata Service Version 1 (IMDSv1) is disabled for the AppStream fleet. If `true`, only IMDSv2 is enabled. If `false`, both IMDSv1 and IMDSv2 are enabled.
 - `disconnect_timeout_in_seconds` (Number) The amount of time that a disconnected session is allowed to remain active.
 - `display_name` (String) The name displayed to users in the AppStream user interface.
 - `domain_join_info` (Attributes) Specifies the Active Directory domain and organizational unit used to join fleet instances to a Microsoft Active Directory domain. This configuration is not supported for elastic fleets. (see [below for nested schema](#nestedatt--domain_join_info))

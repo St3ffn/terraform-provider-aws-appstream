@@ -22,13 +22,13 @@ func (d *dataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp 
 			"The user is uniquely identified by the user name and authentication type.",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description: "Identifier of the AppStream user.",
+				Description: "Identifier of the AppStream User.",
 				MarkdownDescription: "A synthetic identifier for the user, composed of the authentication type and user name " +
 					"in the format `<authentication_type>|<user_name>`.",
 				Computed: true,
 			},
 			"authentication_type": schema.StringAttribute{
-				Description: "Authentication type for the user.",
+				Description: "Authentication type for the User.",
 				MarkdownDescription: "The authentication type associated with the user. " +
 					"Valid values are `API`, `SAML`, `USERPOOL`, or `AWS_AD`.",
 				Required: true,
@@ -52,17 +52,17 @@ func (d *dataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp 
 				},
 			},
 			"first_name": schema.StringAttribute{
-				Description:         "First name of the user.",
+				Description:         "First name of the User.",
 				MarkdownDescription: "The first (given) name of the user.",
 				Computed:            true,
 			},
 			"last_name": schema.StringAttribute{
-				Description:         "Last name of the user.",
+				Description:         "Last name of the User.",
 				MarkdownDescription: "The last (family) name of the user.",
 				Computed:            true,
 			},
 			"enabled": schema.BoolAttribute{
-				Description:         "Whether the user is enabled.",
+				Description:         "Whether the User is enabled.",
 				MarkdownDescription: "Indicates whether the user is enabled.",
 				Computed:            true,
 			},
@@ -72,12 +72,12 @@ func (d *dataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp 
 				Computed:            true,
 			},
 			"arn": schema.StringAttribute{
-				Description:         "ARN of the AppStream user.",
+				Description:         "ARN of the AppStream User.",
 				MarkdownDescription: "The Amazon Resource Name (ARN) of the AppStream user.",
 				Computed:            true,
 			},
 			"created_time": schema.StringAttribute{
-				Description:         "Time the user was created.",
+				Description:         "Time the User was created.",
 				MarkdownDescription: "The timestamp when the user was created, in RFC 3339 format.",
 				Computed:            true,
 			},

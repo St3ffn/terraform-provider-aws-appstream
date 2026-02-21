@@ -27,7 +27,7 @@ func (ds *dataSource) Schema(
 			"and inspect metadata such as created time, resulting AMI IDs, and error details.",
 		Attributes: map[string]schema.Attribute{
 			"filters": schema.SetNestedAttribute{
-				Description: "Filters for export image tasks.",
+				Description: "Filters for Export Image Tasks.",
 				MarkdownDescription: "Optional filters to narrow down the list of export image tasks. " +
 					"Filters allow selecting tasks by attributes such as state or creation date.",
 				Optional: true,
@@ -62,18 +62,18 @@ func (ds *dataSource) Schema(
 				},
 			},
 			"export_image_tasks": schema.SetNestedAttribute{
-				Description:         "Export image tasks.",
+				Description:         "Export Image Tasks.",
 				MarkdownDescription: "The list of export image tasks that match the specified filters.",
 				Computed:            true,
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"task_id": schema.StringAttribute{
-							Description:         "Export image task ID.",
+							Description:         "Export Image Task ID.",
 							MarkdownDescription: "The unique identifier of the export image task.",
 							Computed:            true,
 						},
 						"image_arn": schema.StringAttribute{
-							Description:         "ARN of the exported AppStream image.",
+							Description:         "ARN of the exported AppStream Image.",
 							MarkdownDescription: "The Amazon Resource Name (ARN) of the AppStream Applications image being exported.",
 							Computed:            true,
 						},

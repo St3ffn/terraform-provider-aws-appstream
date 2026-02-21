@@ -28,7 +28,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 			"including launch configuration, supported platforms, instance families, and application metadata.",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description: "Identifier of the AppStream application.",
+				Description: "Identifier of the AppStream Application.",
 				MarkdownDescription: "The Amazon Resource Name (ARN) of the AppStream application. " +
 					"This value is managed by the provider and cannot be set manually.",
 				Computed: true,
@@ -37,7 +37,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				},
 			},
 			"name": schema.StringAttribute{
-				Description: "Name of the AppStream application.",
+				Description: "Name of the AppStream Application.",
 				MarkdownDescription: "The name of the AppStream application. " +
 					"Changing this value forces the application to be replaced.",
 				Required: true,
@@ -52,7 +52,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				},
 			},
 			"display_name": schema.StringAttribute{
-				Description:         "Display name of the application.",
+				Description:         "Display name of the Application.",
 				MarkdownDescription: "The name displayed to users in the AppStream application catalog.",
 				Optional:            true,
 				Validators: []validator.String{
@@ -60,7 +60,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				},
 			},
 			"description": schema.StringAttribute{
-				Description:         "Description of the application.",
+				Description:         "Description of the Application.",
 				MarkdownDescription: "The application description, if set. Must be 256 characters or fewer.",
 				Optional:            true,
 				Validators: []validator.String{
@@ -148,7 +148,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				},
 			},
 			"tags": schema.MapAttribute{
-				Description:         "Tags applied to the application.",
+				Description:         "Tags applied to the Application.",
 				MarkdownDescription: "A map of tags assigned to the application.",
 				Optional:            true,
 				ElementType:         types.StringType,
@@ -171,13 +171,13 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				},
 			},
 			"tags_all": schema.MapAttribute{
-				Description:         "All tags applied to the application.",
+				Description:         "All tags applied to the Application.",
 				MarkdownDescription: "A map of tags, including default tags, assigned to the application.",
 				Computed:            true,
 				ElementType:         types.StringType,
 			},
 			"arn": schema.StringAttribute{
-				Description:         "ARN of the AppStream application.",
+				Description:         "ARN of the AppStream Application.",
 				MarkdownDescription: "The Amazon Resource Name (ARN) of the AppStream application.",
 				Computed:            true,
 				PlanModifiers: []planmodifier.String{
@@ -185,7 +185,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				},
 			},
 			"created_time": schema.StringAttribute{
-				Description:         "Time the application was created.",
+				Description:         "Time the Application was created.",
 				MarkdownDescription: "The timestamp when the application was created, in RFC 3339 format.",
 				Computed:            true,
 				PlanModifiers: []planmodifier.String{

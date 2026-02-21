@@ -43,6 +43,7 @@ func (r *resource) Create(ctx context.Context, req tfresource.CreateRequest, res
 	input.ImageArn = util.StringPointerOrNil(plan.ImageARN)
 	input.Description = util.StringPointerOrNil(plan.Description)
 	input.DisplayName = util.StringPointerOrNil(plan.DisplayName)
+	input.DisableIMDSV1 = util.BoolPointerOrNil(plan.DisableIMDSV1)
 
 	if !plan.VPCConfig.IsNull() && !plan.VPCConfig.IsUnknown() {
 		input.VpcConfig = expandVPCConfig(ctx, plan.VPCConfig, &resp.Diagnostics)

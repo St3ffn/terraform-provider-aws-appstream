@@ -18,6 +18,8 @@ type dataSourceModel struct {
 	Description types.String `tfsdk:"description"`
 	// DisplayName is the name of the image builder shown to users (computed).
 	DisplayName types.String `tfsdk:"display_name"`
+	// DisableIMDSV1 specifies whether the image builder has disabled IMDSv1 and IMDSv2 is enforced (computed).
+	DisableIMDSV1 types.Bool `tfsdk:"disable_imds_v1"`
 	// VPCConfig specifies the VPC configuration for the image builder (computed).
 	VPCConfig types.Object `tfsdk:"vpc_config"`
 	// IAMRoleARN is the ARN of the IAM role applied to the image builder (computed).

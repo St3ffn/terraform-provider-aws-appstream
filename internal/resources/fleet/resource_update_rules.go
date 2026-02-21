@@ -43,6 +43,10 @@ func updateModeAlwaysOnOnDemandFleet(state, plan resourceModel) fleetUpdateMode 
 		return fleetUpdateRequiresStop
 	}
 
+	if util.Changed(state.DisableIMDSV1, plan.DisableIMDSV1) {
+		return fleetUpdateRequiresStop
+	}
+
 	if util.Changed(state.EnableDefaultInternetAccess, plan.EnableDefaultInternetAccess) {
 		return fleetUpdateRequiresStop
 	}
@@ -99,6 +103,10 @@ func updateModeElasticFleet(state, plan resourceModel) fleetUpdateMode {
 	}
 
 	if util.Changed(state.MaxUserDurationInSeconds, plan.MaxUserDurationInSeconds) {
+		return fleetUpdateRequiresStop
+	}
+
+	if util.Changed(state.DisableIMDSV1, plan.DisableIMDSV1) {
 		return fleetUpdateRequiresStop
 	}
 

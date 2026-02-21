@@ -95,6 +95,7 @@ func (r *resource) readImageBuilder(ctx context.Context, prior resourceModel) (*
 		InstanceType:                util.StringOrNull(imageBuilder.InstanceType),
 		Description:                 util.StringOrNull(imageBuilder.Description),
 		DisplayName:                 util.StringOrNull(imageBuilder.DisplayName),
+		DisableIMDSV1:               util.BoolOrNull(imageBuilder.DisableIMDSV1),
 		VPCConfig:                   flattenVPCConfig(ctx, imageBuilder.VpcConfig, &diags),
 		IAMRoleARN:                  util.StringOrNull(imageBuilder.IamRoleArn),
 		EnableDefaultInternetAccess: util.BoolOrNull(imageBuilder.EnableDefaultInternetAccess),

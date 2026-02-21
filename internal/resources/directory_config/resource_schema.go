@@ -27,7 +27,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 			"and authentication settings.",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description: "Identifier of the AppStream directory config.",
+				Description: "Identifier of the AppStream Directory Config.",
 				MarkdownDescription: "A synthetic identifier for the directory config, equal to the directory name. " +
 					"This value is managed by the provider and cannot be set manually.",
 				Computed: true,
@@ -118,7 +118,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				},
 			},
 			"created_time": schema.StringAttribute{
-				Description:         "Time the directory config was created.",
+				Description:         "Time the Directory Config was created.",
 				MarkdownDescription: "The timestamp when the directory configuration was created, in RFC 3339 format.",
 				Computed:            true,
 				PlanModifiers: []planmodifier.String{

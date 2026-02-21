@@ -21,12 +21,12 @@ func (ds *dataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp
 			"that is managed outside of Terraform.",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description:         "Identifier of the AppStream stack theme.",
+				Description:         "Identifier of the AppStream Stack Theme.",
 				MarkdownDescription: "A synthetic identifier for the stack theme, equal to the stack name.",
 				Computed:            true,
 			},
 			"stack_name": schema.StringAttribute{
-				Description:         "Name of the AppStream stack.",
+				Description:         "Name of the AppStream Stack.",
 				MarkdownDescription: "The name of the AppStream stack whose theme is read.",
 				Required:            true,
 				Validators: []validator.String{
@@ -66,7 +66,7 @@ func (ds *dataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp
 				},
 			},
 			"state": schema.StringAttribute{
-				Description:         "State of the stack theme.",
+				Description:         "State of the Stack Theme.",
 				MarkdownDescription: "The current state of the AppStream stack theme.",
 				Computed:            true,
 			},
@@ -81,7 +81,7 @@ func (ds *dataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp
 				Computed:            true,
 			},
 			"created_time": schema.StringAttribute{
-				Description:         "Time the stack theme was created.",
+				Description:         "Time the Stack Theme was created.",
 				MarkdownDescription: "The timestamp when the stack theme was created, in RFC 3339 format.",
 				Computed:            true,
 			},

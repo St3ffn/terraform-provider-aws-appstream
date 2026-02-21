@@ -18,7 +18,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 			"Only one usage report subscription can exist per AWS account and region.",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description:         "Identifier of the usage report subscription.",
+				Description:         "Identifier of the Usage Report Subscription.",
 				MarkdownDescription: "A synthetic identifier for the usage report subscription.",
 				Computed:            true,
 			},
@@ -39,7 +39,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				Computed:            true,
 			},
 			"subscription_errors": schema.SetNestedAttribute{
-				Description:         "Errors reported for the usage report subscription.",
+				Description:         "Errors reported for the Usage Report Subscription.",
 				MarkdownDescription: "Errors returned by AWS if usage reports could not be generated.",
 				Computed:            true,
 				NestedObject: schema.NestedAttributeObject{

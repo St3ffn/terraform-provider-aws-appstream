@@ -44,6 +44,7 @@ func (r *resource) Create(ctx context.Context, req tfresource.CreateRequest, res
 
 	input.Description = util.StringPointerOrNil(plan.Description)
 	input.DisplayName = util.StringPointerOrNil(plan.DisplayName)
+	input.DisableIMDSV1 = util.BoolPointerOrNil(plan.DisableIMDSV1)
 
 	input.IamRoleArn = util.StringPointerOrNil(plan.IAMRoleARN)
 	input.EnableDefaultInternetAccess = util.BoolPointerOrNil(plan.EnableDefaultInternetAccess)

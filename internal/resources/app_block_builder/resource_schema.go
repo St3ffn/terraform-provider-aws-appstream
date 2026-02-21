@@ -28,7 +28,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 			"and configuring applications before associating them with Elastic fleets.",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description: "Identifier of the AppStream app block builder.",
+				Description: "Identifier of the AppStream App Block Builder.",
 				MarkdownDescription: "A synthetic identifier for the app block builder, equal to the app block builder name. " +
 					"This value is managed by the provider and cannot be set manually.",
 				Computed: true,
@@ -37,7 +37,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				},
 			},
 			"name": schema.StringAttribute{
-				Description: "Name of the AppStream app block builder.",
+				Description: "Name of the AppStream App Block Builder.",
 				MarkdownDescription: "The name of the AppStream app block builder. " +
 					"Changing this value forces the app block builder to be replaced.",
 				Required: true,
@@ -52,7 +52,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				},
 			},
 			"instance_type": schema.StringAttribute{
-				Description:         "Instance type for the app block builder.",
+				Description:         "Instance type for the App Block Builder.",
 				MarkdownDescription: "The instance type used when launching the app block builder.",
 				Required:            true,
 				Validators: []validator.String{
@@ -60,7 +60,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				},
 			},
 			"platform": schema.StringAttribute{
-				Description:         "App block builder platform.",
+				Description:         "App Block Builder platform.",
 				MarkdownDescription: "The operating system platform of the app block builder.",
 				Required:            true,
 				Validators: []validator.String{
@@ -76,15 +76,23 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				},
 			},
 			"display_name": schema.StringAttribute{
-				Description:         "Display name of the app block builder.",
+				Description:         "Display name of the App Block Builder.",
 				MarkdownDescription: "The display name of the app block builder shown in the AppStream user interface.",
 				Optional:            true,
 				Validators: []validator.String{
 					stringvalidator.LengthAtMost(100),
 				},
 			},
+			"disable_imds_v1": schema.BoolAttribute{
+				Description: "Disable IMDSv1 and enforce IMDSv2 for the AppStream App Block Builder.",
+				MarkdownDescription: "Whether Instance Metadata Service Version 1 (IMDSv1) is disabled for the " +
+					"AppStream app block builder. If `true`, only IMDSv2 is enabled. " +
+					"If `false`, both IMDSv1 and IMDSv2 are enabled.",
+				Optional: true,
+				Computed: true,
+			},
 			"vpc_config": schema.SingleNestedAttribute{
-				Description: "VPC configuration for the app block builder.",
+				Description: "VPC configuration for the App Block Builder.",
 				MarkdownDescription: "The VPC configuration used by the app block builder. " +
 					"App block builders require at least two subnet IDs in different Availability Zones.",
 				Required: true,
@@ -128,7 +136,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				Computed:            true,
 			},
 			"access_endpoints": schema.SetNestedAttribute{
-				Description:         "VPC access endpoints for the app block builder.",
+				Description:         "VPC access endpoints for the App Block Builder.",
 				MarkdownDescription: "Interface VPC endpoints through which administrators can connect to the app block builder.",
 				Optional:            true,
 				Validators: []validator.Set{
@@ -158,7 +166,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				},
 			},
 			"tags": schema.MapAttribute{
-				Description:         "Tags applied to the app block builder.",
+				Description:         "Tags applied to the App Block Builder.",
 				MarkdownDescription: "A map of tags assigned to the app block builder.",
 				Optional:            true,
 				ElementType:         types.StringType,
@@ -181,13 +189,13 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				},
 			},
 			"tags_all": schema.MapAttribute{
-				Description:         "All tags applied to the app block builder.",
+				Description:         "All tags applied to the App Block Builder.",
 				MarkdownDescription: "A map of tags, including default tags, assigned to the app block builder.",
 				Computed:            true,
 				ElementType:         types.StringType,
 			},
 			"arn": schema.StringAttribute{
-				Description:         "ARN of the AppStream app block builder.",
+				Description:         "ARN of the AppStream App Block Builder.",
 				MarkdownDescription: "The Amazon Resource Name (ARN) of the AppStream app block builder.",
 				Computed:            true,
 				PlanModifiers: []planmodifier.String{
@@ -195,7 +203,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				},
 			},
 			"created_time": schema.StringAttribute{
-				Description:         "Time the app block builder was created.",
+				Description:         "Time the App Block Builder was created.",
 				MarkdownDescription: "The timestamp when the app block builder was created, in RFC 3339 format.",
 				Computed:            true,
 				PlanModifiers: []planmodifier.String{
@@ -203,7 +211,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				},
 			},
 			"state": schema.StringAttribute{
-				Description:         "State of the AppStream app block builder.",
+				Description:         "State of the AppStream App Block Builder.",
 				MarkdownDescription: "The state of the AppStream app block builder.",
 				Computed:            true,
 			},
@@ -225,7 +233,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				},
 			},
 			"app_block_builder_errors": schema.SetNestedAttribute{
-				Description: "Errors reported by AWS for the app block builder.",
+				Description: "Errors reported by AWS for the App Block Builder.",
 				MarkdownDescription: "Informational list of errors reported by AWS for the app block builder. " +
 					"These errors do not affect Terraform lifecycle behavior.",
 				Computed: true,

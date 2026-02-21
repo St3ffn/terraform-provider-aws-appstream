@@ -32,6 +32,7 @@ data "awsappstream_app_block_builder" "example" {
 - `arn` (String) The Amazon Resource Name (ARN) of the AppStream app block builder.
 - `created_time` (String) The timestamp when the app block builder was created, in RFC 3339 format.
 - `description` (String) The app block builder description, if set.
+- `disable_imds_v1` (Boolean) Whether Instance Metadata Service Version 1 (IMDSv1) is disabled for the AppStream app block builder. If `true`, only IMDSv2 is enabled. If `false`, both IMDSv1 and IMDSv2 are enabled.
 - `display_name` (String) The display name of the app block builder shown in the AppStream user interface.
 - `enable_default_internet_access` (Boolean) Whether the app block builder has access to the internet.
 - `iam_role_arn` (String) The ARN of the IAM role applied to the app block builder.

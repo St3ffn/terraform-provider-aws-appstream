@@ -85,6 +85,7 @@ resource "awsappstream_image_builder" "example" {
 - `access_endpoints` (Attributes Set) Interface VPC endpoints through which administrators can connect to the image builder. (see [below for nested schema](#nestedatt--access_endpoints))
 - `appstream_agent_version` (String) The AppStream agent version used by the image builder.
 - `description` (String) The image builder description, if set.
+- `disable_imds_v1` (Boolean) Whether Instance Metadata Service Version 1 (IMDSv1) is disabled for the AppStream image builder. If `true`, only IMDSv2 is enabled. If `false`, both IMDSv1 and IMDSv2 are enabled.
 - `display_name` (String) The display name of the image builder shown in the AppStream user interface.
 - `domain_join_info` (Attributes) Specifies the Active Directory domain and organizational unit used to join the image builder to a Microsoft Active Directory domain. (see [below for nested schema](#nestedatt--domain_join_info))
 - `enable_default_internet_access` (Boolean) Whether the image builder has access to the internet.

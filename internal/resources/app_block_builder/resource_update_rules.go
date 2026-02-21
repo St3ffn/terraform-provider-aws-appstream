@@ -34,6 +34,10 @@ func updateMode(state, plan resourceModel) appBlockBuilderUpdateMode {
 		return appBlockBuilderUpdateRequiresStop
 	}
 
+	if util.Changed(state.DisableIMDSV1, plan.DisableIMDSV1) {
+		return appBlockBuilderUpdateRequiresStop
+	}
+
 	if util.Changed(state.EnableDefaultInternetAccess, plan.EnableDefaultInternetAccess) {
 		return appBlockBuilderUpdateRequiresStop
 	}

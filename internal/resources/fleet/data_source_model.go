@@ -11,52 +11,54 @@ type dataSourceModel struct {
 	// Name is the name of the AppStream fleet (required).
 	Name types.String `tfsdk:"name"`
 	// ImageName is the name of the image used to create the fleet.
-	// Exactly one of ImageName or ImageARN must be specified (optional).
+	// Exactly one of ImageName or ImageARN must be specified (computed).
 	ImageName types.String `tfsdk:"image_name"`
 	// ImageARN is the ARN of the image used to create the fleet.
-	// Exactly one of ImageName or ImageARN must be specified (optional).
+	// Exactly one of ImageName or ImageARN must be specified (computed).
 	ImageARN types.String `tfsdk:"image_arn"`
-	// InstanceType is the EC2 instance type for the fleet (required).
+	// InstanceType is the EC2 instance type for the fleet (computed).
 	InstanceType types.String `tfsdk:"instance_type"`
-	// FleetType is the type of fleet: ON_DEMAND, ALWAYS_ON, or ELASTIC (required).
+	// FleetType is the type of fleet: ON_DEMAND, ALWAYS_ON, or ELASTIC (computed).
 	FleetType types.String `tfsdk:"fleet_type"`
-	// ComputeCapacity specifies the desired number of instances or sessions (non-elastic fleets only).
+	// ComputeCapacity specifies the desired number of instances or sessions (computed).
 	ComputeCapacity types.Object `tfsdk:"compute_capacity"`
-	// VPCConfig specifies the VPC configuration for the fleet (required for elastic fleets).
+	// VPCConfig specifies the VPC configuration for the fleet (computed).
 	VPCConfig types.Object `tfsdk:"vpc_config"`
-	// MaxUserDurationInSeconds is the maximum streaming session length (optional, computed).
+	// MaxUserDurationInSeconds is the maximum streaming session length (computed).
 	MaxUserDurationInSeconds types.Int32 `tfsdk:"max_user_duration_in_seconds"`
-	// DisconnectTimeoutInSeconds is the time before a disconnected session is terminated (optional, computed).
+	// DisconnectTimeoutInSeconds is the time before a disconnected session is terminated (computed).
 	DisconnectTimeoutInSeconds types.Int32 `tfsdk:"disconnect_timeout_in_seconds"`
-	// IdleDisconnectTimeoutInSeconds is the timeout for idle streaming sessions (optional, computed).
+	// IdleDisconnectTimeoutInSeconds is the timeout for idle streaming sessions (computed).
 	IdleDisconnectTimeoutInSeconds types.Int32 `tfsdk:"idle_disconnect_timeout_in_seconds"`
-	// Description is a description to display for the fleet (optional).
+	// Description is a description to display for the fleet (computed).
 	Description types.String `tfsdk:"description"`
-	// DisplayName is the fleet name shown to users (optional).
+	// DisplayName is the fleet name shown to users (computed).
 	DisplayName types.String `tfsdk:"display_name"`
-	// EnableDefaultInternetAccess enables outbound internet access (optional).
+	// DisableIMDSV1 specifies whether the fleet has disabled IMDSv1 and IMDSv2 is enforced (computed).
+	DisableIMDSV1 types.Bool `tfsdk:"disable_imds_v1"`
+	// EnableDefaultInternetAccess enables outbound internet access (computed).
 	EnableDefaultInternetAccess types.Bool `tfsdk:"enable_default_internet_access"`
-	// DomainJoinInfo specifies Active Directory domain join configuration (Windows fleets only).
+	// DomainJoinInfo specifies Active Directory domain join configuration (computed).
 	DomainJoinInfo types.Object `tfsdk:"domain_join_info"`
-	// IAMRoleARN is the ARN of the IAM role applied to the fleet instances (optional).
+	// IAMRoleARN is the ARN of the IAM role applied to the fleet instances (computed).
 	IAMRoleARN types.String `tfsdk:"iam_role_arn"`
-	// StreamView controls which streaming protocol views are enabled (optional).
+	// StreamView controls which streaming protocol views are enabled (computed).
 	StreamView types.String `tfsdk:"stream_view"`
-	// Platform is the platform type of the fleet (optional).
+	// Platform is the platform type of the fleet (computed).
 	Platform types.String `tfsdk:"platform"`
-	// MaxConcurrentSessions is the maximum number of concurrent streaming sessions. (elastic fleets only).
+	// MaxConcurrentSessions is the maximum number of concurrent streaming sessions (computed).
 	MaxConcurrentSessions types.Int32 `tfsdk:"max_concurrent_sessions"`
 	// MaxSessionsPerInstance is the maximum number of user sessions allowed per fleet instance.
-	// This setting applies only to multi-session fleets (optional).
+	// This setting applies only to multi-session fleets (computed).
 	MaxSessionsPerInstance types.Int32 `tfsdk:"max_sessions_per_instance"`
-	// USBDeviceFilterStrings defines which USB devices are allowed (Windows fleets only).
+	// USBDeviceFilterStrings defines which USB devices are allowed (computed).
 	USBDeviceFilterStrings types.Set `tfsdk:"usb_device_filter_strings"`
 	// SessionScriptS3Location specifies the S3 location of the session scripts
-	// configuration ZIP file. This setting applies only to elastic fleets. (optional).
+	// configuration ZIP file. This setting applies only to elastic fleets. (computed).
 	SessionScriptS3Location types.Object `tfsdk:"session_script_s3_location"`
-	// RootVolumeConfig specifies the root volume configuration for the fleet (optional).
+	// RootVolumeConfig specifies the root volume configuration for the fleet (computed).
 	RootVolumeConfig types.Object `tfsdk:"root_volume_config"`
-	// Tags is a map of tags to assign to the fleet (optional).
+	// Tags is a map of tags to assign to the fleet (computed).
 	Tags types.Map `tfsdk:"tags"`
 	// ARN is the ARN of the AppStream fleet (computed).
 	ARN types.String `tfsdk:"arn"`

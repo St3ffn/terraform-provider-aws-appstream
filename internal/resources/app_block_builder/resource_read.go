@@ -94,6 +94,7 @@ func (r *resource) readAppBlockBuilder(ctx context.Context, prior resourceModel)
 		Platform:                    types.StringValue(string(appBlockBuilder.Platform)),
 		Description:                 util.StringOrNull(appBlockBuilder.Description),
 		DisplayName:                 util.StringOrNull(appBlockBuilder.DisplayName),
+		DisableIMDSV1:               util.BoolOrNull(appBlockBuilder.DisableIMDSV1),
 		VPCConfig:                   flattenVPCConfig(ctx, appBlockBuilder.VpcConfig, &diags),
 		IAMRoleARN:                  util.StringOrNull(appBlockBuilder.IamRoleArn),
 		EnableDefaultInternetAccess: util.BoolOrNull(appBlockBuilder.EnableDefaultInternetAccess),

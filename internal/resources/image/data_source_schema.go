@@ -23,12 +23,12 @@ func (ds *dataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp
 			"This data source can be used to reference an existing AppStream image that is managed outside of Terraform.",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description:         "Identifier of the AppStream image.",
+				Description:         "Identifier of the AppStream Image.",
 				MarkdownDescription: "The Amazon Resource Name (ARN) of the AppStream image.",
 				Computed:            true,
 			},
 			"arn": schema.StringAttribute{
-				Description: "ARN of the AppStream image.",
+				Description: "ARN of the AppStream Image.",
 				MarkdownDescription: "The Amazon Resource Name (ARN) of the AppStream image. " +
 					"Cannot be used together with `name` or `name_regex`.",
 				Optional: true,
@@ -38,7 +38,7 @@ func (ds *dataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp
 				},
 			},
 			"name": schema.StringAttribute{
-				Description: "Name of the AppStream image.",
+				Description: "Name of the AppStream Image.",
 				MarkdownDescription: "The name of the AppStream image. " +
 					"Cannot be used together with `arn` or `name_regex`. " +
 					"If multiple images with the same name exist, the data source will return an error.",
@@ -63,7 +63,7 @@ func (ds *dataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp
 				},
 			},
 			"visibility": schema.StringAttribute{
-				Description:         "Visibility of the AppStream image.",
+				Description:         "Visibility of the AppStream Image.",
 				MarkdownDescription: "The image visibility. Valid values are `PUBLIC`, `PRIVATE`, or `SHARED`.",
 				Optional:            true,
 				Computed:            true,
@@ -251,12 +251,12 @@ func (ds *dataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp
 				Computed:            true,
 				Attributes: map[string]schema.Attribute{
 					"allow_fleet": schema.BoolAttribute{
-						Description:         "Allow fleet usage.",
+						Description:         "Allow Fleet usage.",
 						MarkdownDescription: "Whether the image can be used by fleets.",
 						Computed:            true,
 					},
 					"allow_image_builder": schema.BoolAttribute{
-						Description:         "Allow image builder usage.",
+						Description:         "Allow Image Builder usage.",
 						MarkdownDescription: "Whether the image can be used by image builders.",
 						Computed:            true,
 					},
