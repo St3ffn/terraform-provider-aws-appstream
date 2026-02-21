@@ -958,3 +958,84 @@ func TestResourceTags(t *testing.T) {
 		})
 	}
 }
+
+func TestEffectiveTagsForPlan(t *testing.T) {
+	t.Parallel()
+
+	ctx := context.Background()
+
+	tests := []struct {
+		name         string
+		defaultTags  map[string]string
+		resourceTags types.Map
+		wantUnknown  bool
+		wantNull     bool
+		wantTags     map[string]string
+	}{
+		{
+			name:         "no defaults and null resource tags",
+			defaultTags:  map[string]string{},
+			resourceTags: types.MapNull(types.StringType),
+			wantNull:     true,
+		},
+		{
+			name:         "defaults only",
+			defaultTags:  map[string]string{"team": "platform"},
+			resourceTags: types.MapNull(types.StringType),
+			wantTags:     map[string]string{"team": "platform"},
+		},
+		{
+			name:         "merge defaults and resource tags",
+			defaultTags:  map[string]string{"env": "dev", "team": "platform"},
+			resourceTags: types.MapValueMust(types.StringType, map[string]attr.Value{"team": types.StringValue("app"), "owner": types.StringValue("alice")}),
+			wantTags:     map[string]string{"env": "dev", "team": "app", "owner": "alice"},
+		},
+		{
+			name:         "unknown resource tags",
+			defaultTags:  map[string]string{"team": "platform"},
+			resourceTags: types.MapUnknown(types.StringType),
+			wantUnknown:  true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			tm := NewTagManager(nil, tt.defaultTags)
+			got := tm.EffectiveTagsForPlan(tt.resourceTags)
+
+			if tt.wantUnknown {
+				assert.True(t, got.IsUnknown())
+				return
+			}
+
+			if tt.wantNull {
+				assert.True(t, got.IsNull())
+				return
+			}
+
+			assert.False(t, got.IsUnknown())
+			assert.False(t, got.IsNull())
+
+			var expanded map[string]string
+			diags := got.ElementsAs(ctx, &expanded, false)
+			require.False(t, diags.HasError())
+			assert.Equal(t, tt.wantTags, expanded)
+		})
+	}
+}
+
+func TestEffectiveTagsForPlan_UnknownTagValue(t *testing.T) {
+	t.Parallel()
+
+	resourceTags, diags := types.MapValue(
+		types.StringType,
+		map[string]attr.Value{"owner": types.StringUnknown()},
+	)
+	require.False(t, diags.HasError())
+
+	tm := NewTagManager(nil, map[string]string{"team": "platform"})
+	got := tm.EffectiveTagsForPlan(resourceTags)
+	assert.True(t, got.IsUnknown())
+}

@@ -18,6 +18,7 @@ import (
 var (
 	_ tfresource.Resource                = &resource{}
 	_ tfresource.ResourceWithConfigure   = &resource{}
+	_ tfresource.ResourceWithModifyPlan  = &resource{}
 	_ tfresource.ResourceWithImportState = &resource{}
 )
 

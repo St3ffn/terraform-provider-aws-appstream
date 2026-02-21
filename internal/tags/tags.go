@@ -291,3 +291,37 @@ func ResourceTags(ctx context.Context, prior types.Map, all types.Map) (resource
 	resourceTags = flattenTags(ctx, filtered, &diags)
 	return
 }
+
+// EffectiveTagsForPlan returns the planned effective tags (resource tags merged with provider default tags).
+// If tags are unknown, or any tag value is unknown, the result is unknown.
+func (tm *TagManager) EffectiveTagsForPlan(resourceTags types.Map) types.Map {
+	if resourceTags.IsUnknown() {
+		return types.MapUnknown(types.StringType)
+	}
+
+	merged := make(map[string]attr.Value)
+	for k, v := range tm.defaultTags {
+		merged[k] = types.StringValue(v)
+	}
+
+	if resourceTags.IsNull() {
+		if len(merged) == 0 {
+			return types.MapNull(types.StringType)
+		}
+		return types.MapValueMust(types.StringType, merged)
+	}
+
+	for k, v := range resourceTags.Elements() {
+		tagValue, ok := v.(types.String)
+		if !ok || tagValue.IsUnknown() || tagValue.IsNull() {
+			return types.MapUnknown(types.StringType)
+		}
+		merged[k] = types.StringValue(tagValue.ValueString())
+	}
+
+	if len(merged) == 0 {
+		return types.MapNull(types.StringType)
+	}
+
+	return types.MapValueMust(types.StringType, merged)
+}
