@@ -5,6 +5,7 @@ package util
 
 import (
 	"context"
+	"errors"
 	"time"
 )
 
@@ -67,6 +68,22 @@ func shouldRetry(err error, retryOnFns []RetryOnFn) bool {
 	return false
 }
 
+func contextTerminationError(ctxErr, lastErr error) error {
+	if ctxErr == nil {
+		return nil
+	}
+
+	if errors.Is(ctxErr, context.Canceled) {
+		return ctxErr
+	}
+
+	if errors.Is(ctxErr, context.DeadlineExceeded) && lastErr != nil {
+		return lastErr
+	}
+
+	return ctxErr
+}
+
 func RetryOn(ctx context.Context, call func(context.Context) error, opts ...RetryOption) error {
 	options := defaultRetryConfig()
 	for _, fn := range opts {
@@ -81,10 +98,7 @@ func RetryOn(ctx context.Context, call func(context.Context) error, opts ...Retr
 
 	for {
 		if err := ctx.Err(); err != nil {
-			if lastErr != nil {
-				return lastErr
-			}
-			return err
+			return contextTerminationError(err, lastErr)
 		}
 
 		err := call(ctx)
@@ -100,10 +114,7 @@ func RetryOn(ctx context.Context, call func(context.Context) error, opts ...Retr
 
 		select {
 		case <-ctx.Done():
-			if lastErr != nil {
-				return lastErr
-			}
-			return ctx.Err()
+			return contextTerminationError(ctx.Err(), lastErr)
 		case <-time.After(backoff):
 		}
 

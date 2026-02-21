@@ -131,3 +131,26 @@ func TestRetryOn_ContextTimeout(t *testing.T) {
 		t.Fatalf("error = %v, want last_error", err)
 	}
 }
+
+func TestRetryOn_ContextCanceled(t *testing.T) {
+	t.Parallel()
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	retryErr := errors.New("retry")
+	err := RetryOn(
+		ctx,
+		func(context.Context) error {
+			cancel()
+			return retryErr
+		},
+		WithRetryOnFns(func(error) bool { return true }),
+		WithTimeout(100*time.Millisecond),
+		WithInitBackoff(1*time.Millisecond),
+	)
+
+	if !errors.Is(err, context.Canceled) {
+		t.Fatalf("error = %v, want context canceled", err)
+	}
+}
