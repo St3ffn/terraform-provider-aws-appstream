@@ -122,6 +122,17 @@ func (f *FakeTaggingAPI) TagResourcesSucceeds() *FakeTaggingAPI {
 	return f
 }
 
+func (f *FakeTaggingAPI) TagResourcesReturns(out *awstaggingapi.TagResourcesOutput) *FakeTaggingAPI {
+	f.TagResourcesFn = func(
+		context.Context,
+		*awstaggingapi.TagResourcesInput,
+		...func(*awstaggingapi.Options),
+	) (*awstaggingapi.TagResourcesOutput, error) {
+		return out, nil
+	}
+	return f
+}
+
 func (f *FakeTaggingAPI) TagResourcesFails(err error) *FakeTaggingAPI {
 	f.TagResourcesFn = func(
 		context.Context,
@@ -140,6 +151,17 @@ func (f *FakeTaggingAPI) UntagResourcesSucceeds() *FakeTaggingAPI {
 		...func(*awstaggingapi.Options),
 	) (*awstaggingapi.UntagResourcesOutput, error) {
 		return &awstaggingapi.UntagResourcesOutput{}, nil
+	}
+	return f
+}
+
+func (f *FakeTaggingAPI) UntagResourcesReturns(out *awstaggingapi.UntagResourcesOutput) *FakeTaggingAPI {
+	f.UntagResourcesFn = func(
+		context.Context,
+		*awstaggingapi.UntagResourcesInput,
+		...func(*awstaggingapi.Options),
+	) (*awstaggingapi.UntagResourcesOutput, error) {
+		return out, nil
 	}
 	return f
 }
@@ -423,12 +445,56 @@ func TestTagManager_Apply(t *testing.T) {
 			wantError: true,
 		},
 		{
+			name:    "untag_failed_resources_map_returns_diagnostics",
+			arn:     arn,
+			desired: types.MapNull(types.StringType),
+			setupClient: func(f *FakeTaggingAPI) {
+				f.GetResourcesReturns(&awstaggingapi.GetResourcesOutput{
+					ResourceTagMappingList: []awstypes.ResourceTagMapping{
+						{
+							Tags: []awstypes.Tag{
+								{Key: aws.String("a"), Value: aws.String("b")},
+							},
+						},
+					},
+				})
+				f.UntagResourcesReturns(&awstaggingapi.UntagResourcesOutput{
+					FailedResourcesMap: map[string]awstypes.FailureInfo{
+						arn: {
+							ErrorCode:    awstypes.ErrorCodeInvalidParameterException,
+							ErrorMessage: aws.String("invalid parameter"),
+							StatusCode:   400,
+						},
+					},
+				})
+			},
+			wantError: true,
+		},
+		{
 			name:    "tag_error_returns_diagnostics",
 			arn:     arn,
 			desired: types.MapValueMust(types.StringType, map[string]attr.Value{"a": types.StringValue("b")}),
 			setupClient: func(f *FakeTaggingAPI) {
 				f.GetResourcesReturns(&awstaggingapi.GetResourcesOutput{})
 				f.TagResourcesFails(errors.New("boom"))
+			},
+			wantError: true,
+		},
+		{
+			name:    "tag_failed_resources_map_returns_diagnostics",
+			arn:     arn,
+			desired: types.MapValueMust(types.StringType, map[string]attr.Value{"a": types.StringValue("b")}),
+			setupClient: func(f *FakeTaggingAPI) {
+				f.GetResourcesReturns(&awstaggingapi.GetResourcesOutput{})
+				f.TagResourcesReturns(&awstaggingapi.TagResourcesOutput{
+					FailedResourcesMap: map[string]awstypes.FailureInfo{
+						arn: {
+							ErrorCode:    awstypes.ErrorCodeInternalServiceException,
+							ErrorMessage: aws.String("downstream service unavailable"),
+							StatusCode:   500,
+						},
+					},
+				})
 			},
 			wantError: true,
 		},

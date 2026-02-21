@@ -6,8 +6,11 @@ package tags
 import (
 	"context"
 	"fmt"
+	"sort"
+	"strings"
 
 	awstaggingapi "github.com/aws/aws-sdk-go-v2/service/resourcegroupstaggingapi"
+	awstaggingtypes "github.com/aws/aws-sdk-go-v2/service/resourcegroupstaggingapi/types"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -106,7 +109,7 @@ func (tm *TagManager) Apply(ctx context.Context, arn string, desired types.Map) 
 	removeKeys, addOrUpdate := diffTags(current, desiredTags)
 
 	if len(removeKeys) > 0 {
-		_, err := tm.client.UntagResources(ctx, &awstaggingapi.UntagResourcesInput{
+		out, err := tm.client.UntagResources(ctx, &awstaggingapi.UntagResourcesInput{
 			ResourceARNList: []string{arn},
 			TagKeys:         removeKeys,
 		})
@@ -117,10 +120,22 @@ func (tm *TagManager) Apply(ctx context.Context, arn string, desired types.Map) 
 			)
 			return types.MapNull(types.StringType), diags
 		}
+
+		if out != nil && len(out.FailedResourcesMap) > 0 {
+			diags.AddError(
+				"Error Removing AWS Tags",
+				fmt.Sprintf(
+					"Could not remove tags from resource %q because AWS reported failed resources: %s",
+					arn,
+					formatFailedResources(out.FailedResourcesMap),
+				),
+			)
+			return types.MapNull(types.StringType), diags
+		}
 	}
 
 	if len(addOrUpdate) > 0 {
-		_, err := tm.client.TagResources(ctx, &awstaggingapi.TagResourcesInput{
+		out, err := tm.client.TagResources(ctx, &awstaggingapi.TagResourcesInput{
 			ResourceARNList: []string{arn},
 			Tags:            addOrUpdate,
 		})
@@ -131,9 +146,53 @@ func (tm *TagManager) Apply(ctx context.Context, arn string, desired types.Map) 
 			)
 			return types.MapNull(types.StringType), diags
 		}
+
+		if out != nil && len(out.FailedResourcesMap) > 0 {
+			diags.AddError(
+				"Error Updating AWS Tags",
+				fmt.Sprintf(
+					"Could not update tags for resource %q because AWS reported failed resources: %s",
+					arn,
+					formatFailedResources(out.FailedResourcesMap),
+				),
+			)
+			return types.MapNull(types.StringType), diags
+		}
 	}
 
 	return flattenTags(ctx, desiredTags, &diags), diags
+}
+
+func formatFailedResources(failed map[string]awstaggingtypes.FailureInfo) string {
+	if len(failed) == 0 {
+		return ""
+	}
+
+	arns := make([]string, 0, len(failed))
+	for arn := range failed {
+		arns = append(arns, arn)
+	}
+	sort.Strings(arns)
+
+	parts := make([]string, 0, len(arns))
+	for _, arn := range arns {
+		info := failed[arn]
+
+		code := string(info.ErrorCode)
+		if code == "" {
+			code = "UnknownError"
+		}
+
+		part := fmt.Sprintf("%s (code=%s status=%d", arn, code, info.StatusCode)
+		if info.ErrorMessage != nil && *info.ErrorMessage != "" {
+			part += fmt.Sprintf(" message=%q", *info.ErrorMessage)
+		}
+		part += ")"
+
+		parts = append(parts, part)
+	}
+
+	return strings.Join(parts, "; ")
 }
 
 func flattenTags(ctx context.Context, tags map[string]string, diags *diag.Diagnostics) types.Map {
