@@ -1,4 +1,4 @@
-module tools
+module github.com/st3ffn/terraform-provider-aws-appstream/tools/provider-codegen
 
 go 1.25.6
 
