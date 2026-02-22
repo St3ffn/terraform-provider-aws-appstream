@@ -1,0 +1,28 @@
+name: AppStream Changelog Issues
+
+on:
+  schedule:
+    # Every Sunday at 22:00 (UTC)
+    - cron: '0 22 * * 0'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  appstream-changelog-issues:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: actions/setup-go@7a3fe6cf4cb3a834922a1244abfce67bcef6a0c5 # v6.2.0
+        with:
+          go-version-file: 'tools/appstream-changelog-issues/go.mod'
+          cache: true
+      - name: Run appstream-changelog-issues
+        working-directory: tools/appstream-changelog-issues
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          go run ./cmd/appstream-changelog-issues \
+            --provider-go-mod ../../go.mod
