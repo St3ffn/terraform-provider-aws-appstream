@@ -1,6 +1,6 @@
 module github.com/st3ffn/terraform-provider-aws-appstream/tools/provider-codegen
 
-go 1.25.6
+go 1.26.0
 
 require (
 	github.com/hashicorp/copywrite v0.25.0

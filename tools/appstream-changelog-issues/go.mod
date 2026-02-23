@@ -1,6 +1,6 @@
 module github.com/st3ffn/terraform-provider-aws-appstream/tools/appstream-changelog-issues
 
-go 1.25.6
+go 1.26.0
 
 require (
 	github.com/google/go-github/v83 v83.0.0
