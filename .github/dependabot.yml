@@ -6,6 +6,11 @@ updates:
     schedule:
       # Check for updates to Go modules every weekday
       interval: "daily"
+    groups:
+      aws-deps:
+        applies-to: version-updates
+        patterns:
+          - "github.com/aws/*"
   - package-ecosystem: "gomod"
     directory: "/tools/appstream-changelog-issues"
     schedule:
