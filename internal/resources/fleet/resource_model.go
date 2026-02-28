@@ -62,6 +62,10 @@ type resourceModel struct {
 	Tags types.Map `tfsdk:"tags"`
 	// TagsAll is a map of tags, including default tags, assigned to the fleet (computed).
 	TagsAll types.Map `tfsdk:"tags_all"`
+	// DesiredState is the desired runtime state to enforce after create and update (optional).
+	DesiredState types.String `tfsdk:"desired_state"`
+	// UpdateBehavior controls how updates that require a stopped fleet are handled (optional).
+	UpdateBehavior types.String `tfsdk:"update_behavior"`
 	// ARN is the ARN of the AppStream fleet (computed).
 	ARN types.String `tfsdk:"arn"`
 	// CreatedTime is the timestamp when the fleet was created (computed).

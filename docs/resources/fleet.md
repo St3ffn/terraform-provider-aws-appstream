@@ -187,6 +187,7 @@ resource "awsappstream_fleet" "on_demand_multi_session" {
 
 - `compute_capacity` (Attributes) Specifies the desired capacity for the fleet. Exactly one of `desired_instances` or `desired_sessions` must be specified for non-elastic fleets. These attributes are mutually exclusive. (see [below for nested schema](#nestedatt--compute_capacity))
 - `description` (String) The fleet description, if set.
+- `desired_state` (String) The runtime fleet state to enforce after create and update operations. Valid values are `INHERIT`, `RUNNING`, and `STOPPED`. The default value is `INHERIT`, which preserves the fleet's existing runtime state.
 - `disable_imds_v1` (Boolean) Whether Instance Metadata Service Version 1 (IMDSv1) is disabled for the AppStream fleet. If `true`, only IMDSv2 is enabled. If `false`, both IMDSv1 and IMDSv2 are enabled.
 - `disconnect_timeout_in_seconds` (Number) The amount of time that a disconnected session is allowed to remain active.
 - `display_name` (String) The name displayed to users in the AppStream user interface.
@@ -204,6 +205,7 @@ resource "awsappstream_fleet" "on_demand_multi_session" {
 - `session_script_s3_location` (Attributes) Specifies the S3 location of the session scripts configuration ZIP file. This setting applies only to elastic fleets. (see [below for nested schema](#nestedatt--session_script_s3_location))
 - `stream_view` (String) Controls which streaming protocol views are enabled.
 - `tags` (Map of String) A map of tags assigned to the fleet.
+- `update_behavior` (String) Controls how updates are handled when AWS requires the fleet to be stopped. Valid values are `AUTO_STOP_START` and `FAIL_IF_RUNNING`. If omitted, `AUTO_STOP_START` behavior is used.
 - `usb_device_filter_strings` (Set of String) Defines which USB devices can be redirected to streaming sessions when using the Windows native client. This setting is supported only for Windows fleets. For non-Windows platforms or non-native clients, this configuration is accepted by AWS but ignored at runtime.
 - `vpc_config` (Attributes) The VPC configuration used by the fleet. This block is required for elastic fleets. (see [below for nested schema](#nestedatt--vpc_config))
 
