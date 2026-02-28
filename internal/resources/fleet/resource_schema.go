@@ -14,6 +14,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	tfresource "github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/boolplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int32planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
@@ -59,6 +61,9 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 					"Either `image_name` or `image_arn` must be specified.",
 				Optional: true,
 				Computed: true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
 				Validators: []validator.String{
 					stringvalidator.RegexMatches(
 						regexp.MustCompile(`^[a-zA-Z0-9][a-zA-Z0-9_.-]{0,100}$`),
@@ -73,6 +78,9 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 					"Either `image_name` or `image_arn` must be specified.",
 				Optional: true,
 				Computed: true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
 				Validators: []validator.String{
 					util.ValidARNWithServiceAndResource("appstream", "image/"),
 				},
@@ -160,6 +168,9 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				MarkdownDescription: "The maximum length of time that a streaming session can remain active.",
 				Optional:            true,
 				Computed:            true,
+				PlanModifiers: []planmodifier.Int32{
+					int32planmodifier.UseStateForUnknown(),
+				},
 				Validators: []validator.Int32{
 					int32validator.Between(600, 432000),
 				},
@@ -169,6 +180,9 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				MarkdownDescription: "The amount of time that a disconnected session is allowed to remain active.",
 				Optional:            true,
 				Computed:            true,
+				PlanModifiers: []planmodifier.Int32{
+					int32planmodifier.UseStateForUnknown(),
+				},
 				Validators: []validator.Int32{
 					int32validator.Between(60, 36000),
 				},
@@ -180,6 +194,9 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 					"between 60 and 36000 to avoid AWS rounding behavior.",
 				Optional: true,
 				Computed: true,
+				PlanModifiers: []planmodifier.Int32{
+					int32planmodifier.UseStateForUnknown(),
+				},
 				Validators: []validator.Int32{
 					util.DurationWithStep(60, 36000, 60, true),
 				},
@@ -207,12 +224,18 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 					"If `false`, both IMDSv1 and IMDSv2 are enabled.",
 				Optional: true,
 				Computed: true,
+				PlanModifiers: []planmodifier.Bool{
+					boolplanmodifier.UseStateForUnknown(),
+				},
 			},
 			"enable_default_internet_access": schema.BoolAttribute{
 				Description:         "Enable default internet access.",
 				MarkdownDescription: "Whether instances in the fleet have access to the internet.",
 				Optional:            true,
 				Computed:            true,
+				PlanModifiers: []planmodifier.Bool{
+					boolplanmodifier.UseStateForUnknown(),
+				},
 			},
 			"domain_join_info": schema.SingleNestedAttribute{
 				Description: "Active Directory domain join configuration.",
