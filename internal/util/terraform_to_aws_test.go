@@ -212,6 +212,12 @@ func TestOptionalStringUpdate(t *testing.T) {
 			wantValue:  aws.String("new"),
 		},
 		{
+			name:       "plan_value_equals_state_noop",
+			plan:       types.StringValue("same"),
+			state:      types.StringValue("same"),
+			wantCalled: false,
+		},
+		{
 			name:       "plan_null_state_value_clears",
 			plan:       types.StringNull(),
 			state:      types.StringValue("old"),

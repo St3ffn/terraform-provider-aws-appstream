@@ -57,8 +57,10 @@ func OptionalStringUpdate(plan types.String, state types.String, setter func(*st
 	case plan.IsUnknown():
 		return
 	case !plan.IsNull():
-		v := plan.ValueString()
-		setter(&v)
+		if !state.IsUnknown() && !state.IsNull() && plan.ValueString() == state.ValueString() {
+			return
+		}
+		setter(plan.ValueStringPointer())
 	case plan.IsNull() && !state.IsNull():
 		var empty string
 		setter(&empty)
