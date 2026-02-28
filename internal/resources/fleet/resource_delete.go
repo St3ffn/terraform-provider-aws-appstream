@@ -35,7 +35,16 @@ func (r *resource) Delete(ctx context.Context, req tfresource.DeleteRequest, res
 
 	name := state.Name.ValueString()
 
-	_, err := r.appstreamClient.DeleteFleet(ctx, &awsappstream.DeleteFleetInput{
+	_, err := r.ensureStopped(ctx, name)
+	if err != nil {
+		resp.Diagnostics.AddError(
+			"Error Deleting AWS AppStream Fleet",
+			fmt.Sprintf("Could not stop fleet %q for delete: %v", name, err),
+		)
+		return
+	}
+
+	_, err = r.appstreamClient.DeleteFleet(ctx, &awsappstream.DeleteFleetInput{
 		Name: aws.String(name),
 	})
 	if err != nil {
