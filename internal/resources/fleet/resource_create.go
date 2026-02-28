@@ -144,6 +144,17 @@ func (r *resource) Create(ctx context.Context, req tfresource.CreateRequest, res
 		}
 	}
 
+	if desiredStateFromPlan(plan.DesiredState) == desiredStateRunning {
+		err = r.ensureRunning(ctx, name)
+		if err != nil {
+			resp.Diagnostics.AddError(
+				"Error Creating AWS AppStream Fleet",
+				fmt.Sprintf("Could not start fleet %q after successful create: %v", name, err),
+			)
+			return
+		}
+	}
+
 	newState, diags := r.readFleet(ctx, plan)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {

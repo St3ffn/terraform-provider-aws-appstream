@@ -17,6 +17,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/boolplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int32planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -388,6 +389,37 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				MarkdownDescription: "A map of tags, including default tags, assigned to the fleet.",
 				Computed:            true,
 				ElementType:         types.StringType,
+			},
+			"desired_state": schema.StringAttribute{
+				Description: "Desired runtime state of the AppStream Fleet.",
+				MarkdownDescription: "The runtime fleet state to enforce after create and update operations. " +
+					"Valid values are `INHERIT`, `RUNNING`, and `STOPPED`. " +
+					"The default value is `INHERIT`, which preserves the fleet's existing runtime state.",
+				Optional: true,
+				Computed: true,
+				Default:  stringdefault.StaticString(desiredStateInherit.String()),
+				Validators: []validator.String{
+					stringvalidator.OneOf(
+						desiredStateInherit.String(),
+						desiredStateRunning.String(),
+						desiredStateStopped.String(),
+					),
+				},
+			},
+			"update_behavior": schema.StringAttribute{
+				Description: "Update behavior for the AppStream Fleet lifecycle.",
+				MarkdownDescription: "Controls how updates are handled when AWS requires the fleet to be stopped. " +
+					"Valid values are `AUTO_STOP_START` and `FAIL_IF_RUNNING`. " +
+					"If omitted, `AUTO_STOP_START` behavior is used.",
+				Optional: true,
+				Computed: true,
+				Default:  stringdefault.StaticString(updateBehaviorAutoStopStart.String()),
+				Validators: []validator.String{
+					stringvalidator.OneOf(
+						updateBehaviorAutoStopStart.String(),
+						updateBehaviorFailIfRunning.String(),
+					),
+				},
 			},
 			"arn": schema.StringAttribute{
 				Description:         "ARN of the AppStream Fleet.",

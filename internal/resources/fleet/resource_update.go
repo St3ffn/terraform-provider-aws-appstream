@@ -193,17 +193,53 @@ func (r *resource) Update(ctx context.Context, req tfresource.UpdateRequest, res
 	restartAfter := false
 	var err error
 	mode := updateMode(state, plan)
+	updateBehavior := updateBehaviorFromPlan(plan.UpdateBehavior)
+	desiredState := desiredStateFromPlan(plan.DesiredState)
 
 	switch mode {
 	case fleetUpdateRequiresStop:
-		restartAfter, err = r.ensureStopped(ctx, name)
-		if err != nil {
+		switch updateBehavior {
+		case updateBehaviorAutoStopStart:
+			restartAfter, err = r.ensureStopped(ctx, name)
+			if err != nil {
+				resp.Diagnostics.AddError(
+					"Error Updating AWS AppStream Fleet",
+					fmt.Sprintf("Could not stop fleet %q for update: %v", name, err),
+				)
+				return
+			}
+
+		case updateBehaviorFailIfRunning:
+			currentState, exists, err := r.currentFleetState(ctx, name)
+			if err != nil {
+				resp.Diagnostics.AddError(
+					"Error Updating AWS AppStream Fleet",
+					fmt.Sprintf("Could not inspect fleet %q state for update: %v", name, err),
+				)
+				return
+			}
+
+			if exists && currentState != awstypes.FleetStateStopped {
+				resp.Diagnostics.AddError(
+					"Error Updating AWS AppStream Fleet",
+					fmt.Sprintf(
+						"Could not update fleet %q: update requires the fleet to be stopped, but current state is %q and update_behavior is %q.",
+						name,
+						string(currentState),
+						updateBehaviorFailIfRunning,
+					),
+				)
+				return
+			}
+
+		default:
 			resp.Diagnostics.AddError(
 				"Error Updating AWS AppStream Fleet",
-				fmt.Sprintf("Could not stop fleet %q for update: %v", name, err),
+				fmt.Sprintf("Could not update fleet %q: unsupported update_behavior %q", name, updateBehavior),
 			)
 			return
 		}
+
 	case fleetUpdateAllowedRunning:
 		// proceed normally
 	case fleetUpdateForbidden:
@@ -240,12 +276,40 @@ func (r *resource) Update(ctx context.Context, req tfresource.UpdateRequest, res
 		}
 	}
 
-	if mode == fleetUpdateRequiresStop && restartAfter {
+	switch {
+	case mode == fleetUpdateRequiresStop && desiredState == desiredStateRunning:
 		err = r.ensureRunning(ctx, name)
 		if err != nil {
 			resp.Diagnostics.AddError(
 				"Error Updating AWS AppStream Fleet",
 				fmt.Sprintf("Could not start fleet %q after successful update: %v", name, err),
+			)
+			return
+		}
+	case mode == fleetUpdateRequiresStop && desiredState == desiredStateInherit && restartAfter:
+		err = r.ensureRunning(ctx, name)
+		if err != nil {
+			resp.Diagnostics.AddError(
+				"Error Updating AWS AppStream Fleet",
+				fmt.Sprintf("Could not start fleet %q after successful update: %v", name, err),
+			)
+			return
+		}
+	case mode == fleetUpdateAllowedRunning && desiredState == desiredStateRunning:
+		err = r.ensureRunning(ctx, name)
+		if err != nil {
+			resp.Diagnostics.AddError(
+				"Error Updating AWS AppStream Fleet",
+				fmt.Sprintf("Could not start fleet %q after successful update: %v", name, err),
+			)
+			return
+		}
+	case mode == fleetUpdateAllowedRunning && desiredState == desiredStateStopped:
+		_, err = r.ensureStopped(ctx, name)
+		if err != nil {
+			resp.Diagnostics.AddError(
+				"Error Updating AWS AppStream Fleet",
+				fmt.Sprintf("Could not stop fleet %q after successful update: %v", name, err),
 			)
 			return
 		}
@@ -272,27 +336,38 @@ func wasRunning(state awstypes.FleetState) bool {
 	return state == awstypes.FleetStateRunning || state == awstypes.FleetStateStarting
 }
 
+func (r *resource) currentFleetState(ctx context.Context, name string) (state awstypes.FleetState, exists bool, err error) {
+	out, err := r.appstreamClient.DescribeFleets(ctx, &awsappstream.DescribeFleetsInput{
+		Names: []string{name},
+	})
+	if err != nil {
+		if util.IsAppStreamNotFound(err) {
+			return "", false, nil
+		}
+		return "", false, err
+	}
+
+	if len(out.Fleets) == 0 {
+		return "", false, nil
+	}
+
+	return out.Fleets[0].State, true, nil
+}
+
 func (r *resource) ensureStopped(ctx context.Context, name string) (restartAfter bool, err error) {
 	stateCaptured := false
 
 	err = util.RetryOn(
 		ctx,
 		func(ctx context.Context) error {
-			out, err := r.appstreamClient.DescribeFleets(ctx, &awsappstream.DescribeFleetsInput{
-				Names: []string{name},
-			})
+			state, exists, err := r.currentFleetState(ctx, name)
 			if err != nil {
-				if util.IsAppStreamNotFound(err) {
-					return nil
-				}
 				return err
 			}
 
-			if len(out.Fleets) == 0 {
+			if !exists {
 				return nil
 			}
-
-			state := out.Fleets[0].State
 
 			if !stateCaptured {
 				restartAfter = wasRunning(state)
@@ -340,21 +415,14 @@ func (r *resource) ensureRunning(ctx context.Context, name string) error {
 	return util.RetryOn(
 		ctx,
 		func(ctx context.Context) error {
-			out, err := r.appstreamClient.DescribeFleets(ctx, &awsappstream.DescribeFleetsInput{
-				Names: []string{name},
-			})
+			state, exists, err := r.currentFleetState(ctx, name)
 			if err != nil {
-				if util.IsAppStreamNotFound(err) {
-					return nil
-				}
 				return err
 			}
 
-			if len(out.Fleets) == 0 {
+			if !exists {
 				return nil
 			}
-
-			state := out.Fleets[0].State
 
 			switch state {
 			case awstypes.FleetStateStopped:
