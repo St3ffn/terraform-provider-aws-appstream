@@ -77,12 +77,14 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 							stringvalidator.LengthAtLeast(1),
 						},
 					},
+					// codegen:has_remote_changes=false
 					"account_password": schema.StringAttribute{
 						Description: "Service account password.",
 						MarkdownDescription: "The password for the Active Directory service account. " +
-							"This value is sensitive and is never returned by AWS.",
+							"This value is sensitive, write-only, and is never returned by AWS.",
 						Required:  true,
 						Sensitive: true,
+						WriteOnly: true,
 						Validators: []validator.String{
 							stringvalidator.LengthBetween(1, 127),
 						},

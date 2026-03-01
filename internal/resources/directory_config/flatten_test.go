@@ -39,7 +39,7 @@ func TestFlattenServiceAccountCredentials(t *testing.T) {
 			want:  types.ObjectUnknown(serviceAccountCredentialsObjectType.AttrTypes),
 		},
 		{
-			name: "aws_nil_returns_null",
+			name: "aws_nil_preserves_account_name_and_clears_password",
 			prior: mustObject(
 				t,
 				serviceAccountCredentialsObjectType.AttrTypes,
@@ -48,11 +48,17 @@ func TestFlattenServiceAccountCredentials(t *testing.T) {
 					AccountPassword: types.StringValue("secret"),
 				},
 			),
-			aws:  nil,
-			want: types.ObjectNull(serviceAccountCredentialsObjectType.AttrTypes),
+			aws: nil,
+			want: types.ObjectValueMust(
+				serviceAccountCredentialsObjectType.AttrTypes,
+				map[string]attr.Value{
+					"account_name":     types.StringValue("svc"),
+					"account_password": types.StringNull(),
+				},
+			),
 		},
 		{
-			name: "normal_reconcile_password_is_redacted",
+			name: "normal_reconcile_password_is_cleared",
 			prior: mustObject(
 				t,
 				serviceAccountCredentialsObjectType.AttrTypes,
@@ -68,7 +74,7 @@ func TestFlattenServiceAccountCredentials(t *testing.T) {
 				serviceAccountCredentialsObjectType.AttrTypes,
 				map[string]attr.Value{
 					"account_name":     types.StringValue("svc"),
-					"account_password": types.StringValue("secret"),
+					"account_password": types.StringNull(),
 				},
 			),
 		},

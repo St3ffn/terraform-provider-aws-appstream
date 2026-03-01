@@ -90,7 +90,9 @@ func (r *resource) readDirectoryConfig(ctx context.Context, prior resourceModel)
 		ID:                                   types.StringValue(aws.ToString(directoryConfig.DirectoryName)),
 		DirectoryName:                        types.StringValue(aws.ToString(directoryConfig.DirectoryName)),
 		OrganizationalUnitDistinguishedNames: util.SetStringOrNull(ctx, directoryConfig.OrganizationalUnitDistinguishedNames, &diags),
-		ServiceAccountCredentials:            prior.ServiceAccountCredentials,
+		ServiceAccountCredentials: flattenServiceAccountCredentials(
+			ctx, prior.ServiceAccountCredentials, directoryConfig.ServiceAccountCredentials, &diags,
+		),
 		CertificateBasedAuthProperties: flattenCertificateBasedAuthProperties(
 			ctx, directoryConfig.CertificateBasedAuthProperties, &diags,
 		),

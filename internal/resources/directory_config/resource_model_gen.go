@@ -29,7 +29,8 @@ type resourceModelServiceAccountCredentials struct {
 	// objects, join computers to the domain, and reset passwords for computer objects in the specified
 	// organizational units.
 	AccountName types.String `tfsdk:"account_name"`
-	// The password for the Active Directory service account. This value is sensitive and is never returned by AWS.
+	// The password for the Active Directory service account. This value is sensitive, write-only, and is never
+	// returned by AWS.
 	AccountPassword types.String `tfsdk:"account_password"`
 }
 type resourceModelCertificateBasedAuthProperties struct {

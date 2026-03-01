@@ -17,9 +17,11 @@ import (
 func (r *resource) Update(ctx context.Context, req tfresource.UpdateRequest, resp *tfresource.UpdateResponse) {
 	var plan resourceModel
 	var state resourceModel
+	var config resourceModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
@@ -37,6 +39,9 @@ func (r *resource) Update(ctx context.Context, req tfresource.UpdateRequest, res
 	}
 
 	diff := newResourceDiff(state, plan)
+	hasWriteOnlyServiceAccountCredentials := !config.ServiceAccountCredentials.IsNull() &&
+		!config.ServiceAccountCredentials.IsUnknown()
+	hasRemoteChanges := diff.HasRemoteChanges() || hasWriteOnlyServiceAccountCredentials
 	name := plan.DirectoryName.ValueString()
 
 	if diff.CertificateBasedAuthProperties.IsCleared() &&
@@ -51,7 +56,7 @@ func (r *resource) Update(ctx context.Context, req tfresource.UpdateRequest, res
 		return
 	}
 
-	if diff.HasRemoteChanges() {
+	if hasRemoteChanges {
 		input := &awsappstream.UpdateDirectoryConfigInput{
 			DirectoryName: aws.String(name),
 		}
@@ -68,9 +73,10 @@ func (r *resource) Update(ctx context.Context, req tfresource.UpdateRequest, res
 			)
 		}
 
-		if diff.ServiceAccountCredentials.IsChanged() && !plan.ServiceAccountCredentials.IsNull() {
+		if (diff.ServiceAccountCredentials.IsChanged() || hasWriteOnlyServiceAccountCredentials) &&
+			!config.ServiceAccountCredentials.IsNull() {
 			input.ServiceAccountCredentials = expandServiceAccountCredentials(
-				ctx, plan.ServiceAccountCredentials, &resp.Diagnostics,
+				ctx, config.ServiceAccountCredentials, &resp.Diagnostics,
 			)
 		}
 

@@ -70,7 +70,7 @@ resource "awsappstream_directory_config" "example" {
 Required:
 
 - `account_name` (String) The user name of the Active Directory service account. This account must have permissions to create computer objects, join computers to the domain, and reset passwords for computer objects in the specified organizational units.
-- `account_password` (String, Sensitive) The password for the Active Directory service account. This value is sensitive and is never returned by AWS.
+- `account_password` (String, Sensitive, [Write-only](https://developer.hashicorp.com/terraform/language/resources/ephemeral#write-only-arguments)) The password for the Active Directory service account. This value is sensitive, write-only, and is never returned by AWS.
 
 
 <a id="nestedatt--certificate_based_auth_properties"></a>
