@@ -17,7 +17,7 @@ func expandServiceAccountCredentials(
 	ctx context.Context, obj types.Object, diags *diag.Diagnostics,
 ) *awstypes.ServiceAccountCredentials {
 
-	var m serviceAccountCredentialsModel
+	var m resourceModelServiceAccountCredentials
 	diags.Append(obj.As(ctx, &m, basetypes.ObjectAsOptions{})...)
 	if diags.HasError() {
 		return nil
@@ -33,7 +33,7 @@ func expandCertificateBasedAuthProperties(
 	ctx context.Context, obj types.Object, diags *diag.Diagnostics,
 ) *awstypes.CertificateBasedAuthProperties {
 
-	var m certificateBasedAuthPropertiesModel
+	var m resourceModelCertificateBasedAuthProperties
 	diags.Append(obj.As(ctx, &m, basetypes.ObjectAsOptions{})...)
 	if diags.HasError() {
 		return nil

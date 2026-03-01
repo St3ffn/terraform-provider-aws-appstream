@@ -18,7 +18,7 @@ import (
 )
 
 func (ds *dataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var config model
+	var config dataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
 	if resp.Diagnostics.HasError() {
@@ -67,7 +67,7 @@ func (ds *dataSource) Read(ctx context.Context, req datasource.ReadRequest, resp
 		return
 	}
 
-	state := &model{
+	state := &dataSourceModel{
 		ID:                          types.StringValue(aws.ToString(selected.Arn)),
 		ARN:                         types.StringValue(aws.ToString(selected.Arn)),
 		Name:                        types.StringValue(aws.ToString(selected.Name)),
@@ -108,7 +108,7 @@ func (ds *dataSource) Read(ctx context.Context, req datasource.ReadRequest, resp
 	resp.Diagnostics.Append(resp.State.Set(ctx, state)...)
 }
 
-func (ds *dataSource) listImages(ctx context.Context, config *model) ([]awstypes.Image, error) {
+func (ds *dataSource) listImages(ctx context.Context, config *dataSourceModel) ([]awstypes.Image, error) {
 	var (
 		arns  []string
 		names []string

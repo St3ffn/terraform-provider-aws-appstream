@@ -23,7 +23,7 @@ func flattenSourceS3LocationData(
 	obj, d := types.ObjectValueFrom(
 		ctx,
 		sourceS3LocationObjectType.AttrTypes,
-		sourceS3LocationModel{
+		dataSourceModelSourceS3Location{
 			S3Bucket: util.StringOrNull(awsS3Location.S3Bucket),
 			S3Key:    util.StringOrNull(awsS3Location.S3Key),
 		},
@@ -44,14 +44,14 @@ func flattenScriptDetailsData(
 		return types.ObjectNull(scriptDetailsObjectType.AttrTypes)
 	}
 
-	detailsModel := scriptDetailsModel{
+	detailsModel := dataSourceModelSetupScriptDetails{
 		ExecutablePath:       util.StringOrNull(awsScriptDetails.ExecutablePath),
 		ExecutableParameters: util.StringOrNull(awsScriptDetails.ExecutableParameters),
 		TimeoutInSeconds:     util.Int32OrNull(awsScriptDetails.TimeoutInSeconds),
 	}
 
 	if awsScriptDetails.ScriptS3Location != nil {
-		detailsModel.ScriptS3Location = flattenSourceS3LocationData(ctx, awsScriptDetails.ScriptS3Location, diags)
+		detailsModel.ScriptS3Location = flattenScriptS3LocationData(ctx, awsScriptDetails.ScriptS3Location, diags)
 	} else {
 		detailsModel.ScriptS3Location = types.ObjectNull(s3LocationObjectType.AttrTypes)
 	}
@@ -65,15 +65,39 @@ func flattenScriptDetailsData(
 	return obj
 }
 
+func flattenScriptS3LocationData(
+	ctx context.Context, awsS3Location *awstypes.S3Location, diags *diag.Diagnostics,
+) types.Object {
+
+	if awsS3Location == nil {
+		return types.ObjectNull(s3LocationObjectType.AttrTypes)
+	}
+
+	obj, d := types.ObjectValueFrom(
+		ctx,
+		s3LocationObjectType.AttrTypes,
+		dataSourceModelSetupScriptDetailsScriptS3Location{
+			S3Bucket: util.StringOrNull(awsS3Location.S3Bucket),
+			S3Key:    util.StringOrNull(awsS3Location.S3Key),
+		},
+	)
+	diags.Append(d...)
+	if diags.HasError() {
+		return types.ObjectNull(s3LocationObjectType.AttrTypes)
+	}
+
+	return obj
+}
+
 func flattenAppBlockErrorsData(ctx context.Context, awsAppBlockErrors []awstypes.ErrorDetails, diags *diag.Diagnostics) types.Set {
 	if len(awsAppBlockErrors) == 0 {
 		return types.SetNull(errorObjectType)
 	}
 
-	out := make([]appBlockErrorModel, 0, len(awsAppBlockErrors))
+	out := make([]dataSourceModelAppBlockErrors, 0, len(awsAppBlockErrors))
 
 	for _, e := range awsAppBlockErrors {
-		out = append(out, appBlockErrorModel{
+		out = append(out, dataSourceModelAppBlockErrors{
 			ErrorCode:    util.StringOrNull(e.ErrorCode),
 			ErrorMessage: util.StringOrNull(e.ErrorMessage),
 		})

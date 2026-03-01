@@ -20,10 +20,10 @@ func flattenStorageConnectorsData(
 		return types.SetNull(storageConnectorObjectType)
 	}
 
-	out := make([]storageConnectorModel, 0, len(awsStorageConnectors))
+	out := make([]resourceModelStorageConnectors, 0, len(awsStorageConnectors))
 
 	for _, c := range awsStorageConnectors {
-		m := storageConnectorModel{
+		m := resourceModelStorageConnectors{
 			ConnectorType:              types.StringValue(string(c.ConnectorType)),
 			ResourceIdentifier:         util.StringOrNull(c.ResourceIdentifier),
 			Domains:                    util.SetStringOrNull(ctx, c.Domains, diags),
@@ -50,10 +50,10 @@ func flattenUserSettingsData(
 		return types.SetNull(userSettingObjectType)
 	}
 
-	out := make([]userSettingModel, 0, len(awsUserSettings))
+	out := make([]resourceModelUserSettings, 0, len(awsUserSettings))
 
 	for _, s := range awsUserSettings {
-		m := userSettingModel{
+		m := resourceModelUserSettings{
 			Action:        types.StringValue(string(s.Action)),
 			Permission:    types.StringValue(string(s.Permission)),
 			MaximumLength: util.Int32OrNull(s.MaximumLength),
@@ -81,7 +81,7 @@ func flattenApplicationSettingsData(
 	obj, d := types.ObjectValueFrom(
 		ctx,
 		applicationSettingsObjectType.AttrTypes,
-		applicationSettingsModel{
+		resourceModelApplicationSettings{
 			Enabled:       util.BoolOrNull(awsApplicationSettingsResponse.Enabled),
 			SettingsGroup: util.StringOrNull(awsApplicationSettingsResponse.SettingsGroup),
 			S3BucketName:  util.StringOrNull(awsApplicationSettingsResponse.S3BucketName),
@@ -103,10 +103,10 @@ func flattenAccessEndpointsData(
 		return types.SetNull(accessEndpointObjectType)
 	}
 
-	out := make([]accessEndpointModel, 0, len(awsAccessEndpoint))
+	out := make([]resourceModelAccessEndpoints, 0, len(awsAccessEndpoint))
 
 	for _, e := range awsAccessEndpoint {
-		out = append(out, accessEndpointModel{
+		out = append(out, resourceModelAccessEndpoints{
 			EndpointType: types.StringValue(string(e.EndpointType)),
 			VpceID:       util.StringOrNull(e.VpceId),
 		})
@@ -132,7 +132,7 @@ func flattenStreamingExperienceSettingsData(
 	obj, d := types.ObjectValueFrom(
 		ctx,
 		streamingExperienceSettingsObjectType.AttrTypes,
-		streamingExperienceSettingsModel{
+		resourceModelStreamingExperienceSettings{
 			PreferredProtocol: types.StringValue(string(awsStreamingExperienceSettings.PreferredProtocol)),
 		},
 	)
@@ -149,10 +149,10 @@ func flattenStackErrorsData(ctx context.Context, awsStackErrors []awstypes.Stack
 		return types.SetNull(errorObjectType)
 	}
 
-	out := make([]stackErrorModel, 0, len(awsStackErrors))
+	out := make([]resourceModelStackErrors, 0, len(awsStackErrors))
 
 	for _, e := range awsStackErrors {
-		out = append(out, stackErrorModel{
+		out = append(out, resourceModelStackErrors{
 			ErrorCode:    types.StringValue(string(e.ErrorCode)),
 			ErrorMessage: util.StringOrNull(e.ErrorMessage),
 		})

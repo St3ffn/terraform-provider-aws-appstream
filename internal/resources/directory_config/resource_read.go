@@ -16,7 +16,7 @@ import (
 )
 
 func (r *resource) Read(ctx context.Context, req tfresource.ReadRequest, resp *tfresource.ReadResponse) {
-	var state model
+	var state resourceModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
@@ -53,7 +53,7 @@ func (r *resource) Read(ctx context.Context, req tfresource.ReadRequest, resp *t
 	resp.Diagnostics.Append(resp.State.Set(ctx, newState)...)
 }
 
-func (r *resource) readDirectoryConfig(ctx context.Context, prior model) (*model, diag.Diagnostics) {
+func (r *resource) readDirectoryConfig(ctx context.Context, prior resourceModel) (*resourceModel, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
 	name := prior.DirectoryName.ValueString()
@@ -86,7 +86,7 @@ func (r *resource) readDirectoryConfig(ctx context.Context, prior model) (*model
 		return nil, diags
 	}
 
-	state := &model{
+	state := &resourceModel{
 		ID:                                   types.StringValue(aws.ToString(directoryConfig.DirectoryName)),
 		DirectoryName:                        types.StringValue(aws.ToString(directoryConfig.DirectoryName)),
 		OrganizationalUnitDistinguishedNames: util.SetStringOrNull(ctx, directoryConfig.OrganizationalUnitDistinguishedNames, &diags),

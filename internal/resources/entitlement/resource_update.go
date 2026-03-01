@@ -15,8 +15,8 @@ import (
 )
 
 func (r *resource) Update(ctx context.Context, req tfresource.UpdateRequest, resp *tfresource.UpdateResponse) {
-	var plan model
-	var state model
+	var plan resourceModel
+	var state resourceModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
@@ -37,11 +37,12 @@ func (r *resource) Update(ctx context.Context, req tfresource.UpdateRequest, res
 		return
 	}
 
+	diff := newResourceDiff(state, plan)
 	stackName := plan.StackName.ValueString()
 	name := plan.Name.ValueString()
 
-	if plan.AppVisibility.IsNull() || plan.AppVisibility.IsUnknown() ||
-		plan.Attributes.IsNull() || plan.Attributes.IsUnknown() {
+	if diff.HasRemoteChanges() && (plan.AppVisibility.IsNull() || plan.AppVisibility.IsUnknown() ||
+		plan.Attributes.IsNull() || plan.Attributes.IsUnknown()) {
 		resp.Diagnostics.AddError(
 			"Invalid Terraform Plan",
 			"Cannot update entitlement because app_visibility and attributes must be known.",
@@ -49,39 +50,45 @@ func (r *resource) Update(ctx context.Context, req tfresource.UpdateRequest, res
 		return
 	}
 
-	awsAttrs := expandEntitlementAttributes(ctx, plan.Attributes, &resp.Diagnostics)
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	input := &awsappstream.UpdateEntitlementInput{
-		StackName:     aws.String(stackName),
-		Name:          aws.String(name),
-		AppVisibility: awstypes.AppVisibility(plan.AppVisibility.ValueString()),
-		Attributes:    awsAttrs,
-	}
-
-	util.OptionalStringUpdate(plan.Description, state.Description, func(description *string) {
-		input.Description = description
-	})
-
-	_, err := r.appstreamClient.UpdateEntitlement(ctx, input)
-	if err != nil {
-		if util.IsContextCanceled(err) {
-			return
+	if diff.HasRemoteChanges() {
+		input := &awsappstream.UpdateEntitlementInput{
+			StackName: aws.String(stackName),
+			Name:      aws.String(name),
 		}
 
-		// disappeared, treat as gone and next plan/apply will recreate
-		if util.IsAppStreamNotFound(err) {
-			resp.State.RemoveResource(ctx)
-			return
+		if diff.AppVisibility.IsChanged() {
+			input.AppVisibility = awstypes.AppVisibility(plan.AppVisibility.ValueString())
+		}
+		if diff.Attributes.IsChanged() {
+			input.Attributes = expandEntitlementAttributes(ctx, plan.Attributes, &resp.Diagnostics)
+			if resp.Diagnostics.HasError() {
+				return
+			}
+		}
+		if diff.Description.IsChanged() {
+			util.OptionalStringUpdate(plan.Description, state.Description, func(description *string) {
+				input.Description = description
+			})
 		}
 
-		resp.Diagnostics.AddError(
-			"Error Updating AWS AppStream Entitlement",
-			fmt.Sprintf("Could not update entitlement %q in stack %q: %v", name, stackName, err),
-		)
-		return
+		_, err := r.appstreamClient.UpdateEntitlement(ctx, input)
+		if err != nil {
+			if util.IsContextCanceled(err) {
+				return
+			}
+
+			// disappeared, treat as gone and next plan/apply will recreate
+			if util.IsAppStreamNotFound(err) {
+				resp.State.RemoveResource(ctx)
+				return
+			}
+
+			resp.Diagnostics.AddError(
+				"Error Updating AWS AppStream Entitlement",
+				fmt.Sprintf("Could not update entitlement %q in stack %q: %v", name, stackName, err),
+			)
+			return
+		}
 	}
 
 	newState, diags := r.readEntitlement(ctx, plan)

@@ -14,7 +14,7 @@ import (
 )
 
 func expandS3Location(ctx context.Context, obj types.Object, diags *diag.Diagnostics) *awstypes.S3Location {
-	var m s3LocationModel
+	var m resourceModelOrganizationLogoS3Location
 	diags.Append(obj.As(ctx, &m, basetypes.ObjectAsOptions{})...)
 	if diags.HasError() {
 		return nil
@@ -27,7 +27,7 @@ func expandS3Location(ctx context.Context, obj types.Object, diags *diag.Diagnos
 }
 
 func expandFooterLinks(ctx context.Context, set types.Set, diags *diag.Diagnostics) []awstypes.ThemeFooterLink {
-	var models []footerLinkModel
+	var models []resourceModelFooterLinks
 	diags.Append(set.ElementsAs(ctx, &models, false)...)
 	if diags.HasError() {
 		return nil
@@ -41,7 +41,7 @@ func expandFooterLinks(ctx context.Context, set types.Set, diags *diag.Diagnosti
 	for _, m := range models {
 		out = append(out, awstypes.ThemeFooterLink{
 			DisplayName:   util.StringPointerOrNil(m.DisplayName),
-			FooterLinkURL: util.StringPointerOrNil(m.FooterLinkURL),
+			FooterLinkURL: util.StringPointerOrNil(m.FooterLinkUrl),
 		})
 	}
 

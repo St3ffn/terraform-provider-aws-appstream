@@ -3,12 +3,12 @@
 page_title: "awsappstream_app_block_builder Resource - AWS AppStream"
 subcategory: ""
 description: |-
-  Manages an AppStream app block builder. An app block builder is a reusable resource used to package and test AppStream app blocks by installing and configuring applications before associating them with Elastic fleets.
+  Manages an AppStream app block builder. An app block builder is a reusable resource used to package and test AppStream app blocks by installing and configuring applications before associating them with Elastic fleets. App block builders cannot be started until they are associated with an app block.
 ---
 
 # awsappstream_app_block_builder (Resource)
 
-Manages an AppStream app block builder. An app block builder is a reusable resource used to package and test AppStream app blocks by installing and configuring applications before associating them with Elastic fleets.
+Manages an AppStream app block builder. An app block builder is a reusable resource used to package and test AppStream app blocks by installing and configuring applications before associating them with Elastic fleets. App block builders cannot be started until they are associated with an app block.
 
 ## Example Usage
 
@@ -19,7 +19,7 @@ resource "awsappstream_app_block_builder" "example" {
   instance_type = "stream.standard.large"
   platform      = "WINDOWS_SERVER_2019"
 
-  vpc_config {
+  vpc_config = {
     # subnets must be in different Availability Zones
     subnet_ids = [
       "subnet-0abc123def4567890",
@@ -42,7 +42,7 @@ resource "awsappstream_app_block_builder" "example" {
 
   iam_role_arn = "arn:aws:iam::123456789012:role/AppStreamAppBlockBuilderRole"
 
-  vpc_config {
+  vpc_config = {
     # subnets must be in different Availability Zones
     subnet_ids = [
       "subnet-0abc123def4567890",
@@ -83,9 +83,9 @@ resource "awsappstream_app_block_builder" "example" {
 
 - `access_endpoints` (Attributes Set) Interface VPC endpoints through which administrators can connect to the app block builder. (see [below for nested schema](#nestedatt--access_endpoints))
 - `description` (String) The app block builder description, if set.
-- `disable_imds_v1` (Boolean) Whether Instance Metadata Service Version 1 (IMDSv1) is disabled for the AppStream app block builder. If `true`, only IMDSv2 is enabled. If `false`, both IMDSv1 and IMDSv2 are enabled.
+- `disable_imds_v1` (Boolean) Whether Instance Metadata Service Version 1 (IMDSv1) is disabled for the AppStream app block builder. If `true`, only IMDSv2 is enabled. If `false`, both IMDSv1 and IMDSv2 are enabled. The default value is `false`.
 - `display_name` (String) The display name of the app block builder shown in the AppStream user interface.
-- `enable_default_internet_access` (Boolean) Whether the app block builder has access to the internet.
+- `enable_default_internet_access` (Boolean) Whether the app block builder has access to the internet. The default value is `false`.
 - `iam_role_arn` (String) The ARN of the IAM role applied to the app block builder.
 - `tags` (Map of String) A map of tags assigned to the app block builder.
 

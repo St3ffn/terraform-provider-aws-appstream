@@ -17,7 +17,7 @@ import (
 
 func (r *resource) Read(ctx context.Context, req tfresource.ReadRequest, resp *tfresource.ReadResponse) {
 
-	var state model
+	var state resourceModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
@@ -53,7 +53,7 @@ func (r *resource) Read(ctx context.Context, req tfresource.ReadRequest, resp *t
 
 func (r *resource) readAssociateFleetStack(
 	ctx context.Context, fleetName, stackName string,
-) (*model, diag.Diagnostics) {
+) (*resourceModel, diag.Diagnostics) {
 
 	var diags diag.Diagnostics
 	var nextToken *string
@@ -80,7 +80,7 @@ func (r *resource) readAssociateFleetStack(
 
 		for _, stack := range out.Names {
 			if stack == stackName {
-				state := &model{
+				state := &resourceModel{
 					ID:        types.StringValue(buildID(fleetName, stackName)),
 					FleetName: types.StringValue(fleetName),
 					StackName: types.StringValue(stackName),

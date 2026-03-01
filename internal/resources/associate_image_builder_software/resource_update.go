@@ -14,8 +14,8 @@ import (
 )
 
 func (r *resource) Update(ctx context.Context, req tfresource.UpdateRequest, resp *tfresource.UpdateResponse) {
-	var plan model
-	var state model
+	var plan resourceModel
+	var state resourceModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
@@ -32,6 +32,7 @@ func (r *resource) Update(ctx context.Context, req tfresource.UpdateRequest, res
 		return
 	}
 
+	diff := newResourceDiff(state, plan)
 	imageBuilderARN := plan.ImageBuilderARN.ValueString()
 
 	imageBuilderName, err := imageBuilderNameFromARN(imageBuilderARN)
@@ -43,12 +44,16 @@ func (r *resource) Update(ctx context.Context, req tfresource.UpdateRequest, res
 		return
 	}
 
-	added, removed := util.DiffStringSets(ctx, state.SoftwareNames, plan.SoftwareNames, &resp.Diagnostics)
+	added := make([]string, 0)
+	removed := make([]string, 0)
+	if diff.SoftwareNames.IsChanged() {
+		added, removed = util.DiffStringSets(ctx, state.SoftwareNames, plan.SoftwareNames, &resp.Diagnostics)
+	}
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	if len(added) > 0 || len(removed) > 0 || plan.Deploy.ValueBool() {
+	if len(added) > 0 || len(removed) > 0 || (diff.Deploy.IsChanged() && plan.Deploy.ValueBool()) {
 		err = r.waitForImageBuilderAssociable(ctx, imageBuilderName)
 		if err != nil {
 			resp.Diagnostics.AddError(
@@ -117,7 +122,7 @@ func (r *resource) Update(ctx context.Context, req tfresource.UpdateRequest, res
 		}
 	}
 
-	if plan.Deploy.ValueBool() {
+	if diff.Deploy.IsChanged() && plan.Deploy.ValueBool() {
 		err = util.RetryOn(
 			ctx,
 			func(ctx context.Context) error {

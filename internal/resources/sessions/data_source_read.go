@@ -16,7 +16,7 @@ import (
 )
 
 func (ds *dataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var config model
+	var config dataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
 	if resp.Diagnostics.HasError() {
@@ -76,7 +76,7 @@ func (ds *dataSource) Read(ctx context.Context, req datasource.ReadRequest, resp
 		nextToken = out.NextToken
 	}
 
-	state := &model{
+	state := &dataSourceModel{
 		StackName:          types.StringValue(stackName),
 		FleetName:          types.StringValue(fleetName),
 		UserID:             config.UserID,

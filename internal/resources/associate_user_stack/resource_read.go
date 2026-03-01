@@ -18,7 +18,7 @@ import (
 
 func (r *resource) Read(ctx context.Context, req tfresource.ReadRequest, resp *tfresource.ReadResponse) {
 
-	var state model
+	var state resourceModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
@@ -52,7 +52,7 @@ func (r *resource) Read(ctx context.Context, req tfresource.ReadRequest, resp *t
 	resp.Diagnostics.Append(resp.State.Set(ctx, newState)...)
 }
 
-func (r *resource) readAssociateUserStack(ctx context.Context, prior model) (*model, diag.Diagnostics) {
+func (r *resource) readAssociateUserStack(ctx context.Context, prior resourceModel) (*resourceModel, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
 	stackName := prior.StackName.ValueString()
@@ -82,7 +82,7 @@ func (r *resource) readAssociateUserStack(ctx context.Context, prior model) (*mo
 
 	userStackAssociations := out.UserStackAssociations[0]
 
-	state := &model{
+	state := &resourceModel{
 		ID:                    types.StringValue(buildID(stackName, authenticationType, userName)),
 		StackName:             types.StringValue(stackName),
 		UserName:              types.StringValue(userName),

@@ -62,7 +62,7 @@ func flattenComputeCapacity(
 		return types.ObjectNull(computeCapacityObjectType.AttrTypes)
 	}
 
-	model := computeCapacityModel{
+	model := resourceModelComputeCapacity{
 		DesiredInstances: util.Int32OrNull(awsComputeCapacityStatus.Desired),
 		DesiredSessions:  util.Int32OrNull(awsComputeCapacityStatus.DesiredUserSessions),
 	}
@@ -92,7 +92,7 @@ func flattenVPCConfig(ctx context.Context, awsVPCConfig *awstypes.VpcConfig, dia
 	obj, d := types.ObjectValueFrom(
 		ctx,
 		vpcConfigObjectType.AttrTypes,
-		vpcConfigModel{
+		resourceModelVPCConfig{
 			SubnetIDs:        util.SetStringOrNull(ctx, awsVPCConfig.SubnetIds, diags),
 			SecurityGroupIDs: util.SetStringOrNull(ctx, awsVPCConfig.SecurityGroupIds, diags),
 		},
@@ -116,7 +116,7 @@ func flattenDomainJoinInfo(
 	obj, d := types.ObjectValueFrom(
 		ctx,
 		domainJoinInfoObjectType.AttrTypes,
-		domainJoinInfoModel{
+		resourceModelDomainJoinInfo{
 			DirectoryName:                       util.StringOrNull(awsDomainJoinInfo.DirectoryName),
 			OrganizationalUnitDistinguishedName: util.StringOrNull(awsDomainJoinInfo.OrganizationalUnitDistinguishedName),
 		},
@@ -140,7 +140,7 @@ func flattenSessionScriptS3Location(
 	obj, d := types.ObjectValueFrom(
 		ctx,
 		sessionScriptS3LocationObjectType.AttrTypes,
-		sessionScriptS3LocationModel{
+		resourceModelSessionScriptS3Location{
 			S3Bucket: util.StringOrNull(awsS3Location.S3Bucket),
 			S3Key:    util.StringOrNull(awsS3Location.S3Key),
 		},
@@ -164,7 +164,7 @@ func flattenRootVolumeConfig(
 	obj, d := types.ObjectValueFrom(
 		ctx,
 		rootVolumeConfigObjectType.AttrTypes,
-		rootVolumeConfigModel{
+		resourceModelRootVolumeConfig{
 			VolumeSizeInGB: util.Int32OrNull(awsVolumeConfig.VolumeSizeInGb),
 		},
 	)
@@ -181,9 +181,9 @@ func flattenFleetErrors(ctx context.Context, awsFleetErrors []awstypes.FleetErro
 		return types.SetNull(errorObjectType)
 	}
 
-	out := make([]fleetErrorModel, 0, len(awsFleetErrors))
+	out := make([]resourceModelFleetErrors, 0, len(awsFleetErrors))
 	for _, e := range awsFleetErrors {
-		out = append(out, fleetErrorModel{
+		out = append(out, resourceModelFleetErrors{
 			ErrorCode:    types.StringValue(string(e.ErrorCode)),
 			ErrorMessage: util.StringOrNull(e.ErrorMessage),
 		})

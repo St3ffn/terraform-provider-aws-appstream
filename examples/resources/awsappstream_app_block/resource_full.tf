@@ -6,13 +6,13 @@ resource "awsappstream_app_block" "example" {
 
   packaging_type = "CUSTOM"
 
-  source_s3_location {
+  source_s3_location = {
     s3_bucket = "my-appstream-assets"
     s3_key    = "app-blocks/example/source.zip"
   }
 
-  setup_script_details {
-    script_s3_location {
+  setup_script_details = {
+    script_s3_location = {
       s3_bucket = "my-appstream-assets"
       s3_key    = "app-blocks/example/setup.ps1"
     }
@@ -30,17 +30,17 @@ resource "awsappstream_app_block" "example" {
 }
 
 # full app block - APPSTREAM2 packaging
-resource "awsappstream_app_block" "example" {
+resource "awsappstream_app_block" "appstream2" {
   name           = "example-app-block"
   packaging_type = "APPSTREAM2"
 
-  source_s3_location {
+  source_s3_location = {
     s3_bucket = "my-appstream-assets"
     # s3_key optional when AppStream builds a new package
   }
 
-  post_setup_script_details {
-    script_s3_location {
+  post_setup_script_details = {
+    script_s3_location = {
       s3_bucket = "my-appstream-assets"
       s3_key    = "app-blocks/example/post-setup.ps1"
     }

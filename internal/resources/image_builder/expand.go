@@ -14,7 +14,7 @@ import (
 )
 
 func expandVPCConfig(ctx context.Context, obj types.Object, diags *diag.Diagnostics) *awstypes.VpcConfig {
-	var m vpcConfigModel
+	var m resourceModelVPCConfig
 	diags.Append(obj.As(ctx, &m, basetypes.ObjectAsOptions{})...)
 	if diags.HasError() {
 		return nil
@@ -33,7 +33,7 @@ func expandVPCConfig(ctx context.Context, obj types.Object, diags *diag.Diagnost
 }
 
 func expandDomainJoinInfo(ctx context.Context, obj types.Object, diags *diag.Diagnostics) *awstypes.DomainJoinInfo {
-	var m domainJoinInfoModel
+	var m resourceModelDomainJoinInfo
 	diags.Append(obj.As(ctx, &m, basetypes.ObjectAsOptions{})...)
 	if diags.HasError() {
 		return nil
@@ -46,7 +46,7 @@ func expandDomainJoinInfo(ctx context.Context, obj types.Object, diags *diag.Dia
 }
 
 func expandAccessEndpoints(ctx context.Context, set types.Set, diags *diag.Diagnostics) []awstypes.AccessEndpoint {
-	var models []accessEndpointModel
+	var models []resourceModelAccessEndpoints
 	diags.Append(set.ElementsAs(ctx, &models, false)...)
 	if diags.HasError() {
 		return nil
@@ -68,7 +68,7 @@ func expandAccessEndpoints(ctx context.Context, set types.Set, diags *diag.Diagn
 }
 
 func expandRootVolumeConfig(ctx context.Context, obj types.Object, diags *diag.Diagnostics) *awstypes.VolumeConfig {
-	var m rootVolumeConfigModel
+	var m resourceModelRootVolumeConfig
 	diags.Append(obj.As(ctx, &m, basetypes.ObjectAsOptions{})...)
 	if diags.HasError() {
 		return nil

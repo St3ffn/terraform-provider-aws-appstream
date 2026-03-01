@@ -6,7 +6,7 @@ resource "awsappstream_fleet" "on_demand_single_session" {
   image_name    = "example-appstream-image"
   instance_type = "stream.standard.medium"
 
-  compute_capacity {
+  compute_capacity = {
     desired_instances = 2
   }
 
@@ -21,7 +21,7 @@ resource "awsappstream_fleet" "on_demand_multi_session" {
   image_name    = "example-appstream-image"
   instance_type = "stream.standard.large"
 
-  compute_capacity {
+  compute_capacity = {
     desired_sessions = 20
   }
 

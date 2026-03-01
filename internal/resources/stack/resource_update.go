@@ -36,139 +36,165 @@ func (r *resource) Update(ctx context.Context, req tfresource.UpdateRequest, res
 		return
 	}
 
+	diff := newResourceDiff(state, plan)
 	name := plan.Name.ValueString()
 
-	input := &awsappstream.UpdateStackInput{
-		Name: aws.String(name),
+	arnForTags := ""
+	switch {
+	case !plan.ARN.IsNull() && !plan.ARN.IsUnknown():
+		arnForTags = plan.ARN.ValueString()
+	case !state.ARN.IsNull() && !state.ARN.IsUnknown():
+		arnForTags = state.ARN.ValueString()
 	}
-	var attrToDelete []awstypes.StackAttribute
 
-	util.OptionalStringUpdate(plan.Description, state.Description, func(description *string) {
-		input.Description = description
-	})
-	util.OptionalStringUpdate(plan.DisplayName, state.DisplayName, func(displayName *string) {
-		input.DisplayName = displayName
-	})
-
-	if !plan.RedirectURL.IsUnknown() {
-		if plan.RedirectURL.IsNull() {
-			attrToDelete = append(attrToDelete, awstypes.StackAttributeRedirectUrl)
-		} else {
-			input.RedirectURL = aws.String(plan.RedirectURL.ValueString())
+	if diff.HasRemoteChanges() {
+		input := &awsappstream.UpdateStackInput{
+			Name: aws.String(name),
 		}
-	}
+		var attrToDelete []awstypes.StackAttribute
 
-	if !plan.FeedbackURL.IsUnknown() {
-		if plan.FeedbackURL.IsNull() {
-			attrToDelete = append(attrToDelete, awstypes.StackAttributeFeedbackUrl)
-		} else {
-			input.FeedbackURL = aws.String(plan.FeedbackURL.ValueString())
+		if diff.Description.IsChanged() {
+			util.OptionalStringUpdate(plan.Description, state.Description, func(description *string) {
+				input.Description = description
+			})
 		}
-	}
-
-	if !plan.StorageConnectors.IsUnknown() {
-		if plan.StorageConnectors.IsNull() {
-			attrToDelete = append(attrToDelete, awstypes.StackAttributeStorageConnectors)
-		} else {
-			attrToDelete = append(
-				attrToDelete,
-				storageConnectorAttributesToDelete(ctx, state.StorageConnectors, plan.StorageConnectors, &resp.Diagnostics)...,
-			)
-
-			input.StorageConnectors = expandStorageConnectors(
-				ctx,
-				plan.StorageConnectors,
-				&resp.Diagnostics,
-			)
+		if diff.DisplayName.IsChanged() {
+			util.OptionalStringUpdate(plan.DisplayName, state.DisplayName, func(displayName *string) {
+				input.DisplayName = displayName
+			})
 		}
-	}
 
-	if !plan.UserSettings.IsUnknown() {
-		if plan.UserSettings.IsNull() {
-			attrToDelete = append(attrToDelete, awstypes.StackAttributeUserSettings)
-		} else {
-			input.UserSettings = expandUserSettings(
-				ctx,
-				plan.UserSettings,
-				&resp.Diagnostics,
-			)
+		if diff.RedirectUrl.IsChanged() {
+			if plan.RedirectUrl.IsNull() {
+				attrToDelete = append(attrToDelete, awstypes.StackAttributeRedirectUrl)
+			} else {
+				input.RedirectURL = aws.String(plan.RedirectUrl.ValueString())
+			}
 		}
-	}
 
-	if !plan.ApplicationSettings.IsUnknown() {
-		if plan.ApplicationSettings.IsNull() {
-			input.ApplicationSettings = nil
-		} else {
-			input.ApplicationSettings = expandApplicationSettings(
-				ctx,
-				plan.ApplicationSettings,
-				&resp.Diagnostics,
-			)
+		if diff.FeedbackUrl.IsChanged() {
+			if plan.FeedbackUrl.IsNull() {
+				attrToDelete = append(attrToDelete, awstypes.StackAttributeFeedbackUrl)
+			} else {
+				input.FeedbackURL = aws.String(plan.FeedbackUrl.ValueString())
+			}
 		}
-	}
 
-	if !plan.AccessEndpoints.IsUnknown() {
-		if plan.AccessEndpoints.IsNull() {
-			attrToDelete = append(attrToDelete, awstypes.StackAttributeAccessEndpoints)
-		} else {
-			input.AccessEndpoints = expandAccessEndpoints(
-				ctx,
-				plan.AccessEndpoints,
-				&resp.Diagnostics,
-			)
+		if diff.StorageConnectors.IsChanged() {
+			if plan.StorageConnectors.IsNull() {
+				attrToDelete = append(attrToDelete, awstypes.StackAttributeStorageConnectors)
+			} else {
+				attrToDelete = append(
+					attrToDelete,
+					storageConnectorAttributesToDelete(ctx, state.StorageConnectors, plan.StorageConnectors, &resp.Diagnostics)...,
+				)
+
+				input.StorageConnectors = expandStorageConnectors(
+					ctx,
+					plan.StorageConnectors,
+					&resp.Diagnostics,
+				)
+			}
 		}
-	}
 
-	if !plan.EmbedHostDomains.IsUnknown() {
-		if plan.EmbedHostDomains.IsNull() {
-			attrToDelete = append(attrToDelete, awstypes.StackAttributeEmbedHostDomains)
-		} else {
-			input.EmbedHostDomains = util.ExpandStringSetOrNil(
-				ctx,
-				plan.EmbedHostDomains,
-				&resp.Diagnostics,
-			)
+		if diff.UserSettings.IsChanged() {
+			if plan.UserSettings.IsNull() {
+				attrToDelete = append(attrToDelete, awstypes.StackAttributeUserSettings)
+			} else {
+				input.UserSettings = expandUserSettings(
+					ctx,
+					plan.UserSettings,
+					&resp.Diagnostics,
+				)
+			}
 		}
-	}
 
-	if !plan.StreamingExperienceSettings.IsUnknown() {
-		if plan.StreamingExperienceSettings.IsNull() {
-			attrToDelete = append(attrToDelete, awstypes.StackAttributeStreamingExperienceSettings)
-		} else {
-			input.StreamingExperienceSettings = expandStreamingExperienceSettings(
-				ctx,
-				plan.StreamingExperienceSettings,
-				&resp.Diagnostics,
-			)
+		if diff.ApplicationSettings.IsChanged() {
+			if plan.ApplicationSettings.IsNull() {
+				input.ApplicationSettings = nil
+			} else {
+				input.ApplicationSettings = expandApplicationSettings(
+					ctx,
+					plan.ApplicationSettings,
+					&resp.Diagnostics,
+				)
+			}
 		}
-	}
 
-	input.AttributesToDelete = attrToDelete
+		if diff.AccessEndpoints.IsChanged() {
+			if plan.AccessEndpoints.IsNull() {
+				attrToDelete = append(attrToDelete, awstypes.StackAttributeAccessEndpoints)
+			} else {
+				input.AccessEndpoints = expandAccessEndpoints(
+					ctx,
+					plan.AccessEndpoints,
+					&resp.Diagnostics,
+				)
+			}
+		}
 
-	if resp.Diagnostics.HasError() {
-		return
-	}
+		if diff.EmbedHostDomains.IsChanged() {
+			if plan.EmbedHostDomains.IsNull() {
+				attrToDelete = append(attrToDelete, awstypes.StackAttributeEmbedHostDomains)
+			} else {
+				input.EmbedHostDomains = util.ExpandStringSetOrNil(
+					ctx,
+					plan.EmbedHostDomains,
+					&resp.Diagnostics,
+				)
+			}
+		}
 
-	out, err := r.appstreamClient.UpdateStack(ctx, input)
-	if err != nil {
-		if util.IsContextCanceled(err) {
+		if diff.StreamingExperienceSettings.IsChanged() {
+			if plan.StreamingExperienceSettings.IsNull() {
+				attrToDelete = append(attrToDelete, awstypes.StackAttributeStreamingExperienceSettings)
+			} else {
+				input.StreamingExperienceSettings = expandStreamingExperienceSettings(
+					ctx,
+					plan.StreamingExperienceSettings,
+					&resp.Diagnostics,
+				)
+			}
+		}
+
+		input.AttributesToDelete = attrToDelete
+
+		if resp.Diagnostics.HasError() {
 			return
 		}
 
-		if util.IsAppStreamNotFound(err) {
-			resp.State.RemoveResource(ctx)
+		out, err := r.appstreamClient.UpdateStack(ctx, input)
+		if err != nil {
+			if util.IsContextCanceled(err) {
+				return
+			}
+
+			if util.IsAppStreamNotFound(err) {
+				resp.State.RemoveResource(ctx)
+				return
+			}
+
+			resp.Diagnostics.AddError(
+				"Error Updating AWS AppStream Stack",
+				fmt.Sprintf("Could not update stack %q: %v", name, err),
+			)
 			return
 		}
 
-		resp.Diagnostics.AddError(
-			"Error Updating AWS AppStream Stack",
-			fmt.Sprintf("Could not update stack %q: %v", name, err),
-		)
-		return
+		if out.Stack != nil && out.Stack.Arn != nil {
+			arnForTags = aws.ToString(out.Stack.Arn)
+		}
 	}
 
-	if out.Stack != nil && out.Stack.Arn != nil {
-		_, tagDiags := r.tags.Apply(ctx, aws.ToString(out.Stack.Arn), plan.Tags)
+	if diff.RequiresTagApply() {
+		if arnForTags == "" {
+			resp.Diagnostics.AddError(
+				"Error Updating AWS AppStream Stack",
+				fmt.Sprintf("Could not apply tags for stack %q: missing ARN in state and plan", name),
+			)
+			return
+		}
+		_, tagDiags := r.tags.Apply(ctx, arnForTags, plan.Tags)
 		resp.Diagnostics.Append(tagDiags...)
 		if resp.Diagnostics.HasError() {
 			return

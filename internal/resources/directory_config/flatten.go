@@ -47,7 +47,7 @@ func flattenServiceAccountCredentials(
 		return types.ObjectNull(serviceAccountCredentialsObjectType.AttrTypes)
 	}
 
-	var priorProps serviceAccountCredentialsModel
+	var priorProps resourceModelServiceAccountCredentials
 	diags.Append(prior.As(ctx, &priorProps, basetypes.ObjectAsOptions{})...)
 	if diags.HasError() {
 		return types.ObjectNull(serviceAccountCredentialsObjectType.AttrTypes)
@@ -57,7 +57,7 @@ func flattenServiceAccountCredentials(
 	obj, d := types.ObjectValueFrom(
 		ctx,
 		serviceAccountCredentialsObjectType.AttrTypes,
-		serviceAccountCredentialsModel{
+		resourceModelServiceAccountCredentials{
 			AccountName:     util.StringOrNull(awsCreds.AccountName),
 			AccountPassword: priorProps.AccountPassword,
 		},
@@ -81,7 +81,7 @@ func flattenCertificateBasedAuthProperties(
 	obj, d := types.ObjectValueFrom(
 		ctx,
 		certificateBasedAuthPropertiesObjectType.AttrTypes,
-		certificateBasedAuthPropertiesModel{
+		resourceModelCertificateBasedAuthProperties{
 			Status:                  types.StringValue(string(awsProps.Status)),
 			CertificateAuthorityARN: util.StringOrNull(awsProps.CertificateAuthorityArn),
 		},

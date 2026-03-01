@@ -13,9 +13,9 @@ const (
 	diagnosticDelete diagnosticMode = "delete"
 )
 
-func addDiagnostics(model model, diags *diag.Diagnostics, mode diagnosticMode) {
-	if model.AppBlockBuilderName.IsNull() || model.AppBlockBuilderName.IsUnknown() ||
-		model.AppBlockARN.IsNull() || model.AppBlockARN.IsUnknown() {
+func addDiagnostics(resourceModel resourceModel, diags *diag.Diagnostics, mode diagnosticMode) {
+	if resourceModel.AppBlockBuilderName.IsNull() || resourceModel.AppBlockBuilderName.IsUnknown() ||
+		resourceModel.AppBlockARN.IsNull() || resourceModel.AppBlockARN.IsUnknown() {
 
 		switch mode {
 		case diagnosticPlan:

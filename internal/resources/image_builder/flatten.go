@@ -71,7 +71,7 @@ func flattenVPCConfig(ctx context.Context, awsVPCConfig *awstypes.VpcConfig, dia
 	obj, d := types.ObjectValueFrom(
 		ctx,
 		vpcConfigObjectType.AttrTypes,
-		vpcConfigModel{
+		resourceModelVPCConfig{
 			SubnetIDs:        util.SetStringOrNull(ctx, awsVPCConfig.SubnetIds, diags),
 			SecurityGroupIDs: util.SetStringOrNull(ctx, awsVPCConfig.SecurityGroupIds, diags),
 		},
@@ -95,7 +95,7 @@ func flattenDomainJoinInfo(
 	obj, d := types.ObjectValueFrom(
 		ctx,
 		domainJoinInfoObjectType.AttrTypes,
-		domainJoinInfoModel{
+		resourceModelDomainJoinInfo{
 			DirectoryName:                       util.StringOrNull(awsDomainJoinInfo.DirectoryName),
 			OrganizationalUnitDistinguishedName: util.StringOrNull(awsDomainJoinInfo.OrganizationalUnitDistinguishedName),
 		},
@@ -116,9 +116,9 @@ func flattenAccessEndpoints(
 		return types.SetNull(accessEndpointObjectType)
 	}
 
-	out := make([]accessEndpointModel, 0, len(awsEndpoints))
+	out := make([]resourceModelAccessEndpoints, 0, len(awsEndpoints))
 	for _, e := range awsEndpoints {
-		out = append(out, accessEndpointModel{
+		out = append(out, resourceModelAccessEndpoints{
 			EndpointType: types.StringValue(string(e.EndpointType)),
 			VpceID:       util.StringOrNull(e.VpceId),
 		})
@@ -144,7 +144,7 @@ func flattenRootVolumeConfig(
 	obj, d := types.ObjectValueFrom(
 		ctx,
 		rootVolumeConfigObjectType.AttrTypes,
-		rootVolumeConfigModel{
+		resourceModelRootVolumeConfig{
 			VolumeSizeInGB: util.Int32OrNull(awsVolumeConfig.VolumeSizeInGb),
 		},
 	)
@@ -167,9 +167,9 @@ func flattenNetworkAccessConfiguration(
 	obj, d := types.ObjectValueFrom(
 		ctx,
 		networkAccessConfigurationObjectType.AttrTypes,
-		networkAccessConfigurationModel{
-			EniPrivateIPAddress: util.StringOrNull(awsConfig.EniPrivateIpAddress),
-			EniIPv6Addresses:    util.SetStringOrNull(ctx, awsConfig.EniIpv6Addresses, diags),
+		resourceModelNetworkAccessConfiguration{
+			EniPrivateIpAddress: util.StringOrNull(awsConfig.EniPrivateIpAddress),
+			EniIpv6Addresses:    util.SetStringOrNull(ctx, awsConfig.EniIpv6Addresses, diags),
 			EniID:               util.StringOrNull(awsConfig.EniId),
 		},
 	)
@@ -192,7 +192,7 @@ func flattenStateChangeReason(
 	obj, d := types.ObjectValueFrom(
 		ctx,
 		stateChangeReasonObjectType.AttrTypes,
-		stateChangeReasonModel{
+		resourceModelStateChangeReason{
 			Code:    types.StringValue(string(awsReason.Code)),
 			Message: util.StringOrNull(awsReason.Message),
 		},
@@ -213,9 +213,9 @@ func flattenImageBuilderErrors(
 		return types.SetNull(imageBuilderErrorObjectType)
 	}
 
-	out := make([]imageBuilderErrorModel, 0, len(awsErrors))
+	out := make([]resourceModelImageBuilderErrors, 0, len(awsErrors))
 	for _, e := range awsErrors {
-		out = append(out, imageBuilderErrorModel{
+		out = append(out, resourceModelImageBuilderErrors{
 			ErrorCode:      types.StringValue(string(e.ErrorCode)),
 			ErrorMessage:   util.StringOrNull(e.ErrorMessage),
 			ErrorTimestamp: util.StringFromTime(e.ErrorTimestamp),

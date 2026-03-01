@@ -56,14 +56,14 @@ func flattenScriptDetailsResource(
 		return types.ObjectNull(scriptDetailsObjectType.AttrTypes)
 	}
 
-	detailsModel := scriptDetailsModel{
+	detailsModel := resourceModelSetupScriptDetails{
 		ExecutablePath:       util.StringOrNull(awsScriptDetails.ExecutablePath),
 		ExecutableParameters: util.StringOrNull(awsScriptDetails.ExecutableParameters),
 		TimeoutInSeconds:     util.Int32OrNull(awsScriptDetails.TimeoutInSeconds),
 	}
 
 	if awsScriptDetails.ScriptS3Location != nil {
-		detailsModel.ScriptS3Location = flattenSourceS3LocationData(ctx, awsScriptDetails.ScriptS3Location, diags)
+		detailsModel.ScriptS3Location = flattenScriptS3LocationResource(ctx, awsScriptDetails.ScriptS3Location, diags)
 	} else {
 		detailsModel.ScriptS3Location = types.ObjectNull(s3LocationObjectType.AttrTypes)
 	}
@@ -75,4 +75,75 @@ func flattenScriptDetailsResource(
 	}
 
 	return obj
+}
+
+func flattenSourceS3LocationResource(
+	ctx context.Context, awsS3Location *awstypes.S3Location, diags *diag.Diagnostics,
+) types.Object {
+
+	if awsS3Location == nil {
+		return types.ObjectNull(sourceS3LocationObjectType.AttrTypes)
+	}
+
+	obj, d := types.ObjectValueFrom(
+		ctx,
+		sourceS3LocationObjectType.AttrTypes,
+		resourceModelSourceS3Location{
+			S3Bucket: util.StringOrNull(awsS3Location.S3Bucket),
+			S3Key:    util.StringOrNull(awsS3Location.S3Key),
+		},
+	)
+	diags.Append(d...)
+	if diags.HasError() {
+		return types.ObjectNull(sourceS3LocationObjectType.AttrTypes)
+	}
+
+	return obj
+}
+
+func flattenScriptS3LocationResource(
+	ctx context.Context, awsS3Location *awstypes.S3Location, diags *diag.Diagnostics,
+) types.Object {
+
+	if awsS3Location == nil {
+		return types.ObjectNull(s3LocationObjectType.AttrTypes)
+	}
+
+	obj, d := types.ObjectValueFrom(
+		ctx,
+		s3LocationObjectType.AttrTypes,
+		resourceModelSetupScriptDetailsScriptS3Location{
+			S3Bucket: util.StringOrNull(awsS3Location.S3Bucket),
+			S3Key:    util.StringOrNull(awsS3Location.S3Key),
+		},
+	)
+	diags.Append(d...)
+	if diags.HasError() {
+		return types.ObjectNull(s3LocationObjectType.AttrTypes)
+	}
+
+	return obj
+}
+
+func flattenAppBlockErrorsResource(ctx context.Context, awsAppBlockErrors []awstypes.ErrorDetails, diags *diag.Diagnostics) types.Set {
+	if len(awsAppBlockErrors) == 0 {
+		return types.SetNull(errorObjectType)
+	}
+
+	out := make([]resourceModelAppBlockErrors, 0, len(awsAppBlockErrors))
+
+	for _, e := range awsAppBlockErrors {
+		out = append(out, resourceModelAppBlockErrors{
+			ErrorCode:    util.StringOrNull(e.ErrorCode),
+			ErrorMessage: util.StringOrNull(e.ErrorMessage),
+		})
+	}
+
+	setVal, d := types.SetValueFrom(ctx, errorObjectType, out)
+	diags.Append(d...)
+	if diags.HasError() {
+		return types.SetNull(errorObjectType)
+	}
+
+	return setVal
 }

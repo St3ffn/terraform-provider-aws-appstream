@@ -36,9 +36,9 @@ func flattenSoftwareAssociations(
 		return types.SetNull(softwareAssociationObjectType)
 	}
 
-	out := make([]softwareAssociationModel, 0, len(awsAssociations))
+	out := make([]dataSourceModelSoftwareAssociations, 0, len(awsAssociations))
 	for _, a := range awsAssociations {
-		out = append(out, softwareAssociationModel{
+		out = append(out, dataSourceModelSoftwareAssociations{
 			SoftwareName:     util.StringOrNull(a.SoftwareName),
 			Status:           types.StringValue(string(a.Status)),
 			DeploymentErrors: flattenSoftwareAssociationDeploymentErrors(ctx, a.DeploymentError, diags),
@@ -62,9 +62,9 @@ func flattenSoftwareAssociationDeploymentErrors(
 		return types.SetNull(deploymentErrorObjectType)
 	}
 
-	out := make([]deploymentErrorModel, 0, len(awsErrors))
+	out := make([]dataSourceModelSoftwareAssociationsDeploymentErrors, 0, len(awsErrors))
 	for _, e := range awsErrors {
-		out = append(out, deploymentErrorModel{
+		out = append(out, dataSourceModelSoftwareAssociationsDeploymentErrors{
 			ErrorCode:    util.StringOrNull(e.ErrorCode),
 			ErrorMessage: util.StringOrNull(e.ErrorMessage),
 		})

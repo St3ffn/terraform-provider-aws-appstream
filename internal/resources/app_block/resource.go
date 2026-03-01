@@ -84,7 +84,7 @@ func (r *resource) ValidateConfig(ctx context.Context, req tfresource.ValidateCo
 
 	// validate source_s3_location.s3_key requirements
 	if !config.SourceS3Location.IsNull() && !config.SourceS3Location.IsUnknown() {
-		var source sourceS3LocationModel
+		var source resourceModelSourceS3Location
 
 		resp.Diagnostics.Append(
 			config.SourceS3Location.As(ctx, &source, basetypes.ObjectAsOptions{})...,

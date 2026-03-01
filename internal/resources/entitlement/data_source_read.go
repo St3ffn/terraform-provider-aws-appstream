@@ -15,7 +15,7 @@ import (
 )
 
 func (ds *dataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var config model
+	var config dataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
 	if resp.Diagnostics.HasError() {
@@ -79,7 +79,7 @@ func (ds *dataSource) Read(ctx context.Context, req datasource.ReadRequest, resp
 		return
 	}
 
-	state := &model{
+	state := &dataSourceModel{
 		ID:            types.StringValue(buildID(aws.ToString(e.StackName), aws.ToString(e.Name))),
 		StackName:     types.StringValue(aws.ToString(e.StackName)),
 		Name:          types.StringValue(aws.ToString(e.Name)),

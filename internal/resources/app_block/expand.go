@@ -14,7 +14,7 @@ import (
 )
 
 func expandSourceS3Location(ctx context.Context, obj types.Object, diags *diag.Diagnostics) *awstypes.S3Location {
-	var m sourceS3LocationModel
+	var m resourceModelSourceS3Location
 	diags.Append(obj.As(ctx, &m, basetypes.ObjectAsOptions{})...)
 	if diags.HasError() {
 		return nil
@@ -27,7 +27,7 @@ func expandSourceS3Location(ctx context.Context, obj types.Object, diags *diag.D
 }
 
 func expandScriptDetails(ctx context.Context, obj types.Object, diags *diag.Diagnostics) *awstypes.ScriptDetails {
-	var m scriptDetailsModel
+	var m resourceModelSetupScriptDetails
 	diags.Append(obj.As(ctx, &m, basetypes.ObjectAsOptions{})...)
 	if diags.HasError() {
 		return nil

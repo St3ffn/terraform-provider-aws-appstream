@@ -92,7 +92,7 @@ func (r *resource) readAppBlock(ctx context.Context, prior resourceModel) (*reso
 		Name:                   types.StringValue(aws.ToString(appBlock.Name)),
 		DisplayName:            util.StringOrNull(appBlock.DisplayName),
 		Description:            util.StringOrNull(appBlock.Description),
-		SourceS3Location:       flattenSourceS3LocationData(ctx, appBlock.SourceS3Location, &diags),
+		SourceS3Location:       flattenSourceS3LocationResource(ctx, appBlock.SourceS3Location, &diags),
 		SetupScriptDetails:     flattenScriptDetailsResource(ctx, prior.SetupScriptDetails, appBlock.SetupScriptDetails, &diags),
 		PostSetupScriptDetails: flattenScriptDetailsResource(ctx, prior.PostSetupScriptDetails, appBlock.PostSetupScriptDetails, &diags),
 		PackagingType:          util.StringOrNull(aws.String(string(appBlock.PackagingType))),
@@ -100,7 +100,7 @@ func (r *resource) readAppBlock(ctx context.Context, prior resourceModel) (*reso
 		ARN:                    util.StringOrNull(appBlock.Arn),
 		CreatedTime:            util.StringFromTime(appBlock.CreatedTime),
 		State:                  types.StringValue(string(appBlock.State)),
-		AppBlockErrors:         flattenAppBlockErrorsData(ctx, appBlock.AppBlockErrors, &diags),
+		AppBlockErrors:         flattenAppBlockErrorsResource(ctx, appBlock.AppBlockErrors, &diags),
 	}
 
 	if !state.ARN.IsNull() {

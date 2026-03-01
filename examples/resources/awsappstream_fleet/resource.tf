@@ -5,7 +5,7 @@ resource "awsappstream_fleet" "minimal" {
   image_name    = "example-image"
   instance_type = "stream.standard.small"
 
-  compute_capacity {
+  compute_capacity = {
     desired_instances = 1
   }
 }
@@ -21,11 +21,11 @@ resource "awsappstream_fleet" "full" {
   display_name = "Engineering Always-On Fleet"
   description  = "Always-on AppStream fleet for engineering workloads"
 
-  compute_capacity {
+  compute_capacity = {
     desired_instances = 5
   }
 
-  vpc_config {
+  vpc_config = {
     subnet_ids = [
       "subnet-0a1234567890abcd1",
       "subnet-0b1234567890abcd2",
@@ -45,14 +45,13 @@ resource "awsappstream_fleet" "full" {
   iam_role_arn = "arn:aws:iam::123456789012:role/AppStreamFleetRole"
 
   stream_view = "DESKTOP"
-  platform    = "WINDOWS_SERVER_2022"
 
-  domain_join_info {
+  domain_join_info = {
     directory_name                         = "corp.example.com"
     organizational_unit_distinguished_name = "OU=AppStream,OU=Computers,DC=corp,DC=example,DC=com"
   }
 
-  root_volume_config {
+  root_volume_config = {
     volume_size_in_gb = 250
   }
 
@@ -67,4 +66,3 @@ resource "awsappstream_fleet" "full" {
     ManagedBy   = "terraform"
   }
 }
-

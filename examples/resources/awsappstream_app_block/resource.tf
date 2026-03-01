@@ -2,13 +2,13 @@
 resource "awsappstream_app_block" "example" {
   name = "example-app-block"
 
-  source_s3_location {
+  source_s3_location = {
     s3_bucket = "my-appstream-assets"
     s3_key    = "app-blocks/example/source.zip"
   }
 
-  setup_script_details {
-    script_s3_location {
+  setup_script_details = {
+    script_s3_location = {
       s3_bucket = "my-appstream-assets"
       s3_key    = "app-blocks/example/setup.ps1"
     }

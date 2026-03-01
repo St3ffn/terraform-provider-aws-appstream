@@ -1,37 +1,66 @@
 # provider-codegen
 
-Tooling module for provider generation tasks.
+Code generation tooling for this provider.
 
 ## What it does
 
-Runs the repository generation pipeline defined in `tools.go`:
-
-1. Generate license files (`copywrite license`)
-2. Generate/update file headers (`copywrite headers`)
-3. Format Terraform examples (`terraform fmt`)
-4. Generate provider docs (`tfplugindocs`)
+- Runs schema-driven artifact generation (`cmd/schema-to-artifacts`):
+  - `data_source_model_gen.go`
+  - `resource_model_gen.go`
+  - `resource_diff_gen.go` (resources only)
+- Runs post-generation steps (`go generate` in this module):
+  - `copywrite license`
+  - `copywrite headers`
+  - `terraform fmt` for examples
+  - `tfplugindocs generate`
 
 ## Usage
 
-From repository root:
+Run full pipeline (recommended), from repo root:
 
 ```bash
 make generate
 ```
 
-Or directly:
+Run full pipeline directly:
 
 ```bash
 cd tools/provider-codegen
 go generate ./...
 ```
 
-## Requirements
+## Schema To Artifacts
 
-- Go
-- Terraform CLI (for `terraform fmt`)
+`schema-to-artifacts` scans provider resource and data source schema files and writes generated files next to them.
 
-## Notes
+Generated files:
 
-- Commands operate on repo root via relative paths from this module.
-- `tools.go` is build-tagged with `generate` and intended for `go generate` only.
+- `data_source_model_gen.go`
+- `resource_model_gen.go`
+- `resource_diff_gen.go` (resources only)
+
+Run schema artifact generation only:
+
+```bash
+cd tools/provider-codegen
+go run ./cmd/schema-to-artifacts --root ../../internal/resources --schema-pattern resource_schema.go --schema-pattern data_source_schema.go
+```
+
+Useful flags:
+
+- `--verbose` prints matched schema files and generated output paths.
+
+## Codegen Annotations
+
+You can control whether a schema attribute participates in generated
+`HasRemoteChanges()` detection with a comment annotation above the map entry:
+
+```go
+// codegen:has_remote_changes=false
+"desired_state": schema.StringAttribute{
+    // ...
+}
+```
+
+- Default behavior (no annotation): `codegen:has_remote_changes=true`
+- Typical use case for `false`: provider-only control fields that should not trigger AWS update calls

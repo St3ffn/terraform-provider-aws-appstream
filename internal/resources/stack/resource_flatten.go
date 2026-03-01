@@ -74,7 +74,7 @@ func flattenStorageConnectorsResource(
 	}
 
 	// decode prior state into models
-	var priorModels []storageConnectorModel
+	var priorModels []resourceModelStorageConnectors
 	diags.Append(prior.ElementsAs(ctx, &priorModels, false)...)
 	if diags.HasError() {
 		return types.SetNull(storageConnectorObjectType)
@@ -89,7 +89,7 @@ func flattenStorageConnectorsResource(
 		awsByType[string(awsConn.ConnectorType)] = awsConn
 	}
 
-	out := make([]storageConnectorModel, 0, len(priorModels))
+	out := make([]resourceModelStorageConnectors, 0, len(priorModels))
 
 	// iterate prior state to preserve ownership and intent
 	for _, priorConn := range priorModels {
@@ -102,7 +102,7 @@ func flattenStorageConnectorsResource(
 
 		// drift case: user configured the connector but aws no longer has it
 		if !exists {
-			out = append(out, storageConnectorModel{
+			out = append(out, resourceModelStorageConnectors{
 				ConnectorType:              types.StringValue(ct),
 				ResourceIdentifier:         types.StringNull(),
 				Domains:                    types.SetNull(types.StringType),
@@ -111,7 +111,7 @@ func flattenStorageConnectorsResource(
 			continue
 		}
 
-		m := storageConnectorModel{
+		m := resourceModelStorageConnectors{
 			ConnectorType:      types.StringValue(ct),
 			ResourceIdentifier: util.FlattenStateOwnedString(priorConn.ResourceIdentifier, awsConn.ResourceIdentifier),
 			Domains:            util.FlattenStateOwnedStringSet(ctx, priorConn.Domains, awsConn.Domains, diags),
@@ -158,7 +158,7 @@ func flattenUserSettingsResource(
 	}
 
 	// decode prior state into models
-	var priorModels []userSettingModel
+	var priorModels []resourceModelUserSettings
 	diags.Append(prior.ElementsAs(ctx, &priorModels, false)...)
 	if diags.HasError() {
 		return types.SetNull(userSettingObjectType)
@@ -170,7 +170,7 @@ func flattenUserSettingsResource(
 		awsByAction[string(s.Action)] = s
 	}
 
-	out := make([]userSettingModel, 0, len(priorModels))
+	out := make([]resourceModelUserSettings, 0, len(priorModels))
 
 	// iterate prior state to preserve ownership
 	for _, priorSetting := range priorModels {
@@ -183,7 +183,7 @@ func flattenUserSettingsResource(
 
 		// drift: user configured action but aws no longer has it
 		if !exists {
-			out = append(out, userSettingModel{
+			out = append(out, resourceModelUserSettings{
 				Action:        types.StringValue(action),
 				Permission:    types.StringNull(),
 				MaximumLength: types.Int32Null(),
@@ -191,7 +191,7 @@ func flattenUserSettingsResource(
 			continue
 		}
 
-		out = append(out, userSettingModel{
+		out = append(out, resourceModelUserSettings{
 			Action:        types.StringValue(action),
 			Permission:    types.StringValue(string(awsSetting.Permission)),
 			MaximumLength: util.Int32OrNull(awsSetting.MaximumLength),
@@ -229,7 +229,7 @@ func flattenApplicationSettingsResource(
 	}
 
 	// decode prior state
-	var priorModel applicationSettingsModel
+	var priorModel resourceModelApplicationSettings
 	diags.Append(prior.As(ctx, &priorModel, basetypes.ObjectAsOptions{})...)
 	if diags.HasError() {
 		return types.ObjectNull(applicationSettingsObjectType.AttrTypes)
@@ -240,7 +240,7 @@ func flattenApplicationSettingsResource(
 		obj, d := types.ObjectValueFrom(
 			ctx,
 			applicationSettingsObjectType.AttrTypes,
-			applicationSettingsModel{
+			resourceModelApplicationSettings{
 				Enabled:       priorModel.Enabled,
 				SettingsGroup: types.StringNull(),
 				S3BucketName:  types.StringNull(),
@@ -254,7 +254,7 @@ func flattenApplicationSettingsResource(
 	obj, d := types.ObjectValueFrom(
 		ctx,
 		applicationSettingsObjectType.AttrTypes,
-		applicationSettingsModel{
+		resourceModelApplicationSettings{
 			Enabled:       util.BoolOrNull(awsAppSettings.Enabled),
 			SettingsGroup: util.FlattenStateOwnedString(priorModel.SettingsGroup, awsAppSettings.SettingsGroup),
 			S3BucketName:  util.StringOrNull(awsAppSettings.S3BucketName),
@@ -285,10 +285,10 @@ func flattenAccessEndpointsResource(
 		return empty
 	}
 
-	out := make([]accessEndpointModel, 0, len(awsAccessEndpoints))
+	out := make([]resourceModelAccessEndpoints, 0, len(awsAccessEndpoints))
 
 	for _, e := range awsAccessEndpoints {
-		out = append(out, accessEndpointModel{
+		out = append(out, resourceModelAccessEndpoints{
 			EndpointType: types.StringValue(string(e.EndpointType)),
 			VpceID:       util.StringOrNull(e.VpceId),
 		})
@@ -318,7 +318,7 @@ func flattenStreamingExperienceSettingsResource(
 	}
 
 	// decode prior state
-	var priorModel streamingExperienceSettingsModel
+	var priorModel resourceModelStreamingExperienceSettings
 	diags.Append(prior.As(ctx, &priorModel, basetypes.ObjectAsOptions{})...)
 	if diags.HasError() {
 		return types.ObjectNull(streamingExperienceSettingsObjectType.AttrTypes)
@@ -329,7 +329,7 @@ func flattenStreamingExperienceSettingsResource(
 		obj, d := types.ObjectValueFrom(
 			ctx,
 			streamingExperienceSettingsObjectType.AttrTypes,
-			streamingExperienceSettingsModel{
+			resourceModelStreamingExperienceSettings{
 				PreferredProtocol: priorModel.PreferredProtocol,
 			},
 		)
@@ -341,7 +341,7 @@ func flattenStreamingExperienceSettingsResource(
 	obj, d := types.ObjectValueFrom(
 		ctx,
 		streamingExperienceSettingsObjectType.AttrTypes,
-		streamingExperienceSettingsModel{
+		resourceModelStreamingExperienceSettings{
 			PreferredProtocol: types.StringValue(string(awsSettings.PreferredProtocol)),
 		},
 	)

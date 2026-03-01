@@ -36,46 +36,49 @@ func (r *resource) Update(ctx context.Context, req tfresource.UpdateRequest, res
 		return
 	}
 
+	diff := newResourceDiff(state, plan)
 	name := plan.Name.ValueString()
 	sharedAccountID := plan.SharedAccountID.ValueString()
 
-	input := &awsappstream.UpdateImagePermissionsInput{
-		Name:             aws.String(name),
-		SharedAccountId:  aws.String(sharedAccountID),
-		ImagePermissions: expandImagePermissions(ctx, plan.ImagePermissions, &resp.Diagnostics),
-	}
+	if diff.HasRemoteChanges() {
+		input := &awsappstream.UpdateImagePermissionsInput{
+			Name:             aws.String(name),
+			SharedAccountId:  aws.String(sharedAccountID),
+			ImagePermissions: expandImagePermissions(ctx, plan.ImagePermissions, &resp.Diagnostics),
+		}
 
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	err := util.RetryOn(
-		ctx,
-		func(ctx context.Context) error {
-			_, err := r.appstreamClient.UpdateImagePermissions(ctx, input)
-			return err
-		},
-		util.WithTimeout(retryTimeout),
-		util.WithInitBackoff(retryInitBackoff),
-		util.WithMaxBackoff(retryMaxBackoff),
-		// see https://docs.aws.amazon.com/appstream2/latest/APIReference/API_UpdateImagePermissions.html
-		util.WithRetryOnFns(
-			util.IsResourceNotAvailableException,
-		),
-	)
-
-	if err != nil {
-		// disappeared, treat as gone and next plan/apply will recreate
-		if util.IsAppStreamNotFound(err) {
-			resp.State.RemoveResource(ctx)
+		if resp.Diagnostics.HasError() {
 			return
 		}
 
-		resp.Diagnostics.AddError(
-			"Error Updating AWS AppStream Image Permission",
-			fmt.Sprintf("Could not update image permission for image %q shared with account %q: %v", name, sharedAccountID, err),
+		err := util.RetryOn(
+			ctx,
+			func(ctx context.Context) error {
+				_, err := r.appstreamClient.UpdateImagePermissions(ctx, input)
+				return err
+			},
+			util.WithTimeout(retryTimeout),
+			util.WithInitBackoff(retryInitBackoff),
+			util.WithMaxBackoff(retryMaxBackoff),
+			// see https://docs.aws.amazon.com/appstream2/latest/APIReference/API_UpdateImagePermissions.html
+			util.WithRetryOnFns(
+				util.IsResourceNotAvailableException,
+			),
 		)
-		return
+
+		if err != nil {
+			// disappeared, treat as gone and next plan/apply will recreate
+			if util.IsAppStreamNotFound(err) {
+				resp.State.RemoveResource(ctx)
+				return
+			}
+
+			resp.Diagnostics.AddError(
+				"Error Updating AWS AppStream Image Permission",
+				fmt.Sprintf("Could not update image permission for image %q shared with account %q: %v", name, sharedAccountID, err),
+			)
+			return
+		}
 	}
 
 	newState, diags := r.readImagePermission(ctx, plan)

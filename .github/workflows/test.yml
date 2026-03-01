@@ -27,6 +27,15 @@ jobs:
         with:
           go-version-file: 'go.mod'
           cache: true
+      - name: Check gofmt
+        run: |
+          UNFORMATTED="$(gofmt -s -l .)"
+          if [ -n "$UNFORMATTED" ]; then
+            echo "These files are not gofmt'ed:"
+            echo "$UNFORMATTED"
+            echo "Run: make fmt"
+            exit 1
+          fi
       - run: go mod download
       - run: go build -v .
       - name: Run linters
@@ -35,6 +44,7 @@ jobs:
           version: latest
 
   generate:
+    name: Generate Diff Check
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2

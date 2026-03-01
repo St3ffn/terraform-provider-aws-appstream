@@ -97,7 +97,7 @@ func TestFlattenAssociations(t *testing.T) {
 
 			require.False(t, out.IsNull(), "expected non-null map")
 
-			var m map[string]associationModel
+			var m map[string]resourceModelAssociations
 			diags = out.ElementsAs(ctx, &m, false)
 			require.False(t, diags.HasError(), "failed to decode map elements")
 
@@ -115,7 +115,7 @@ func TestFlattenAssociations(t *testing.T) {
 					"unexpected status value",
 				)
 
-				var errs []deploymentErrorModel
+				var errs []resourceModelAssociationsDeploymentErrors
 				diags = assoc.DeploymentErrors.ElementsAs(ctx, &errs, false)
 				require.False(t, diags.HasError(), "failed to decode deployment errors")
 

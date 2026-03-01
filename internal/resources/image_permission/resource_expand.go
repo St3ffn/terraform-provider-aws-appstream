@@ -14,7 +14,7 @@ import (
 )
 
 func expandImagePermissions(ctx context.Context, obj types.Object, diags *diag.Diagnostics) *awstypes.ImagePermissions {
-	var m imagePermissionsModel
+	var m resourceModelImagePermissions
 	diags.Append(obj.As(ctx, &m, basetypes.ObjectAsOptions{})...)
 	if diags.HasError() {
 		return nil

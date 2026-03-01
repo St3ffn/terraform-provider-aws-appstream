@@ -38,7 +38,7 @@ func flattenS3Location(
 	obj, d := types.ObjectValueFrom(
 		ctx,
 		s3LocationObjectType.AttrTypes,
-		s3LocationModel{
+		resourceModelOrganizationLogoS3Location{
 			S3Bucket: util.StringOrNull(awsS3Location.S3Bucket),
 			S3Key:    util.StringOrNull(awsS3Location.S3Key),
 		},
@@ -59,11 +59,11 @@ func flattenFooterLinks(
 		return types.SetNull(footerLinkObjectType)
 	}
 
-	out := make([]footerLinkModel, 0, len(awsThemeFooterLinks))
+	out := make([]resourceModelFooterLinks, 0, len(awsThemeFooterLinks))
 	for _, link := range awsThemeFooterLinks {
-		out = append(out, footerLinkModel{
+		out = append(out, resourceModelFooterLinks{
 			DisplayName:   util.StringOrNull(link.DisplayName),
-			FooterLinkURL: util.StringOrNull(link.FooterLinkURL),
+			FooterLinkUrl: util.StringOrNull(link.FooterLinkURL),
 		})
 	}
 
