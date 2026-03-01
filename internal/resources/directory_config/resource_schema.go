@@ -92,13 +92,16 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 			"certificate_based_auth_properties": schema.SingleNestedAttribute{
 				Description: "Certificate-based authentication configuration.",
 				MarkdownDescription: "Specifies certificate-based authentication settings used to authenticate " +
-					"SAML 2.0 identity provider users to Active Directory domain-joined streaming instances.",
+					"SAML 2.0 identity provider users to Active Directory domain-joined streaming instances. " +
+					"Removing this block after it has been configured is not supported by AWS update APIs. " +
+					"To disable certificate-based authentication, set `status` to `DISABLED`.",
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
 					"status": schema.StringAttribute{
 						Description: "Certificate-based authentication status.",
 						MarkdownDescription: "Controls whether certificate-based authentication is enabled. " +
-							"Valid values are `DISABLED`, `ENABLED`, or `ENABLED_NO_DIRECTORY_LOGIN_FALLBACK`.",
+							"Valid values are `DISABLED`, `ENABLED`, or `ENABLED_NO_DIRECTORY_LOGIN_FALLBACK`. " +
+							"Use `DISABLED` to turn off certificate-based authentication.",
 						Optional: true,
 						Validators: []validator.String{
 							stringvalidator.OneOf(

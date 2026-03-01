@@ -13,10 +13,10 @@ const (
 	diagnosticDelete diagnosticMode = "delete"
 )
 
-func addDiagnostics(model model, diags *diag.Diagnostics, mode diagnosticMode) {
-	if model.StackName.IsNull() || model.StackName.IsUnknown() ||
-		model.EntitlementName.IsNull() || model.EntitlementName.IsUnknown() ||
-		model.ApplicationIdentifier.IsNull() || model.ApplicationIdentifier.IsUnknown() {
+func addDiagnostics(resourceModel resourceModel, diags *diag.Diagnostics, mode diagnosticMode) {
+	if resourceModel.StackName.IsNull() || resourceModel.StackName.IsUnknown() ||
+		resourceModel.EntitlementName.IsNull() || resourceModel.EntitlementName.IsUnknown() ||
+		resourceModel.ApplicationIdentifier.IsNull() || resourceModel.ApplicationIdentifier.IsUnknown() {
 
 		switch mode {
 		case diagnosticPlan:

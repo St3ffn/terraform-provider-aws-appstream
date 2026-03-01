@@ -28,7 +28,7 @@ func flattenIconS3Location(ctx context.Context, awsS3Location *awstypes.S3Locati
 	obj, d := types.ObjectValueFrom(
 		ctx,
 		iconS3LocationObjectType.AttrTypes,
-		iconS3LocationModel{
+		resourceModelIconS3Location{
 			S3Bucket: util.StringOrNull(awsS3Location.S3Bucket),
 			S3Key:    util.StringOrNull(awsS3Location.S3Key),
 		},

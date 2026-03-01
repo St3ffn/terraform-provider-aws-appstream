@@ -13,6 +13,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	tfresource "github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
@@ -25,7 +26,8 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 		Description: "Manage an AWS AppStream App Block Builder",
 		MarkdownDescription: "Manages an AppStream app block builder. " +
 			"An app block builder is a reusable resource used to package and test AppStream app blocks by installing " +
-			"and configuring applications before associating them with Elastic fleets.",
+			"and configuring applications before associating them with Elastic fleets. " +
+			"App block builders cannot be started until they are associated with an app block.",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description: "Identifier of the AppStream App Block Builder.",
@@ -87,9 +89,10 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				Description: "Disable IMDSv1 and enforce IMDSv2 for the AppStream App Block Builder.",
 				MarkdownDescription: "Whether Instance Metadata Service Version 1 (IMDSv1) is disabled for the " +
 					"AppStream app block builder. If `true`, only IMDSv2 is enabled. " +
-					"If `false`, both IMDSv1 and IMDSv2 are enabled.",
+					"If `false`, both IMDSv1 and IMDSv2 are enabled. The default value is `false`.",
 				Optional: true,
 				Computed: true,
+				Default:  booldefault.StaticBool(false),
 			},
 			"vpc_config": schema.SingleNestedAttribute{
 				Description: "VPC configuration for the App Block Builder.",
@@ -130,10 +133,12 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				},
 			},
 			"enable_default_internet_access": schema.BoolAttribute{
-				Description:         "Enable default internet access.",
-				MarkdownDescription: "Whether the app block builder has access to the internet.",
-				Optional:            true,
-				Computed:            true,
+				Description: "Enable default internet access.",
+				MarkdownDescription: "Whether the app block builder has access to the internet. " +
+					"The default value is `false`.",
+				Optional: true,
+				Computed: true,
+				Default:  booldefault.StaticBool(false),
 			},
 			"access_endpoints": schema.SetNestedAttribute{
 				Description:         "VPC access endpoints for the App Block Builder.",

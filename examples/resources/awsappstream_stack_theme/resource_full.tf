@@ -4,12 +4,12 @@ resource "awsappstream_stack_theme" "example" {
   title_text    = "Example AppStream Portal"
   theme_styling = "LIGHT_BLUE"
 
-  organization_logo_s3_location {
+  organization_logo_s3_location = {
     s3_bucket = "my-appstream-assets"
     s3_key    = "branding/logo.png"
   }
 
-  favicon_s3_location {
+  favicon_s3_location = {
     s3_bucket = "my-appstream-assets"
     s3_key    = "branding/favicon.ico"
   }
@@ -29,4 +29,3 @@ resource "awsappstream_stack_theme" "example" {
     }
   ]
 }
-

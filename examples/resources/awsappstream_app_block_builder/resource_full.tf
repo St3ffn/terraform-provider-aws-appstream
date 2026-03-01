@@ -10,7 +10,7 @@ resource "awsappstream_app_block_builder" "example" {
 
   iam_role_arn = "arn:aws:iam::123456789012:role/AppStreamAppBlockBuilderRole"
 
-  vpc_config {
+  vpc_config = {
     # subnets must be in different Availability Zones
     subnet_ids = [
       "subnet-0abc123def4567890",

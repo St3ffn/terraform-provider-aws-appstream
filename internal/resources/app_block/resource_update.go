@@ -31,12 +31,15 @@ func (r *resource) Update(ctx context.Context, req tfresource.UpdateRequest, res
 		return
 	}
 
+	diff := newResourceDiff(state, plan)
 	arn := plan.ID.ValueString()
 
-	_, tagDiags := r.tags.Apply(ctx, arn, plan.Tags)
-	resp.Diagnostics.Append(tagDiags...)
-	if resp.Diagnostics.HasError() {
-		return
+	if diff.RequiresTagApply() {
+		_, tagDiags := r.tags.Apply(ctx, arn, plan.Tags)
+		resp.Diagnostics.Append(tagDiags...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
 	}
 
 	newState, diags := r.readAppBlock(ctx, plan)

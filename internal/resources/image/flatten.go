@@ -73,7 +73,7 @@ func flattenStateChangeReason(
 	obj, d := types.ObjectValueFrom(
 		ctx,
 		stateChangeReasonObjectType.AttrTypes,
-		stateChangeReasonModel{
+		dataSourceModelStateChangeReason{
 			Code:    types.StringValue(string(awsReason.Code)),
 			Message: util.StringOrNull(awsReason.Message),
 		},
@@ -92,12 +92,12 @@ func flattenApplications(ctx context.Context, awsApps []awstypes.Application, di
 		return types.SetNull(applicationObjectType)
 	}
 
-	out := make([]applicationModel, 0, len(awsApps))
+	out := make([]dataSourceModelApplications, 0, len(awsApps))
 	for _, app := range awsApps {
-		out = append(out, applicationModel{
+		out = append(out, dataSourceModelApplications{
 			Name:             util.StringOrNull(app.Name),
 			DisplayName:      util.StringOrNull(app.DisplayName),
-			IconURL:          util.StringOrNull(app.IconURL),
+			IconUrl:          util.StringOrNull(app.IconURL),
 			LaunchPath:       util.StringOrNull(app.LaunchPath),
 			LaunchParameters: util.StringOrNull(app.LaunchParameters),
 			Enabled:          util.BoolOrNull(app.Enabled),
@@ -133,7 +133,7 @@ func flattenIconS3Location(
 	obj, d := types.ObjectValueFrom(
 		ctx,
 		iconS3LocationObjectType.AttrTypes,
-		iconS3LocationModel{
+		dataSourceModelApplicationsIconS3Location{
 			S3Bucket: util.StringOrNull(awsS3Location.S3Bucket),
 			S3Key:    util.StringOrNull(awsS3Location.S3Key),
 		},
@@ -157,7 +157,7 @@ func flattenImagePermissions(
 	obj, d := types.ObjectValueFrom(
 		ctx,
 		imagePermissionsObjectType.AttrTypes,
-		imagePermissionsModel{
+		dataSourceModelImagePermissions{
 			AllowFleet:        util.BoolOrNull(awsPerms.AllowFleet),
 			AllowImageBuilder: util.BoolOrNull(awsPerms.AllowImageBuilder),
 		},
@@ -175,9 +175,9 @@ func flattenImageErrors(ctx context.Context, awsErrors []awstypes.ResourceError,
 		return types.SetNull(imageErrorObjectType)
 	}
 
-	out := make([]imageErrorModel, 0, len(awsErrors))
+	out := make([]dataSourceModelImageErrors, 0, len(awsErrors))
 	for _, e := range awsErrors {
-		out = append(out, imageErrorModel{
+		out = append(out, dataSourceModelImageErrors{
 			ErrorCode:      types.StringValue(string(e.ErrorCode)),
 			ErrorMessage:   util.StringOrNull(e.ErrorMessage),
 			ErrorTimestamp: util.StringFromTime(e.ErrorTimestamp),

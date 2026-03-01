@@ -77,14 +77,14 @@ func BuildIssueContentWithOptions(currentVersion string, releases []appstream.Re
 	b.WriteString(issueMarker)
 	b.WriteString("\n")
 	b.WriteString("## Summary\n")
-	b.WriteString(fmt.Sprintf("- Current `github.com/aws/aws-sdk-go-v2/service/appstream` version: `%s`\n", currentVersion))
-	b.WriteString(fmt.Sprintf("- Latest feature release detected: `%s`\n", latest))
-	b.WriteString(fmt.Sprintf("- Feature releases found: `%d`\n", len(releases)))
+	_, _ = fmt.Fprintf(&b, "- Current `github.com/aws/aws-sdk-go-v2/service/appstream` version: `%s`\n", currentVersion)
+	_, _ = fmt.Fprintf(&b, "- Latest feature release detected: `%s`\n", latest)
+	_, _ = fmt.Fprintf(&b, "- Feature releases found: `%d`\n", len(releases))
 	b.WriteString("\n")
 	b.WriteString("## Feature Releases\n")
 
 	for _, release := range releases {
-		b.WriteString(fmt.Sprintf("### %s (%s)\n", release.Version, release.Date))
+		_, _ = fmt.Fprintf(&b, "### %s (%s)\n", release.Version, release.Date)
 		for _, note := range release.Notes {
 			if strings.TrimSpace(note) == "" {
 				continue
@@ -97,7 +97,7 @@ func BuildIssueContentWithOptions(currentVersion string, releases []appstream.Re
 	}
 
 	b.WriteString("## Source\n")
-	b.WriteString(fmt.Sprintf("- %s\n", sourceURL))
+	_, _ = fmt.Fprintf(&b, "- %s\n", sourceURL)
 
 	return IssueContent{
 		Title: issueTitle,

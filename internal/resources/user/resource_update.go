@@ -37,6 +37,7 @@ func (r *resource) Update(ctx context.Context, req tfresource.UpdateRequest, res
 		return
 	}
 
+	diff := newResourceDiff(state, plan)
 	authenticationType := plan.AuthenticationType.ValueString()
 	userName := plan.UserName.ValueString()
 
@@ -45,9 +46,7 @@ func (r *resource) Update(ctx context.Context, req tfresource.UpdateRequest, res
 	if plan.Enabled.IsNull() || plan.Enabled.IsUnknown() {
 		// user does not manage enabled
 		goto READ
-	} else if state.Enabled.IsUnknown() || state.Enabled.IsNull() {
-		// first time management
-	} else if state.Enabled.ValueBool() == plan.Enabled.ValueBool() {
+	} else if !diff.Enabled.IsChanged() {
 		// no changes
 		goto READ
 	}

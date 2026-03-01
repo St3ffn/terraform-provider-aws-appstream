@@ -2,7 +2,7 @@
 resource "awsappstream_application" "example" {
   name = "example-app"
 
-  icon_s3_location {
+  icon_s3_location = {
     s3_bucket = "my-appstream-assets"
     s3_key    = "icons/example.png"
   }
@@ -19,5 +19,4 @@ resource "awsappstream_application" "example" {
 
   app_block_arn = "arn:aws:appstream:eu-west-1:123456789012:app-block/example-block"
 }
-
 

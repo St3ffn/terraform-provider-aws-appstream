@@ -14,7 +14,7 @@ import (
 )
 
 func expandComputeCapacity(ctx context.Context, obj types.Object, diags *diag.Diagnostics) *awstypes.ComputeCapacity {
-	var m computeCapacityModel
+	var m resourceModelComputeCapacity
 	diags.Append(obj.As(ctx, &m, basetypes.ObjectAsOptions{})...)
 	if diags.HasError() {
 		return nil
@@ -33,7 +33,7 @@ func expandComputeCapacity(ctx context.Context, obj types.Object, diags *diag.Di
 }
 
 func expandVPCConfig(ctx context.Context, obj types.Object, diags *diag.Diagnostics) *awstypes.VpcConfig {
-	var m vpcConfigModel
+	var m resourceModelVPCConfig
 	diags.Append(obj.As(ctx, &m, basetypes.ObjectAsOptions{})...)
 	if diags.HasError() {
 		return nil
@@ -46,7 +46,7 @@ func expandVPCConfig(ctx context.Context, obj types.Object, diags *diag.Diagnost
 }
 
 func expandDomainJoinInfo(ctx context.Context, obj types.Object, diags *diag.Diagnostics) *awstypes.DomainJoinInfo {
-	var m domainJoinInfoModel
+	var m resourceModelDomainJoinInfo
 	diags.Append(obj.As(ctx, &m, basetypes.ObjectAsOptions{})...)
 	if diags.HasError() {
 		return nil
@@ -59,7 +59,7 @@ func expandDomainJoinInfo(ctx context.Context, obj types.Object, diags *diag.Dia
 }
 
 func expandSessionScriptS3Location(ctx context.Context, obj types.Object, diags *diag.Diagnostics) *awstypes.S3Location {
-	var m sessionScriptS3LocationModel
+	var m resourceModelSessionScriptS3Location
 	diags.Append(obj.As(ctx, &m, basetypes.ObjectAsOptions{})...)
 	if diags.HasError() {
 		return nil
@@ -72,7 +72,7 @@ func expandSessionScriptS3Location(ctx context.Context, obj types.Object, diags 
 }
 
 func expandRootVolumeConfig(ctx context.Context, obj types.Object, diags *diag.Diagnostics) *awstypes.VolumeConfig {
-	var m rootVolumeConfigModel
+	var m resourceModelRootVolumeConfig
 	diags.Append(obj.As(ctx, &m, basetypes.ObjectAsOptions{})...)
 	if diags.HasError() {
 		return nil

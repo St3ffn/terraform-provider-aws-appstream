@@ -25,10 +25,10 @@ func flattenErrorDetailsData(ctx context.Context, errorDetails []awstypes.ErrorD
 		return types.SetNull(errorDetailObjectType)
 	}
 
-	out := make([]errorDetailModel, 0, len(errorDetails))
+	out := make([]dataSourceModelErrorDetails, 0, len(errorDetails))
 
 	for _, e := range errorDetails {
-		out = append(out, errorDetailModel{
+		out = append(out, dataSourceModelErrorDetails{
 			ErrorCode:    util.StringOrNull(e.ErrorCode),
 			ErrorMessage: util.StringOrNull(e.ErrorMessage),
 		})

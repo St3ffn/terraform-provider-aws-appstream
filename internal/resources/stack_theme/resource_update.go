@@ -36,65 +36,76 @@ func (r *resource) Update(ctx context.Context, req tfresource.UpdateRequest, res
 		return
 	}
 
+	diff := newResourceDiff(state, plan)
 	stackName := plan.StackName.ValueString()
 
-	input := &awsappstream.UpdateThemeForStackInput{
-		StackName: aws.String(stackName),
-	}
-	var attrToDelete []awstypes.ThemeAttribute
-
-	util.OptionalStringUpdate(plan.TitleText, state.TitleText, func(titleText *string) {
-		input.TitleText = titleText
-	})
-
-	if plan.ThemeStyling.IsNull() {
-		// no delete support
-	} else if !plan.ThemeStyling.IsUnknown() {
-		input.ThemeStyling = awstypes.ThemeStyling(plan.ThemeStyling.ValueString())
-	}
-
-	if plan.OrganizationLogoS3Location.IsNull() {
-		// no delete support
-	} else if !plan.OrganizationLogoS3Location.IsUnknown() {
-		input.OrganizationLogoS3Location = expandS3Location(ctx, plan.OrganizationLogoS3Location, &resp.Diagnostics)
-	}
-
-	if plan.FaviconS3Location.IsNull() {
-		// no delete support
-	} else if !plan.FaviconS3Location.IsUnknown() {
-		input.FaviconS3Location = expandS3Location(ctx, plan.FaviconS3Location, &resp.Diagnostics)
-	}
-
-	if !plan.FooterLinks.IsUnknown() {
-		if plan.FooterLinks.IsNull() {
-			attrToDelete = append(attrToDelete, awstypes.ThemeAttributeFooterLinks)
-		} else {
-			input.FooterLinks = expandFooterLinks(ctx, plan.FooterLinks, &resp.Diagnostics)
+	if diff.HasRemoteChanges() {
+		input := &awsappstream.UpdateThemeForStackInput{
+			StackName: aws.String(stackName),
 		}
-	}
+		var attrToDelete []awstypes.ThemeAttribute
 
-	input.AttributesToDelete = attrToDelete
+		if diff.TitleText.IsChanged() {
+			util.OptionalStringUpdate(plan.TitleText, state.TitleText, func(titleText *string) {
+				input.TitleText = titleText
+			})
+		}
 
-	if resp.Diagnostics.HasError() {
-		return
-	}
+		if diff.ThemeStyling.IsChanged() {
+			if plan.ThemeStyling.IsNull() {
+				// no delete support
+			} else {
+				input.ThemeStyling = awstypes.ThemeStyling(plan.ThemeStyling.ValueString())
+			}
+		}
 
-	_, err := r.appstreamClient.UpdateThemeForStack(ctx, input)
-	if err != nil {
-		if util.IsContextCanceled(err) {
+		if diff.OrganizationLogoS3Location.IsChanged() {
+			if plan.OrganizationLogoS3Location.IsNull() {
+				// no delete support
+			} else {
+				input.OrganizationLogoS3Location = expandS3Location(ctx, plan.OrganizationLogoS3Location, &resp.Diagnostics)
+			}
+		}
+
+		if diff.FaviconS3Location.IsChanged() {
+			if plan.FaviconS3Location.IsNull() {
+				// no delete support
+			} else {
+				input.FaviconS3Location = expandS3Location(ctx, plan.FaviconS3Location, &resp.Diagnostics)
+			}
+		}
+
+		if diff.FooterLinks.IsChanged() {
+			if plan.FooterLinks.IsNull() {
+				attrToDelete = append(attrToDelete, awstypes.ThemeAttributeFooterLinks)
+			} else {
+				input.FooterLinks = expandFooterLinks(ctx, plan.FooterLinks, &resp.Diagnostics)
+			}
+		}
+
+		input.AttributesToDelete = attrToDelete
+
+		if resp.Diagnostics.HasError() {
 			return
 		}
 
-		if util.IsAppStreamNotFound(err) {
-			resp.State.RemoveResource(ctx)
+		_, err := r.appstreamClient.UpdateThemeForStack(ctx, input)
+		if err != nil {
+			if util.IsContextCanceled(err) {
+				return
+			}
+
+			if util.IsAppStreamNotFound(err) {
+				resp.State.RemoveResource(ctx)
+				return
+			}
+
+			resp.Diagnostics.AddError(
+				"Error Updating AWS AppStream Stack Theme",
+				fmt.Sprintf("Could not update theme for stack %q: %v", stackName, err),
+			)
 			return
 		}
-
-		resp.Diagnostics.AddError(
-			"Error Updating AWS AppStream Stack Theme",
-			fmt.Sprintf("Could not update theme for stack %q: %v", stackName, err),
-		)
-		return
 	}
 
 	newState, diags := r.readStackTheme(ctx, plan)

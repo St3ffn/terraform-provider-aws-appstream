@@ -37,125 +37,161 @@ func (r *resource) Update(ctx context.Context, req tfresource.UpdateRequest, res
 		return
 	}
 
+	diff := newResourceDiff(state, plan)
 	name := plan.Name.ValueString()
 
-	input := &awsappstream.UpdateAppBlockBuilderInput{
-		Name: aws.String(name),
+	arnForTags := ""
+	switch {
+	case !plan.ARN.IsNull() && !plan.ARN.IsUnknown():
+		arnForTags = plan.ARN.ValueString()
+	case !state.ARN.IsNull() && !state.ARN.IsUnknown():
+		arnForTags = state.ARN.ValueString()
 	}
 
-	var attrsToDelete []awstypes.AppBlockBuilderAttribute
-
-	util.OptionalStringUpdate(plan.Description, state.Description, func(v *string) {
-		input.Description = v
-	})
-
-	util.OptionalStringUpdate(plan.DisplayName, state.DisplayName, func(v *string) {
-		input.DisplayName = v
-	})
-
-	input.DisableIMDSV1 = util.BoolPointerOrNil(plan.DisableIMDSV1)
-
-	input.EnableDefaultInternetAccess = util.BoolPointerOrNil(plan.EnableDefaultInternetAccess)
-
-	if plan.InstanceType.IsNull() {
-		// no delete support
-	} else if !plan.InstanceType.IsUnknown() {
-		input.InstanceType = plan.InstanceType.ValueStringPointer()
-	}
-
-	if plan.Platform.IsNull() {
-		// no delete support
-	} else if !plan.Platform.IsUnknown() {
-		input.Platform = awstypes.PlatformType(plan.Platform.ValueString())
-	}
-
-	if plan.IAMRoleARN.IsNull() {
-		if !plan.IAMRoleARN.IsUnknown() {
-			attrsToDelete = append(attrsToDelete, awstypes.AppBlockBuilderAttributeIamRoleArn)
-		}
-	} else if !plan.IAMRoleARN.IsUnknown() {
-		input.IamRoleArn = plan.IAMRoleARN.ValueStringPointer()
-	}
-
-	if plan.AccessEndpoints.IsNull() {
-		if !plan.AccessEndpoints.IsUnknown() {
-			attrsToDelete = append(attrsToDelete, awstypes.AppBlockBuilderAttributeAccessEndpoints)
-		}
-	} else if !plan.AccessEndpoints.IsUnknown() {
-		input.AccessEndpoints = expandAccessEndpoints(ctx, plan.AccessEndpoints, &resp.Diagnostics)
-	}
-
-	if plan.VPCConfig.IsNull() {
-		// no delete support
-	} else if !plan.VPCConfig.IsUnknown() {
-		stateVPCConfig := expandVPCConfig(ctx, state.VPCConfig, &resp.Diagnostics)
-		planVPCConfig := expandVPCConfig(ctx, plan.VPCConfig, &resp.Diagnostics)
-
-		if stateVPCConfig != nil && len(stateVPCConfig.SecurityGroupIds) > 0 &&
-			planVPCConfig != nil && len(planVPCConfig.SecurityGroupIds) == 0 {
-			attrsToDelete = append(attrsToDelete, awstypes.AppBlockBuilderAttributeVpcConfigurationSecurityGroupIds)
+	if diff.HasRemoteChanges() {
+		input := &awsappstream.UpdateAppBlockBuilderInput{
+			Name: aws.String(name),
 		}
 
-		input.VpcConfig = planVPCConfig
-	}
+		var attrsToDelete []awstypes.AppBlockBuilderAttribute
 
-	input.AttributesToDelete = attrsToDelete
-
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	restartAfter := false
-	var err error
-	mode := updateMode(state, plan)
-
-	switch mode {
-	case appBlockBuilderUpdateRequiresStop:
-		restartAfter, err = r.ensureStopped(ctx, name)
-		if err != nil {
-			resp.Diagnostics.AddError(
-				"Error Updating AWS AppStream App Block Builder",
-				fmt.Sprintf("Could not stop app block builder %q for update: %v", name, err),
-			)
-			return
-		}
-	case appBlockBuilderUpdateAllowedRunning:
-		// proceed normally
-	}
-
-	out, err := r.appstreamClient.UpdateAppBlockBuilder(ctx, input)
-	if err != nil {
-		if util.IsContextCanceled(err) {
-			return
+		if diff.Description.IsChanged() {
+			util.OptionalStringUpdate(plan.Description, state.Description, func(v *string) {
+				input.Description = v
+			})
 		}
 
-		if util.IsAppStreamNotFound(err) {
-			resp.State.RemoveResource(ctx)
-			return
+		if diff.DisplayName.IsChanged() {
+			util.OptionalStringUpdate(plan.DisplayName, state.DisplayName, func(v *string) {
+				input.DisplayName = v
+			})
 		}
 
-		resp.Diagnostics.AddError(
-			"Error Updating AWS AppStream App Block Builder",
-			fmt.Sprintf("Could not update app block builder %q: %v", name, err),
-		)
-		return
-	}
+		if diff.DisableIMDSV1.IsChanged() {
+			input.DisableIMDSV1 = util.BoolPointerOrNil(plan.DisableIMDSV1)
+		}
 
-	if out.AppBlockBuilder != nil && out.AppBlockBuilder.Arn != nil {
-		_, tagDiags := r.tags.Apply(ctx, aws.ToString(out.AppBlockBuilder.Arn), plan.Tags)
-		resp.Diagnostics.Append(tagDiags...)
+		if diff.EnableDefaultInternetAccess.IsChanged() {
+			input.EnableDefaultInternetAccess = util.BoolPointerOrNil(plan.EnableDefaultInternetAccess)
+		}
+
+		if diff.InstanceType.IsChanged() {
+			if plan.InstanceType.IsNull() {
+				// no delete support
+			} else {
+				input.InstanceType = plan.InstanceType.ValueStringPointer()
+			}
+		}
+
+		if diff.Platform.IsChanged() {
+			if plan.Platform.IsNull() {
+				// no delete support
+			} else {
+				input.Platform = awstypes.PlatformType(plan.Platform.ValueString())
+			}
+		}
+
+		if diff.IAMRoleARN.IsChanged() {
+			if plan.IAMRoleARN.IsNull() {
+				attrsToDelete = append(attrsToDelete, awstypes.AppBlockBuilderAttributeIamRoleArn)
+			} else {
+				input.IamRoleArn = plan.IAMRoleARN.ValueStringPointer()
+			}
+		}
+
+		if diff.AccessEndpoints.IsChanged() {
+			if plan.AccessEndpoints.IsNull() {
+				attrsToDelete = append(attrsToDelete, awstypes.AppBlockBuilderAttributeAccessEndpoints)
+			} else {
+				input.AccessEndpoints = expandAccessEndpoints(ctx, plan.AccessEndpoints, &resp.Diagnostics)
+			}
+		}
+
+		if diff.VPCConfig.IsChanged() {
+			if plan.VPCConfig.IsNull() {
+				// no delete support
+			} else {
+				stateVPCConfig := expandVPCConfig(ctx, state.VPCConfig, &resp.Diagnostics)
+				planVPCConfig := expandVPCConfig(ctx, plan.VPCConfig, &resp.Diagnostics)
+
+				if stateVPCConfig != nil && len(stateVPCConfig.SecurityGroupIds) > 0 &&
+					planVPCConfig != nil && len(planVPCConfig.SecurityGroupIds) == 0 {
+					attrsToDelete = append(attrsToDelete, awstypes.AppBlockBuilderAttributeVpcConfigurationSecurityGroupIds)
+				}
+
+				input.VpcConfig = planVPCConfig
+			}
+		}
+
+		input.AttributesToDelete = attrsToDelete
+
 		if resp.Diagnostics.HasError() {
 			return
 		}
-	}
 
-	if mode == appBlockBuilderUpdateRequiresStop && restartAfter {
-		err = r.ensureRunning(ctx, name)
+		restartAfter := false
+		mode := updateMode(state, plan)
+		var err error
+
+		switch mode {
+		case appBlockBuilderUpdateRequiresStop:
+			restartAfter, err = r.ensureStopped(ctx, name)
+			if err != nil {
+				resp.Diagnostics.AddError(
+					"Error Updating AWS AppStream App Block Builder",
+					fmt.Sprintf("Could not stop app block builder %q for update: %v", name, err),
+				)
+				return
+			}
+		case appBlockBuilderUpdateAllowedRunning:
+			// proceed normally
+		}
+
+		out, err := r.appstreamClient.UpdateAppBlockBuilder(ctx, input)
 		if err != nil {
+			if util.IsContextCanceled(err) {
+				return
+			}
+
+			if util.IsAppStreamNotFound(err) {
+				resp.State.RemoveResource(ctx)
+				return
+			}
+
 			resp.Diagnostics.AddError(
 				"Error Updating AWS AppStream App Block Builder",
-				fmt.Sprintf("Could not start app block builder %q after successful update: %v", name, err),
+				fmt.Sprintf("Could not update app block builder %q: %v", name, err),
 			)
+			return
+		}
+
+		if out.AppBlockBuilder != nil && out.AppBlockBuilder.Arn != nil {
+			arnForTags = aws.ToString(out.AppBlockBuilder.Arn)
+		}
+
+		if mode == appBlockBuilderUpdateRequiresStop && restartAfter {
+			err = r.ensureRunning(ctx, name)
+			if err != nil {
+				resp.Diagnostics.AddError(
+					"Error Updating AWS AppStream App Block Builder",
+					fmt.Sprintf("Could not start app block builder %q after successful update: %v", name, err),
+				)
+				return
+			}
+		}
+	}
+
+	if diff.RequiresTagApply() {
+		if arnForTags == "" {
+			resp.Diagnostics.AddError(
+				"Error Updating AWS AppStream App Block Builder",
+				fmt.Sprintf("Could not apply tags for app block builder %q: missing ARN in state and plan", name),
+			)
+			return
+		}
+		_, tagDiags := r.tags.Apply(ctx, arnForTags, plan.Tags)
+		resp.Diagnostics.Append(tagDiags...)
+		if resp.Diagnostics.HasError() {
 			return
 		}
 	}

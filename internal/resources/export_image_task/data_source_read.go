@@ -15,7 +15,7 @@ import (
 )
 
 func (ds *dataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var config model
+	var config dataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
 	if resp.Diagnostics.HasError() {
@@ -69,10 +69,10 @@ func (ds *dataSource) Read(ctx context.Context, req datasource.ReadRequest, resp
 
 	task := out.ExportImageTask
 
-	state := &model{
+	state := &dataSourceModel{
 		ID:                types.StringValue(aws.ToString(task.TaskId)),
 		TaskID:            types.StringValue(aws.ToString(task.TaskId)),
-		ImageArn:          util.StringOrNull(task.ImageArn),
+		ImageARN:          util.StringOrNull(task.ImageArn),
 		AmiName:           util.StringOrNull(task.AmiName),
 		AmiDescription:    util.StringOrNull(task.AmiDescription),
 		AmiID:             util.StringOrNull(task.AmiId),

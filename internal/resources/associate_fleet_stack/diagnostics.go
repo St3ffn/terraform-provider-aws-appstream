@@ -13,9 +13,9 @@ const (
 	diagnosticDelete diagnosticMode = "delete"
 )
 
-func addDiagnostics(model model, diags *diag.Diagnostics, mode diagnosticMode) {
-	if model.FleetName.IsNull() || model.FleetName.IsUnknown() ||
-		model.StackName.IsNull() || model.StackName.IsUnknown() {
+func addDiagnostics(resourceModel resourceModel, diags *diag.Diagnostics, mode diagnosticMode) {
+	if resourceModel.FleetName.IsNull() || resourceModel.FleetName.IsUnknown() ||
+		resourceModel.StackName.IsNull() || resourceModel.StackName.IsUnknown() {
 
 		switch mode {
 		case diagnosticPlan:

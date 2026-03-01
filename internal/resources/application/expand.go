@@ -14,7 +14,7 @@ import (
 )
 
 func expandIconS3Location(ctx context.Context, obj types.Object, diags *diag.Diagnostics) *awstypes.S3Location {
-	var m iconS3LocationModel
+	var m resourceModelIconS3Location
 	diags.Append(obj.As(ctx, &m, basetypes.ObjectAsOptions{})...)
 	if diags.HasError() {
 		return nil

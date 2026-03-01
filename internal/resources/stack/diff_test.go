@@ -13,8 +13,8 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func testStorageConnector(connectorType string) storageConnectorModel {
-	return storageConnectorModel{
+func testStorageConnector(connectorType string) resourceModelStorageConnectors {
+	return resourceModelStorageConnectors{
 		ConnectorType:              types.StringValue(connectorType),
 		ResourceIdentifier:         types.StringNull(),
 		Domains:                    types.SetNull(types.StringType),
@@ -22,7 +22,7 @@ func testStorageConnector(connectorType string) storageConnectorModel {
 	}
 }
 
-func storageConnectorSet(ctx context.Context, t *testing.T, models []storageConnectorModel) types.Set {
+func storageConnectorSet(ctx context.Context, t *testing.T, models []resourceModelStorageConnectors) types.Set {
 	t.Helper()
 
 	if len(models) == 0 {
@@ -42,8 +42,8 @@ func TestStorageConnectorAttributesToDelete(t *testing.T) {
 
 	tests := []struct {
 		name      string
-		prior     []storageConnectorModel
-		plan      []storageConnectorModel
+		prior     []resourceModelStorageConnectors
+		plan      []resourceModelStorageConnectors
 		wantAttrs []awstypes.StackAttribute
 	}{
 		{
@@ -54,7 +54,7 @@ func TestStorageConnectorAttributesToDelete(t *testing.T) {
 		},
 		{
 			name: "prior_only_delete_all",
-			prior: []storageConnectorModel{
+			prior: []resourceModelStorageConnectors{
 				testStorageConnector("HOMEFOLDERS"),
 				testStorageConnector("GOOGLE_DRIVE"),
 			},
@@ -66,21 +66,21 @@ func TestStorageConnectorAttributesToDelete(t *testing.T) {
 		},
 		{
 			name: "prior_and_plan_identical_no_deletes",
-			prior: []storageConnectorModel{
+			prior: []resourceModelStorageConnectors{
 				testStorageConnector("HOMEFOLDERS"),
 			},
-			plan: []storageConnectorModel{
+			plan: []resourceModelStorageConnectors{
 				testStorageConnector("HOMEFOLDERS"),
 			},
 			wantAttrs: nil,
 		},
 		{
 			name: "remove_one_connector",
-			prior: []storageConnectorModel{
+			prior: []resourceModelStorageConnectors{
 				testStorageConnector("HOMEFOLDERS"),
 				testStorageConnector("GOOGLE_DRIVE"),
 			},
-			plan: []storageConnectorModel{
+			plan: []resourceModelStorageConnectors{
 				testStorageConnector("HOMEFOLDERS"),
 			},
 			wantAttrs: []awstypes.StackAttribute{
@@ -89,11 +89,11 @@ func TestStorageConnectorAttributesToDelete(t *testing.T) {
 		},
 		{
 			name: "unknown_connector_type_ignored",
-			prior: []storageConnectorModel{
+			prior: []resourceModelStorageConnectors{
 				testStorageConnector("HOMEFOLDERS"),
 				testStorageConnector("UNKNOWN"),
 			},
-			plan: []storageConnectorModel{
+			plan: []resourceModelStorageConnectors{
 				testStorageConnector("HOMEFOLDERS"),
 			},
 			wantAttrs: nil,

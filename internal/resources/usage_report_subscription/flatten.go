@@ -28,9 +28,9 @@ func flattenSubscriptionErrors(
 		return types.SetNull(subscriptionErrorObjectType)
 	}
 
-	out := make([]subscriptionErrorModel, 0, len(awsErrors))
+	out := make([]resourceModelSubscriptionErrors, 0, len(awsErrors))
 	for _, e := range awsErrors {
-		out = append(out, subscriptionErrorModel{
+		out = append(out, resourceModelSubscriptionErrors{
 			ErrorCode:    types.StringValue(string(e.ErrorCode)),
 			ErrorMessage: util.StringOrNull(e.ErrorMessage),
 		})

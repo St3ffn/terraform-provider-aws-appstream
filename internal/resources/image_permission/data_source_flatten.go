@@ -28,10 +28,10 @@ func flattenImagePermissionsData(
 		return types.SetNull(imagePermissionEntryObjectType)
 	}
 
-	entries := make([]imagePermissionModel, 0, len(awsEntries))
+	entries := make([]dataSourceModelPermissions, 0, len(awsEntries))
 
 	for _, e := range awsEntries {
-		entries = append(entries, imagePermissionModel{
+		entries = append(entries, dataSourceModelPermissions{
 			SharedAccountID:  util.StringOrNull(e.SharedAccountId),
 			ImagePermissions: flattenImagePermissionsResource(ctx, e.ImagePermissions, diags),
 		})

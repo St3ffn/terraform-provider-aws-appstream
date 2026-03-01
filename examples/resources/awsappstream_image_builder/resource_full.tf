@@ -12,7 +12,7 @@ resource "awsappstream_image_builder" "example" {
 
   iam_role_arn = "arn:aws:iam::123456789012:role/AppStreamImageBuilderRole"
 
-  vpc_config {
+  vpc_config = {
     subnet_ids = [
       "subnet-0abc123def4567890"
     ]
@@ -22,7 +22,7 @@ resource "awsappstream_image_builder" "example" {
     ]
   }
 
-  domain_join_info {
+  domain_join_info = {
     directory_name                         = "corp.example.com"
     organizational_unit_distinguished_name = "OU=AppStream,DC=corp,DC=example,DC=com"
   }
@@ -34,7 +34,7 @@ resource "awsappstream_image_builder" "example" {
     }
   ]
 
-  root_volume_config {
+  root_volume_config = {
     volume_size_in_gb = 300
   }
 

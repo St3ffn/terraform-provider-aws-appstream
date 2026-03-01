@@ -43,7 +43,7 @@ func TestFlattenServiceAccountCredentials(t *testing.T) {
 			prior: mustObject(
 				t,
 				serviceAccountCredentialsObjectType.AttrTypes,
-				serviceAccountCredentialsModel{
+				resourceModelServiceAccountCredentials{
 					AccountName:     types.StringValue("svc"),
 					AccountPassword: types.StringValue("secret"),
 				},
@@ -56,7 +56,7 @@ func TestFlattenServiceAccountCredentials(t *testing.T) {
 			prior: mustObject(
 				t,
 				serviceAccountCredentialsObjectType.AttrTypes,
-				serviceAccountCredentialsModel{
+				resourceModelServiceAccountCredentials{
 					AccountName:     types.StringValue("svc"),
 					AccountPassword: types.StringValue("secret"),
 				},

@@ -42,7 +42,7 @@ func TestFlattenStorageConnectorsResource(t *testing.T) {
 		},
 		{
 			name: "aws_resource_identifier_not_adopted_when_not_configured",
-			prior: mustSet(t, storageConnectorObjectType, []storageConnectorModel{
+			prior: mustSet(t, storageConnectorObjectType, []resourceModelStorageConnectors{
 				{
 					ConnectorType:              types.StringValue("HOMEFOLDERS"),
 					ResourceIdentifier:         types.StringNull(),
@@ -61,7 +61,7 @@ func TestFlattenStorageConnectorsResource(t *testing.T) {
 		},
 		{
 			name: "aws_connector_missing_returns_drifted_element",
-			prior: mustSet(t, storageConnectorObjectType, []storageConnectorModel{
+			prior: mustSet(t, storageConnectorObjectType, []resourceModelStorageConnectors{
 				{
 					ConnectorType:              types.StringValue("HOMEFOLDERS"),
 					ResourceIdentifier:         types.StringNull(),
@@ -92,7 +92,7 @@ func TestFlattenStorageConnectorsResource(t *testing.T) {
 				return
 			}
 
-			var models []storageConnectorModel
+			var models []resourceModelStorageConnectors
 			diags = out.ElementsAs(ctx, &models, false)
 			require.False(t, diags.HasError())
 			require.Len(t, models, tt.expectElements)
@@ -109,7 +109,7 @@ func TestFlattenUserSettingsResource_basic_mapping(t *testing.T) {
 
 	ctx := context.Background()
 
-	prior := mustSet(t, userSettingObjectType, []userSettingModel{
+	prior := mustSet(t, userSettingObjectType, []resourceModelUserSettings{
 		{
 			Action:        types.StringValue("CLIPBOARD_COPY_FROM_LOCAL_DEVICE"),
 			Permission:    types.StringValue("ENABLED"),
@@ -128,7 +128,7 @@ func TestFlattenUserSettingsResource_basic_mapping(t *testing.T) {
 	out := flattenUserSettingsResource(ctx, prior, awsSettings, &diags)
 	require.False(t, diags.HasError())
 
-	var models []userSettingModel
+	var models []resourceModelUserSettings
 	diags = out.ElementsAs(ctx, &models, false)
 	require.False(t, diags.HasError())
 	require.Len(t, models, 1)
@@ -143,7 +143,7 @@ func TestFlattenApplicationSettingsResource_computed_bucket_preserved(t *testing
 
 	ctx := context.Background()
 
-	prior := mustObject(t, applicationSettingsObjectType.AttrTypes, applicationSettingsModel{
+	prior := mustObject(t, applicationSettingsObjectType.AttrTypes, resourceModelApplicationSettings{
 		Enabled:       types.BoolValue(true),
 		SettingsGroup: types.StringNull(),
 		S3BucketName:  types.StringNull(),
@@ -159,7 +159,7 @@ func TestFlattenApplicationSettingsResource_computed_bucket_preserved(t *testing
 	out := flattenApplicationSettingsResource(ctx, prior, awsResp, &diags)
 	require.False(t, diags.HasError())
 
-	var model applicationSettingsModel
+	var model resourceModelApplicationSettings
 	diags = out.As(ctx, &model, basetypes.ObjectAsOptions{})
 	require.False(t, diags.HasError())
 
@@ -173,7 +173,7 @@ func TestFlattenAccessEndpointsResource_basic_mapping(t *testing.T) {
 
 	ctx := context.Background()
 
-	prior := mustSet(t, accessEndpointObjectType, []accessEndpointModel{
+	prior := mustSet(t, accessEndpointObjectType, []resourceModelAccessEndpoints{
 		{
 			EndpointType: types.StringValue("STREAMING"),
 			VpceID:       types.StringValue("vpce-123"),
@@ -191,7 +191,7 @@ func TestFlattenAccessEndpointsResource_basic_mapping(t *testing.T) {
 	out := flattenAccessEndpointsResource(ctx, prior, awsEndpoints, &diags)
 	require.False(t, diags.HasError())
 
-	var models []accessEndpointModel
+	var models []resourceModelAccessEndpoints
 	diags = out.ElementsAs(ctx, &models, false)
 	require.False(t, diags.HasError())
 	require.Len(t, models, 1)
@@ -208,7 +208,7 @@ func TestFlattenStreamingExperienceSettingsResource_preferred_protocol_from_aws(
 	prior := mustObject(
 		t,
 		streamingExperienceSettingsObjectType.AttrTypes,
-		streamingExperienceSettingsModel{
+		resourceModelStreamingExperienceSettings{
 			PreferredProtocol: types.StringValue("TCP"),
 		},
 	)
@@ -221,7 +221,7 @@ func TestFlattenStreamingExperienceSettingsResource_preferred_protocol_from_aws(
 	out := flattenStreamingExperienceSettingsResource(ctx, prior, awsSettings, &diags)
 	require.False(t, diags.HasError())
 
-	var model streamingExperienceSettingsModel
+	var model resourceModelStreamingExperienceSettings
 	diags = out.As(ctx, &model, basetypes.ObjectAsOptions{})
 	require.False(t, diags.HasError())
 

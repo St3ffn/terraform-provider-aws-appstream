@@ -17,7 +17,7 @@ func expandFilters(ctx context.Context, set types.Set, diags *diag.Diagnostics) 
 		return nil
 	}
 
-	var models []filterModel
+	var models []dataSourceModelFilters
 	diags.Append(set.ElementsAs(ctx, &models, false)...)
 	if diags.HasError() {
 		return nil

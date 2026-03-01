@@ -111,7 +111,7 @@ func (r *resource) ValidateConfig(ctx context.Context, req tfresource.ValidateCo
 			)
 		}
 
-		var vpc vpcConfigModel
+		var vpc resourceModelVPCConfig
 		resp.Diagnostics.Append(
 			config.VPCConfig.As(ctx, &vpc, basetypes.ObjectAsOptions{})...,
 		)
@@ -183,6 +183,15 @@ func (r *resource) ValidateConfig(ctx context.Context, req tfresource.ValidateCo
 			)
 		}
 
+		// platform is only supported for elastic fleets
+		if !config.Platform.IsNull() && !config.Platform.IsUnknown() {
+			resp.Diagnostics.AddAttributeError(
+				path.Root("platform"),
+				"Invalid Configuration",
+				"`platform` can only be specified for elastic fleets.",
+			)
+		}
+
 		// non-elastic fleets must define compute capacity
 		if config.ComputeCapacity.IsNull() {
 			resp.Diagnostics.AddAttributeError(
@@ -193,7 +202,7 @@ func (r *resource) ValidateConfig(ctx context.Context, req tfresource.ValidateCo
 			return
 		}
 
-		var capacity computeCapacityModel
+		var capacity resourceModelComputeCapacity
 		resp.Diagnostics.Append(
 			config.ComputeCapacity.As(ctx, &capacity, basetypes.ObjectAsOptions{})...,
 		)
@@ -289,4 +298,7 @@ func (r *resource) ImportState(ctx context.Context, req tfresource.ImportStateRe
 
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("name"), req.ID)...)
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("id"), req.ID)...)
+	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("desired_state"), desiredStateInherit.String())...)
+	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("update_behavior"), updateBehaviorAutoStopStart.String())...)
+	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("stream_view"), string(awstypes.StreamViewApp))...)
 }

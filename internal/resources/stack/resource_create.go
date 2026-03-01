@@ -40,8 +40,8 @@ func (r *resource) Create(ctx context.Context, req tfresource.CreateRequest, res
 
 	input.Description = util.StringPointerOrNil(plan.Description)
 	input.DisplayName = util.StringPointerOrNil(plan.DisplayName)
-	input.RedirectURL = util.StringPointerOrNil(plan.RedirectURL)
-	input.FeedbackURL = util.StringPointerOrNil(plan.FeedbackURL)
+	input.RedirectURL = util.StringPointerOrNil(plan.RedirectUrl)
+	input.FeedbackURL = util.StringPointerOrNil(plan.FeedbackUrl)
 
 	if !plan.StorageConnectors.IsNull() && !plan.StorageConnectors.IsUnknown() {
 		input.StorageConnectors = expandStorageConnectors(ctx, plan.StorageConnectors, &resp.Diagnostics)

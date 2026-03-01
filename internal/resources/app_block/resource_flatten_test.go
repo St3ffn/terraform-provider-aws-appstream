@@ -14,6 +14,58 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
+func TestFlattenSourceS3LocationResource(t *testing.T) {
+	t.Parallel()
+
+	ctx := context.Background()
+
+	tests := []struct {
+		name  string
+		input *awstypes.S3Location
+		want  types.Object
+	}{
+		{
+			name:  "nil_location_returns_null_object",
+			input: nil,
+			want:  types.ObjectNull(sourceS3LocationObjectType.AttrTypes),
+		},
+		{
+			name: "bucket_and_key_set",
+			input: &awstypes.S3Location{
+				S3Bucket: aws.String("my-bucket"),
+				S3Key:    aws.String("path/to/object"),
+			},
+			want: types.ObjectValueMust(
+				sourceS3LocationObjectType.AttrTypes,
+				map[string]attr.Value{
+					"s3_bucket": types.StringValue("my-bucket"),
+					"s3_key":    types.StringValue("path/to/object"),
+				},
+			),
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			var diags diag.Diagnostics
+
+			got := flattenSourceS3LocationResource(ctx, tt.input, &diags)
+
+			if diags.HasError() {
+				t.Fatalf("unexpected diagnostics for test %q: %v", tt.name, diags)
+			}
+
+			if !got.Equal(tt.want) {
+				t.Fatalf("flattenSourceS3LocationResource mismatch for test %q\n got:  %v\n want: %v",
+					tt.name, got, tt.want,
+				)
+			}
+		})
+	}
+}
+
 func TestFlattenScriptDetailsResource(t *testing.T) {
 	t.Parallel()
 
@@ -100,6 +152,70 @@ func TestFlattenScriptDetailsResource(t *testing.T) {
 				t.Fatalf(
 					"flattenScriptDetailsResource mismatch\nprior: %v\naws: %#v\ngot:  %v\nwant: %v",
 					tt.prior, tt.aws, got, tt.want,
+				)
+			}
+		})
+	}
+}
+
+func TestFlattenAppBlockErrorsResource(t *testing.T) {
+	t.Parallel()
+
+	ctx := context.Background()
+
+	tests := []struct {
+		name  string
+		input []awstypes.ErrorDetails
+		want  types.Set
+	}{
+		{
+			name:  "nil_slice_returns_null_set",
+			input: nil,
+			want:  types.SetNull(errorObjectType),
+		},
+		{
+			name:  "empty_slice_returns_null_set",
+			input: []awstypes.ErrorDetails{},
+			want:  types.SetNull(errorObjectType),
+		},
+		{
+			name: "single_error",
+			input: []awstypes.ErrorDetails{
+				{
+					ErrorCode:    aws.String("InvalidParameter"),
+					ErrorMessage: aws.String("Something went wrong"),
+				},
+			},
+			want: types.SetValueMust(
+				errorObjectType,
+				[]attr.Value{
+					types.ObjectValueMust(
+						errorObjectType.AttrTypes,
+						map[string]attr.Value{
+							"error_code":    types.StringValue("InvalidParameter"),
+							"error_message": types.StringValue("Something went wrong"),
+						},
+					),
+				},
+			),
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			var diags diag.Diagnostics
+
+			got := flattenAppBlockErrorsResource(ctx, tt.input, &diags)
+
+			if diags.HasError() {
+				t.Fatalf("unexpected diagnostics for test %q: %v", tt.name, diags)
+			}
+
+			if !got.Equal(tt.want) {
+				t.Fatalf("flattenAppBlockErrorsResource mismatch for test %q\n got:  %v\n want: %v",
+					tt.name, got, tt.want,
 				)
 			}
 		})

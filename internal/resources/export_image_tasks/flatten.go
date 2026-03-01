@@ -42,12 +42,12 @@ func flattenExportImageTasksData(
 		return types.SetNull(exportImageTaskObjectType)
 	}
 
-	out := make([]exportImageTaskModel, 0, len(tasks))
+	out := make([]dataSourceModelExportImageTasks, 0, len(tasks))
 
 	for _, t := range tasks {
-		out = append(out, exportImageTaskModel{
+		out = append(out, dataSourceModelExportImageTasks{
 			TaskID:            util.StringOrNull(t.TaskId),
-			ImageArn:          util.StringOrNull(t.ImageArn),
+			ImageARN:          util.StringOrNull(t.ImageArn),
 			AmiName:           util.StringOrNull(t.AmiName),
 			AmiDescription:    util.StringOrNull(t.AmiDescription),
 			AmiID:             util.StringOrNull(t.AmiId),
@@ -75,10 +75,10 @@ func flattenErrorDetailsData(
 		return types.SetNull(errorDetailObjectType)
 	}
 
-	out := make([]errorDetailModel, 0, len(errorDetails))
+	out := make([]dataSourceModelExportImageTasksErrorDetails, 0, len(errorDetails))
 
 	for _, e := range errorDetails {
-		out = append(out, errorDetailModel{
+		out = append(out, dataSourceModelExportImageTasksErrorDetails{
 			ErrorCode:    util.StringOrNull(e.ErrorCode),
 			ErrorMessage: util.StringOrNull(e.ErrorMessage),
 		})

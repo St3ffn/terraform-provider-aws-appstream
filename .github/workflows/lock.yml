@@ -1,6 +1,6 @@
 # DO NOT EDIT - This GitHub Workflow is managed by automation
 # https://github.com/hashicorp/terraform-devex-repos
-name: 'Lock Threads'
+name: Lock Threads
 
 on:
   schedule:
@@ -12,6 +12,7 @@ permissions:
 
 jobs:
   lock:
+    name: Lock Inactive Threads
     runs-on: ubuntu-latest
     steps:
       # NOTE: When TSCCR updates the GitHub action version, update the template workflow file to avoid drift:

@@ -20,7 +20,7 @@ resource "awsappstream_fleet" "minimal" {
   image_name    = "example-image"
   instance_type = "stream.standard.small"
 
-  compute_capacity {
+  compute_capacity = {
     desired_instances = 1
   }
 }
@@ -36,11 +36,11 @@ resource "awsappstream_fleet" "full" {
   display_name = "Engineering Always-On Fleet"
   description  = "Always-on AppStream fleet for engineering workloads"
 
-  compute_capacity {
+  compute_capacity = {
     desired_instances = 5
   }
 
-  vpc_config {
+  vpc_config = {
     subnet_ids = [
       "subnet-0a1234567890abcd1",
       "subnet-0b1234567890abcd2",
@@ -60,14 +60,13 @@ resource "awsappstream_fleet" "full" {
   iam_role_arn = "arn:aws:iam::123456789012:role/AppStreamFleetRole"
 
   stream_view = "DESKTOP"
-  platform    = "WINDOWS_SERVER_2022"
 
-  domain_join_info {
+  domain_join_info = {
     directory_name                         = "corp.example.com"
     organizational_unit_distinguished_name = "OU=AppStream,OU=Computers,DC=corp,DC=example,DC=com"
   }
 
-  root_volume_config {
+  root_volume_config = {
     volume_size_in_gb = 250
   }
 
@@ -93,7 +92,7 @@ resource "awsappstream_fleet" "always_on_single_session" {
   image_name    = "example-appstream-image"
   instance_type = "stream.standard.medium"
 
-  compute_capacity {
+  compute_capacity = {
     desired_instances = 2
   }
 
@@ -108,7 +107,7 @@ resource "awsappstream_fleet" "always_on_multi_session" {
   image_name    = "example-appstream-image"
   instance_type = "stream.standard.large"
 
-  compute_capacity {
+  compute_capacity = {
     desired_sessions = 30
   }
 
@@ -124,12 +123,12 @@ resource "awsappstream_fleet" "elastic" {
   name       = "elastic-fleet"
   fleet_type = "ELASTIC"
 
-  image_name    = "example-elastic-image"
   instance_type = "stream.standard.large"
+  platform      = "WINDOWS_SERVER_2019"
 
   max_concurrent_sessions = 100
 
-  vpc_config {
+  vpc_config = {
     subnet_ids = [
       "subnet-0123456789abcdef0",
       "subnet-0fedcba9876543210",
@@ -149,7 +148,7 @@ resource "awsappstream_fleet" "on_demand_single_session" {
   image_name    = "example-appstream-image"
   instance_type = "stream.standard.medium"
 
-  compute_capacity {
+  compute_capacity = {
     desired_instances = 2
   }
 
@@ -164,7 +163,7 @@ resource "awsappstream_fleet" "on_demand_multi_session" {
   image_name    = "example-appstream-image"
   instance_type = "stream.standard.large"
 
-  compute_capacity {
+  compute_capacity = {
     desired_sessions = 20
   }
 
@@ -188,11 +187,11 @@ resource "awsappstream_fleet" "on_demand_multi_session" {
 - `compute_capacity` (Attributes) Specifies the desired capacity for the fleet. Exactly one of `desired_instances` or `desired_sessions` must be specified for non-elastic fleets. These attributes are mutually exclusive. (see [below for nested schema](#nestedatt--compute_capacity))
 - `description` (String) The fleet description, if set.
 - `desired_state` (String) The runtime fleet state to enforce after create and update operations. Valid values are `INHERIT`, `RUNNING`, and `STOPPED`. The default value is `INHERIT`, which preserves the fleet's existing runtime state.
-- `disable_imds_v1` (Boolean) Whether Instance Metadata Service Version 1 (IMDSv1) is disabled for the AppStream fleet. If `true`, only IMDSv2 is enabled. If `false`, both IMDSv1 and IMDSv2 are enabled.
+- `disable_imds_v1` (Boolean) Whether Instance Metadata Service Version 1 (IMDSv1) is disabled for the AppStream fleet. If `true`, only IMDSv2 is enabled. If `false`, both IMDSv1 and IMDSv2 are enabled. The default value is `false`.
 - `disconnect_timeout_in_seconds` (Number) The amount of time that a disconnected session is allowed to remain active.
 - `display_name` (String) The name displayed to users in the AppStream user interface.
 - `domain_join_info` (Attributes) Specifies the Active Directory domain and organizational unit used to join fleet instances to a Microsoft Active Directory domain. This configuration is not supported for elastic fleets. (see [below for nested schema](#nestedatt--domain_join_info))
-- `enable_default_internet_access` (Boolean) Whether instances in the fleet have access to the internet.
+- `enable_default_internet_access` (Boolean) Whether instances in the fleet have access to the internet. The default value is `false`.
 - `iam_role_arn` (String) The ARN of the IAM role applied to fleet instances.
 - `idle_disconnect_timeout_in_seconds` (Number) The amount of time, in seconds, that a session can remain idle before being disconnected. Specify `0` to disable idle disconnection. Otherwise, the value must be a multiple of 60 seconds between 60 and 36000 to avoid AWS rounding behavior.
 - `image_arn` (String) The ARN of the AppStream image used to create the fleet. This attribute is supported only for non-elastic fleets. Either `image_name` or `image_arn` must be specified.
@@ -200,10 +199,10 @@ resource "awsappstream_fleet" "on_demand_multi_session" {
 - `max_concurrent_sessions` (Number) The maximum number of concurrent streaming sessions for an elastic fleet. This setting is required for elastic fleets and is not allowed for other fleet types.
 - `max_sessions_per_instance` (Number) The maximum number of user sessions allowed per fleet instance. This setting applies only to multi-session fleets.
 - `max_user_duration_in_seconds` (Number) The maximum length of time that a streaming session can remain active.
-- `platform` (String) The platform of the fleet. This attribute is optional but required for elastic fleets. If not specified, the platform is inferred from the image.
+- `platform` (String) The platform of the fleet. This attribute is only supported for elastic fleets and must be specified when `fleet_type` is `ELASTIC`.
 - `root_volume_config` (Attributes) Specifies the root volume configuration for fleet instances. (see [below for nested schema](#nestedatt--root_volume_config))
 - `session_script_s3_location` (Attributes) Specifies the S3 location of the session scripts configuration ZIP file. This setting applies only to elastic fleets. (see [below for nested schema](#nestedatt--session_script_s3_location))
-- `stream_view` (String) Controls which streaming protocol views are enabled.
+- `stream_view` (String) Controls which streaming protocol views are enabled. The default value is `APP`
 - `tags` (Map of String) A map of tags assigned to the fleet.
 - `update_behavior` (String) Controls how updates are handled when AWS requires the fleet to be stopped. Valid values are `AUTO_STOP_START` and `FAIL_IF_RUNNING`. If omitted, `AUTO_STOP_START` behavior is used.
 - `usb_device_filter_strings` (Set of String) Defines which USB devices can be redirected to streaming sessions when using the Windows native client. This setting is supported only for Windows fleets. For non-Windows platforms or non-native clients, this configuration is accepted by AWS but ignored at runtime.

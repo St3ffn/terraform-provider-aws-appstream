@@ -12,6 +12,7 @@ permissions:
 
 jobs:
   issue_comment_triage:
+    name: Remove Waiting-Response Label
     runs-on: ubuntu-latest
     env:
       # issue_comment events are triggered by comments on issues and pull requests. Checking the

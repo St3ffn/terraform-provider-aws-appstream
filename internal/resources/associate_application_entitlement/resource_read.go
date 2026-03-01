@@ -16,7 +16,7 @@ import (
 )
 
 func (r *resource) Read(ctx context.Context, req tfresource.ReadRequest, resp *tfresource.ReadResponse) {
-	var state model
+	var state resourceModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
@@ -57,7 +57,7 @@ func (r *resource) Read(ctx context.Context, req tfresource.ReadRequest, resp *t
 
 func (r *resource) readAssociateApplicationEntitlement(
 	ctx context.Context, stackName, entitlementName, applicationIdentifier string,
-) (*model, diag.Diagnostics) {
+) (*resourceModel, diag.Diagnostics) {
 
 	var diags diag.Diagnostics
 	var nextToken *string
@@ -89,7 +89,7 @@ func (r *resource) readAssociateApplicationEntitlement(
 
 		for _, ea := range out.EntitledApplications {
 			if ea.ApplicationIdentifier != nil && *ea.ApplicationIdentifier == applicationIdentifier {
-				state := &model{
+				state := &resourceModel{
 					ID: types.StringValue(
 						buildID(stackName, entitlementName, applicationIdentifier),
 					),

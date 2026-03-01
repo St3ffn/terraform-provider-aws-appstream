@@ -19,7 +19,7 @@ func storageConnectorAttributesToDelete(
 	attrsToDelete := make([]awstypes.StackAttribute, 0)
 
 	if !priorSet.IsNull() && !priorSet.IsUnknown() {
-		var prior []storageConnectorModel
+		var prior []resourceModelStorageConnectors
 		diags.Append(priorSet.ElementsAs(ctx, &prior, false)...)
 		if diags.HasError() {
 			return nil
@@ -32,7 +32,7 @@ func storageConnectorAttributesToDelete(
 	}
 
 	if !planSet.IsNull() && !planSet.IsUnknown() {
-		var desired []storageConnectorModel
+		var desired []resourceModelStorageConnectors
 		diags.Append(planSet.ElementsAs(ctx, &desired, false)...)
 		if diags.HasError() {
 			return nil

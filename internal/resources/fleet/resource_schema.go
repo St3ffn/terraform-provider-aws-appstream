@@ -14,7 +14,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	tfresource "github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/boolplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int32planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
@@ -62,9 +62,6 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 					"Either `image_name` or `image_arn` must be specified.",
 				Optional: true,
 				Computed: true,
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.UseStateForUnknown(),
-				},
 				Validators: []validator.String{
 					stringvalidator.RegexMatches(
 						regexp.MustCompile(`^[a-zA-Z0-9][a-zA-Z0-9_.-]{0,100}$`),
@@ -79,9 +76,6 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 					"Either `image_name` or `image_arn` must be specified.",
 				Optional: true,
 				Computed: true,
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.UseStateForUnknown(),
-				},
 				Validators: []validator.String{
 					util.ValidARNWithServiceAndResource("appstream", "image/"),
 				},
@@ -222,21 +216,18 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				Description: "Disable IMDSv1 and enforce IMDSv2 for the AppStream Fleet.",
 				MarkdownDescription: "Whether Instance Metadata Service Version 1 (IMDSv1) is disabled for the " +
 					"AppStream fleet. If `true`, only IMDSv2 is enabled. " +
-					"If `false`, both IMDSv1 and IMDSv2 are enabled.",
+					"If `false`, both IMDSv1 and IMDSv2 are enabled. The default value is `false`.",
 				Optional: true,
 				Computed: true,
-				PlanModifiers: []planmodifier.Bool{
-					boolplanmodifier.UseStateForUnknown(),
-				},
+				Default:  booldefault.StaticBool(false),
 			},
 			"enable_default_internet_access": schema.BoolAttribute{
-				Description:         "Enable default internet access.",
-				MarkdownDescription: "Whether instances in the fleet have access to the internet.",
-				Optional:            true,
-				Computed:            true,
-				PlanModifiers: []planmodifier.Bool{
-					boolplanmodifier.UseStateForUnknown(),
-				},
+				Description: "Enable default internet access.",
+				MarkdownDescription: "Whether instances in the fleet have access to the internet. " +
+					"The default value is `false`.",
+				Optional: true,
+				Computed: true,
+				Default:  booldefault.StaticBool(false),
 			},
 			"domain_join_info": schema.SingleNestedAttribute{
 				Description: "Active Directory domain join configuration.",
@@ -270,8 +261,10 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 			},
 			"stream_view": schema.StringAttribute{
 				Description:         "Streaming view configuration.",
-				MarkdownDescription: "Controls which streaming protocol views are enabled.",
+				MarkdownDescription: "Controls which streaming protocol views are enabled. The default value is `APP`",
 				Optional:            true,
+				Computed:            true,
+				Default:             stringdefault.StaticString(string(awstypes.StreamViewApp)),
 				Validators: []validator.String{
 					stringvalidator.OneOf(
 						util.AWSEnumToSlice(awstypes.StreamView.Values)...,
@@ -280,8 +273,8 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 			},
 			"platform": schema.StringAttribute{
 				Description: "Fleet platform.",
-				MarkdownDescription: "The platform of the fleet. This attribute is optional but required " +
-					"for elastic fleets. If not specified, the platform is inferred from the image.",
+				MarkdownDescription: "The platform of the fleet. This attribute is only supported for elastic fleets " +
+					"and must be specified when `fleet_type` is `ELASTIC`.",
 				Optional: true,
 				Validators: []validator.String{
 					stringvalidator.LengthAtLeast(1),
@@ -390,6 +383,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				Computed:            true,
 				ElementType:         types.StringType,
 			},
+			// codegen:has_remote_changes=false
 			"desired_state": schema.StringAttribute{
 				Description: "Desired runtime state of the AppStream Fleet.",
 				MarkdownDescription: "The runtime fleet state to enforce after create and update operations. " +
@@ -406,6 +400,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 					),
 				},
 			},
+			// codegen:has_remote_changes=false
 			"update_behavior": schema.StringAttribute{
 				Description: "Update behavior for the AppStream Fleet lifecycle.",
 				MarkdownDescription: "Controls how updates are handled when AWS requires the fleet to be stopped. " +

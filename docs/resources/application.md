@@ -17,7 +17,7 @@ Manages an AppStream application. An application defines how software is launche
 resource "awsappstream_application" "example" {
   name = "example-app"
 
-  icon_s3_location {
+  icon_s3_location = {
     s3_bucket = "my-appstream-assets"
     s3_key    = "icons/example.png"
   }
@@ -43,7 +43,7 @@ resource "awsappstream_application" "example" {
   display_name = "Example Application"
   description  = "Example AppStream application managed by Terraform"
 
-  icon_s3_location {
+  icon_s3_location = {
     s3_bucket = "my-appstream-assets"
     s3_key    = "icons/example.png"
   }

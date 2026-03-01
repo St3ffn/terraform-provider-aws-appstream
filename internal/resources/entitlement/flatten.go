@@ -24,9 +24,9 @@ func flattenAttributes(
 	ctx context.Context, awsEntitlementAttributes []awstypes.EntitlementAttribute, diags *diag.Diagnostics,
 ) types.Set {
 
-	attrs := make([]attributeModel, 0, len(awsEntitlementAttributes))
+	attrs := make([]resourceModelAttributes, 0, len(awsEntitlementAttributes))
 	for _, a := range awsEntitlementAttributes {
-		attrs = append(attrs, attributeModel{
+		attrs = append(attrs, resourceModelAttributes{
 			Name:  types.StringValue(aws.ToString(a.Name)),
 			Value: types.StringValue(aws.ToString(a.Value)),
 		})

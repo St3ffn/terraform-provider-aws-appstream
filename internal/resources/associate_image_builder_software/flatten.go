@@ -38,7 +38,7 @@ func flattenAssociations(
 		return types.MapNull(associationObjectType)
 	}
 
-	out := make(map[string]associationModel)
+	out := make(map[string]resourceModelAssociations)
 
 	for _, assoc := range awsAssociations {
 		if assoc.SoftwareName == nil {
@@ -48,9 +48,9 @@ func flattenAssociations(
 		softwareName := aws.ToString(assoc.SoftwareName)
 
 		// deployment errors
-		errs := make([]deploymentErrorModel, 0, len(assoc.DeploymentError))
+		errs := make([]resourceModelAssociationsDeploymentErrors, 0, len(assoc.DeploymentError))
 		for _, e := range assoc.DeploymentError {
-			errs = append(errs, deploymentErrorModel{
+			errs = append(errs, resourceModelAssociationsDeploymentErrors{
 				ErrorCode:    util.StringOrNull(e.ErrorCode),
 				ErrorMessage: util.StringOrNull(e.ErrorMessage),
 			})
@@ -62,7 +62,7 @@ func flattenAssociations(
 			continue
 		}
 
-		out[softwareName] = associationModel{
+		out[softwareName] = resourceModelAssociations{
 			Status:           types.StringValue(string(assoc.Status)),
 			DeploymentErrors: errSet,
 		}

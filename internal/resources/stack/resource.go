@@ -40,7 +40,7 @@ func (r *resource) ValidateConfig(ctx context.Context, req tfresource.ValidateCo
 	}
 
 	if !config.StorageConnectors.IsNull() && !config.StorageConnectors.IsUnknown() {
-		var connectors []storageConnectorModel
+		var connectors []resourceModelStorageConnectors
 		resp.Diagnostics.Append(
 			config.StorageConnectors.ElementsAs(ctx, &connectors, false)...,
 		)
@@ -66,7 +66,7 @@ func (r *resource) ValidateConfig(ctx context.Context, req tfresource.ValidateCo
 	}
 
 	if !config.UserSettings.IsNull() && !config.UserSettings.IsUnknown() {
-		var settings []userSettingModel
+		var settings []resourceModelUserSettings
 		resp.Diagnostics.Append(
 			config.UserSettings.ElementsAs(ctx, &settings, false)...,
 		)

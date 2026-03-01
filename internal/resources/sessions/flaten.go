@@ -47,10 +47,10 @@ func flattenSessions(
 		return types.SetNull(sessionObjectType)
 	}
 
-	out := make([]sessionModel, 0, len(awsSessions))
+	out := make([]dataSourceModelSessions, 0, len(awsSessions))
 
 	for _, session := range awsSessions {
-		m := sessionModel{
+		m := dataSourceModelSessions{
 			ID:                 util.StringOrNull(session.Id),
 			UserID:             util.StringOrNull(session.UserId),
 			StackName:          util.StringOrNull(session.StackName),
@@ -89,9 +89,9 @@ func flattenNetworkAccessConfiguration(
 	obj, d := types.ObjectValueFrom(
 		ctx,
 		networkAccessConfigurationObjectType.AttrTypes,
-		networkAccessConfigurationModel{
-			EniPrivateIPAddress: util.StringOrNull(awsNetwork.EniPrivateIpAddress),
-			EniIPv6Addresses:    util.SetStringOrNull(ctx, awsNetwork.EniIpv6Addresses, diags),
+		dataSourceModelSessionsNetworkAccessConfiguration{
+			EniPrivateIpAddress: util.StringOrNull(awsNetwork.EniPrivateIpAddress),
+			EniIpv6Addresses:    util.SetStringOrNull(ctx, awsNetwork.EniIpv6Addresses, diags),
 			EniID:               util.StringOrNull(awsNetwork.EniId),
 		},
 	)

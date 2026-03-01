@@ -35,8 +35,8 @@ provider "awsappstream" {
 
   default_tags {
     tags = {
+      maintainer  = "st3ffn"
       environment = "prod"
-      team        = "platform"
       managed_by  = "terraform"
     }
   }

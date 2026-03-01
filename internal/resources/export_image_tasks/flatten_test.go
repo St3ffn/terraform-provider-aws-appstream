@@ -161,7 +161,7 @@ func TestFlattenExportImageTasksData(t *testing.T) {
 				return
 			}
 
-			var models []exportImageTaskModel
+			var models []dataSourceModelExportImageTasks
 			diags = out.ElementsAs(ctx, &models, false)
 			require.False(t, diags.HasError())
 			require.Len(t, models, tt.expectElements)

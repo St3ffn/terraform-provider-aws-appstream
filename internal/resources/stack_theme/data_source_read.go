@@ -84,8 +84,8 @@ func (ds *dataSource) Read(ctx context.Context, req datasource.ReadRequest, resp
 		FooterLinks:              flattenFooterLinks(ctx, theme.ThemeFooterLinks, &resp.Diagnostics),
 		State:                    types.StringValue(string(theme.State)),
 		CreatedTime:              util.StringFromTime(theme.CreatedTime),
-		ThemeOrganizationLogoURL: util.StringOrNull(theme.ThemeOrganizationLogoURL),
-		ThemeFaviconURL:          util.StringOrNull(theme.ThemeFaviconURL),
+		ThemeOrganizationLogoUrl: util.StringOrNull(theme.ThemeOrganizationLogoURL),
+		ThemeFaviconUrl:          util.StringOrNull(theme.ThemeFaviconURL),
 	}
 
 	if resp.Diagnostics.HasError() {

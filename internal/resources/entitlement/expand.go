@@ -16,7 +16,7 @@ func expandEntitlementAttributes(
 	ctx context.Context, tfAttributes types.Set, diags *diag.Diagnostics,
 ) []awstypes.EntitlementAttribute {
 
-	var attrs []attributeModel
+	var attrs []resourceModelAttributes
 	diags.Append(tfAttributes.ElementsAs(ctx, &attrs, false)...)
 	if diags.HasError() {
 		return nil

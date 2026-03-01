@@ -36,6 +36,7 @@ func (r *resource) Update(ctx context.Context, req tfresource.UpdateRequest, res
 		return
 	}
 
+	diff := newResourceDiff(state, plan)
 	arn := plan.ID.ValueString()
 
 	name, err := applicationNameFromARN(arn)
@@ -47,82 +48,94 @@ func (r *resource) Update(ctx context.Context, req tfresource.UpdateRequest, res
 		return
 	}
 
-	input := &awsappstream.UpdateApplicationInput{
-		Name: aws.String(name),
-	}
-
-	var attrsToDelete []awstypes.ApplicationAttribute
-
-	util.OptionalStringUpdate(plan.DisplayName, state.DisplayName, func(v *string) {
-		input.DisplayName = v
-	})
-	util.OptionalStringUpdate(plan.Description, state.Description, func(v *string) {
-		input.Description = v
-	})
-	util.OptionalStringUpdate(plan.LaunchPath, state.LaunchPath, func(v *string) {
-		input.LaunchPath = v
-	})
-
-	util.OptionalStringUpdate(plan.AppBlockARN, state.AppBlockARN, func(v *string) {
-		input.AppBlockArn = v
-	})
-
-	if !plan.WorkingDirectory.IsUnknown() {
-		if plan.WorkingDirectory.IsNull() {
-			attrsToDelete = append(attrsToDelete, awstypes.ApplicationAttributeWorkingDirectory)
-		} else {
-			input.WorkingDirectory = plan.WorkingDirectory.ValueStringPointer()
+	if diff.HasRemoteChanges() {
+		input := &awsappstream.UpdateApplicationInput{
+			Name: aws.String(name),
 		}
-	}
 
-	if !plan.LaunchParameters.IsUnknown() {
-		if plan.LaunchParameters.IsNull() {
-			attrsToDelete = append(attrsToDelete, awstypes.ApplicationAttributeLaunchParameters)
-		} else {
-			input.LaunchParameters = plan.LaunchParameters.ValueStringPointer()
+		var attrsToDelete []awstypes.ApplicationAttribute
+
+		if diff.DisplayName.IsChanged() {
+			util.OptionalStringUpdate(plan.DisplayName, state.DisplayName, func(v *string) {
+				input.DisplayName = v
+			})
 		}
-	}
+		if diff.Description.IsChanged() {
+			util.OptionalStringUpdate(plan.Description, state.Description, func(v *string) {
+				input.Description = v
+			})
+		}
+		if diff.LaunchPath.IsChanged() {
+			util.OptionalStringUpdate(plan.LaunchPath, state.LaunchPath, func(v *string) {
+				input.LaunchPath = v
+			})
+		}
 
-	if !plan.IconS3Location.IsUnknown() {
-		if plan.IconS3Location.IsNull() {
-			// no delete support
-		} else {
-			input.IconS3Location = expandIconS3Location(
-				ctx, plan.IconS3Location, &resp.Diagnostics,
+		if diff.AppBlockARN.IsChanged() {
+			util.OptionalStringUpdate(plan.AppBlockARN, state.AppBlockARN, func(v *string) {
+				input.AppBlockArn = v
+			})
+		}
+
+		if diff.WorkingDirectory.IsChanged() {
+			if plan.WorkingDirectory.IsNull() {
+				attrsToDelete = append(attrsToDelete, awstypes.ApplicationAttributeWorkingDirectory)
+			} else {
+				input.WorkingDirectory = plan.WorkingDirectory.ValueStringPointer()
+			}
+		}
+
+		if diff.LaunchParameters.IsChanged() {
+			if plan.LaunchParameters.IsNull() {
+				attrsToDelete = append(attrsToDelete, awstypes.ApplicationAttributeLaunchParameters)
+			} else {
+				input.LaunchParameters = plan.LaunchParameters.ValueStringPointer()
+			}
+		}
+
+		if diff.IconS3Location.IsChanged() {
+			if plan.IconS3Location.IsNull() {
+				// no delete support
+			} else {
+				input.IconS3Location = expandIconS3Location(
+					ctx, plan.IconS3Location, &resp.Diagnostics,
+				)
+			}
+		}
+
+		if len(attrsToDelete) > 0 {
+			input.AttributesToDelete = attrsToDelete
+		}
+
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
+		_, err = r.appstreamClient.UpdateApplication(ctx, input)
+		if err != nil {
+			if util.IsContextCanceled(err) {
+				return
+			}
+
+			if util.IsAppStreamNotFound(err) {
+				resp.State.RemoveResource(ctx)
+				return
+			}
+
+			resp.Diagnostics.AddError(
+				"Error Updating AWS AppStream Application",
+				fmt.Sprintf("Could not update application %q: %v", arn, err),
 			)
-		}
-	}
-
-	if len(attrsToDelete) > 0 {
-		input.AttributesToDelete = attrsToDelete
-	}
-
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	_, err = r.appstreamClient.UpdateApplication(ctx, input)
-	if err != nil {
-		if util.IsContextCanceled(err) {
 			return
 		}
-
-		if util.IsAppStreamNotFound(err) {
-			resp.State.RemoveResource(ctx)
-			return
-		}
-
-		resp.Diagnostics.AddError(
-			"Error Updating AWS AppStream Application",
-			fmt.Sprintf("Could not update application %q: %v", arn, err),
-		)
-		return
 	}
 
-	_, tagDiags := r.tags.Apply(ctx, arn, plan.Tags)
-	resp.Diagnostics.Append(tagDiags...)
-	if resp.Diagnostics.HasError() {
-		return
+	if diff.RequiresTagApply() {
+		_, tagDiags := r.tags.Apply(ctx, arn, plan.Tags)
+		resp.Diagnostics.Append(tagDiags...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
 	}
 
 	newState, diags := r.readApplication(ctx, plan)

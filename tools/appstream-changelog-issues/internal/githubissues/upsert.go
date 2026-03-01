@@ -37,8 +37,8 @@ type UpsertResult struct {
 // CreateOrUpdateIssue creates or updates an issue for the configured repository.
 //
 // Matching logic:
-// 1) open issue body contains Marker
-// 2) fallback: open issue title matches Title
+// 1) open issue body contains Marker.
+// 2) fallback: open issue title matches Title.
 func (c *Client) CreateOrUpdateIssue(ctx context.Context, input UpsertInput) (UpsertResult, error) {
 	if err := c.validate(); err != nil {
 		return UpsertResult{}, err

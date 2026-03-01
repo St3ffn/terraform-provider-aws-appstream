@@ -31,7 +31,7 @@ func flattenImagePermissionsResource(
 	obj, d := types.ObjectValueFrom(
 		ctx,
 		imagePermissionsObjectType.AttrTypes,
-		imagePermissionsModel{
+		resourceModelImagePermissions{
 			AllowFleet:        util.BoolOrNull(awsImagePermissions.AllowFleet),
 			AllowImageBuilder: util.BoolOrNull(awsImagePermissions.AllowImageBuilder),
 		},

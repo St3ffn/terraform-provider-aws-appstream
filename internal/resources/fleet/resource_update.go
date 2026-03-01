@@ -36,158 +36,192 @@ func (r *resource) Update(ctx context.Context, req tfresource.UpdateRequest, res
 		return
 	}
 
+	diff := newResourceDiff(state, plan)
 	name := plan.Name.ValueString()
 
-	input := &awsappstream.UpdateFleetInput{
-		Name: aws.String(name),
-	}
-
-	var attrsToDelete []awstypes.FleetAttribute
-
-	util.OptionalStringUpdate(plan.DisplayName, state.DisplayName, func(v *string) {
-		input.DisplayName = v
-	})
-
-	util.OptionalStringUpdate(plan.Description, state.Description, func(v *string) {
-		input.Description = v
-	})
-
-	util.OptionalStringUpdate(plan.ImageName, state.ImageName, func(v *string) {
-		input.ImageName = v
-	})
-
-	util.OptionalStringUpdate(plan.ImageARN, state.ImageARN, func(v *string) {
-		input.ImageArn = v
-	})
-
-	util.OptionalStringUpdate(plan.InstanceType, state.InstanceType, func(v *string) {
-		input.InstanceType = v
-	})
-
-	util.OptionalStringUpdate(plan.IAMRoleARN, state.IAMRoleARN, func(v *string) {
-		input.IamRoleArn = v
-	})
-
-	if plan.StreamView.IsNull() {
-		// no delete support
-	} else if !plan.StreamView.IsUnknown() {
-		input.StreamView = awstypes.StreamView(plan.StreamView.ValueString())
-	}
-
-	if plan.Platform.IsNull() {
-		// no delete support
-	} else if !plan.Platform.IsUnknown() {
-		input.Platform = awstypes.PlatformType(plan.Platform.ValueString())
-	}
-
-	if plan.MaxUserDurationInSeconds.IsNull() {
-		// no delete support
-	} else if !plan.MaxUserDurationInSeconds.IsUnknown() {
-		input.MaxUserDurationInSeconds = plan.MaxUserDurationInSeconds.ValueInt32Pointer()
-	}
-
-	if plan.DisconnectTimeoutInSeconds.IsNull() {
-		// no delete support
-	} else if !plan.DisconnectTimeoutInSeconds.IsUnknown() {
-		input.DisconnectTimeoutInSeconds = plan.DisconnectTimeoutInSeconds.ValueInt32Pointer()
-	}
-
-	if plan.IdleDisconnectTimeoutInSeconds.IsNull() {
-		// no delete support
-	} else if !plan.IdleDisconnectTimeoutInSeconds.IsUnknown() {
-		input.IdleDisconnectTimeoutInSeconds = plan.IdleDisconnectTimeoutInSeconds.ValueInt32Pointer()
-	}
-
-	if plan.EnableDefaultInternetAccess.IsNull() {
-		// no delete support
-	} else if !plan.EnableDefaultInternetAccess.IsUnknown() {
-		input.EnableDefaultInternetAccess = plan.EnableDefaultInternetAccess.ValueBoolPointer()
-	}
-
-	if plan.DisableIMDSV1.IsNull() {
-		// no delete support
-	} else if !plan.DisableIMDSV1.IsUnknown() {
-		input.DisableIMDSV1 = plan.DisableIMDSV1.ValueBoolPointer()
-	}
-
-	if plan.ComputeCapacity.IsNull() {
-		// no delete support
-	} else if !plan.ComputeCapacity.IsUnknown() {
-		input.ComputeCapacity = expandComputeCapacity(
-			ctx,
-			plan.ComputeCapacity,
-			&resp.Diagnostics,
-		)
-	}
-
-	if plan.VPCConfig.IsNull() {
-		if !plan.VPCConfig.IsUnknown() {
-			attrsToDelete = append(attrsToDelete, awstypes.FleetAttributeVpcConfiguration)
+	var input *awsappstream.UpdateFleetInput
+	if diff.HasRemoteChanges() {
+		input = &awsappstream.UpdateFleetInput{
+			Name: aws.String(name),
 		}
-	} else if !plan.VPCConfig.IsUnknown() {
-		input.VpcConfig = expandVPCConfig(ctx, plan.VPCConfig, &resp.Diagnostics)
-	}
 
-	if plan.DomainJoinInfo.IsNull() {
-		if !plan.DomainJoinInfo.IsUnknown() {
-			attrsToDelete = append(attrsToDelete, awstypes.FleetAttributeDomainJoinInfo)
+		var attrsToDelete []awstypes.FleetAttribute
+
+		if diff.DisplayName.IsChanged() {
+			util.OptionalStringUpdate(plan.DisplayName, state.DisplayName, func(v *string) {
+				input.DisplayName = v
+			})
 		}
-	} else if !plan.DomainJoinInfo.IsUnknown() {
-		input.DomainJoinInfo = expandDomainJoinInfo(
-			ctx,
-			plan.DomainJoinInfo,
-			&resp.Diagnostics,
-		)
-	}
 
-	if plan.USBDeviceFilterStrings.IsNull() {
-		if !plan.USBDeviceFilterStrings.IsUnknown() {
-			attrsToDelete = append(attrsToDelete, awstypes.FleetAttributeUsbDeviceFilterStrings)
+		if diff.Description.IsChanged() {
+			util.OptionalStringUpdate(plan.Description, state.Description, func(v *string) {
+				input.Description = v
+			})
 		}
-	} else if !plan.USBDeviceFilterStrings.IsUnknown() {
-		input.UsbDeviceFilterStrings = util.ExpandStringSetOrNil(
-			ctx,
-			plan.USBDeviceFilterStrings,
-			&resp.Diagnostics,
-		)
-	}
 
-	if plan.SessionScriptS3Location.IsNull() {
-		if !plan.SessionScriptS3Location.IsUnknown() {
-			attrsToDelete = append(attrsToDelete, awstypes.FleetAttributeSessionScriptS3Location)
+		if diff.ImageName.IsChanged() {
+			util.OptionalStringUpdate(plan.ImageName, state.ImageName, func(v *string) {
+				input.ImageName = v
+			})
 		}
-	} else if !plan.SessionScriptS3Location.IsUnknown() {
-		input.SessionScriptS3Location = expandSessionScriptS3Location(
-			ctx,
-			plan.SessionScriptS3Location,
-			&resp.Diagnostics,
-		)
-	}
 
-	if plan.MaxSessionsPerInstance.IsNull() {
-		if !plan.MaxSessionsPerInstance.IsUnknown() {
-			attrsToDelete = append(attrsToDelete, awstypes.FleetAttributeMaxSessionsPerInstance)
+		if diff.ImageARN.IsChanged() {
+			util.OptionalStringUpdate(plan.ImageARN, state.ImageARN, func(v *string) {
+				input.ImageArn = v
+			})
 		}
-	} else if !plan.MaxSessionsPerInstance.IsUnknown() {
-		input.MaxSessionsPerInstance = plan.MaxSessionsPerInstance.ValueInt32Pointer()
-	}
 
-	if plan.RootVolumeConfig.IsNull() {
-		if !plan.RootVolumeConfig.IsUnknown() {
-			attrsToDelete = append(attrsToDelete, awstypes.FleetAttributeVolumeConfiguration)
+		if diff.InstanceType.IsChanged() {
+			util.OptionalStringUpdate(plan.InstanceType, state.InstanceType, func(v *string) {
+				input.InstanceType = v
+			})
 		}
-	} else if !plan.RootVolumeConfig.IsUnknown() {
-		input.RootVolumeConfig = expandRootVolumeConfig(
-			ctx,
-			plan.RootVolumeConfig,
-			&resp.Diagnostics,
-		)
-	}
 
-	input.AttributesToDelete = attrsToDelete
+		if diff.IAMRoleARN.IsChanged() {
+			if plan.IAMRoleARN.IsNull() {
+				attrsToDelete = append(attrsToDelete, awstypes.FleetAttributeIamRoleArn)
+			} else {
+				input.IamRoleArn = plan.IAMRoleARN.ValueStringPointer()
+			}
+		}
 
-	if resp.Diagnostics.HasError() {
-		return
+		if diff.StreamView.IsChanged() {
+			if plan.StreamView.IsNull() {
+				// no delete support
+			} else {
+				input.StreamView = awstypes.StreamView(plan.StreamView.ValueString())
+			}
+		}
+
+		if diff.Platform.IsChanged() {
+			if plan.Platform.IsNull() {
+				// no delete support
+			} else {
+				input.Platform = awstypes.PlatformType(plan.Platform.ValueString())
+			}
+		}
+
+		if diff.MaxUserDurationInSeconds.IsChanged() {
+			if plan.MaxUserDurationInSeconds.IsNull() {
+				// no delete support
+			} else {
+				input.MaxUserDurationInSeconds = plan.MaxUserDurationInSeconds.ValueInt32Pointer()
+			}
+		}
+
+		if diff.DisconnectTimeoutInSeconds.IsChanged() {
+			if plan.DisconnectTimeoutInSeconds.IsNull() {
+				// no delete support
+			} else {
+				input.DisconnectTimeoutInSeconds = plan.DisconnectTimeoutInSeconds.ValueInt32Pointer()
+			}
+		}
+
+		if diff.IdleDisconnectTimeoutInSeconds.IsChanged() {
+			if plan.IdleDisconnectTimeoutInSeconds.IsNull() {
+				// no delete support
+			} else {
+				input.IdleDisconnectTimeoutInSeconds = plan.IdleDisconnectTimeoutInSeconds.ValueInt32Pointer()
+			}
+		}
+
+		if diff.EnableDefaultInternetAccess.IsChanged() {
+			if plan.EnableDefaultInternetAccess.IsNull() {
+				// no delete support
+			} else {
+				input.EnableDefaultInternetAccess = plan.EnableDefaultInternetAccess.ValueBoolPointer()
+			}
+		}
+
+		if diff.DisableIMDSV1.IsChanged() {
+			if plan.DisableIMDSV1.IsNull() {
+				// no delete support
+			} else {
+				input.DisableIMDSV1 = plan.DisableIMDSV1.ValueBoolPointer()
+			}
+		}
+
+		if diff.ComputeCapacity.IsChanged() {
+			if plan.ComputeCapacity.IsNull() {
+				// no delete support
+			} else {
+				input.ComputeCapacity = expandComputeCapacity(
+					ctx,
+					plan.ComputeCapacity,
+					&resp.Diagnostics,
+				)
+			}
+		}
+
+		if diff.VPCConfig.IsChanged() {
+			if plan.VPCConfig.IsNull() {
+				attrsToDelete = append(attrsToDelete, awstypes.FleetAttributeVpcConfiguration)
+			} else {
+				input.VpcConfig = expandVPCConfig(ctx, plan.VPCConfig, &resp.Diagnostics)
+			}
+		}
+
+		if diff.DomainJoinInfo.IsChanged() {
+			if plan.DomainJoinInfo.IsNull() {
+				attrsToDelete = append(attrsToDelete, awstypes.FleetAttributeDomainJoinInfo)
+			} else {
+				input.DomainJoinInfo = expandDomainJoinInfo(
+					ctx,
+					plan.DomainJoinInfo,
+					&resp.Diagnostics,
+				)
+			}
+		}
+
+		if diff.USBDeviceFilterStrings.IsChanged() {
+			if plan.USBDeviceFilterStrings.IsNull() {
+				attrsToDelete = append(attrsToDelete, awstypes.FleetAttributeUsbDeviceFilterStrings)
+			} else {
+				input.UsbDeviceFilterStrings = util.ExpandStringSetOrNil(
+					ctx,
+					plan.USBDeviceFilterStrings,
+					&resp.Diagnostics,
+				)
+			}
+		}
+
+		if diff.SessionScriptS3Location.IsChanged() {
+			if plan.SessionScriptS3Location.IsNull() {
+				attrsToDelete = append(attrsToDelete, awstypes.FleetAttributeSessionScriptS3Location)
+			} else {
+				input.SessionScriptS3Location = expandSessionScriptS3Location(
+					ctx,
+					plan.SessionScriptS3Location,
+					&resp.Diagnostics,
+				)
+			}
+		}
+
+		if diff.MaxSessionsPerInstance.IsChanged() {
+			if plan.MaxSessionsPerInstance.IsNull() {
+				attrsToDelete = append(attrsToDelete, awstypes.FleetAttributeMaxSessionsPerInstance)
+			} else {
+				input.MaxSessionsPerInstance = plan.MaxSessionsPerInstance.ValueInt32Pointer()
+			}
+		}
+
+		if diff.RootVolumeConfig.IsChanged() {
+			if plan.RootVolumeConfig.IsNull() {
+				attrsToDelete = append(attrsToDelete, awstypes.FleetAttributeVolumeConfiguration)
+			} else {
+				input.RootVolumeConfig = expandRootVolumeConfig(
+					ctx,
+					plan.RootVolumeConfig,
+					&resp.Diagnostics,
+				)
+			}
+		}
+
+		input.AttributesToDelete = attrsToDelete
+
+		if resp.Diagnostics.HasError() {
+			return
+		}
 	}
 
 	restartAfter := false
@@ -195,81 +229,103 @@ func (r *resource) Update(ctx context.Context, req tfresource.UpdateRequest, res
 	mode := updateMode(state, plan)
 	updateBehavior := updateBehaviorFromPlan(plan.UpdateBehavior)
 	desiredState := desiredStateFromPlan(plan.DesiredState)
+	didRemoteUpdate := false
+	arnForTags := ""
+	switch {
+	case !plan.ARN.IsNull() && !plan.ARN.IsUnknown():
+		arnForTags = plan.ARN.ValueString()
+	case !state.ARN.IsNull() && !state.ARN.IsUnknown():
+		arnForTags = state.ARN.ValueString()
+	}
 
-	switch mode {
-	case fleetUpdateRequiresStop:
-		switch updateBehavior {
-		case updateBehaviorAutoStopStart:
-			restartAfter, err = r.ensureStopped(ctx, name)
-			if err != nil {
+	if diff.HasRemoteChanges() {
+		switch mode {
+		case fleetUpdateRequiresStop:
+			switch updateBehavior {
+			case updateBehaviorAutoStopStart:
+				restartAfter, err = r.ensureStopped(ctx, name)
+				if err != nil {
+					resp.Diagnostics.AddError(
+						"Error Updating AWS AppStream Fleet",
+						fmt.Sprintf("Could not stop fleet %q for update: %v", name, err),
+					)
+					return
+				}
+
+			case updateBehaviorFailIfRunning:
+				currentState, exists, err := r.currentFleetState(ctx, name)
+				if err != nil {
+					resp.Diagnostics.AddError(
+						"Error Updating AWS AppStream Fleet",
+						fmt.Sprintf("Could not inspect fleet %q state for update: %v", name, err),
+					)
+					return
+				}
+
+				if exists && currentState != awstypes.FleetStateStopped {
+					resp.Diagnostics.AddError(
+						"Error Updating AWS AppStream Fleet",
+						fmt.Sprintf(
+							"Could not update fleet %q: update requires the fleet to be stopped, but current state is %q and update_behavior is %q.",
+							name,
+							string(currentState),
+							updateBehaviorFailIfRunning,
+						),
+					)
+					return
+				}
+
+			default:
 				resp.Diagnostics.AddError(
 					"Error Updating AWS AppStream Fleet",
-					fmt.Sprintf("Could not stop fleet %q for update: %v", name, err),
+					fmt.Sprintf("Could not update fleet %q: unsupported update_behavior %q", name, updateBehavior),
 				)
 				return
 			}
 
-		case updateBehaviorFailIfRunning:
-			currentState, exists, err := r.currentFleetState(ctx, name)
-			if err != nil {
-				resp.Diagnostics.AddError(
-					"Error Updating AWS AppStream Fleet",
-					fmt.Sprintf("Could not inspect fleet %q state for update: %v", name, err),
-				)
-				return
-			}
-
-			if exists && currentState != awstypes.FleetStateStopped {
-				resp.Diagnostics.AddError(
-					"Error Updating AWS AppStream Fleet",
-					fmt.Sprintf(
-						"Could not update fleet %q: update requires the fleet to be stopped, but current state is %q and update_behavior is %q.",
-						name,
-						string(currentState),
-						updateBehaviorFailIfRunning,
-					),
-				)
-				return
-			}
-
-		default:
+		case fleetUpdateAllowedRunning:
+			// proceed normally
+		case fleetUpdateForbidden:
 			resp.Diagnostics.AddError(
 				"Error Updating AWS AppStream Fleet",
-				fmt.Sprintf("Could not update fleet %q: unsupported update_behavior %q", name, updateBehavior),
+				fmt.Sprintf("Could not update fleet %q: fleet cannot be updated in its current state", name),
 			)
 			return
 		}
 
-	case fleetUpdateAllowedRunning:
-		// proceed normally
-	case fleetUpdateForbidden:
-		resp.Diagnostics.AddError(
-			"Error Updating AWS AppStream Fleet",
-			fmt.Sprintf("Could not update fleet %q: fleet cannot be updated in its current state", name),
-		)
-		return
-	}
+		out, err := r.appstreamClient.UpdateFleet(ctx, input)
+		if err != nil {
+			if util.IsContextCanceled(err) {
+				return
+			}
 
-	out, err := r.appstreamClient.UpdateFleet(ctx, input)
-	if err != nil {
-		if util.IsContextCanceled(err) {
+			if util.IsAppStreamNotFound(err) {
+				resp.State.RemoveResource(ctx)
+				return
+			}
+
+			resp.Diagnostics.AddError(
+				"Error Updating AWS AppStream Fleet",
+				fmt.Sprintf("Could not update fleet %q: %v", name, err),
+			)
 			return
 		}
 
-		if util.IsAppStreamNotFound(err) {
-			resp.State.RemoveResource(ctx)
-			return
+		didRemoteUpdate = true
+		if out.Fleet != nil && out.Fleet.Arn != nil {
+			arnForTags = aws.ToString(out.Fleet.Arn)
 		}
-
-		resp.Diagnostics.AddError(
-			"Error Updating AWS AppStream Fleet",
-			fmt.Sprintf("Could not update fleet %q: %v", name, err),
-		)
-		return
 	}
 
-	if out.Fleet != nil && out.Fleet.Arn != nil {
-		_, tagDiags := r.tags.Apply(ctx, aws.ToString(out.Fleet.Arn), plan.Tags)
+	if diff.RequiresTagApply() {
+		if arnForTags == "" {
+			resp.Diagnostics.AddError(
+				"Error Updating AWS AppStream Fleet",
+				fmt.Sprintf("Could not apply tags for fleet %q: missing ARN in state and plan", name),
+			)
+			return
+		}
+		_, tagDiags := r.tags.Apply(ctx, arnForTags, plan.Tags)
 		resp.Diagnostics.Append(tagDiags...)
 		if resp.Diagnostics.HasError() {
 			return
@@ -277,7 +333,7 @@ func (r *resource) Update(ctx context.Context, req tfresource.UpdateRequest, res
 	}
 
 	switch {
-	case mode == fleetUpdateRequiresStop && desiredState == desiredStateRunning:
+	case didRemoteUpdate && mode == fleetUpdateRequiresStop && desiredState == desiredStateRunning:
 		err = r.ensureRunning(ctx, name)
 		if err != nil {
 			resp.Diagnostics.AddError(
@@ -286,7 +342,7 @@ func (r *resource) Update(ctx context.Context, req tfresource.UpdateRequest, res
 			)
 			return
 		}
-	case mode == fleetUpdateRequiresStop && desiredState == desiredStateInherit && restartAfter:
+	case didRemoteUpdate && mode == fleetUpdateRequiresStop && desiredState == desiredStateInherit && restartAfter:
 		err = r.ensureRunning(ctx, name)
 		if err != nil {
 			resp.Diagnostics.AddError(
@@ -295,7 +351,7 @@ func (r *resource) Update(ctx context.Context, req tfresource.UpdateRequest, res
 			)
 			return
 		}
-	case mode == fleetUpdateAllowedRunning && desiredState == desiredStateRunning:
+	case didRemoteUpdate && mode == fleetUpdateAllowedRunning && desiredState == desiredStateRunning:
 		err = r.ensureRunning(ctx, name)
 		if err != nil {
 			resp.Diagnostics.AddError(
@@ -304,7 +360,25 @@ func (r *resource) Update(ctx context.Context, req tfresource.UpdateRequest, res
 			)
 			return
 		}
-	case mode == fleetUpdateAllowedRunning && desiredState == desiredStateStopped:
+	case didRemoteUpdate && mode == fleetUpdateAllowedRunning && desiredState == desiredStateStopped:
+		_, err = r.ensureStopped(ctx, name)
+		if err != nil {
+			resp.Diagnostics.AddError(
+				"Error Updating AWS AppStream Fleet",
+				fmt.Sprintf("Could not stop fleet %q after successful update: %v", name, err),
+			)
+			return
+		}
+	case !didRemoteUpdate && desiredState == desiredStateRunning:
+		err = r.ensureRunning(ctx, name)
+		if err != nil {
+			resp.Diagnostics.AddError(
+				"Error Updating AWS AppStream Fleet",
+				fmt.Sprintf("Could not start fleet %q after successful update: %v", name, err),
+			)
+			return
+		}
+	case !didRemoteUpdate && desiredState == desiredStateStopped:
 		_, err = r.ensureStopped(ctx, name)
 		if err != nil {
 			resp.Diagnostics.AddError(

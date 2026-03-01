@@ -17,7 +17,7 @@ import (
 
 func (r *resource) Read(ctx context.Context, req tfresource.ReadRequest, resp *tfresource.ReadResponse) {
 
-	var state model
+	var state resourceModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
@@ -55,7 +55,7 @@ func (r *resource) Read(ctx context.Context, req tfresource.ReadRequest, resp *t
 
 func (r *resource) readAssociateAppBlockBuilderAppBlock(
 	ctx context.Context, appBlockBuilderName, appBlockARN string,
-) (*model, diag.Diagnostics) {
+) (*resourceModel, diag.Diagnostics) {
 
 	var diags diag.Diagnostics
 
@@ -82,7 +82,7 @@ func (r *resource) readAssociateAppBlockBuilderAppBlock(
 		return nil, diags
 	}
 
-	state := &model{
+	state := &resourceModel{
 		ID:                  types.StringValue(buildID(appBlockBuilderName, appBlockARN)),
 		AppBlockBuilderName: types.StringValue(appBlockBuilderName),
 		AppBlockARN:         types.StringValue(appBlockARN),
