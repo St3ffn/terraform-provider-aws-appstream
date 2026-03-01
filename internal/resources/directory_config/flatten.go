@@ -42,15 +42,18 @@ func flattenServiceAccountCredentials(
 		return types.ObjectUnknown(serviceAccountCredentialsObjectType.AttrTypes)
 	}
 
-	// drift or redaction: block disappears
-	if awsCreds == nil {
-		return types.ObjectNull(serviceAccountCredentialsObjectType.AttrTypes)
-	}
-
 	var priorProps resourceModelServiceAccountCredentials
 	diags.Append(prior.As(ctx, &priorProps, basetypes.ObjectAsOptions{})...)
 	if diags.HasError() {
 		return types.ObjectNull(serviceAccountCredentialsObjectType.AttrTypes)
+	}
+
+	// AWS does not return the password on read and may omit service account
+	// credentials entirely. Preserve account_name from prior state/config and
+	// always clear account_password.
+	accountName := priorProps.AccountName
+	if awsCreds != nil && awsCreds.AccountName != nil {
+		accountName = util.StringOrNull(awsCreds.AccountName)
 	}
 
 	// normal reconcile
@@ -58,8 +61,8 @@ func flattenServiceAccountCredentials(
 		ctx,
 		serviceAccountCredentialsObjectType.AttrTypes,
 		resourceModelServiceAccountCredentials{
-			AccountName:     util.StringOrNull(awsCreds.AccountName),
-			AccountPassword: priorProps.AccountPassword,
+			AccountName:     accountName,
+			AccountPassword: types.StringNull(),
 		},
 	)
 	diags.Append(d...)

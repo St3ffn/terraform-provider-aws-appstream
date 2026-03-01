@@ -15,8 +15,10 @@ import (
 
 func (r *resource) Create(ctx context.Context, req tfresource.CreateRequest, resp *tfresource.CreateResponse) {
 	var plan resourceModel
+	var config resourceModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
+	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
@@ -42,9 +44,9 @@ func (r *resource) Create(ctx context.Context, req tfresource.CreateRequest, res
 		),
 	}
 
-	if !plan.ServiceAccountCredentials.IsNull() && !plan.ServiceAccountCredentials.IsUnknown() {
+	if !config.ServiceAccountCredentials.IsNull() && !config.ServiceAccountCredentials.IsUnknown() {
 		input.ServiceAccountCredentials = expandServiceAccountCredentials(
-			ctx, plan.ServiceAccountCredentials, &resp.Diagnostics,
+			ctx, config.ServiceAccountCredentials, &resp.Diagnostics,
 		)
 	}
 
