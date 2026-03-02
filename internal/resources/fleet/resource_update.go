@@ -294,12 +294,10 @@ func (r *resource) Update(ctx context.Context, req tfresource.UpdateRequest, res
 		}
 
 		var out *awsappstream.UpdateFleetOutput
-		err = util.RetryOn(
+		out, err = util.RetryOnValue(
 			ctx,
-			func(ctx context.Context) error {
-				var err error
-				out, err = r.appstreamClient.UpdateFleet(ctx, input)
-				return err
+			func(ctx context.Context) (*awsappstream.UpdateFleetOutput, error) {
+				return r.appstreamClient.UpdateFleet(ctx, input)
 			},
 			util.WithTimeout(updateRetryTimeout),
 			util.WithInitBackoff(updateRetryInitBackoff),

@@ -56,15 +56,12 @@ func (r *resource) Read(ctx context.Context, req tfresource.ReadRequest, resp *t
 }
 
 func (r *resource) readUser(ctx context.Context, prior resourceModel) (*resourceModel, diag.Diagnostics) {
-	var state *resourceModel
 	var diags diag.Diagnostics
 
-	err := util.RetryOn(
+	state, err := util.RetryOnValue(
 		ctx,
-		func(ctx context.Context) error {
-			var err error
-			state, err = r.readUserOnce(ctx, prior)
-			return err
+		func(ctx context.Context) (*resourceModel, error) {
+			return r.readUserOnce(ctx, prior)
 		},
 		util.WithTimeout(readRetryTimeout),
 		util.WithInitBackoff(readRetryInitBackoff),
