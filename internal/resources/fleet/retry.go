@@ -10,7 +10,15 @@ const (
 	createRetryInitBackoff = 10 * time.Second
 	createRetryMaxBackoff  = 1 * time.Minute
 
-	updateRetryTimeout     = 45 * time.Minute
-	updateRetryInitBackoff = 30 * time.Second
-	updateRetryMaxBackoff  = 1 * time.Minute
+	stopRetryTimeout     = 45 * time.Minute
+	stopRetryInitBackoff = 30 * time.Second
+	stopRetryMaxBackoff  = 1 * time.Minute
+
+	startRetryTimeout     = 45 * time.Minute
+	startRetryInitBackoff = 30 * time.Second
+	startRetryMaxBackoff  = 1 * time.Minute
+
+	updateRetryTimeout     = 5 * time.Minute
+	updateRetryInitBackoff = 2 * time.Second
+	updateRetryMaxBackoff  = 30 * time.Second
 )

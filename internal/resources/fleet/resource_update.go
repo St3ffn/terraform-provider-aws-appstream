@@ -293,7 +293,27 @@ func (r *resource) Update(ctx context.Context, req tfresource.UpdateRequest, res
 			return
 		}
 
-		out, err := r.appstreamClient.UpdateFleet(ctx, input)
+		var out *awsappstream.UpdateFleetOutput
+		err = util.RetryOn(
+			ctx,
+			func(ctx context.Context) error {
+				var err error
+				out, err = r.appstreamClient.UpdateFleet(ctx, input)
+				return err
+			},
+			util.WithTimeout(updateRetryTimeout),
+			util.WithInitBackoff(updateRetryInitBackoff),
+			util.WithMaxBackoff(updateRetryMaxBackoff),
+			// see https://docs.aws.amazon.com/appstream2/latest/APIReference/API_UpdateFleet.html
+			util.WithRetryOnFns(
+				util.IsConcurrentModificationException,
+				util.IsOperationNotPermittedException,
+				util.IsResourceNotAvailableException,
+				util.IsResourceInUseException,
+				util.IsInvalidRoleException,
+			),
+		)
+
 		if err != nil {
 			if util.IsContextCanceled(err) {
 				return
@@ -471,9 +491,9 @@ func (r *resource) ensureStopped(ctx context.Context, name string) (restartAfter
 				return fmt.Errorf("%w: current=%s", errUnexpectedFleetState, state)
 			}
 		},
-		util.WithTimeout(updateRetryTimeout),
-		util.WithInitBackoff(updateRetryInitBackoff),
-		util.WithMaxBackoff(updateRetryMaxBackoff),
+		util.WithTimeout(stopRetryTimeout),
+		util.WithInitBackoff(stopRetryInitBackoff),
+		util.WithMaxBackoff(stopRetryMaxBackoff),
 		// see https://docs.aws.amazon.com/appstream2/latest/APIReference/API_DescribeFleets.html
 		// see https://docs.aws.amazon.com/appstream2/latest/APIReference/API_StopFleet.html
 		util.WithRetryOnFns(
@@ -521,9 +541,9 @@ func (r *resource) ensureRunning(ctx context.Context, name string) error {
 				return fmt.Errorf("%w: current=%s", errUnexpectedFleetState, state)
 			}
 		},
-		util.WithTimeout(updateRetryTimeout),
-		util.WithInitBackoff(updateRetryInitBackoff),
-		util.WithMaxBackoff(updateRetryMaxBackoff),
+		util.WithTimeout(startRetryTimeout),
+		util.WithInitBackoff(startRetryInitBackoff),
+		util.WithMaxBackoff(startRetryMaxBackoff),
 		// see https://docs.aws.amazon.com/appstream2/latest/APIReference/API_DescribeFleets.html
 		// see https://docs.aws.amazon.com/appstream2/latest/APIReference/API_StartFleet.html
 		util.WithRetryOnFns(

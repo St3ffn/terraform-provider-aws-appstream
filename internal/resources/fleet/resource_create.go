@@ -113,6 +113,7 @@ func (r *resource) Create(ctx context.Context, req tfresource.CreateRequest, res
 			util.IsOperationNotPermittedException,
 			util.IsResourceNotAvailableException,
 			util.IsResourceNotFoundException,
+			util.IsInvalidRoleException,
 		),
 	)
 
