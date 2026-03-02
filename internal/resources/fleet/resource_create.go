@@ -96,13 +96,10 @@ func (r *resource) Create(ctx context.Context, req tfresource.CreateRequest, res
 		return
 	}
 
-	var out *awsappstream.CreateFleetOutput
-	err := util.RetryOn(
+	out, err := util.RetryOnValue(
 		ctx,
-		func(ctx context.Context) error {
-			var err error
-			out, err = r.appstreamClient.CreateFleet(ctx, input)
-			return err
+		func(ctx context.Context) (*awsappstream.CreateFleetOutput, error) {
+			return r.appstreamClient.CreateFleet(ctx, input)
 		},
 		util.WithTimeout(createRetryTimeout),
 		util.WithInitBackoff(createRetryInitBackoff),

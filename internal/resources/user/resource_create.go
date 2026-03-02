@@ -93,8 +93,7 @@ func (r *resource) Create(ctx context.Context, req tfresource.CreateRequest, res
 		err = util.RetryOn(
 			ctx,
 			func(ctx context.Context) error {
-				var err error
-				_, err = r.appstreamClient.DisableUser(ctx, &awsappstream.DisableUserInput{
+				_, err := r.appstreamClient.DisableUser(ctx, &awsappstream.DisableUserInput{
 					AuthenticationType: awstypes.AuthenticationType(authenticationType),
 					UserName:           aws.String(userName),
 				})

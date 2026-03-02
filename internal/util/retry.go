@@ -85,6 +85,17 @@ func contextTerminationError(ctxErr, lastErr error) error {
 }
 
 func RetryOn(ctx context.Context, call func(context.Context) error, opts ...RetryOption) error {
+	_, err := RetryOnValue(
+		ctx,
+		func(ctx context.Context) (struct{}, error) {
+			return struct{}{}, call(ctx)
+		},
+		opts...,
+	)
+	return err
+}
+
+func RetryOnValue[T any](ctx context.Context, call func(context.Context) (T, error), opts ...RetryOption) (T, error) {
 	options := defaultRetryConfig()
 	for _, fn := range opts {
 		fn(options)
@@ -94,27 +105,30 @@ func RetryOn(ctx context.Context, call func(context.Context) error, opts ...Retr
 	defer cancel()
 
 	backoff := options.initBackoff
-	var lastErr error
+	var (
+		out     T
+		lastErr error
+	)
 
 	for {
 		if err := ctx.Err(); err != nil {
-			return contextTerminationError(err, lastErr)
+			return out, contextTerminationError(err, lastErr)
 		}
 
-		err := call(ctx)
+		out, err := call(ctx)
 		if err == nil {
-			return nil
+			return out, nil
 		}
 
 		if !shouldRetry(err, options.retryOnFns) {
-			return err
+			return out, err
 		}
 
 		lastErr = err
 
 		select {
 		case <-ctx.Done():
-			return contextTerminationError(ctx.Err(), lastErr)
+			return out, contextTerminationError(ctx.Err(), lastErr)
 		case <-time.After(backoff):
 		}
 

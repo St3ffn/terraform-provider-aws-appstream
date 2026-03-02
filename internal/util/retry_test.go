@@ -154,3 +154,67 @@ func TestRetryOn_ContextCanceled(t *testing.T) {
 		t.Fatalf("error = %v, want context canceled", err)
 	}
 }
+
+func TestRetryOnValue_SuccessFirstTry(t *testing.T) {
+	t.Parallel()
+
+	ctx := context.Background()
+
+	calls := 0
+	out, err := RetryOnValue(
+		ctx,
+		func(context.Context) (int, error) {
+			calls++
+			return 42, nil
+		},
+	)
+
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	if out != 42 {
+		t.Fatalf("out = %d, want 42", out)
+	}
+
+	if calls != 1 {
+		t.Fatalf("call count = %d, want 1", calls)
+	}
+}
+
+func TestRetryOnValue_RetryThenSuccess(t *testing.T) {
+	t.Parallel()
+
+	ctx := context.Background()
+
+	calls := 0
+	retryErr := errors.New("retry")
+
+	out, err := RetryOnValue(
+		ctx,
+		func(context.Context) (string, error) {
+			calls++
+			if calls < 3 {
+				return "", retryErr
+			}
+			return "done", nil
+		},
+		WithRetryOnFns(func(err error) bool {
+			return errors.Is(err, retryErr)
+		}),
+		WithInitBackoff(1*time.Millisecond),
+		WithMaxBackoff(2*time.Millisecond),
+	)
+
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	if out != "done" {
+		t.Fatalf("out = %q, want %q", out, "done")
+	}
+
+	if calls != 3 {
+		t.Fatalf("call count = %d, want 3", calls)
+	}
+}

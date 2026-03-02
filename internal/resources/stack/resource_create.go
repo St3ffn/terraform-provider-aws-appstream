@@ -71,13 +71,10 @@ func (r *resource) Create(ctx context.Context, req tfresource.CreateRequest, res
 		return
 	}
 
-	var out *awsappstream.CreateStackOutput
-	err := util.RetryOn(
+	out, err := util.RetryOnValue(
 		ctx,
-		func(ctx context.Context) error {
-			var err error
-			out, err = r.appstreamClient.CreateStack(ctx, input)
-			return err
+		func(ctx context.Context) (*awsappstream.CreateStackOutput, error) {
+			return r.appstreamClient.CreateStack(ctx, input)
 		},
 		util.WithTimeout(createRetryTimeout),
 		util.WithInitBackoff(createRetryInitBackoff),

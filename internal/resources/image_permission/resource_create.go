@@ -53,8 +53,7 @@ func (r *resource) Create(ctx context.Context, req tfresource.CreateRequest, res
 	err := util.RetryOn(
 		ctx,
 		func(ctx context.Context) error {
-			var err error
-			_, err = r.appstreamClient.UpdateImagePermissions(ctx, input)
+			_, err := r.appstreamClient.UpdateImagePermissions(ctx, input)
 			return err
 		},
 		util.WithTimeout(retryTimeout),

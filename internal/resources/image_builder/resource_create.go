@@ -70,13 +70,10 @@ func (r *resource) Create(ctx context.Context, req tfresource.CreateRequest, res
 		return
 	}
 
-	var out *awsappstream.CreateImageBuilderOutput
-	err := util.RetryOn(
+	out, err := util.RetryOnValue(
 		ctx,
-		func(ctx context.Context) error {
-			var err error
-			out, err = r.appstreamClient.CreateImageBuilder(ctx, input)
-			return err
+		func(ctx context.Context) (*awsappstream.CreateImageBuilderOutput, error) {
+			return r.appstreamClient.CreateImageBuilder(ctx, input)
 		},
 		util.WithTimeout(createRetryTimeout),
 		util.WithInitBackoff(createRetryInitBackoff),

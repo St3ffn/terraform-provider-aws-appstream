@@ -64,13 +64,10 @@ func (r *resource) Create(ctx context.Context, req tfresource.CreateRequest, res
 		return
 	}
 
-	var out *awsappstream.CreateAppBlockOutput
-	err := util.RetryOn(
+	out, err := util.RetryOnValue(
 		ctx,
-		func(ctx context.Context) error {
-			var err error
-			out, err = r.appstreamClient.CreateAppBlock(ctx, input)
-			return err
+		func(ctx context.Context) (*awsappstream.CreateAppBlockOutput, error) {
+			return r.appstreamClient.CreateAppBlock(ctx, input)
 		},
 		util.WithTimeout(createRetryTimeout),
 		util.WithInitBackoff(createRetryInitBackoff),
