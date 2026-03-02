@@ -113,6 +113,24 @@ func TestErrorPredicates(t *testing.T) {
 			want: false,
 		},
 		{
+			name: "invalid_role/match",
+			err:  &smithy.GenericAPIError{Code: "InvalidRoleException"},
+			fn:   IsInvalidRoleException,
+			want: true,
+		},
+		{
+			name: "invalid_role/no_match",
+			err:  &smithy.GenericAPIError{Code: "other"},
+			fn:   IsInvalidRoleException,
+			want: false,
+		},
+		{
+			name: "invalid_role/no_match_nil",
+			err:  nil,
+			fn:   IsInvalidRoleException,
+			want: false,
+		},
+		{
 			name: "resource_already_exists/match",
 			err:  &smithy.GenericAPIError{Code: "ResourceAlreadyExistsException"},
 			fn:   IsResourceAlreadyExists,

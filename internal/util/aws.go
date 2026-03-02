@@ -43,6 +43,10 @@ func IsResourceNotAvailableException(err error) bool {
 	return IsAWSAPIError(err, "ResourceNotAvailableException")
 }
 
+func IsInvalidRoleException(err error) bool {
+	return IsAWSAPIError(err, "InvalidRoleException")
+}
+
 func IsResourceAlreadyExists(err error) bool {
 	return IsAWSAPIError(err, "ResourceAlreadyExistsException")
 }
