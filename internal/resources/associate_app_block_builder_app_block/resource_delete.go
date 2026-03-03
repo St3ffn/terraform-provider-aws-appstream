@@ -33,10 +33,28 @@ func (r *resource) Delete(ctx context.Context, req tfresource.DeleteRequest, res
 	appBlockBuilderName := state.AppBlockBuilderName.ValueString()
 	appBlockARN := state.AppBlockARN.ValueString()
 
-	_, err := r.appstreamClient.DisassociateAppBlockBuilderAppBlock(ctx, &awsappstream.DisassociateAppBlockBuilderAppBlockInput{
-		AppBlockArn:         aws.String(appBlockARN),
-		AppBlockBuilderName: aws.String(appBlockBuilderName),
-	})
+	err := util.RetryOn(
+		ctx,
+		func(ctx context.Context) error {
+			_, err := r.appstreamClient.DisassociateAppBlockBuilderAppBlock(
+				ctx,
+				&awsappstream.DisassociateAppBlockBuilderAppBlockInput{
+					AppBlockArn:         aws.String(appBlockARN),
+					AppBlockBuilderName: aws.String(appBlockBuilderName),
+				},
+			)
+			return err
+		},
+		util.WithTimeout(deleteRetryTimeout),
+		util.WithInitBackoff(deleteRetryInitBackoff),
+		util.WithMaxBackoff(deleteRetryMaxBackoff),
+		// see https://docs.aws.amazon.com/appstream2/latest/APIReference/API_DisassociateAppBlockBuilderAppBlock.html
+		util.WithRetryOnFns(
+			util.IsConcurrentModificationException,
+			util.IsOperationNotPermittedException,
+		),
+	)
+
 	if err != nil {
 		if util.IsContextCanceled(err) {
 			return

@@ -71,7 +71,22 @@ func (r *resource) Update(ctx context.Context, req tfresource.UpdateRequest, res
 			})
 		}
 
-		_, err := r.appstreamClient.UpdateEntitlement(ctx, input)
+		err := util.RetryOn(
+			ctx,
+			func(ctx context.Context) error {
+				_, err := r.appstreamClient.UpdateEntitlement(ctx, input)
+				return err
+			},
+			util.WithTimeout(updateRetryTimeout),
+			util.WithInitBackoff(updateRetryInitBackoff),
+			util.WithMaxBackoff(updateRetryMaxBackoff),
+			// see https://docs.aws.amazon.com/appstream2/latest/APIReference/API_UpdateEntitlement.html
+			util.WithRetryOnFns(
+				util.IsConcurrentModificationException,
+				util.IsOperationNotPermittedException,
+			),
+		)
+
 		if err != nil {
 			if util.IsContextCanceled(err) {
 				return

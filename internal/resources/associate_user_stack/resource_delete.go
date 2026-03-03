@@ -35,15 +35,31 @@ func (r *resource) Delete(ctx context.Context, req tfresource.DeleteRequest, res
 	userName := state.UserName.ValueString()
 	authenticationType := state.AuthenticationType.ValueString()
 
-	out, err := r.appstreamClient.BatchDisassociateUserStack(ctx, &awsappstream.BatchDisassociateUserStackInput{
-		UserStackAssociations: []awstypes.UserStackAssociation{
-			{
-				AuthenticationType: awstypes.AuthenticationType(authenticationType),
-				StackName:          aws.String(stackName),
-				UserName:           aws.String(userName),
-			},
+	out, err := util.RetryOnValue(
+		ctx,
+		func(ctx context.Context) (*awsappstream.BatchDisassociateUserStackOutput, error) {
+			return r.appstreamClient.BatchDisassociateUserStack(
+				ctx,
+				&awsappstream.BatchDisassociateUserStackInput{
+					UserStackAssociations: []awstypes.UserStackAssociation{
+						{
+							AuthenticationType: awstypes.AuthenticationType(authenticationType),
+							StackName:          aws.String(stackName),
+							UserName:           aws.String(userName),
+						},
+					},
+				},
+			)
 		},
-	})
+		util.WithTimeout(deleteRetryTimeout),
+		util.WithInitBackoff(deleteRetryInitBackoff),
+		util.WithMaxBackoff(deleteRetryMaxBackoff),
+		// see https://docs.aws.amazon.com/appstream2/latest/APIReference/API_BatchDisassociateUserStack.html
+		util.WithRetryOnFns(
+			util.IsOperationNotPermittedException,
+		),
+	)
+
 	if err != nil {
 		if util.IsContextCanceled(err) {
 			return

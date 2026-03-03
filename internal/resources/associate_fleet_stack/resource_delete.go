@@ -33,10 +33,26 @@ func (r *resource) Delete(ctx context.Context, req tfresource.DeleteRequest, res
 	fleetName := state.FleetName.ValueString()
 	stackName := state.StackName.ValueString()
 
-	_, err := r.appstreamClient.DisassociateFleet(ctx, &awsappstream.DisassociateFleetInput{
-		FleetName: aws.String(fleetName),
-		StackName: aws.String(stackName),
-	})
+	err := util.RetryOn(
+		ctx,
+		func(ctx context.Context) error {
+			_, err := r.appstreamClient.DisassociateFleet(ctx, &awsappstream.DisassociateFleetInput{
+				FleetName: aws.String(fleetName),
+				StackName: aws.String(stackName),
+			})
+			return err
+		},
+		util.WithTimeout(deleteRetryTimeout),
+		util.WithInitBackoff(deleteRetryInitBackoff),
+		util.WithMaxBackoff(deleteRetryMaxBackoff),
+		// see https://docs.aws.amazon.com/appstream2/latest/APIReference/API_DisassociateFleet.html
+		util.WithRetryOnFns(
+			util.IsConcurrentModificationException,
+			util.IsOperationNotPermittedException,
+			util.IsResourceInUseException,
+		),
+	)
+
 	if err != nil {
 		if util.IsContextCanceled(err) {
 			return

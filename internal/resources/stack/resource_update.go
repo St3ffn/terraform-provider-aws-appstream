@@ -163,7 +163,21 @@ func (r *resource) Update(ctx context.Context, req tfresource.UpdateRequest, res
 			return
 		}
 
-		out, err := r.appstreamClient.UpdateStack(ctx, input)
+		out, err := util.RetryOnValue(
+			ctx,
+			func(ctx context.Context) (*awsappstream.UpdateStackOutput, error) {
+				return r.appstreamClient.UpdateStack(ctx, input)
+			},
+			util.WithTimeout(updateRetryTimeout),
+			util.WithInitBackoff(updateRetryInitBackoff),
+			util.WithMaxBackoff(updateRetryMaxBackoff),
+			// see https://docs.aws.amazon.com/appstream2/latest/APIReference/API_UpdateStack.html
+			util.WithRetryOnFns(
+				util.IsConcurrentModificationException,
+				util.IsResourceInUseException,
+			),
+		)
+
 		if err != nil {
 			if util.IsContextCanceled(err) {
 				return
