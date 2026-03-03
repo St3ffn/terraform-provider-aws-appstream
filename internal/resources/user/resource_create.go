@@ -48,20 +48,7 @@ func (r *resource) Create(ctx context.Context, req tfresource.CreateRequest, res
 		input.MessageAction = awstypes.MessageAction(plan.MessageAction.ValueString())
 	}
 
-	err := util.RetryOn(
-		ctx,
-		func(ctx context.Context) error {
-			_, err := r.appstreamClient.CreateUser(ctx, input)
-			return err
-		},
-		util.WithTimeout(createRetryTimeout),
-		util.WithInitBackoff(createRetryInitBackoff),
-		util.WithMaxBackoff(createRetryMaxBackoff),
-		// see https://docs.aws.amazon.com/appstream2/latest/APIReference/API_CreateUser.html
-		util.WithRetryOnFns(
-			util.IsOperationNotPermittedException,
-		),
-	)
+	_, err := r.appstreamClient.CreateUser(ctx, input)
 
 	if err != nil {
 		if util.IsResourceAlreadyExists(err) {

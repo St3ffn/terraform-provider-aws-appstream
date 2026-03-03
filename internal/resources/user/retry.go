@@ -6,10 +6,6 @@ package user
 import "time"
 
 const (
-	createRetryTimeout     = 5 * time.Minute
-	createRetryInitBackoff = 2 * time.Second
-	createRetryMaxBackoff  = 30 * time.Second
-
 	disableRetryTimeout     = 3 * time.Minute
 	disableRetryInitBackoff = 2 * time.Second
 	disableRetryMaxBackoff  = 30 * time.Second

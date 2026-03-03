@@ -68,7 +68,6 @@ func (r *resource) readUser(ctx context.Context, prior resourceModel) (*resource
 		util.WithMaxBackoff(readRetryMaxBackoff),
 		// see https://docs.aws.amazon.com/appstream2/latest/APIReference/API_DescribeUsers.html
 		util.WithRetryOnFns(
-			util.IsOperationNotPermittedException,
 			util.IsResourceNotFoundException,
 			isUserNotYetVisibleError,
 		),
