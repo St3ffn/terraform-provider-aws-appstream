@@ -5,13 +5,35 @@ name: Tests
 # Optionally, you can turn it on using a schedule for regular testing.
 on:
   pull_request:
-    paths-ignore:
-      - 'README.md'
+    paths:
+      - '**/*.go'
+      - '!tools/**'
+      - 'go.mod'
+      - 'go.sum'
+      - 'GNUmakefile'
+      - '.copywrite.hcl'
+      - '.golangci.yaml'
+      - '.github/workflows/test.yml'
+      - 'examples/**'
+      - 'internal/**'
+      - 'templates/**'
+      - 'tools/provider-codegen/**'
   push:
     branches:
       - main
-    paths-ignore:
-      - 'README.md'
+    paths:
+      - '**/*.go'
+      - '!tools/**'
+      - 'go.mod'
+      - 'go.sum'
+      - 'GNUmakefile'
+      - '.copywrite.hcl'
+      - '.golangci.yaml'
+      - '.github/workflows/test.yml'
+      - 'examples/**'
+      - 'internal/**'
+      - 'templates/**'
+      - 'tools/provider-codegen/**'
 
 # Testing only needs permissions to read the repository contents.
 permissions:

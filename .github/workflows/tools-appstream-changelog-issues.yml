@@ -3,13 +3,15 @@ name: Tool AppStream Changelog Issues
 on:
   pull_request:
     paths:
-      - 'tools/appstream-changelog-issues/**'
       - '.github/workflows/tools-appstream-changelog-issues.yml'
+      - 'tools/appstream-changelog-issues/**'
       - '!tools/appstream-changelog-issues/README.md'
   push:
+    branches:
+      - main
     paths:
-      - 'tools/appstream-changelog-issues/**'
       - '.github/workflows/tools-appstream-changelog-issues.yml'
+      - 'tools/appstream-changelog-issues/**'
       - '!tools/appstream-changelog-issues/README.md'
 
 permissions:

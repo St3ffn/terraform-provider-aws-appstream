@@ -7,6 +7,8 @@ on:
       - '.github/workflows/tools-provider-codegen.yml'
       - '!tools/provider-codegen/README.md'
   push:
+    branches:
+      - main
     paths:
       - 'tools/provider-codegen/**'
       - '.github/workflows/tools-provider-codegen.yml'

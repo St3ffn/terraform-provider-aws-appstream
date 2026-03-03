@@ -2,12 +2,22 @@ name: Govulncheck
 
 on:
   pull_request:
+    paths:
+      - '**/*.go'
+      - '**/go.mod'
+      - '**/go.sum'
+      - '.github/workflows/govulncheck.yml'
   push:
     branches:
       - main
+    paths:
+      - '**/*.go'
+      - '**/go.mod'
+      - '**/go.sum'
+      - '.github/workflows/govulncheck.yml'
   schedule:
-    # Every Monday at 00:00 UTC.
-    - cron: '0 0 * * 1'
+    # Every Sunday at 16:00 UTC.
+    - cron: '0 16 * * 0'
   workflow_dispatch:
 
 jobs:
@@ -82,7 +92,7 @@ jobs:
         working-directory: ${{ matrix.module.work_dir }}
         run: $(go env GOPATH)/bin/govulncheck -format sarif ./... > govulncheck.sarif
       - name: Upload SARIF file
-        uses: github/codeql-action/upload-sarif@192325c86100d080feab897ff886c34abd4c83a3 # v3.30.2
+        uses: github/codeql-action/upload-sarif@c793b717bc78562f491db7b0e93a3a178b099162 # v4.32.5
         with:
           sarif_file: ${{ matrix.module.work_dir }}/govulncheck.sarif
           category: govulncheck/${{ matrix.module.name }}
