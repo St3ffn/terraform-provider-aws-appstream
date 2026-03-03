@@ -1,0 +1,18 @@
+# Default owner for all files
+* @St3ffn
+
+# Provider core
+/internal/provider/** @St3ffn
+/internal/resources/** @St3ffn
+/internal/tags/** @St3ffn
+/internal/util/** @St3ffn
+
+# Tooling
+/tools/provider-codegen/** @St3ffn
+/tools/appstream-changelog-issues/** @St3ffn
+
+# CI/CD and repo governance
+/.github/workflows/** @St3ffn
+/.github/ISSUE_TEMPLATE/** @St3ffn
+/.github/pull_request_template.md @St3ffn
+/Makefile @St3ffn
