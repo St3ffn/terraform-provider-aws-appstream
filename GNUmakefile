@@ -7,7 +7,7 @@ GOBIN := $(shell go env GOBIN)
 GOPATH := $(shell go env GOPATH)
 INSTALL_DIR := $(if $(GOBIN),$(GOBIN),$(GOPATH)/bin)
 
-default: generate fmt lint test install
+default: generate fmt lint govulncheck test install
 
 build:
 	@echo "🚧  Building provider..."
@@ -59,6 +59,24 @@ test:
 	@go test -v -cover -timeout=5m ./...
 	@echo "✅  Tests completed"
 
+govulncheck: govulncheck-provider govulncheck-tool-provider-codegen govulncheck-tool-appstream-changelog-issues
+	@echo "✅  govulncheck completed"
+
+govulncheck-provider:
+	@echo "🔐  Running govulncheck (provider)..."
+	@go run golang.org/x/vuln/cmd/govulncheck@latest ./...
+	@echo "✅  Provider govulncheck completed"
+
+govulncheck-tool-provider-codegen:
+	@echo "🔐  Running govulncheck (tools/provider-codegen)..."
+	@cd tools/provider-codegen && go run golang.org/x/vuln/cmd/govulncheck@latest ./...
+	@echo "✅  tools/provider-codegen govulncheck completed"
+
+govulncheck-tool-appstream-changelog-issues:
+	@echo "🔐  Running govulncheck (tools/appstream-changelog-issues)..."
+	@cd tools/appstream-changelog-issues && go run golang.org/x/vuln/cmd/govulncheck@latest ./...
+	@echo "✅  tools/appstream-changelog-issues govulncheck completed"
+
 testacc:
 	@echo "🧪  Running acceptance tests..."
 	@TF_ACC=1 go test -v -cover -timeout 120m ./...
@@ -76,6 +94,10 @@ clean:
 	lint-tool-provider-codegen \
 	lint-tool-appstream-changelog-issues \
 	test \
+	govulncheck \
+	govulncheck-provider \
+	govulncheck-tool-provider-codegen \
+	govulncheck-tool-appstream-changelog-issues \
 	testacc \
 	build \
 	build-debug \

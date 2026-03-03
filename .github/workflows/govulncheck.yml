@@ -1,0 +1,88 @@
+name: Govulncheck
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  schedule:
+    # Every Monday at 00:00 UTC.
+    - cron: '0 0 * * 1'
+  workflow_dispatch:
+
+jobs:
+  govulncheck-pr:
+    if: github.event_name == 'pull_request'
+    name: Go Vulnerability Check (PR)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        module:
+          - name: provider
+            work_dir: .
+            go_version_file: go.mod
+            cache_dependency_path: go.sum
+          - name: tool-provider-codegen
+            work_dir: tools/provider-codegen
+            go_version_file: tools/provider-codegen/go.mod
+            cache_dependency_path: tools/provider-codegen/go.sum
+          - name: tool-appstream-changelog-issues
+            work_dir: tools/appstream-changelog-issues
+            go_version_file: tools/appstream-changelog-issues/go.mod
+            cache_dependency_path: tools/appstream-changelog-issues/go.sum
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: actions/setup-go@4b73464bb391d4059bd26b0524d20df3927bd417 # v6.3.0
+        with:
+          go-version-file: ${{ matrix.module.go_version_file }}
+          cache: true
+          cache-dependency-path: ${{ matrix.module.cache_dependency_path }}
+      - name: Install govulncheck
+        run: go install golang.org/x/vuln/cmd/govulncheck@latest
+      - name: Run govulncheck
+        working-directory: ${{ matrix.module.work_dir }}
+        run: $(go env GOPATH)/bin/govulncheck ./...
+
+  govulncheck-sarif:
+    if: github.event_name != 'pull_request'
+    name: Go Vulnerability Check (SARIF)
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        module:
+          - name: provider
+            work_dir: .
+            go_version_file: go.mod
+            cache_dependency_path: go.sum
+          - name: tool-provider-codegen
+            work_dir: tools/provider-codegen
+            go_version_file: tools/provider-codegen/go.mod
+            cache_dependency_path: tools/provider-codegen/go.sum
+          - name: tool-appstream-changelog-issues
+            work_dir: tools/appstream-changelog-issues
+            go_version_file: tools/appstream-changelog-issues/go.mod
+            cache_dependency_path: tools/appstream-changelog-issues/go.sum
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: actions/setup-go@4b73464bb391d4059bd26b0524d20df3927bd417 # v6.3.0
+        with:
+          go-version-file: ${{ matrix.module.go_version_file }}
+          cache: true
+          cache-dependency-path: ${{ matrix.module.cache_dependency_path }}
+      - name: Install govulncheck
+        run: go install golang.org/x/vuln/cmd/govulncheck@latest
+      - name: Run govulncheck and generate SARIF
+        working-directory: ${{ matrix.module.work_dir }}
+        run: $(go env GOPATH)/bin/govulncheck -format sarif ./... > govulncheck.sarif
+      - name: Upload SARIF file
+        uses: github/codeql-action/upload-sarif@192325c86100d080feab897ff886c34abd4c83a3 # v3.30.2
+        with:
+          sarif_file: ${{ matrix.module.work_dir }}/govulncheck.sarif
+          category: govulncheck/${{ matrix.module.name }}
