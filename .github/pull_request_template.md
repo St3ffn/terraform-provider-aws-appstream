@@ -25,6 +25,7 @@ Select one:
 - [ ] Hotfix (patch)
 - [ ] Minor change
 - [ ] Major/breaking change
+- [ ] No provider behavior change (docs/CI/repo-only changes)
 
 If `Major/breaking change`, describe the breaking behavior and migration steps.
 
