@@ -54,7 +54,8 @@ jobs:
         run: go install golang.org/x/vuln/cmd/govulncheck@latest
       - name: Run govulncheck
         working-directory: ${{ matrix.module.work_dir }}
-        run: $(go env GOPATH)/bin/govulncheck ./...
+        run: |
+          "$(go env GOPATH)/bin/govulncheck" ./...
 
   govulncheck-sarif:
     if: github.event_name != 'pull_request'
@@ -90,7 +91,8 @@ jobs:
         run: go install golang.org/x/vuln/cmd/govulncheck@latest
       - name: Run govulncheck and generate SARIF
         working-directory: ${{ matrix.module.work_dir }}
-        run: $(go env GOPATH)/bin/govulncheck -format sarif ./... > govulncheck.sarif
+        run: |
+          "$(go env GOPATH)/bin/govulncheck" -format sarif ./... > govulncheck.sarif
       - name: Upload SARIF file
         uses: github/codeql-action/upload-sarif@c793b717bc78562f491db7b0e93a3a178b099162 # v4.32.5
         with:
