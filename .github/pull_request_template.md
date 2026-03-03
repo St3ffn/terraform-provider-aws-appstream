@@ -4,6 +4,9 @@ Fixes: #<!-- INSERT ISSUE NUMBER -->
 
 If there is no linked issue, write `None`.
 
+Commit style:
+- Commits in this PR must comply with [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/#summary) (`type(scope): description`).
+
 ## Description
 
 Provide a concise summary of the change and why it was made.
@@ -15,6 +18,15 @@ Key updates:
 
 Design choice:
 <!-- Optional but recommended: explain one important design decision and tradeoff -->
+
+## Release Impact
+
+Select one:
+- [ ] Hotfix (patch)
+- [ ] Minor change
+- [ ] Major/breaking change
+
+If `Major/breaking change`, describe the breaking behavior and migration steps.
 
 <!-- heimdall_github_prtemplate:grc-pci_dss-2024-01-05 -->
 ## Rollback Plan
