@@ -82,7 +82,6 @@ func (r *resource) Create(ctx context.Context, req tfresource.CreateRequest, res
 		// see https://docs.aws.amazon.com/appstream2/latest/APIReference/API_CreateStack.html
 		util.WithRetryOnFns(
 			util.IsConcurrentModificationException,
-			util.IsOperationNotPermittedException,
 			util.IsResourceNotFoundException,
 		),
 	)
