@@ -6,7 +6,11 @@ package associate_application_fleet
 import "time"
 
 const (
-	createRetryTimeout     = 3 * time.Minute
+	createRetryTimeout     = 5 * time.Minute
 	createRetryInitBackoff = 2 * time.Second
 	createRetryMaxBackoff  = 30 * time.Second
+
+	deleteRetryTimeout     = 5 * time.Minute
+	deleteRetryInitBackoff = 2 * time.Second
+	deleteRetryMaxBackoff  = 30 * time.Second
 )

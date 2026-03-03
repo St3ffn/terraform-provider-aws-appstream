@@ -34,11 +34,28 @@ func (r *resource) Delete(ctx context.Context, req tfresource.DeleteRequest, res
 	entitlementName := state.EntitlementName.ValueString()
 	applicationIdentifier := state.ApplicationIdentifier.ValueString()
 
-	_, err := r.appstreamClient.DisassociateApplicationFromEntitlement(ctx, &awsappstream.DisassociateApplicationFromEntitlementInput{
-		StackName:             aws.String(stackName),
-		EntitlementName:       aws.String(entitlementName),
-		ApplicationIdentifier: aws.String(applicationIdentifier),
-	})
+	err := util.RetryOn(
+		ctx,
+		func(ctx context.Context) error {
+			_, err := r.appstreamClient.DisassociateApplicationFromEntitlement(
+				ctx,
+				&awsappstream.DisassociateApplicationFromEntitlementInput{
+					StackName:             aws.String(stackName),
+					EntitlementName:       aws.String(entitlementName),
+					ApplicationIdentifier: aws.String(applicationIdentifier),
+				},
+			)
+			return err
+		},
+		util.WithTimeout(deleteRetryTimeout),
+		util.WithInitBackoff(deleteRetryInitBackoff),
+		util.WithMaxBackoff(deleteRetryMaxBackoff),
+		// see https://docs.aws.amazon.com/appstream2/latest/APIReference/API_DisassociateApplicationFromEntitlement.html
+		util.WithRetryOnFns(
+			util.IsOperationNotPermittedException,
+		),
+	)
+
 	if err != nil {
 		if util.IsContextCanceled(err) {
 			return
