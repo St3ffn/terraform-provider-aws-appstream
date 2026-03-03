@@ -10,5 +10,6 @@ project {
     ".idea/**",
     ".golangci.yaml",
     ".goreleaser.yaml",
+    ".github/ISSUE_TEMPLATE/**"
   ]
 }
