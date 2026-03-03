@@ -1,0 +1,89 @@
+name: Feature request
+description: Propose a new resource, data source, or provider enhancement
+title: "[feature] "
+labels:
+  - feature
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: Briefly describe the requested feature.
+      placeholder: |
+        Implement association management between Applications and Fleets.
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem Statement
+      description: What user problem does this solve?
+      placeholder: |
+        Describe current pain points and why existing resources are not sufficient.
+    validations:
+      required: true
+
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope
+      description: List what should be included in this feature.
+      placeholder: |
+        - Associate and disassociate application ↔ fleet
+        - Tolerate eventual consistency
+        - No mutable state stored
+    validations:
+      required: true
+
+  - type: textarea
+    id: apis
+    attributes:
+      label: Relevant AWS APIs / Docs
+      description: Add AWS CLI/API links used by this request.
+      placeholder: |
+        - AssociateApplicationFleet
+          - CLI: https://docs.aws.amazon.com/cli/latest/reference/appstream/associate-application-fleet.html
+          - API: https://docs.aws.amazon.com/appstream2/latest/APIReference/API_AssociateApplicationFleet.html
+        - DisassociateApplicationFleet
+          - CLI: https://docs.aws.amazon.com/cli/latest/reference/appstream/disassociate-application-fleet.html
+          - API: https://docs.aws.amazon.com/appstream2/latest/APIReference/API_DisassociateApplicationFleet.html
+        - DescribeApplicationFleetAssociations
+          - CLI: https://docs.aws.amazon.com/cli/latest/reference/appstream/describe-application-fleet-associations.html
+          - API: https://docs.aws.amazon.com/appstream2/latest/APIReference/API_DescribeApplicationFleetAssociations.html
+
+  - type: textarea
+    id: proposed_design
+    attributes:
+      label: Proposed Design
+      description: Describe expected Terraform behavior (schema, lifecycle, retries/import).
+      placeholder: |
+        Describe desired resource/data source behavior and edge cases.
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance_criteria
+    attributes:
+      label: Acceptance Criteria
+      description: Define what must be true for this issue to be done.
+      placeholder: |
+        - Resource can be created and deleted successfully.
+        - Read detects and removes missing associations from state.
+        - Acceptance tests cover happy path and eventual consistency cases.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: Optional alternative designs/workarounds and why they are insufficient.
+
+  - type: checkboxes
+    id: confirmation
+    attributes:
+      label: Confirmation
+      options:
+        - label: I searched existing issues and did not find a duplicate.
+          required: true

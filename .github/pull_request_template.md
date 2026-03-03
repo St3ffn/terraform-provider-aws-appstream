@@ -1,10 +1,20 @@
 ## Related Issue
 
-Fixes # <!-- INSERT ISSUE NUMBER -->
+Fixes: #<!-- INSERT ISSUE NUMBER -->
+
+If there is no linked issue, write `None`.
 
 ## Description
 
-In plain English, describe your approach to addressing the issue linked above. For example, if you made a particular design decision, let us know why you chose this path instead of another solution.
+Provide a concise summary of the change and why it was made.
+
+Key updates:
+- <!-- List the most important changes -->
+- <!-- e.g. Added/changed/removed behavior -->
+- <!-- e.g. Updated docs/tests/workflows -->
+
+Design choice:
+<!-- Optional but recommended: explain one important design decision and tradeoff -->
 
 <!-- heimdall_github_prtemplate:grc-pci_dss-2024-01-05 -->
 ## Rollback Plan
@@ -13,4 +23,11 @@ In plain English, describe your approach to addressing the issue linked above. F
 
 ## Changes to Security Controls
 
-Are there any changes to security controls (access controls, encryption, logging) in this pull request? If so, explain.
+State whether this PR changes security controls (access controls, encryption, logging).
+
+If yes:
+- Describe what changed.
+- Describe impact/risk.
+
+If no:
+- `No changes to security controls in this pull request.`

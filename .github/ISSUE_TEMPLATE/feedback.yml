@@ -1,0 +1,65 @@
+name: General feedback
+description: Share general feedback about provider UX, behavior, or project direction
+title: "[feedback] "
+labels:
+  - feedback
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: What feedback do you want to share?
+      placeholder: |
+        Briefly describe your feedback.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      description: Which area is this feedback about?
+      options:
+        - Resource behavior
+        - Data source behavior
+        - Documentation
+        - Error messages/diagnostics
+        - Developer experience (tests/tooling/codegen)
+        - Performance/reliability
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: current_experience
+    attributes:
+      label: Current Experience
+      description: What is the current experience and why is it problematic/suboptimal?
+      placeholder: |
+        Describe your current experience.
+    validations:
+      required: true
+
+  - type: textarea
+    id: suggested_improvement
+    attributes:
+      label: Suggested Improvement
+      description: What change would improve this?
+      placeholder: |
+        Describe what should change and why.
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional_context
+    attributes:
+      label: Additional Context (Optional)
+      description: Add examples, links, Terraform snippets, logs, or related issues.
+
+  - type: checkboxes
+    id: confirmation
+    attributes:
+      label: Confirmation
+      options:
+        - label: I searched existing issues and did not find a duplicate.
+          required: true

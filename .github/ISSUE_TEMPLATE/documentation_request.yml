@@ -1,0 +1,86 @@
+name: Documentation request
+description: Report missing, unclear, or incorrect documentation
+title: "[docs] "
+labels:
+  - documentation
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: Briefly describe the documentation issue or request.
+      placeholder: |
+        Clarify migration steps from hashicorp/aws to st3ffn/aws-appstream for association resources.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: doc_change_type
+    attributes:
+      label: Change Type
+      description: Select the primary documentation need.
+      options:
+        - Missing documentation
+        - Incorrect/outdated documentation
+        - Unclear/confusing documentation
+        - New guide/tutorial request
+        - Example/config snippet request
+    validations:
+      required: true
+
+  - type: textarea
+    id: affected_docs
+    attributes:
+      label: Affected Docs
+      description: Which pages/files are affected? Add links or paths.
+      placeholder: |
+        - docs/resources/fleet.md
+        - docs/guides/migrating-from-hashicorp-aws.md
+        - https://registry.terraform.io/providers/...
+
+  - type: textarea
+    id: current_behavior
+    attributes:
+      label: Current Documentation
+      description: What is currently documented and why is it not sufficient?
+      placeholder: |
+        Describe what exists today and what is missing/wrong.
+    validations:
+      required: true
+
+  - type: textarea
+    id: desired_behavior
+    attributes:
+      label: Proposed Documentation
+      description: What should be documented instead?
+      placeholder: |
+        Describe expected wording, structure, or new sections.
+    validations:
+      required: true
+
+  - type: textarea
+    id: example_snippet
+    attributes:
+      label: Example or Snippet (Optional)
+      description: Provide example Terraform config/CLI output that should be included.
+      render: hcl
+
+  - type: textarea
+    id: acceptance_criteria
+    attributes:
+      label: Acceptance Criteria
+      description: Define when this docs issue is done.
+      placeholder: |
+        - Updated docs include working example config.
+        - Constraints/defaults are explicitly documented.
+        - Migration caveats are listed.
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: confirmation
+    attributes:
+      label: Confirmation
+      options:
+        - label: I searched existing issues and did not find a duplicate.
+          required: true

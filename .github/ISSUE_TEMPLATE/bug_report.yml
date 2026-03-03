@@ -1,0 +1,86 @@
+name: Bug report
+description: Report a bug in the AWS AppStream provider
+title: "[bug] "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        <!--- Provide a general summary of the issue in the Title above -->
+
+  - type: textarea
+    id: expected_behavior
+    attributes:
+      label: Expected Behavior
+      description: Tell us what should happen.
+      placeholder: |
+        Describe the expected behavior.
+    validations:
+      required: true
+
+  - type: textarea
+    id: current_behavior
+    attributes:
+      label: Current Behavior
+      description: Tell us what happens instead of the expected behavior.
+      placeholder: |
+        Describe the actual behavior.
+    validations:
+      required: true
+
+  - type: textarea
+    id: possible_solution
+    attributes:
+      label: Possible Solution
+      description: Not obligatory, but suggest a fix/reason for the bug.
+      placeholder: |
+        Optional: proposed fix or suspected root cause.
+
+  - type: textarea
+    id: steps_to_reproduce
+    attributes:
+      label: Steps to Reproduce
+      description: Provide an unambiguous set of steps to reproduce this bug. Include code if relevant.
+      placeholder: |
+        1.
+        2.
+        3.
+        4.
+    validations:
+      required: true
+
+  - type: textarea
+    id: context_environment
+    attributes:
+      label: Context (Environment)
+      description: |
+        How has this issue affected you? What are you trying to accomplish?
+        Providing context helps us come up with a solution that is most useful in the real world.
+      placeholder: |
+        AWS region:
+        OS:
+
+  - type: input
+    id: terraform_version
+    attributes:
+      label: Terraform Version
+      placeholder: e.g. 1.14.6
+    validations:
+      required: true
+
+  - type: input
+    id: provider_version
+    attributes:
+      label: Provider Version
+      placeholder: e.g. 2.0.0
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: confirmation
+    attributes:
+      label: Confirmation
+      options:
+        - label: I searched existing issues and did not find a duplicate.
+          required: true
