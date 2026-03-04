@@ -48,11 +48,11 @@ type AccTestEnv struct {
 // This helper should be called once per acceptance test and reused for
 // all test configuration and assertions.
 func LoadAccTestEnv(t *testing.T) *AccTestEnv {
+	t.Helper()
+
 	if os.Getenv("TF_ACC") == "" {
 		t.Skip("skipping acceptance test unless TF_ACC is set")
 	}
-
-	t.Helper()
 
 	if os.Getenv("AWS_PROFILE") == "" &&
 		os.Getenv("AWS_ACCESS_KEY_ID") == "" {

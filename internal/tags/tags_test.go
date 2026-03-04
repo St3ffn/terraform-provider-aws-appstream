@@ -310,6 +310,8 @@ func TestTagManager_Apply(t *testing.T) {
 			),
 			setupClient: func(f *FakeTaggingAPI) {},
 			assert: func(t *testing.T, f *FakeTaggingAPI) {
+				t.Helper()
+
 				if f.GetResourcesCalls != 0 || f.TagResourcesCalls != 0 || f.UntagResourcesCalls != 0 {
 					t.Fatalf("no AWS calls expected for empty ARN")
 				}
@@ -332,6 +334,8 @@ func TestTagManager_Apply(t *testing.T) {
 				})
 			},
 			assert: func(t *testing.T, f *FakeTaggingAPI) {
+				t.Helper()
+
 				if f.GetResourcesCalls != 1 {
 					t.Fatalf("expected GetResources to be called once, got %d", f.GetResourcesCalls)
 				}
@@ -356,6 +360,8 @@ func TestTagManager_Apply(t *testing.T) {
 				f.TagResourcesSucceeds()
 			},
 			assert: func(t *testing.T, f *FakeTaggingAPI) {
+				t.Helper()
+
 				if f.TagResourcesCalls != 1 {
 					t.Fatalf("expected TagResources to be called once")
 				}
@@ -389,6 +395,8 @@ func TestTagManager_Apply(t *testing.T) {
 				f.UntagResourcesSucceeds()
 			},
 			assert: func(t *testing.T, f *FakeTaggingAPI) {
+				t.Helper()
+
 				if f.UntagResourcesCalls != 1 {
 					t.Fatalf("expected UntagResources to be called once")
 				}
@@ -417,6 +425,8 @@ func TestTagManager_Apply(t *testing.T) {
 				f.TagResourcesSucceeds()
 			},
 			assert: func(t *testing.T, f *FakeTaggingAPI) {
+				t.Helper()
+
 				if f.UntagResourcesCalls != 1 || f.TagResourcesCalls != 1 {
 					t.Fatalf("expected both TagResources and UntagResources to be called once")
 				}

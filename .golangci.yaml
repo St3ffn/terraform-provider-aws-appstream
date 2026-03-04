@@ -13,22 +13,30 @@ formatters:
 linters:
   default: none
   enable:
+    - bodyclose
+    - contextcheck
+    - copyloopvar
     - durationcheck
     - errcheck
     - errorlint
     - errname
-    - copyloopvar
     - forcetypeassert
+    - gocheckcompilerdirectives
     - godot
+    - gosec
+    - govet
     - ineffassign
     - makezero
     - misspell
     - nilerr
+    - nolintlint
     - predeclared
+#    - revive
     - staticcheck
+    - testifylint
+    - thelper
+    - tparallel
     - unconvert
     - unparam
     - unused
-    - govet
-    - nolintlint
-    - gosec
+    - wastedassign
