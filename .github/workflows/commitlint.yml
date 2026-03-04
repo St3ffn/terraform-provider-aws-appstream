@@ -1,0 +1,47 @@
+name: Commitlint
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  commitlint:
+    name: Validate Commit Messages
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          fetch-depth: 0
+      - name: Validate PR Commits
+        shell: bash
+        # from https://stackoverflow.com/a/67202756, may you rest in peace stackoverflow
+        run: |
+          set -euo pipefail
+
+          regex='\A(((Initial commit)|(Merge [^\r\n]+)|((build|chore|ci|docs|feat|fix|perf|refactor|revert|style|test)(\(\w+\))?!?: [^\r\n]+((\r|\n|\r\n)((\r|\n|\r\n)[^\r\n]+)+)*))(\r|\n|\r\n)?)\z'
+          base_sha="${{ github.event.pull_request.base.sha }}"
+          head_sha="${{ github.event.pull_request.head.sha }}"
+          failed=0
+          invalid_count=0
+
+          while IFS= read -r sha; do
+            msg="$(git show -s --format=%B "$sha")"
+            subject="$(git show -s --format=%s "$sha")"
+            short_sha="$(git rev-parse --short "$sha")"
+
+            if ! printf '%s' "$msg" | grep -Pzoq "$regex"; then
+              echo "::error title=Conventional Commit violation::${short_sha} - ${subject}"
+              echo "Conventional Commit violation: ${short_sha} - ${subject}"
+              failed=1
+              invalid_count=$((invalid_count + 1))
+            fi
+          done < <(git rev-list "${base_sha}..${head_sha}")
+
+          if [ "$failed" -eq 1 ]; then
+            echo
+            echo "Found ${invalid_count} commit(s) that do not follow Conventional Commits."
+          fi
+
+          exit "$failed"
