@@ -182,3 +182,45 @@ This repository includes a helper script that prepares all necessary prerequisit
 ```bash
 ./setup-acceptance-tests.sh
 ```
+
+## Conventional Commits
+
+This repository uses [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/#summary) for commit messages.
+
+Examples:
+
+- `feat: add retry for invalid role errors`
+- `fix: handle write-only password on update`
+- `chore: pin workflow action shas`
+
+## Development Prerequisites
+
+Before running local development targets, ensure these tools are available:
+
+- Go (version from `go.mod`)
+- `golangci-lint`
+- Terraform CLI (used by `make generate` for `terraform fmt`)
+
+Some targets execute `go run ...` tools and may download modules on first run
+(for example `govulncheck`, `tfplugindocs`, and `copywrite`).
+
+## Make Targets
+
+| Target             | Description                                                  | Requires                                                |
+|--------------------|--------------------------------------------------------------|---------------------------------------------------------|
+| `make fmt`         | Format Go code (provider + tools) with configured formatters | Go, `golangci-lint`                                     |
+| `make lint`        | Run linters (provider + tools)                               | Go, `golangci-lint`                                     |
+| `make test`        | Run unit tests (provider + tools)                            | Go                                                      |
+| `make govulncheck` | Run vulnerability checks (provider + tools)                  | Go, network access on first run                         |
+| `make generate`    | Generate provider artifacts/docs and format examples         | Go, Terraform CLI, network access on first run          |
+| `make build`       | Build provider binary into `./bin`                           | Go                                                      |
+| `make build-debug` | Build non-optimized debug binary                             | Go                                                      |
+| `make install`     | Install provider binary with `go install`                    | Go                                                      |
+| `make testacc`     | Run acceptance tests                                         | Go, Terraform CLI, AWS credentials + test prerequisites |
+
+Module-specific targets are also available for `fmt`, `lint`, `test`, and
+`govulncheck`:
+
+- `*-provider`
+- `*-tool-provider-codegen`
+- `*-tool-appstream-changelog-issues`
