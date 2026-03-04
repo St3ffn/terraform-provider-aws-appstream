@@ -69,12 +69,10 @@ func (v arnValidator) ValidateString(
 	}
 }
 
-//nolint:unused // kept for future validators
 func ValidARN() validator.String {
 	return arnValidator{}
 }
 
-//nolint:unused // kept for future validators
 func ValidARNWithService(service string) validator.String {
 	return arnValidator{service: service}
 }

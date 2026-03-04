@@ -28,3 +28,4 @@ linters:
     - unparam
     - unused
     - govet
+    - nolintlint
