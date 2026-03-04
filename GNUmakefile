@@ -85,10 +85,23 @@ generate:
 	@cd tools/provider-codegen && go generate ./...
 	@echo "✅  Generation completed"
 
-test:
-	@echo "🧪  Running tests..."
-	@go test -v -cover -timeout=5m ./...
+test: test-provider test-tool-provider-codegen test-tool-appstream-changelog-issues
 	@echo "✅  Tests completed"
+
+test-provider:
+	@echo "🧪  Running provider tests..."
+	@go test -v -cover -timeout=10m ./...
+	@echo "✅  Provider tests completed"
+
+test-tool-provider-codegen:
+	@echo "🧪  Running tools/provider-codegen tests..."
+	@cd tools/provider-codegen && go test -v -cover -timeout=5m ./...
+	@echo "✅  tools/provider-codegen tests completed"
+
+test-tool-appstream-changelog-issues:
+	@echo "🧪  Running tools/appstream-changelog-issues tests..."
+	@cd tools/appstream-changelog-issues && go test -v -cover -timeout=5m ./...
+	@echo "✅  tools/appstream-changelog-issues tests completed"
 
 testacc:
 	@echo "🧪  Running acceptance tests..."
@@ -110,6 +123,9 @@ clean:
 	lint-tool-provider-codegen \
 	lint-tool-appstream-changelog-issues \
 	test \
+	test-provider \
+	test-tool-provider-codegen \
+	test-tool-appstream-changelog-issues \
 	govulncheck \
 	govulncheck-provider \
 	govulncheck-tool-provider-codegen \
