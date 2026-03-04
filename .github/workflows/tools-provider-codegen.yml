@@ -3,6 +3,7 @@ name: Tool Provider Codegen
 on:
   pull_request:
     paths:
+      - '.golangci.yaml'
       - 'tools/provider-codegen/**'
       - '.github/workflows/tools-provider-codegen.yml'
       - '!tools/provider-codegen/README.md'
@@ -10,9 +11,11 @@ on:
     branches:
       - main
     paths:
+      - '.golangci.yaml'
       - 'tools/provider-codegen/**'
       - '.github/workflows/tools-provider-codegen.yml'
       - '!tools/provider-codegen/README.md'
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -31,15 +34,6 @@ jobs:
         with:
           go-version-file: 'tools/provider-codegen/go.mod'
           cache: true
-      - name: Check gofmt
-        run: |
-          UNFORMATTED="$(gofmt -s -l .)"
-          if [ -n "$UNFORMATTED" ]; then
-            echo "These files are not gofmt'ed:"
-            echo "$UNFORMATTED"
-            echo "Run: make fmt"
-            exit 1
-          fi
       - name: Run linters
         uses: golangci/golangci-lint-action@1e7e51e771db61008b38414a730f564565cf7c20 # v9.2.0
         with:

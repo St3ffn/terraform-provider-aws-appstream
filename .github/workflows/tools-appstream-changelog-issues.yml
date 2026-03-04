@@ -3,6 +3,7 @@ name: Tool AppStream Changelog Issues
 on:
   pull_request:
     paths:
+      - '.golangci.yaml'
       - '.github/workflows/tools-appstream-changelog-issues.yml'
       - 'tools/appstream-changelog-issues/**'
       - '!tools/appstream-changelog-issues/README.md'
@@ -10,9 +11,11 @@ on:
     branches:
       - main
     paths:
+      - '.golangci.yaml'
       - '.github/workflows/tools-appstream-changelog-issues.yml'
       - 'tools/appstream-changelog-issues/**'
       - '!tools/appstream-changelog-issues/README.md'
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -31,19 +34,10 @@ jobs:
         with:
           go-version-file: 'tools/appstream-changelog-issues/go.mod'
           cache: true
-      - name: Check gofmt
-        run: |
-          UNFORMATTED="$(gofmt -s -l .)"
-          if [ -n "$UNFORMATTED" ]; then
-            echo "These files are not gofmt'ed:"
-            echo "$UNFORMATTED"
-            echo "Run: make fmt"
-            exit 1
-          fi
       - name: Run linters
         uses: golangci/golangci-lint-action@1e7e51e771db61008b38414a730f564565cf7c20 # v9.2.0
         with:
           version: latest
           working-directory: tools/appstream-changelog-issues
       - run: go mod download
-      - run:  go test -v -cover -timeout 10m ./...
+      - run: go test -v -cover -timeout 10m ./...
