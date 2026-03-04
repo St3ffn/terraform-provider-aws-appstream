@@ -115,13 +115,41 @@ func TestModuleVersion_InvalidGoMod(t *testing.T) {
 	}
 }
 
-func writeTempGoMod(t *testing.T, content string) string {
-	t.Helper()
+func TestModuleVersion_PathOutsideRepositoryRoot(t *testing.T) {
+	t.Parallel()
 
 	tmpDir := t.TempDir()
 	path := filepath.Join(tmpDir, "go.mod")
+	if err := os.WriteFile(path, []byte("module outside/test\n"), 0o600); err != nil {
+		t.Fatalf("write go.mod: %v", err)
+	}
 
-	err := os.WriteFile(path, []byte(strings.TrimSpace(content)+"\n"), 0o600)
+	_, err := ModuleVersion(path, AppStreamModulePath)
+	if err == nil {
+		t.Fatal("expected error, got nil")
+	}
+	if !strings.Contains(err.Error(), "unsafe go.mod path") {
+		t.Fatalf("expected unsafe path error, got %v", err)
+	}
+}
+
+func writeTempGoMod(t *testing.T, content string) string {
+	t.Helper()
+
+	repoRoot, err := findRepositoryRoot()
+	if err != nil {
+		t.Fatalf("resolve repository root: %v", err)
+	}
+
+	tmpDir, err := os.MkdirTemp(repoRoot, "gomod-test-")
+	if err != nil {
+		t.Fatalf("create temp dir: %v", err)
+	}
+	t.Cleanup(func() { _ = os.RemoveAll(tmpDir) })
+
+	path := filepath.Join(tmpDir, "go.mod")
+
+	err = os.WriteFile(path, []byte(strings.TrimSpace(content)+"\n"), 0o600)
 	if err != nil {
 		t.Fatalf("write go.mod: %v", err)
 	}

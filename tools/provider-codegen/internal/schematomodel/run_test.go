@@ -69,7 +69,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 }
 `
 
-	if err := os.WriteFile(schemaPath, []byte(schema), 0o644); err != nil {
+	if err := os.WriteFile(schemaPath, []byte(schema), 0o600); err != nil {
 		t.Fatalf("write schema: %v", err)
 	}
 
@@ -81,6 +81,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 	}
 
 	outPath := filepath.Join(root, "resource_model_gen.go")
+	// #nosec G304 -- fixed generated filename under t.TempDir(), not user-controlled path input.
 	out, err := os.ReadFile(outPath)
 	if err != nil {
 		t.Fatalf("read generated file: %v", err)
@@ -101,6 +102,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 	}
 
 	diffPath := filepath.Join(root, "resource_diff_gen.go")
+	// #nosec G304 -- fixed generated filename under t.TempDir(), not user-controlled path input.
 	diffOut, err := os.ReadFile(diffPath)
 	if err != nil {
 		t.Fatalf("read generated diff file: %v", err)
@@ -163,7 +165,7 @@ func (d *dataSource) Schema(_ context.Context, _ tfdatasource.SchemaRequest, res
 }
 `
 
-	if err := os.WriteFile(schemaPath, []byte(schema), 0o644); err != nil {
+	if err := os.WriteFile(schemaPath, []byte(schema), 0o600); err != nil {
 		t.Fatalf("write schema: %v", err)
 	}
 
