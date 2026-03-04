@@ -7,7 +7,7 @@ GOBIN := $(shell go env GOBIN)
 GOPATH := $(shell go env GOPATH)
 INSTALL_DIR := $(if $(GOBIN),$(GOBIN),$(GOPATH)/bin)
 
-default: generate fmt lint govulncheck test install
+default: fmt generate lint govulncheck test install
 
 build:
 	@echo "🚧  Building provider..."
@@ -25,6 +25,24 @@ install:
 	@echo "📦  Installing provider..."
 	@go install -v .
 	@echo "✅  Install completed: $(INSTALL_DIR)/$(BINARY_NAME)"
+
+fmt: fmt-provider fmt-tool-provider-codegen fmt-tool-appstream-changelog-issues
+	@echo "✅  Format completed"
+
+fmt-provider:
+	@echo "🧹  Formatting provider Go files..."
+	@golangci-lint fmt ./...
+	@echo "✅  Provider format completed"
+
+fmt-tool-provider-codegen:
+	@echo "🧹  Formatting tools/provider-codegen Go files..."
+	@cd tools/provider-codegen && golangci-lint fmt --config ../../.golangci.yaml ./...
+	@echo "✅  tools/provider-codegen format completed"
+
+fmt-tool-appstream-changelog-issues:
+	@echo "🧹  Formatting tools/appstream-changelog-issues Go files..."
+	@cd tools/appstream-changelog-issues && golangci-lint fmt --config ../../.golangci.yaml ./...
+	@echo "✅  tools/appstream-changelog-issues format completed"
 
 lint: lint-provider lint-tool-provider-codegen lint-tool-appstream-changelog-issues
 	@echo "✅  Lint completed"
@@ -44,21 +62,6 @@ lint-tool-appstream-changelog-issues:
 	@cd tools/appstream-changelog-issues && golangci-lint run ./...
 	@echo "✅  tools/appstream-changelog-issues lint completed"
 
-generate:
-	@echo "⚙️  Running code generation..."
-	@cd tools/provider-codegen && go generate ./...
-	@echo "✅  Generation completed"
-
-fmt:
-	@echo "🧹  Formatting Go files..."
-	@gofmt -s -w -e .
-	@echo "✅  Format completed"
-
-test:
-	@echo "🧪  Running tests..."
-	@go test -v -cover -timeout=5m ./...
-	@echo "✅  Tests completed"
-
 govulncheck: govulncheck-provider govulncheck-tool-provider-codegen govulncheck-tool-appstream-changelog-issues
 	@echo "✅  govulncheck completed"
 
@@ -77,6 +80,16 @@ govulncheck-tool-appstream-changelog-issues:
 	@cd tools/appstream-changelog-issues && go run golang.org/x/vuln/cmd/govulncheck@latest ./...
 	@echo "✅  tools/appstream-changelog-issues govulncheck completed"
 
+generate:
+	@echo "⚙️  Running code generation..."
+	@cd tools/provider-codegen && go generate ./...
+	@echo "✅  Generation completed"
+
+test:
+	@echo "🧪  Running tests..."
+	@go test -v -cover -timeout=5m ./...
+	@echo "✅  Tests completed"
+
 testacc:
 	@echo "🧪  Running acceptance tests..."
 	@TF_ACC=1 go test -v -cover -timeout 120m ./...
@@ -89,6 +102,9 @@ clean:
 
 .PHONY: \
 	fmt \
+	fmt-provider \
+	fmt-tool-provider-codegen \
+	fmt-tool-appstream-changelog-issues \
 	lint \
 	lint-provider \
 	lint-tool-provider-codegen \
