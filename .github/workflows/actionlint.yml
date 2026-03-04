@@ -4,10 +4,15 @@ on:
   pull_request:
     paths:
       - '.github/workflows/**'
+  schedule:
+    # Every Sunday at 16:00 UTC.
+    - cron: '0 16 * * 0'
+  workflow_dispatch:
 
 permissions:
   contents: read
   pull-requests: write
+  checks: write
 
 jobs:
   actionlint:
@@ -19,6 +24,6 @@ jobs:
         uses: reviewdog/action-actionlint@0d952c597ef8459f634d7145b0b044a9699e5e43 # v1.71.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          reporter: github-pr-review
-          filter_mode: added
+          reporter: ${{ github.event_name == 'pull_request' && 'github-pr-review' || 'github-check' }}
+          filter_mode: nofilter
           fail_level: error
