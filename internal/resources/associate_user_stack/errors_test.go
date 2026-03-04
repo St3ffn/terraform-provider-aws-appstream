@@ -47,11 +47,11 @@ func TestNewUserStackAssociationNotReadyError(t *testing.T) {
 			err := newUserStackAssociationNotReadyError(tt.input)
 
 			if tt.wantNil {
-				require.Nil(t, err)
+				require.NoError(t, err)
 				return
 			}
 
-			require.NotNil(t, err)
+			require.Error(t, err)
 			require.True(t, isUserStackAssociationNotReadyError(err))
 			require.Contains(t, err.Error(), tt.wantMsgSub)
 		})

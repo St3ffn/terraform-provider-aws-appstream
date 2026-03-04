@@ -54,12 +54,12 @@ lint-provider:
 
 lint-tool-provider-codegen:
 	@echo "🔍  Linting tools/provider-codegen..."
-	@cd tools/provider-codegen && golangci-lint run ./...
+	@cd tools/provider-codegen && golangci-lint run
 	@echo "✅  tools/provider-codegen lint completed"
 
 lint-tool-appstream-changelog-issues:
 	@echo "🔍  Linting tools/appstream-changelog-issues..."
-	@cd tools/appstream-changelog-issues && golangci-lint run ./...
+	@cd tools/appstream-changelog-issues && golangci-lint run
 	@echo "✅  tools/appstream-changelog-issues lint completed"
 
 govulncheck: govulncheck-provider govulncheck-tool-provider-codegen govulncheck-tool-appstream-changelog-issues
