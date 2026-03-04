@@ -106,7 +106,7 @@ func TestFetchChangelog(t *testing.T) {
 		}),
 	}
 
-	got, err := FetchChangelog(context.Background(), client, "https://example.invalid/changelog")
+	got, err := FetchChangelog(context.Background(), client, DefaultChangelogURL)
 	if err != nil {
 		t.Fatalf("FetchChangelog returned error: %v", err)
 	}
@@ -129,12 +129,24 @@ func TestFetchChangelog_HTTPError(t *testing.T) {
 		}),
 	}
 
-	_, err := FetchChangelog(context.Background(), client, "https://example.invalid/changelog")
+	_, err := FetchChangelog(context.Background(), client, DefaultChangelogURL)
 	if err == nil {
 		t.Fatal("expected error, got nil")
 	}
 	if !strings.Contains(err.Error(), "unexpected status") {
 		t.Fatalf("expected status error, got %v", err)
+	}
+}
+
+func TestFetchChangelog_RejectsDisallowedHost(t *testing.T) {
+	t.Parallel()
+
+	_, err := FetchChangelog(context.Background(), nil, "https://example.invalid/changelog")
+	if err == nil {
+		t.Fatal("expected error, got nil")
+	}
+	if !strings.Contains(err.Error(), "host") {
+		t.Fatalf("expected host validation error, got %v", err)
 	}
 }
 

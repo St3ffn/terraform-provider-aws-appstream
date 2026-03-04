@@ -31,3 +31,4 @@ linters:
     - unused
     - govet
     - nolintlint
+    - gosec

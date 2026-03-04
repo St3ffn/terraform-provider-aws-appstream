@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"golang.org/x/mod/modfile"
@@ -37,6 +38,12 @@ func ModuleVersion(goModPath, modulePath string) (string, error) {
 		return "", errors.New("module path must not be empty")
 	}
 
+	goModPath, err := sanitizeGoModPath(goModPath)
+	if err != nil {
+		return "", err
+	}
+
+	// #nosec G304 -- goModPath is sanitized by sanitizeGoModPath to an absolute path inside repo root with basename go.mod.
 	content, err := os.ReadFile(goModPath)
 	if err != nil {
 		return "", fmt.Errorf("read go.mod: %w", err)
@@ -74,4 +81,49 @@ func ModuleVersion(goModPath, modulePath string) (string, error) {
 	}
 
 	return version, nil
+}
+
+func sanitizeGoModPath(input string) (string, error) {
+	cleanPath := filepath.Clean(input)
+	absPath, err := filepath.Abs(cleanPath)
+	if err != nil {
+		return "", fmt.Errorf("resolve absolute go.mod path: %w", err)
+	}
+
+	safeRoot, err := findRepositoryRoot()
+	if err != nil {
+		return "", err
+	}
+
+	safeRoot = filepath.Clean(safeRoot)
+	safeRootPrefix := safeRoot + string(filepath.Separator)
+	if absPath != safeRoot && !strings.HasPrefix(absPath, safeRootPrefix) {
+		return "", fmt.Errorf("unsafe go.mod path %q: must be inside repository root %q", absPath, safeRoot)
+	}
+
+	if filepath.Base(absPath) != "go.mod" {
+		return "", fmt.Errorf("unsafe go.mod path %q: expected file name go.mod", absPath)
+	}
+
+	return absPath, nil
+}
+
+func findRepositoryRoot() (string, error) {
+	startDir, err := os.Getwd()
+	if err != nil {
+		return "", fmt.Errorf("resolve current working directory: %w", err)
+	}
+
+	dir := filepath.Clean(startDir)
+	for {
+		if _, err := os.Stat(filepath.Join(dir, ".git")); err == nil {
+			return dir, nil
+		}
+
+		parent := filepath.Dir(dir)
+		if parent == dir {
+			return "", errors.New("repository root not found (missing .git)")
+		}
+		dir = parent
+	}
 }

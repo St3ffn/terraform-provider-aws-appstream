@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"regexp"
 	"strings"
 
@@ -22,6 +23,10 @@ const (
 
 var (
 	headingRE = regexp.MustCompile(`^# (v\d+\.\d+\.\d+) \(([^)]+)\)$`)
+
+	allowedChangelogHosts = map[string]struct{}{
+		"raw.githubusercontent.com": {},
+	}
 )
 
 // Release represents one version section in the AppStream changelog.
@@ -38,6 +43,11 @@ func FetchChangelog(ctx context.Context, client *http.Client, url string) ([]byt
 		url = DefaultChangelogURL
 	}
 
+	url, err := sanitizeChangelogURL(url)
+	if err != nil {
+		return nil, err
+	}
+
 	if client == nil {
 		client = http.DefaultClient
 	}
@@ -47,6 +57,7 @@ func FetchChangelog(ctx context.Context, client *http.Client, url string) ([]byt
 		return nil, fmt.Errorf("create request: %w", err)
 	}
 
+	// #nosec G704 -- request target is constrained by sanitizeChangelogURL to https://raw.githubusercontent.com only.
 	resp, err := client.Do(req)
 	if err != nil {
 		return nil, fmt.Errorf("fetch changelog: %w", err)
@@ -156,4 +167,34 @@ func FilterFeatureReleases(releases []Release) []Release {
 	}
 
 	return filtered
+}
+
+func sanitizeChangelogURL(rawURL string) (string, error) {
+	u, err := url.Parse(strings.TrimSpace(rawURL))
+	if err != nil {
+		return "", fmt.Errorf("invalid changelog URL %q: %w", rawURL, err)
+	}
+
+	if !u.IsAbs() {
+		return "", fmt.Errorf("invalid changelog URL %q: URL must be absolute", rawURL)
+	}
+
+	if !strings.EqualFold(u.Scheme, "https") {
+		return "", fmt.Errorf("invalid changelog URL %q: only https URLs are allowed", rawURL)
+	}
+
+	if u.User != nil {
+		return "", fmt.Errorf("invalid changelog URL %q: userinfo is not allowed", rawURL)
+	}
+
+	if u.Port() != "" {
+		return "", fmt.Errorf("invalid changelog URL %q: custom ports are not allowed", rawURL)
+	}
+
+	host := strings.ToLower(u.Hostname())
+	if _, ok := allowedChangelogHosts[host]; !ok {
+		return "", fmt.Errorf("invalid changelog URL %q: host %q is not allowed", rawURL, host)
+	}
+
+	return u.String(), nil
 }

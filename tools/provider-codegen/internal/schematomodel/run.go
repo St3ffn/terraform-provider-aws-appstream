@@ -111,11 +111,11 @@ func generateArtifacts(
 		return err
 	}
 
-	if err := os.MkdirAll(filepath.Dir(modelPath), 0o755); err != nil {
+	if err := os.MkdirAll(filepath.Dir(modelPath), 0o750); err != nil {
 		return fmt.Errorf("create output directory: %w", err)
 	}
 
-	if err := os.WriteFile(modelPath, modelOut, 0o644); err != nil {
+	if err := os.WriteFile(modelPath, modelOut, 0o600); err != nil {
 		return fmt.Errorf("write model output: %w", err)
 	}
 	if verbose {
@@ -131,7 +131,7 @@ func generateArtifacts(
 		return err
 	}
 
-	if err := os.WriteFile(diffPath, diffOut, 0o644); err != nil {
+	if err := os.WriteFile(diffPath, diffOut, 0o600); err != nil {
 		return fmt.Errorf("write diff output: %w", err)
 	}
 	if verbose {
