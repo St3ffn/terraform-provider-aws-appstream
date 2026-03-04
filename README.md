@@ -1,6 +1,6 @@
 # Terraform AWS AppStream Provider
 
-[![Release](https://img.shields.io/github/v/release/St3ffn/terraform-provider-aws-appstream)](https://github.com/St3ffn/terraform-provider-aws-appstream/releases)
+[![Release](https://img.shields.io/github/v/release/St3ffn/terraform-provider-aws-appstream?sort=semver&cacheSeconds=300)](https://github.com/St3ffn/terraform-provider-aws-appstream/releases)
 [![CI](https://github.com/St3ffn/terraform-provider-aws-appstream/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/St3ffn/terraform-provider-aws-appstream/actions/workflows/test.yml?branch=main)
 [![License](https://img.shields.io/github/license/st3ffn/terraform-provider-aws-appstream)](/LICENSE)
 [![GO](https://img.shields.io/github/go-mod/go-version/St3ffn/terraform-provider-aws-appstream)](https://golang.org/)
