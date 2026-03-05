@@ -105,6 +105,8 @@ func BuildIssueContentWithOptions(currentVersion string, releases []appstream.Re
 	}, nil
 }
 
+type unused struct{}
+
 func latestVersion(releases []appstream.Release) (string, error) {
 	var latest string
 

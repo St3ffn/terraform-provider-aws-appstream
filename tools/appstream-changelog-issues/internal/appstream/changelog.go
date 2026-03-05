@@ -16,6 +16,8 @@ import (
 	"golang.org/x/mod/semver"
 )
 
+type unused struct{}
+
 const (
 	// DefaultChangelogURL points to the upstream AWS SDK for Go v2 AppStream changelog.
 	DefaultChangelogURL = "https://raw.githubusercontent.com/aws/aws-sdk-go-v2/main/service/appstream/CHANGELOG.md"
