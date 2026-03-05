@@ -6,6 +6,7 @@ BUILD_DIR := ./bin
 GOBIN := $(shell go env GOBIN)
 GOPATH := $(shell go env GOPATH)
 INSTALL_DIR := $(if $(GOBIN),$(GOBIN),$(GOPATH)/bin)
+TESTFLAGS ?=
 
 default: fmt generate lint govulncheck test install
 
@@ -90,22 +91,22 @@ test: test-provider test-tool-provider-codegen test-tool-appstream-changelog-iss
 
 test-provider:
 	@echo "🧪  Running provider tests..."
-	@go test -v -cover -timeout=10m ./...
+	@go test -v -cover -timeout=10m $(TESTFLAGS) ./...
 	@echo "✅  Provider tests completed"
 
 test-tool-provider-codegen:
 	@echo "🧪  Running tools/provider-codegen tests..."
-	@cd tools/provider-codegen && go test -v -cover -timeout=5m ./...
+	@cd tools/provider-codegen && go test -v -cover -timeout=5m $(TESTFLAGS) ./...
 	@echo "✅  tools/provider-codegen tests completed"
 
 test-tool-appstream-changelog-issues:
 	@echo "🧪  Running tools/appstream-changelog-issues tests..."
-	@cd tools/appstream-changelog-issues && go test -v -cover -timeout=5m ./...
+	@cd tools/appstream-changelog-issues && go test -v -cover -timeout=5m $(TESTFLAGS) ./...
 	@echo "✅  tools/appstream-changelog-issues tests completed"
 
 testacc:
 	@echo "🧪  Running acceptance tests..."
-	@TF_ACC=1 go test -v -cover -timeout 120m ./...
+	@TF_ACC=1 go test -v -cover -timeout 120m $(TESTFLAGS) ./...
 	@echo "✅  Acceptance tests completed"
 
 clean:
