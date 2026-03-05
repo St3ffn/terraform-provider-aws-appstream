@@ -34,7 +34,8 @@ func (r *resource) ModifyPlan(ctx context.Context, req tfresource.ModifyPlanRequ
 	plan.TagsAll = r.tags.EffectiveTagsForPlan(plan.Tags)
 
 	if hasState {
-		mode := updateMode(state, plan)
+		diff := newResourceDiff(state, plan)
+		mode := updateMode(plan, diff)
 		behavior := updateBehaviorFromPlan(plan.UpdateBehavior)
 		desired := desiredStateFromPlan(plan.DesiredState)
 

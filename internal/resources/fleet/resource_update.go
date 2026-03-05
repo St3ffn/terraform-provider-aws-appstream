@@ -226,7 +226,7 @@ func (r *resource) Update(ctx context.Context, req tfresource.UpdateRequest, res
 
 	restartAfter := false
 	var err error
-	mode := updateMode(state, plan)
+	mode := updateMode(plan, diff)
 	updateBehavior := updateBehaviorFromPlan(plan.UpdateBehavior)
 	desiredState := desiredStateFromPlan(plan.DesiredState)
 	didRemoteUpdate := false
