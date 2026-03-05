@@ -14,6 +14,12 @@ import (
 	"strings"
 )
 
+// Run executes schema-to-artifact generation for all matched schema files.
+//
+// It validates input options, discovers schema files from the configured root
+// and glob patterns, then for each schema parses the AST, extracts top-level
+// attributes, renders the generated model file, and conditionally renders the
+// generated diff helper when enabled for that schema.
 func Run(opts Options) error {
 	if strings.TrimSpace(opts.RootPath) == "" || len(opts.SchemaPatterns) == 0 {
 		return fmt.Errorf("root path and at least one schema pattern are required")

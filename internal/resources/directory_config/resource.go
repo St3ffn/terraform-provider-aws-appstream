@@ -20,6 +20,7 @@ var (
 	_ tfresource.ResourceWithImportState = &resource{}
 )
 
+// NewResource constructs the resource implementation used by Terraform for this type.
 func NewResource() tfresource.Resource {
 	return &resource{}
 }
@@ -29,10 +30,14 @@ type resource struct {
 	tags            *tags.TagManager
 }
 
+// Metadata registers this component's Terraform type name.
+// Terraform uses it to bind configuration blocks to this implementation.
 func (r *resource) Metadata(_ context.Context, req tfresource.MetadataRequest, resp *tfresource.MetadataResponse) {
 	resp.TypeName = req.ProviderTypeName + "_directory_config"
 }
 
+// Configure reads provider metadata, validates the expected metadata type and required clients,
+// and stores them on the receiver for subsequent operations.
 func (r *resource) Configure(_ context.Context, req tfresource.ConfigureRequest, resp *tfresource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
@@ -67,6 +72,7 @@ func (r *resource) Configure(_ context.Context, req tfresource.ConfigureRequest,
 	r.tags = tags.NewTagManager(meta.Tagging, meta.DefaultTags)
 }
 
+// ImportState expects <directory_name> and seeds directory_name and id.
 func (r *resource) ImportState(ctx context.Context, req tfresource.ImportStateRequest, resp *tfresource.ImportStateResponse) {
 	if req.ID == "" {
 		resp.Diagnostics.AddError(

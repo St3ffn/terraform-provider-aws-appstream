@@ -24,6 +24,7 @@ var (
 	_ tfresource.ResourceWithImportState    = &resource{}
 )
 
+// NewResource constructs the resource implementation used by Terraform for this type.
 func NewResource() tfresource.Resource {
 	return &resource{}
 }
@@ -33,6 +34,9 @@ type resource struct {
 	tags            *tags.TagManager
 }
 
+// ValidateConfig enforces fleet-type specific rules before planning.
+// It validates required/exclusive fields for ELASTIC vs ON_DEMAND/ALWAYS_ON
+// fleets, plus nested object requirements such as VPC and compute capacity.
 func (r *resource) ValidateConfig(ctx context.Context, req tfresource.ValidateConfigRequest, resp *tfresource.ValidateConfigResponse) {
 	var config resourceModel
 
@@ -249,10 +253,14 @@ func (r *resource) ValidateConfig(ctx context.Context, req tfresource.ValidateCo
 	}
 }
 
+// Metadata registers this component's Terraform type name.
+// Terraform uses it to bind configuration blocks to this implementation.
 func (r *resource) Metadata(_ context.Context, req tfresource.MetadataRequest, resp *tfresource.MetadataResponse) {
 	resp.TypeName = req.ProviderTypeName + "_fleet"
 }
 
+// Configure reads provider metadata, validates the expected metadata type and required clients,
+// and stores them on the receiver for subsequent operations.
 func (r *resource) Configure(_ context.Context, req tfresource.ConfigureRequest, resp *tfresource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
@@ -287,6 +295,8 @@ func (r *resource) Configure(_ context.Context, req tfresource.ConfigureRequest,
 	r.tags = tags.NewTagManager(meta.Tagging, meta.DefaultTags)
 }
 
+// ImportState expects <fleet_name>, seeds name/id, and initializes provider-owned
+// defaults (desired_state=INHERIT, update_behavior=AUTO_STOP_START, stream_view=APP).
 func (r *resource) ImportState(ctx context.Context, req tfresource.ImportStateRequest, resp *tfresource.ImportStateResponse) {
 	if req.ID == "" {
 		resp.Diagnostics.AddError(

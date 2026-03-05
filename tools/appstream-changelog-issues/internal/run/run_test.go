@@ -21,7 +21,7 @@ func TestExecute_DryRunSkipsGitHubIssueWrite(t *testing.T) {
 
 	clientCreated := false
 	deps := fixedDeps()
-	deps.newGitHubClient = func(owner, repo string, token *githubissues.Token) (githubIssueClient, error) {
+	deps.newGitHubClient = func(_, _ string, _ *githubissues.Token) (githubIssueClient, error) {
 		clientCreated = true
 		return &fakeGitHubIssueClient{}, nil
 	}
@@ -49,7 +49,7 @@ func TestExecute_NoNewerReleasesIsNoop(t *testing.T) {
 	deps.newerThan = func(_ []appstream.Release, _ string) ([]appstream.Release, error) {
 		return nil, nil
 	}
-	deps.newGitHubClient = func(owner, repo string, token *githubissues.Token) (githubIssueClient, error) {
+	deps.newGitHubClient = func(_, _ string, _ *githubissues.Token) (githubIssueClient, error) {
 		clientCreated = true
 		return &fakeGitHubIssueClient{}, nil
 	}
@@ -76,7 +76,7 @@ func TestExecute_NonFeatureReleasesIsNoop(t *testing.T) {
 	deps.filterFeatureRelease = func(_ []appstream.Release) []appstream.Release {
 		return nil
 	}
-	deps.newGitHubClient = func(owner, repo string, token *githubissues.Token) (githubIssueClient, error) {
+	deps.newGitHubClient = func(_, _ string, _ *githubissues.Token) (githubIssueClient, error) {
 		clientCreated = true
 		return &fakeGitHubIssueClient{}, nil
 	}
@@ -163,7 +163,7 @@ func TestExecute_UsesCustomIssueOptions(t *testing.T) {
 
 	fakeClient := &fakeGitHubIssueClient{}
 	deps := fixedDeps()
-	deps.buildIssueContent = func(currentVersion string, releases []appstream.Release, opts report.BuildOptions) (report.IssueContent, error) {
+	deps.buildIssueContent = func(_ string, _ []appstream.Release, opts report.BuildOptions) (report.IssueContent, error) {
 		if opts.IssueTitle != "Custom title" {
 			t.Fatalf("expected custom title, got %q", opts.IssueTitle)
 		}
@@ -178,7 +178,7 @@ func TestExecute_UsesCustomIssueOptions(t *testing.T) {
 			Body:  "<!-- custom -->\ncontent",
 		}, nil
 	}
-	deps.newGitHubClient = func(owner, repo string, token *githubissues.Token) (githubIssueClient, error) {
+	deps.newGitHubClient = func(_, _ string, _ *githubissues.Token) (githubIssueClient, error) {
 		return fakeClient, nil
 	}
 
@@ -252,7 +252,7 @@ func TestExecute_PropagatesCreateOrUpdateError(t *testing.T) {
 	t.Parallel()
 
 	deps := fixedDeps()
-	deps.newGitHubClient = func(owner, repo string, token *githubissues.Token) (githubIssueClient, error) {
+	deps.newGitHubClient = func(_, _ string, _ *githubissues.Token) (githubIssueClient, error) {
 		return &fakeGitHubIssueClient{err: errors.New("boom")}, nil
 	}
 
@@ -286,25 +286,25 @@ func fixedDeps() dependencies {
 			}
 			return "v1.53.0", nil
 		},
-		fetchChangelog: func(ctx context.Context, client *http.Client, url string) ([]byte, error) {
+		fetchChangelog: func(_ context.Context, _ *http.Client, _ string) ([]byte, error) {
 			return []byte("dummy"), nil
 		},
-		parseChangelog: func(markdown []byte) ([]appstream.Release, error) {
+		parseChangelog: func(_ []byte) ([]appstream.Release, error) {
 			return releases, nil
 		},
-		newerThan: func(releases []appstream.Release, currentVersion string) ([]appstream.Release, error) {
+		newerThan: func(releases []appstream.Release, _ string) ([]appstream.Release, error) {
 			return releases, nil
 		},
 		filterFeatureRelease: func(releases []appstream.Release) []appstream.Release {
 			return releases
 		},
-		buildIssueContent: func(currentVersion string, releases []appstream.Release, opts report.BuildOptions) (report.IssueContent, error) {
+		buildIssueContent: func(_ string, _ []appstream.Release, opts report.BuildOptions) (report.IssueContent, error) {
 			return report.IssueContent{
 				Title: opts.IssueTitle,
 				Body:  opts.IssueMarker + "\ncontent",
 			}, nil
 		},
-		newGitHubClient: func(owner, repo string, token *githubissues.Token) (githubIssueClient, error) {
+		newGitHubClient: func(_, _ string, _ *githubissues.Token) (githubIssueClient, error) {
 			return &fakeGitHubIssueClient{}, nil
 		},
 	}

@@ -10,6 +10,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 )
 
+// Schema returns the static Terraform schema for this component.
+// It defines supported attributes/blocks plus validators and plan behavior.
 func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *tfresource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Description: "Manages an AWS AppStream Usage Report Subscription.",

@@ -10,6 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
+// BoolPointerOrNil converts a Terraform bool into an AWS boolean pointer.
 func BoolPointerOrNil(v types.Bool) *bool {
 	if v.IsNull() || v.IsUnknown() {
 		return nil
@@ -18,6 +19,7 @@ func BoolPointerOrNil(v types.Bool) *bool {
 	return &b
 }
 
+// Int32PointerOrNil converts a Terraform int32 into an AWS int32 pointer.
 func Int32PointerOrNil(v types.Int32) *int32 {
 	if v.IsNull() || v.IsUnknown() {
 		return nil
@@ -26,6 +28,7 @@ func Int32PointerOrNil(v types.Int32) *int32 {
 	return &i
 }
 
+// StringPointerOrNil converts a Terraform string into an AWS string pointer.
 func StringPointerOrNil(v types.String) *string {
 	if v.IsNull() || v.IsUnknown() {
 		return nil
@@ -34,6 +37,7 @@ func StringPointerOrNil(v types.String) *string {
 	return &s
 }
 
+// ExpandStringSetOrNil converts a Terraform string set into a Go slice.
 func ExpandStringSetOrNil(ctx context.Context, set types.Set, diags *diag.Diagnostics) []string {
 	if set.IsNull() || set.IsUnknown() {
 		return nil
@@ -52,6 +56,7 @@ func ExpandStringSetOrNil(ctx context.Context, set types.Set, diags *diag.Diagno
 	return values
 }
 
+// OptionalStringUpdate applies optional string update semantics to an AWS setter.
 func OptionalStringUpdate(plan types.String, state types.String, setter func(*string)) {
 	switch {
 	case plan.IsUnknown():
@@ -67,6 +72,7 @@ func OptionalStringUpdate(plan types.String, state types.String, setter func(*st
 	}
 }
 
+// DiffStringSets computes added and removed elements between two Terraform sets.
 func DiffStringSets(ctx context.Context, oldSet, newSet types.Set, diags *diag.Diagnostics) (added, removed []string) {
 	var oldVals, newVals []string
 

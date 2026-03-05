@@ -14,6 +14,9 @@ import (
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/util"
 )
 
+// Update applies mutable directory config fields, including write-only service
+// account credentials from req.Config, retries transient update errors, applies
+// tags when needed, and refreshes state from AWS.
 func (r *resource) Update(ctx context.Context, req tfresource.UpdateRequest, resp *tfresource.UpdateResponse) {
 	var plan resourceModel
 	var state resourceModel

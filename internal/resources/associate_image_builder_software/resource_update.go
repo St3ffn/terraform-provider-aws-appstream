@@ -13,6 +13,9 @@ import (
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/util"
 )
 
+// Update reconciles association membership by diffing software_names and applying
+// disassociate/associate calls, optionally triggers deployment when deploy=true,
+// and then reads back the association state.
 func (r *resource) Update(ctx context.Context, req tfresource.UpdateRequest, resp *tfresource.UpdateResponse) {
 	var plan resourceModel
 	var state resourceModel

@@ -13,6 +13,9 @@ import (
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/util"
 )
 
+// Read fetches the current remote object and refreshes Terraform state from AWS.
+// When the object no longer exists remotely, the resource is removed from state
+// to converge Terraform with external deletions.
 func (ds *dataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var config dataSourceModel
 

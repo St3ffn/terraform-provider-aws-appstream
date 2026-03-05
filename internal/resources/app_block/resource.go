@@ -24,6 +24,7 @@ var (
 	_ tfresource.ResourceWithImportState    = &resource{}
 )
 
+// NewResource constructs the resource implementation used by Terraform for this type.
 func NewResource() tfresource.Resource {
 	return &resource{}
 }
@@ -33,6 +34,9 @@ type resource struct {
 	tags            *tags.TagManager
 }
 
+// ValidateConfig enforces packaging-specific app block constraints.
+// It validates allowed setup/post-setup script combinations and checks whether
+// source_s3_location.s3_key is required for the selected packaging_type.
 func (r *resource) ValidateConfig(ctx context.Context, req tfresource.ValidateConfigRequest, resp *tfresource.ValidateConfigResponse) {
 	var config resourceModel
 
@@ -105,10 +109,14 @@ func (r *resource) ValidateConfig(ctx context.Context, req tfresource.ValidateCo
 	}
 }
 
+// Metadata registers this component's Terraform type name.
+// Terraform uses it to bind configuration blocks to this implementation.
 func (r *resource) Metadata(_ context.Context, req tfresource.MetadataRequest, resp *tfresource.MetadataResponse) {
 	resp.TypeName = req.ProviderTypeName + "_app_block"
 }
 
+// Configure reads provider metadata, validates the expected metadata type and required clients,
+// and stores them on the receiver for subsequent operations.
 func (r *resource) Configure(_ context.Context, req tfresource.ConfigureRequest, resp *tfresource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
@@ -143,6 +151,7 @@ func (r *resource) Configure(_ context.Context, req tfresource.ConfigureRequest,
 	r.tags = tags.NewTagManager(meta.Tagging, meta.DefaultTags)
 }
 
+// ImportState accepts an AppStream app block ARN and stores it as resource id.
 func (r *resource) ImportState(ctx context.Context, req tfresource.ImportStateRequest, resp *tfresource.ImportStateResponse) {
 	if err := util.ValidateARNValue(req.ID, "appstream", "app-block/"); err != nil {
 		resp.Diagnostics.AddError(

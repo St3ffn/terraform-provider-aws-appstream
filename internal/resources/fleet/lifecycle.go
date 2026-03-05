@@ -7,6 +7,7 @@ import "github.com/hashicorp/terraform-plugin-framework/types"
 
 type desiredState string
 
+// String returns the string representation of the current value.
 func (s desiredState) String() string {
 	return string(s)
 }
@@ -27,6 +28,7 @@ func desiredStateFromPlan(v types.String) desiredState {
 
 type updateBehavior string
 
+// String returns the string representation of the current value.
 func (b updateBehavior) String() string {
 	return string(b)
 }

@@ -14,6 +14,9 @@ import (
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/util"
 )
 
+// Update applies mutable stack theme fields and tracks which AWS ThemeAttribute
+// values must be deleted, retries transient update errors, and then refreshes
+// state from AWS.
 func (r *resource) Update(ctx context.Context, req tfresource.UpdateRequest, resp *tfresource.UpdateResponse) {
 	var plan resourceModel
 	var state resourceModel
@@ -52,25 +55,22 @@ func (r *resource) Update(ctx context.Context, req tfresource.UpdateRequest, res
 		}
 
 		if diff.ThemeStyling.IsChanged() {
-			if plan.ThemeStyling.IsNull() {
-				// no delete support
-			} else {
+			// AWS does not support unsetting theme_styling once configured.
+			if !plan.ThemeStyling.IsNull() {
 				input.ThemeStyling = awstypes.ThemeStyling(plan.ThemeStyling.ValueString())
 			}
 		}
 
 		if diff.OrganizationLogoS3Location.IsChanged() {
-			if plan.OrganizationLogoS3Location.IsNull() {
-				// no delete support
-			} else {
+			// AWS does not support unsetting organization_logo_s3_location once configured.
+			if !plan.OrganizationLogoS3Location.IsNull() {
 				input.OrganizationLogoS3Location = expandS3Location(ctx, plan.OrganizationLogoS3Location, &resp.Diagnostics)
 			}
 		}
 
 		if diff.FaviconS3Location.IsChanged() {
-			if plan.FaviconS3Location.IsNull() {
-				// no delete support
-			} else {
+			// AWS does not support unsetting favicon_s3_location once configured.
+			if !plan.FaviconS3Location.IsNull() {
 				input.FaviconS3Location = expandS3Location(ctx, plan.FaviconS3Location, &resp.Diagnostics)
 			}
 		}

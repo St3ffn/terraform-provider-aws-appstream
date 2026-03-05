@@ -30,15 +30,18 @@ type taggingAPI interface {
 	) (*awstaggingapi.UntagResourcesOutput, error)
 }
 
+// TagManager reconciles desired Terraform tags with AWS tags for a resource.
 type TagManager struct {
 	client      taggingAPI
 	defaultTags map[string]string
 }
 
+// NewTagManager creates a TagManager with the given client and default tags.
 func NewTagManager(taggingAPI taggingAPI, defaultTags map[string]string) *TagManager {
 	return &TagManager{taggingAPI, defaultTags}
 }
 
+// ReadAll reads all resource tags for the given ARN.
 func (tm *TagManager) ReadAll(ctx context.Context, arn string) (types.Map, diag.Diagnostics) {
 	tags, diags := tm.readRaw(ctx, arn)
 	if diags.HasError() {
@@ -79,6 +82,7 @@ func (tm *TagManager) readRaw(ctx context.Context, arn string) (map[string]strin
 	return raw, diags
 }
 
+// Apply reconciles the desired tags against the current remote tags.
 func (tm *TagManager) Apply(ctx context.Context, arn string, desired types.Map) (types.Map, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
@@ -252,6 +256,7 @@ func diffTags(current, desired map[string]string) (removeKeys []string, addOrUpd
 	return removeKeys, addOrUpdate
 }
 
+// ResourceTags derives user-managed tags from tags_all and prior state.
 func ResourceTags(ctx context.Context, prior types.Map, all types.Map) (resourceTags types.Map, diags diag.Diagnostics) {
 	// no tags exist, nothing to return
 	if all.IsNull() || all.IsUnknown() {

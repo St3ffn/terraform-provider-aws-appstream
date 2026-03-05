@@ -10,7 +10,7 @@ import (
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/testhelpers"
 )
 
-func testAccExportImageTasksDataSource_basic() string {
+func testAccExportImageTasksDataSourceBasic() string {
 	return testhelpers.TestAccProviderBasicConfig() + `
 data "awsappstream_export_image_tasks" "test" {}
 `
@@ -23,7 +23,7 @@ func TestAccExportImageTasksDataSource_basic(t *testing.T) {
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccExportImageTasksDataSource_basic(),
+				Config: testAccExportImageTasksDataSourceBasic(),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr("data.awsappstream_export_image_tasks.test", "export_image_tasks.#", "0"),
 				),
@@ -32,7 +32,7 @@ func TestAccExportImageTasksDataSource_basic(t *testing.T) {
 	})
 }
 
-func testAccExportImageTasksDataSource_withFilter() string {
+func testAccExportImageTasksDataSourceWithFilter() string {
 	return testhelpers.TestAccProviderBasicConfig() + `
 data "awsappstream_export_image_tasks" "test" {
   filters = [{
@@ -50,7 +50,7 @@ func TestAccExportImageTasksDataSource_withFilter(t *testing.T) {
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccExportImageTasksDataSource_withFilter(),
+				Config: testAccExportImageTasksDataSourceWithFilter(),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr("data.awsappstream_export_image_tasks.test", "export_image_tasks.#", "0"),
 				),

@@ -20,6 +20,7 @@ var (
 	_ tfresource.ResourceWithImportState    = &resource{}
 )
 
+// NewResource constructs the resource implementation used by Terraform for this type.
 func NewResource() tfresource.Resource {
 	return &resource{}
 }
@@ -28,6 +29,8 @@ type resource struct {
 	appstreamClient *awsappstream.Client
 }
 
+// ValidateConfig validates dependent association fields.
+// send_email_notification is only valid when authentication_type is USERPOOL.
 func (r *resource) ValidateConfig(ctx context.Context, req tfresource.ValidateConfigRequest, resp *tfresource.ValidateConfigResponse) {
 	var config resourceModel
 
@@ -52,10 +55,14 @@ func (r *resource) ValidateConfig(ctx context.Context, req tfresource.ValidateCo
 	}
 }
 
+// Metadata registers this component's Terraform type name.
+// Terraform uses it to bind configuration blocks to this implementation.
 func (r *resource) Metadata(_ context.Context, req tfresource.MetadataRequest, resp *tfresource.MetadataResponse) {
 	resp.TypeName = req.ProviderTypeName + "_associate_user_stack"
 }
 
+// Configure reads provider metadata, validates the expected metadata type and required clients,
+// and stores them on the receiver for subsequent operations.
 func (r *resource) Configure(_ context.Context, req tfresource.ConfigureRequest, resp *tfresource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
@@ -81,6 +88,8 @@ func (r *resource) Configure(_ context.Context, req tfresource.ConfigureRequest,
 	r.appstreamClient = meta.Appstream
 }
 
+// ImportState expects <stack_name>|<authentication_type>|<user_name> and maps
+// each segment into state attributes before setting id.
 func (r *resource) ImportState(ctx context.Context, req tfresource.ImportStateRequest, resp *tfresource.ImportStateResponse) {
 	stackName, authenticationType, userName, err := parseID(req.ID)
 	if err != nil {

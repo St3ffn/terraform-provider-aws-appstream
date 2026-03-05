@@ -11,7 +11,7 @@ import (
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/testhelpers"
 )
 
-func testAccSessionsDataSource_basic(stackName, fleetName string) string {
+func testAccSessionsDataSourceBasic(stackName, fleetName string) string {
 	return testhelpers.TestAccProviderBasicConfig() + fmt.Sprintf(`
 data "awsappstream_sessions" "test" {
   stack_name = %q
@@ -27,7 +27,7 @@ func TestAccSoftwareAssociationsDataSource_basic(t *testing.T) {
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccSessionsDataSource_basic("fake-stack", "fake-fleet"),
+				Config: testAccSessionsDataSourceBasic("fake-stack", "fake-fleet"),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr("data.awsappstream_sessions.test", "stack_name", "fake-stack"),
 					resource.TestCheckResourceAttr("data.awsappstream_sessions.test", "fleet_name", "fake-fleet"),

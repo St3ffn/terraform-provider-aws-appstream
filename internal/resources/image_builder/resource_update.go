@@ -9,6 +9,9 @@ import (
 	tfresource "github.com/hashicorp/terraform-plugin-framework/resource"
 )
 
+// Update handles tag-only in-place changes for image builders.
+// All non-tag arguments are ForceNew; after optional tag apply it performs a
+// read-back so state reflects current remote values.
 func (r *resource) Update(ctx context.Context, req tfresource.UpdateRequest, resp *tfresource.UpdateResponse) {
 	var plan resourceModel
 	var state resourceModel

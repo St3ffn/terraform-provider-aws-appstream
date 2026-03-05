@@ -15,6 +15,9 @@ import (
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/util"
 )
 
+// Update applies mutable app block builder fields and lifecycle state transitions.
+// For updates that require a stopped builder, it can stop/update/start depending on
+// update_behavior and previous runtime state, then applies tags and reads back state.
 func (r *resource) Update(ctx context.Context, req tfresource.UpdateRequest, resp *tfresource.UpdateResponse) {
 	var plan resourceModel
 	var state resourceModel
@@ -76,17 +79,15 @@ func (r *resource) Update(ctx context.Context, req tfresource.UpdateRequest, res
 		}
 
 		if diff.InstanceType.IsChanged() {
-			if plan.InstanceType.IsNull() {
-				// no delete support
-			} else {
+			// AWS does not support unsetting instance_type once configured.
+			if !plan.InstanceType.IsNull() {
 				input.InstanceType = plan.InstanceType.ValueStringPointer()
 			}
 		}
 
 		if diff.Platform.IsChanged() {
-			if plan.Platform.IsNull() {
-				// no delete support
-			} else {
+			// AWS does not support unsetting platform once configured.
+			if !plan.Platform.IsNull() {
 				input.Platform = awstypes.PlatformType(plan.Platform.ValueString())
 			}
 		}
@@ -108,9 +109,8 @@ func (r *resource) Update(ctx context.Context, req tfresource.UpdateRequest, res
 		}
 
 		if diff.VPCConfig.IsChanged() {
-			if plan.VPCConfig.IsNull() {
-				// no delete support
-			} else {
+			// AWS does not support removing vpc_config as a whole.
+			if !plan.VPCConfig.IsNull() {
 				stateVPCConfig := expandVPCConfig(ctx, state.VPCConfig, &resp.Diagnostics)
 				planVPCConfig := expandVPCConfig(ctx, plan.VPCConfig, &resp.Diagnostics)
 

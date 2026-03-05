@@ -76,11 +76,15 @@ type defaultTagsModel struct {
 	Tags types.Map `tfsdk:"tags"`
 }
 
+// Metadata registers this component's Terraform type name.
+// Terraform uses it to bind configuration blocks to this implementation.
 func (p *awsAppStreamProvider) Metadata(_ context.Context, _ provider.MetadataRequest, resp *provider.MetadataResponse) {
 	resp.Version = p.version
 	resp.TypeName = "awsappstream"
 }
 
+// Schema returns the static Terraform schema for this component.
+// It defines supported attributes/blocks plus validators and plan behavior.
 func (p *awsAppStreamProvider) Schema(_ context.Context, _ provider.SchemaRequest, resp *provider.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Description: "Interact with AWS AppStream",
@@ -200,6 +204,9 @@ Authentication and region selection follow the standard AWS SDK behavior.
 	}
 }
 
+// ValidateConfig performs provider-level static validation before Configure runs.
+// It rejects unknown provider arguments and enforces cross-field auth rules,
+// including access/secret pairing, session token usage, and profile conflicts.
 func (p *awsAppStreamProvider) ValidateConfig(ctx context.Context, req provider.ValidateConfigRequest, resp *provider.ValidateConfigResponse) {
 	tflog.Debug(ctx, "Validating AWS AppStream Provider")
 
@@ -344,6 +351,15 @@ func (p *awsAppStreamProvider) ValidateConfig(ctx context.Context, req provider.
 	}
 }
 
+// Configure builds provider runtime metadata from Terraform configuration.
+//
+// It resolves authentication input (static credentials, profile, or AWS SDK
+// default chain), applies optional region and retry settings, loads the AWS SDK
+// config, and optionally validates credentials via STS GetCallerIdentity.
+//
+// It also reads provider-level default tags and stores the resulting metadata
+// object in both ResourceData and DataSourceData so every resource and data
+// source uses the same AWS config and default tag context.
 func (p *awsAppStreamProvider) Configure(ctx context.Context, req provider.ConfigureRequest, resp *provider.ConfigureResponse) {
 	tflog.Info(ctx, "Configuring AWS AppStream Provider")
 
@@ -489,6 +505,7 @@ func (p *awsAppStreamProvider) Configure(ctx context.Context, req provider.Confi
 	tflog.Info(ctx, "Configured AWS AppStream client", map[string]any{"success": true})
 }
 
+// DataSources returns all data source constructors registered by the provider.
 func (p *awsAppStreamProvider) DataSources(_ context.Context) []func() datasource.DataSource {
 	return []func() datasource.DataSource{
 		fleet.NewDataSource,
@@ -510,6 +527,7 @@ func (p *awsAppStreamProvider) DataSources(_ context.Context) []func() datasourc
 	}
 }
 
+// Resources returns all resource constructors registered by the provider.
 func (p *awsAppStreamProvider) Resources(_ context.Context) []func() resource.Resource {
 	return []func() resource.Resource{
 		fleet.NewResource,
@@ -533,6 +551,7 @@ func (p *awsAppStreamProvider) Resources(_ context.Context) []func() resource.Re
 	}
 }
 
+// New returns the provider factory for Terraform plugin startup.
 func New(version string) func() provider.Provider {
 	return func() provider.Provider {
 		return &awsAppStreamProvider{version: version}

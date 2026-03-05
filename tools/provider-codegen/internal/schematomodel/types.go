@@ -19,6 +19,7 @@ type modelType struct {
 	Fields []field
 }
 
+// Options configures schema-to-model artifact generation.
 type Options struct {
 	RootPath       string
 	SchemaPatterns []string

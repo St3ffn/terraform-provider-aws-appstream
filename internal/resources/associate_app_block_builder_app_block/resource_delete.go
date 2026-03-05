@@ -13,6 +13,9 @@ import (
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/util"
 )
 
+// Delete calls the AWS delete/disassociate API and treats not-found
+// responses as already deleted so destroy remains idempotent.
+// Terraform state is then cleared by the framework lifecycle.
 func (r *resource) Delete(ctx context.Context, req tfresource.DeleteRequest, resp *tfresource.DeleteResponse) {
 	var state resourceModel
 

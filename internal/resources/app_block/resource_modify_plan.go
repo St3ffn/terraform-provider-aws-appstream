@@ -9,6 +9,8 @@ import (
 	tfresource "github.com/hashicorp/terraform-plugin-framework/resource"
 )
 
+// ModifyPlan computes tags_all by merging provider default_tags with resource tags.
+// This keeps planned tag values deterministic before apply.
 func (r *resource) ModifyPlan(ctx context.Context, req tfresource.ModifyPlanRequest, resp *tfresource.ModifyPlanResponse) {
 	if req.Plan.Raw.IsNull() {
 		return
