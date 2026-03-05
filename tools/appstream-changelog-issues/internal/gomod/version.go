@@ -24,6 +24,8 @@ func AppStreamVersion(goModPath string) (string, error) {
 	return ModuleVersion(goModPath, AppStreamModulePath)
 }
 
+type unused struct{}
+
 // ModuleVersion reads a module version from the provided go.mod file. If a replace
 // directive exists for the module and includes a replacement version, that version
 // is returned as the effective version.

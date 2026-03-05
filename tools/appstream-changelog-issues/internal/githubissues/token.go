@@ -8,6 +8,7 @@ import "strings"
 type Token struct {
 	v string
 }
+type unused struct{}
 
 func NewToken(token string) *Token {
 	return &Token{v: strings.TrimSpace(token)}
