@@ -8,6 +8,7 @@ import (
 	"errors"
 )
 
+// IsContextCanceled reports whether err was caused by context cancellation or deadline.
 func IsContextCanceled(err error) bool {
 	return errors.Is(err, context.Canceled) || errors.Is(err, context.DeadlineExceeded)
 }

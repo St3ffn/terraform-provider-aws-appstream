@@ -19,6 +19,7 @@ var (
 	_ datasource.DataSourceWithValidateConfig = &dataSource{}
 )
 
+// NewDataSource constructs the data source implementation used by Terraform for this type.
 func NewDataSource() datasource.DataSource {
 	return &dataSource{}
 }
@@ -27,6 +28,8 @@ type dataSource struct {
 	appstreamClient *awsappstream.Client
 }
 
+// ValidateConfig validates session filter dependencies.
+// authentication_type is required whenever user_id is specified.
 func (ds *dataSource) ValidateConfig(ctx context.Context, req datasource.ValidateConfigRequest, resp *datasource.ValidateConfigResponse) {
 	var config dataSourceModel
 
@@ -46,10 +49,14 @@ func (ds *dataSource) ValidateConfig(ctx context.Context, req datasource.Validat
 	}
 }
 
+// Metadata registers this component's Terraform type name.
+// Terraform uses it to bind configuration blocks to this implementation.
 func (ds *dataSource) Metadata(_ context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
 	resp.TypeName = req.ProviderTypeName + "_sessions"
 }
 
+// Configure reads provider metadata, validates the expected metadata type and required clients,
+// and stores them on the receiver for subsequent operations.
 func (ds *dataSource) Configure(_ context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return

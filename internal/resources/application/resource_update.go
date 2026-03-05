@@ -14,6 +14,9 @@ import (
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/util"
 )
 
+// Update builds UpdateApplication from the state/plan diff and applies only changed
+// fields (including attribute deletions), retries transient API errors, applies
+// tag changes, and then refreshes state from AWS.
 func (r *resource) Update(ctx context.Context, req tfresource.UpdateRequest, resp *tfresource.UpdateResponse) {
 	var plan resourceModel
 	var state resourceModel
@@ -94,9 +97,8 @@ func (r *resource) Update(ctx context.Context, req tfresource.UpdateRequest, res
 		}
 
 		if diff.IconS3Location.IsChanged() {
-			if plan.IconS3Location.IsNull() {
-				// no delete support
-			} else {
+			// AWS does not support unsetting icon_s3_location once configured.
+			if !plan.IconS3Location.IsNull() {
 				input.IconS3Location = expandIconS3Location(
 					ctx, plan.IconS3Location, &resp.Diagnostics,
 				)

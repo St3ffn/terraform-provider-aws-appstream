@@ -9,6 +9,8 @@ import (
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/provider"
 )
 
+// ProtoV6ProviderFactories is used by Terraform acceptance tests to instantiate
+// the provider under the protocol v6 test server.
 var ProtoV6ProviderFactories = map[string]func() (tfprotov6.ProviderServer, error){
 	"awsappstream": providerserver.NewProtocol6WithError(provider.New("test")()),
 }

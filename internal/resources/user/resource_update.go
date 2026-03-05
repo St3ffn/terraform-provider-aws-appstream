@@ -14,6 +14,9 @@ import (
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/util"
 )
 
+// Update reconciles only the enabled flag for an existing user.
+// It calls EnableUser/DisableUser when enabled is managed and changed, then
+// performs a read-back to persist current remote state.
 func (r *resource) Update(ctx context.Context, req tfresource.UpdateRequest, resp *tfresource.UpdateResponse) {
 	var plan resourceModel
 	var state resourceModel

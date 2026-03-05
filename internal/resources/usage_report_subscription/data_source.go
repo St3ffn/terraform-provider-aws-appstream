@@ -17,6 +17,7 @@ var (
 	_ datasource.DataSourceWithConfigure = &dataSource{}
 )
 
+// NewDataSource constructs the data source implementation used by Terraform for this type.
 func NewDataSource() datasource.DataSource {
 	return &dataSource{}
 }
@@ -25,10 +26,14 @@ type dataSource struct {
 	appstreamClient *awsappstream.Client
 }
 
+// Metadata registers this component's Terraform type name.
+// Terraform uses it to bind configuration blocks to this implementation.
 func (ds *dataSource) Metadata(_ context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
 	resp.TypeName = req.ProviderTypeName + "_usage_report_subscription"
 }
 
+// Configure reads provider metadata, validates the expected metadata type and required clients,
+// and stores them on the receiver for subsequent operations.
 func (ds *dataSource) Configure(_ context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return

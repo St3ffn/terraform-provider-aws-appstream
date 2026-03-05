@@ -13,6 +13,12 @@ import (
 	"github.com/st3ffn/terraform-provider-aws-appstream/tools/appstream-changelog-issues/internal/report"
 )
 
+// Execute runs the end-to-end changelog watch workflow.
+//
+// It validates options, reads the current AppStream SDK version from go.mod,
+// fetches and parses the AWS AppStream changelog, filters newer feature releases,
+// builds issue content, and then either logs a dry-run summary or upserts the
+// GitHub issue identified by the configured marker.
 func Execute(ctx context.Context, opts Options) error {
 	return execute(ctx, opts, defaultDependencies())
 }

@@ -11,6 +11,9 @@ import (
 	tfresource "github.com/hashicorp/terraform-plugin-framework/resource"
 )
 
+// ModifyPlan computes tags_all and performs a plan-time restart risk check.
+// If the diff requires a stop/start update, update_behavior is AUTO_STOP_START,
+// and current state is RUNNING, it emits a warning before apply.
 func (r *resource) ModifyPlan(ctx context.Context, req tfresource.ModifyPlanRequest, resp *tfresource.ModifyPlanResponse) {
 	if req.Plan.Raw.IsNull() {
 		return

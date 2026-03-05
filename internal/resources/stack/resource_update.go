@@ -14,6 +14,9 @@ import (
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/util"
 )
 
+// Update builds UpdateStack from the computed diff, including explicit attribute
+// deletions for unset optional fields, retries transient update errors, applies
+// tag changes, and then reads back the stack state.
 func (r *resource) Update(ctx context.Context, req tfresource.UpdateRequest, resp *tfresource.UpdateResponse) {
 	var plan resourceModel
 	var state resourceModel

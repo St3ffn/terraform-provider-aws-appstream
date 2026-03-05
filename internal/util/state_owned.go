@@ -11,6 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
+// FlattenStateOwnedBool preserves state ownership for optional bool attributes.
 func FlattenStateOwnedBool(prior types.Bool, awsValue *bool) types.Bool {
 	// user never set it
 	if prior.IsNull() {
@@ -30,6 +31,7 @@ func FlattenStateOwnedBool(prior types.Bool, awsValue *bool) types.Bool {
 	return types.BoolValue(*awsValue)
 }
 
+// FlattenStateOwnedInt32 preserves state ownership for optional int32 attributes.
 func FlattenStateOwnedInt32(prior types.Int32, awsValue *int32) types.Int32 {
 	// user never set it
 	if prior.IsNull() {
@@ -49,6 +51,7 @@ func FlattenStateOwnedInt32(prior types.Int32, awsValue *int32) types.Int32 {
 	return types.Int32Value(*awsValue)
 }
 
+// FlattenStateOwnedString preserves state ownership for optional string attributes.
 func FlattenStateOwnedString(prior types.String, awsValue *string) types.String {
 	// user never set it
 	if prior.IsNull() {
@@ -68,6 +71,7 @@ func FlattenStateOwnedString(prior types.String, awsValue *string) types.String 
 	return types.StringValue(*awsValue)
 }
 
+// FlattenStateOwnedStringSet preserves state ownership for optional string set attributes.
 func FlattenStateOwnedStringSet(ctx context.Context, prior types.Set, awsValues []string, diags *diag.Diagnostics) types.Set {
 	// user never managed this attribute
 	if prior.IsNull() {

@@ -18,6 +18,7 @@ type durationStepValidator struct {
 	allowZero bool
 }
 
+// Description returns a human-readable description of the validator behavior.
 func (v durationStepValidator) Description(_ context.Context) string {
 	if v.allowZero {
 		return fmt.Sprintf(
@@ -28,10 +29,12 @@ func (v durationStepValidator) Description(_ context.Context) string {
 	return fmt.Sprintf("value must be between %d and %d in increments of %d seconds", v.min, v.max, v.step)
 }
 
+// MarkdownDescription returns a Markdown validator description for Terraform docs.
 func (v durationStepValidator) MarkdownDescription(ctx context.Context) string {
 	return v.Description(ctx)
 }
 
+// ValidateInt32 validates int32 duration values against configured bounds and step.
 func (v durationStepValidator) ValidateInt32(
 	ctx context.Context, req validator.Int32Request, resp *validator.Int32Response,
 ) {
@@ -68,6 +71,7 @@ func (v durationStepValidator) ValidateInt32(
 	}
 }
 
+// DurationWithStep returns an int32 validator for duration values with step constraints.
 func DurationWithStep(minValue, maxValue, step int32, allowZero bool) validator.Int32 {
 	return durationStepValidator{
 		min:       minValue,

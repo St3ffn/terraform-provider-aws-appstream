@@ -21,6 +21,7 @@ var (
 	_ tfresource.ResourceWithImportState = &resource{}
 )
 
+// NewResource constructs the resource implementation used by Terraform for this type.
 func NewResource() tfresource.Resource {
 	return &resource{}
 }
@@ -29,10 +30,14 @@ type resource struct {
 	appstreamClient *awsappstream.Client
 }
 
+// Metadata registers this component's Terraform type name.
+// Terraform uses it to bind configuration blocks to this implementation.
 func (r *resource) Metadata(_ context.Context, req tfresource.MetadataRequest, resp *tfresource.MetadataResponse) {
 	resp.TypeName = req.ProviderTypeName + "_usage_report_subscription"
 }
 
+// Configure reads provider metadata, validates the expected metadata type and required clients,
+// and stores them on the receiver for subsequent operations.
 func (r *resource) Configure(_ context.Context, req tfresource.ConfigureRequest, resp *tfresource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
@@ -58,6 +63,8 @@ func (r *resource) Configure(_ context.Context, req tfresource.ConfigureRequest,
 	r.appstreamClient = meta.Appstream
 }
 
+// ImportState ignores the user-supplied identifier because AWS exposes a single
+// account-level subscription; state always uses the provider constant id.
 func (r *resource) ImportState(ctx context.Context, _ tfresource.ImportStateRequest, resp *tfresource.ImportStateResponse) {
 	// ignore user provided id and use constant as id
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("id"), usageReportSubscriptionID)...)

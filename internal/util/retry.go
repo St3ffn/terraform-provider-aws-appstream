@@ -15,6 +15,7 @@ const (
 	defaultRetryMaxBackoff  = 1 * time.Minute
 )
 
+// RetryOnFn classifies whether an error should be retried.
 type RetryOnFn func(error) bool
 
 type retryConfig struct {
@@ -33,26 +34,31 @@ func defaultRetryConfig() *retryConfig {
 	}
 }
 
+// RetryOption mutates retry configuration used by RetryOn and RetryOnValue.
 type RetryOption func(*retryConfig)
 
+// WithTimeout sets the maximum duration for the retry operation.
 func WithTimeout(timeout time.Duration) RetryOption {
 	return func(c *retryConfig) {
 		c.timeout = timeout
 	}
 }
 
+// WithInitBackoff sets the initial retry backoff duration.
 func WithInitBackoff(initBackoff time.Duration) RetryOption {
 	return func(c *retryConfig) {
 		c.initBackoff = initBackoff
 	}
 }
 
+// WithMaxBackoff sets the maximum retry backoff duration.
 func WithMaxBackoff(maxBackoff time.Duration) RetryOption {
 	return func(c *retryConfig) {
 		c.maxBackoff = maxBackoff
 	}
 }
 
+// WithRetryOnFns sets the retry predicate functions used to classify retryable errors.
 func WithRetryOnFns(retryOnFns ...RetryOnFn) RetryOption {
 	return func(c *retryConfig) {
 		c.retryOnFns = append(c.retryOnFns, retryOnFns...)
@@ -84,6 +90,15 @@ func contextTerminationError(ctxErr, lastErr error) error {
 	return ctxErr
 }
 
+// RetryOn executes call and retries only when the returned error matches any
+// predicate from WithRetryOnFns. Retry backoff starts at init_backoff, doubles per
+// attempt, and is capped by max_backoff until timeout/context cancellation.
+//
+// Return behavior:
+//   - success: nil
+//   - non-retryable error: immediate return of that error
+//   - canceled context: context.Canceled
+//   - timeout: last retryable error if available, otherwise context.DeadlineExceeded
 func RetryOn(ctx context.Context, call func(context.Context) error, opts ...RetryOption) error {
 	_, err := RetryOnValue(
 		ctx,
@@ -95,6 +110,9 @@ func RetryOn(ctx context.Context, call func(context.Context) error, opts ...Retr
 	return err
 }
 
+// RetryOnValue is RetryOn with a typed return value from call.
+// The last successful output is returned together with nil on success, and the
+// zero value of T is returned on failures before call succeeds.
 func RetryOnValue[T any](ctx context.Context, call func(context.Context) (T, error), opts ...RetryOption) (T, error) {
 	options := defaultRetryConfig()
 	for _, fn := range opts {

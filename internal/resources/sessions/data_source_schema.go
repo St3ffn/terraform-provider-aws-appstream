@@ -16,6 +16,8 @@ import (
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/util"
 )
 
+// Schema returns the static Terraform schema for this component.
+// It defines supported attributes/blocks plus validators and plan behavior.
 func (ds *dataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Description: "Read AWS AppStream Sessions",

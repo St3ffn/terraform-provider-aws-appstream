@@ -192,7 +192,7 @@ func TestTagManager_ReadAll(t *testing.T) {
 		{
 			name: "empty_arn_returns_null",
 			arn:  "",
-			setupClient: func(f *FakeTaggingAPI) {
+			setupClient: func(_ *FakeTaggingAPI) {
 				// no calls expected
 			},
 			want:      types.MapNull(types.StringType),
@@ -308,7 +308,7 @@ func TestTagManager_Apply(t *testing.T) {
 				types.StringType,
 				map[string]attr.Value{"a": types.StringValue("b")},
 			),
-			setupClient: func(f *FakeTaggingAPI) {},
+			setupClient: func(_ *FakeTaggingAPI) {},
 			assert: func(t *testing.T, f *FakeTaggingAPI) {
 				t.Helper()
 

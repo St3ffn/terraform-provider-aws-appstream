@@ -31,7 +31,7 @@ linters:
     - nilerr
     - nolintlint
     - predeclared
-#    - revive
+    - revive
     - staticcheck
     - testifylint
     - thelper
@@ -40,3 +40,15 @@ linters:
     - unparam
     - unused
     - wastedassign
+  exclusions:
+    rules:
+      - linters:
+          - revive
+        text: "var-naming: don't use an underscore in package name"
+      - linters:
+          - revive
+        text: "var-naming: avoid package names that conflict with Go standard library package names"
+      - linters:
+          - revive
+        path: ^internal/util/
+        text: "var-naming: avoid meaningless package names"

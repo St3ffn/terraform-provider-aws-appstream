@@ -1,6 +1,7 @@
 // Copyright St3ffn 2025, 2026
 // SPDX-License-Identifier: MPL-2.0
 
+// Command terraform-provider-aws-appstream serves the awsappstream Terraform provider.
 package main
 
 import (

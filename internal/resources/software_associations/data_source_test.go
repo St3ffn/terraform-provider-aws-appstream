@@ -11,7 +11,7 @@ import (
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/testhelpers"
 )
 
-func testAccSoftwareAssociationsDataSource_basic(region, accountID string) string {
+func testAccSoftwareAssociationsDataSourceBasic(region, accountID string) string {
 	return testhelpers.TestAccProviderBasicConfig() + fmt.Sprintf(`
 data "awsappstream_software_associations" "test" {
   associated_resource = "arn:aws:appstream:%s:%s:image/fake-image-for-test"
@@ -26,7 +26,7 @@ func TestAccSoftwareAssociationsDataSource_basic(t *testing.T) {
 		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccSoftwareAssociationsDataSource_basic(testEnv.Region, testEnv.AccountID),
+				Config: testAccSoftwareAssociationsDataSourceBasic(testEnv.Region, testEnv.AccountID),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttrSet("data.awsappstream_software_associations.test", "associated_resource"),
 					resource.TestCheckResourceAttr("data.awsappstream_software_associations.test", "software_associations.#", "0"),

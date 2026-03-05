@@ -19,6 +19,7 @@ var (
 	_ tfresource.ResourceWithImportState = &resource{}
 )
 
+// NewResource constructs the resource implementation used by Terraform for this type.
 func NewResource() tfresource.Resource {
 	return &resource{}
 }
@@ -27,10 +28,14 @@ type resource struct {
 	appstreamClient *awsappstream.Client
 }
 
+// Metadata registers this component's Terraform type name.
+// Terraform uses it to bind configuration blocks to this implementation.
 func (r *resource) Metadata(_ context.Context, req tfresource.MetadataRequest, resp *tfresource.MetadataResponse) {
 	resp.TypeName = req.ProviderTypeName + "_stack_theme"
 }
 
+// Configure reads provider metadata, validates the expected metadata type and required clients,
+// and stores them on the receiver for subsequent operations.
 func (r *resource) Configure(_ context.Context, req tfresource.ConfigureRequest, resp *tfresource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
@@ -56,6 +61,7 @@ func (r *resource) Configure(_ context.Context, req tfresource.ConfigureRequest,
 	r.appstreamClient = meta.Appstream
 }
 
+// ImportState expects <stack_name> and stores it as stack_name and id.
 func (r *resource) ImportState(ctx context.Context, req tfresource.ImportStateRequest, resp *tfresource.ImportStateResponse) {
 	if req.ID == "" {
 		resp.Diagnostics.AddError(

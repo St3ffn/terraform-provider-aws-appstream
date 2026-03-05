@@ -22,6 +22,10 @@ var defaultIssueLabels = []string{
 	defaultIssueLabelWatch,
 }
 
+// Options configures a changelog watch run.
+//
+// The run reads ProviderGoModPath to detect the currently used AppStream SDK
+// version and upserts an issue in RepoOwner/RepoName.
 type Options struct {
 	ProviderGoModPath string
 	RepoOwner         string

@@ -13,14 +13,17 @@ import (
 	"github.com/google/go-github/v83/github"
 )
 
+// UpsertAction describes the outcome of a CreateOrUpdateIssue call.
 type UpsertAction string
 
+// UpsertAction values returned by CreateOrUpdateIssue.
 const (
 	UpsertActionCreated UpsertAction = "created"
 	UpsertActionUpdated UpsertAction = "updated"
 	UpsertActionNoop    UpsertAction = "noop"
 )
 
+// UpsertInput is the desired issue state used by CreateOrUpdateIssue.
 type UpsertInput struct {
 	Title  string
 	Body   string
@@ -28,6 +31,7 @@ type UpsertInput struct {
 	Labels []string
 }
 
+// UpsertResult contains the resulting issue metadata after upsert.
 type UpsertResult struct {
 	Action      UpsertAction
 	IssueNumber int

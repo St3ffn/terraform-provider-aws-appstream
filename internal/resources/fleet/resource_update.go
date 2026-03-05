@@ -14,6 +14,10 @@ import (
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/util"
 )
 
+// Update performs the full fleet reconciliation flow from state/plan diff.
+// It builds UpdateFleet inputs (including AttributesToDelete), enforces stop/start
+// preconditions based on update mode and update_behavior, retries transient API
+// errors, applies tags, then converges desired_state and finally reads back state.
 func (r *resource) Update(ctx context.Context, req tfresource.UpdateRequest, resp *tfresource.UpdateResponse) {
 	var plan resourceModel
 	var state resourceModel
@@ -86,65 +90,57 @@ func (r *resource) Update(ctx context.Context, req tfresource.UpdateRequest, res
 		}
 
 		if diff.StreamView.IsChanged() {
-			if plan.StreamView.IsNull() {
-				// no delete support
-			} else {
+			// AWS does not support unsetting stream_view once configured.
+			if !plan.StreamView.IsNull() {
 				input.StreamView = awstypes.StreamView(plan.StreamView.ValueString())
 			}
 		}
 
 		if diff.Platform.IsChanged() {
-			if plan.Platform.IsNull() {
-				// no delete support
-			} else {
+			// AWS does not support unsetting platform once configured.
+			if !plan.Platform.IsNull() {
 				input.Platform = awstypes.PlatformType(plan.Platform.ValueString())
 			}
 		}
 
 		if diff.MaxUserDurationInSeconds.IsChanged() {
-			if plan.MaxUserDurationInSeconds.IsNull() {
-				// no delete support
-			} else {
+			// AWS does not support unsetting max_user_duration_in_seconds once configured.
+			if !plan.MaxUserDurationInSeconds.IsNull() {
 				input.MaxUserDurationInSeconds = plan.MaxUserDurationInSeconds.ValueInt32Pointer()
 			}
 		}
 
 		if diff.DisconnectTimeoutInSeconds.IsChanged() {
-			if plan.DisconnectTimeoutInSeconds.IsNull() {
-				// no delete support
-			} else {
+			// AWS does not support unsetting disconnect_timeout_in_seconds once configured.
+			if !plan.DisconnectTimeoutInSeconds.IsNull() {
 				input.DisconnectTimeoutInSeconds = plan.DisconnectTimeoutInSeconds.ValueInt32Pointer()
 			}
 		}
 
 		if diff.IdleDisconnectTimeoutInSeconds.IsChanged() {
-			if plan.IdleDisconnectTimeoutInSeconds.IsNull() {
-				// no delete support
-			} else {
+			// AWS does not support unsetting idle_disconnect_timeout_in_seconds once configured.
+			if !plan.IdleDisconnectTimeoutInSeconds.IsNull() {
 				input.IdleDisconnectTimeoutInSeconds = plan.IdleDisconnectTimeoutInSeconds.ValueInt32Pointer()
 			}
 		}
 
 		if diff.EnableDefaultInternetAccess.IsChanged() {
-			if plan.EnableDefaultInternetAccess.IsNull() {
-				// no delete support
-			} else {
+			// AWS does not support unsetting enable_default_internet_access once configured.
+			if !plan.EnableDefaultInternetAccess.IsNull() {
 				input.EnableDefaultInternetAccess = plan.EnableDefaultInternetAccess.ValueBoolPointer()
 			}
 		}
 
 		if diff.DisableIMDSV1.IsChanged() {
-			if plan.DisableIMDSV1.IsNull() {
-				// no delete support
-			} else {
+			// AWS does not support unsetting disable_imdsv1 once configured.
+			if !plan.DisableIMDSV1.IsNull() {
 				input.DisableIMDSV1 = plan.DisableIMDSV1.ValueBoolPointer()
 			}
 		}
 
 		if diff.ComputeCapacity.IsChanged() {
-			if plan.ComputeCapacity.IsNull() {
-				// no delete support
-			} else {
+			// AWS does not support removing compute_capacity as a whole.
+			if !plan.ComputeCapacity.IsNull() {
 				input.ComputeCapacity = expandComputeCapacity(
 					ctx,
 					plan.ComputeCapacity,

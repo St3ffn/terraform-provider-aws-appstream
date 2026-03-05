@@ -17,6 +17,8 @@ import (
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/util"
 )
 
+// Schema returns the static Terraform schema for this component.
+// It defines supported attributes/blocks plus validators and plan behavior.
 func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *tfresource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Description: "Manage an AWS AppStream Image Builder Software Association",

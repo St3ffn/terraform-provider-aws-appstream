@@ -15,10 +15,12 @@ import (
 
 type stringSliceFlag []string
 
+// String returns the string representation of the current value.
 func (f *stringSliceFlag) String() string {
 	return strings.Join(*f, ",")
 }
 
+// Set parses and stores the provided string value.
 func (f *stringSliceFlag) Set(value string) error {
 	v := strings.TrimSpace(value)
 	if v == "" {

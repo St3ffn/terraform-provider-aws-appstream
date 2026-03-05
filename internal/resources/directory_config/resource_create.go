@@ -13,6 +13,9 @@ import (
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/util"
 )
 
+// Create validates plan input, performs the required AWS create/associate calls,
+// retries configured transient API errors, and then reads the remote object back
+// so state is written from the authoritative AWS response.
 func (r *resource) Create(ctx context.Context, req tfresource.CreateRequest, resp *tfresource.CreateResponse) {
 	var plan resourceModel
 	var config resourceModel
