@@ -210,13 +210,13 @@ Some targets execute `go run ...` tools and may download modules on first run
 |--------------------|--------------------------------------------------------------|---------------------------------------------------------|
 | `make fmt`         | Format Go code (provider + tools) with configured formatters | Go, `golangci-lint`                                     |
 | `make lint`        | Run linters (provider + tools)                               | Go, `golangci-lint`                                     |
-| `make test`        | Run unit tests (provider + tools)                            | Go                                                      |
+| `make test`        | Run unit tests (provider + tools); supports `TESTFLAGS`      | Go                                                      |
 | `make govulncheck` | Run vulnerability checks (provider + tools)                  | Go, network access on first run                         |
 | `make generate`    | Generate provider artifacts/docs and format examples         | Go, Terraform CLI, network access on first run          |
 | `make build`       | Build provider binary into `./bin`                           | Go                                                      |
 | `make build-debug` | Build non-optimized debug binary                             | Go                                                      |
 | `make install`     | Install provider binary with `go install`                    | Go                                                      |
-| `make testacc`     | Run acceptance tests                                         | Go, Terraform CLI, AWS credentials + test prerequisites |
+| `make testacc`     | Run acceptance tests; supports `TESTFLAGS`                   | Go, Terraform CLI, AWS credentials + test prerequisites |
 
 Module-specific targets are also available for `fmt`, `lint`, `test`, and
 `govulncheck`:
@@ -224,3 +224,43 @@ Module-specific targets are also available for `fmt`, `lint`, `test`, and
 - `*-provider`
 - `*-tool-provider-codegen`
 - `*-tool-appstream-changelog-issues`
+
+Examples:
+
+- `make test TESTFLAGS='-p=8 -parallel=8'`
+- `make testacc TESTFLAGS='-p=4 -parallel=4'`
+
+## Local Provider Build and Test
+
+To test a local provider binary with Terraform:
+
+1. Build the provider binary:
+
+```bash
+make build-debug
+```
+
+2. Create or update `~/.terraformrc` (or use `TF_CLI_CONFIG_FILE`) with a
+   development override. The source address must match your Terraform
+   `required_providers` entry.
+
+```hcl
+provider_installation {
+  dev_overrides {
+    "st3ffn/aws-appstream" = "<PATH_TO_REPOSITORY>/terraform-provider-aws-appstream/bin"
+  }
+
+  direct {}
+}
+```
+
+3. In the Terraform project that uses the provider, run:
+
+```bash
+terraform init -upgrade
+terraform plan
+```
+
+- Adjust the local path to your checkout location.
+- Keep `direct {}` so non-overridden providers still resolve normally.
+- For debugger setup and attaching Terraform to a local provider process, see: https://developer.hashicorp.com/terraform/plugin/debugging
