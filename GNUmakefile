@@ -8,7 +8,7 @@ GOPATH := $(shell go env GOPATH)
 INSTALL_DIR := $(if $(GOBIN),$(GOBIN),$(GOPATH)/bin)
 TESTFLAGS ?=
 
-default: fmt generate lint govulncheck test install
+default: fmt generate lint govulncheck test build
 
 build:
 	@echo "🚧  Building provider..."
