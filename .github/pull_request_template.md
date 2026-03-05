@@ -29,7 +29,6 @@ Select one:
 
 If `Major/breaking change`, describe the breaking behavior and migration steps.
 
-<!-- heimdall_github_prtemplate:grc-pci_dss-2024-01-05 -->
 ## Rollback Plan
 
 - [ ] If a change needs to be reverted, we will roll out an update to the code within 7 days.
