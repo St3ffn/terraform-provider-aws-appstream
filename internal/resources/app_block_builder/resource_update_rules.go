@@ -3,10 +3,6 @@
 
 package app_block_builder
 
-import (
-	"github.com/st3ffn/terraform-provider-aws-appstream/internal/util"
-)
-
 type appBlockBuilderUpdateMode int
 
 const (
@@ -14,35 +10,35 @@ const (
 	appBlockBuilderUpdateRequiresStop
 )
 
-func updateMode(state, plan resourceModel) appBlockBuilderUpdateMode {
+func updateMode(diff resourceDiff) appBlockBuilderUpdateMode {
 	// see https://docs.aws.amazon.com/appstream2/latest/APIReference/API_CreateAppBlockBuilder.html
 	// see https://docs.aws.amazon.com/appstream2/latest/APIReference/API_UpdateAppBlockBuilder.html
 
-	if util.Changed(state.InstanceType, plan.InstanceType) {
+	if diff.InstanceType.IsChanged() {
 		return appBlockBuilderUpdateRequiresStop
 	}
 
-	if util.Changed(state.Platform, plan.Platform) {
+	if diff.Platform.IsChanged() {
 		return appBlockBuilderUpdateRequiresStop
 	}
 
-	if util.Changed(state.VPCConfig, plan.VPCConfig) {
+	if diff.VPCConfig.IsChanged() {
 		return appBlockBuilderUpdateRequiresStop
 	}
 
-	if util.Changed(state.IAMRoleARN, plan.IAMRoleARN) {
+	if diff.IAMRoleARN.IsChanged() {
 		return appBlockBuilderUpdateRequiresStop
 	}
 
-	if util.Changed(state.DisableIMDSV1, plan.DisableIMDSV1) {
+	if diff.DisableIMDSV1.IsChanged() {
 		return appBlockBuilderUpdateRequiresStop
 	}
 
-	if util.Changed(state.EnableDefaultInternetAccess, plan.EnableDefaultInternetAccess) {
+	if diff.EnableDefaultInternetAccess.IsChanged() {
 		return appBlockBuilderUpdateRequiresStop
 	}
 
-	if util.Changed(state.AccessEndpoints, plan.AccessEndpoints) {
+	if diff.AccessEndpoints.IsChanged() {
 		return appBlockBuilderUpdateRequiresStop
 	}
 

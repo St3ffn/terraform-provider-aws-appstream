@@ -5,7 +5,6 @@ package fleet
 
 import (
 	awstypes "github.com/aws/aws-sdk-go-v2/service/appstream/types"
-	"github.com/st3ffn/terraform-provider-aws-appstream/internal/util"
 )
 
 type fleetUpdateMode int
@@ -16,117 +15,117 @@ const (
 	fleetUpdateForbidden
 )
 
-func updateMode(state, plan resourceModel) fleetUpdateMode {
+func updateMode(plan resourceModel, diff resourceDiff) fleetUpdateMode {
 	switch awstypes.FleetType(plan.FleetType.ValueString()) {
 	case awstypes.FleetTypeAlwaysOn, awstypes.FleetTypeOnDemand:
-		return updateModeAlwaysOnOnDemandFleet(state, plan)
+		return updateModeAlwaysOnOnDemandFleet(diff)
 	case awstypes.FleetTypeElastic:
-		return updateModeElasticFleet(state, plan)
+		return updateModeElasticFleet(diff)
 	default:
 		return fleetUpdateForbidden
 	}
 }
 
-func updateModeAlwaysOnOnDemandFleet(state, plan resourceModel) fleetUpdateMode {
+func updateModeAlwaysOnOnDemandFleet(diff resourceDiff) fleetUpdateMode {
 	// see https://docs.aws.amazon.com/appstream2/latest/APIReference/API_CreateFleet.html
 	// see https://docs.aws.amazon.com/appstream2/latest/APIReference/API_UpdateFleet.html
 
-	if util.Changed(state.InstanceType, plan.InstanceType) {
+	if diff.InstanceType.IsChanged() {
 		return fleetUpdateRequiresStop
 	}
 
-	if util.Changed(state.VPCConfig, plan.VPCConfig) {
+	if diff.VPCConfig.IsChanged() {
 		return fleetUpdateRequiresStop
 	}
 
-	if util.Changed(state.MaxUserDurationInSeconds, plan.MaxUserDurationInSeconds) {
+	if diff.MaxUserDurationInSeconds.IsChanged() {
 		return fleetUpdateRequiresStop
 	}
 
-	if util.Changed(state.DisableIMDSV1, plan.DisableIMDSV1) {
+	if diff.DisableIMDSV1.IsChanged() {
 		return fleetUpdateRequiresStop
 	}
 
-	if util.Changed(state.EnableDefaultInternetAccess, plan.EnableDefaultInternetAccess) {
+	if diff.EnableDefaultInternetAccess.IsChanged() {
 		return fleetUpdateRequiresStop
 	}
 
-	if util.Changed(state.DomainJoinInfo, plan.DomainJoinInfo) {
+	if diff.DomainJoinInfo.IsChanged() {
 		return fleetUpdateRequiresStop
 	}
 
-	if util.Changed(state.IAMRoleARN, plan.IAMRoleARN) {
+	if diff.IAMRoleARN.IsChanged() {
 		return fleetUpdateRequiresStop
 	}
 
-	if util.Changed(state.StreamView, plan.StreamView) {
+	if diff.StreamView.IsChanged() {
 		return fleetUpdateRequiresStop
 	}
 
-	if util.Changed(state.Platform, plan.Platform) {
+	if diff.Platform.IsChanged() {
 		return fleetUpdateRequiresStop
 	}
 
-	if util.Changed(state.MaxSessionsPerInstance, plan.MaxSessionsPerInstance) {
+	if diff.MaxSessionsPerInstance.IsChanged() {
 		return fleetUpdateRequiresStop
 	}
 
-	if util.Changed(state.USBDeviceFilterStrings, plan.USBDeviceFilterStrings) {
+	if diff.USBDeviceFilterStrings.IsChanged() {
 		return fleetUpdateRequiresStop
 	}
 
-	if util.Changed(state.RootVolumeConfig, plan.RootVolumeConfig) {
+	if diff.RootVolumeConfig.IsChanged() {
 		return fleetUpdateRequiresStop
 	}
 
 	return fleetUpdateAllowedRunning
 }
 
-func updateModeElasticFleet(state, plan resourceModel) fleetUpdateMode {
+func updateModeElasticFleet(diff resourceDiff) fleetUpdateMode {
 	// see https://docs.aws.amazon.com/appstream2/latest/APIReference/API_CreateFleet.html
 	// see https://docs.aws.amazon.com/appstream2/latest/APIReference/API_UpdateFleet.html
 
-	if util.Changed(state.ImageName, plan.ImageName) {
+	if diff.ImageName.IsChanged() {
 		return fleetUpdateRequiresStop
 	}
 
-	if util.Changed(state.ImageARN, plan.ImageARN) {
+	if diff.ImageARN.IsChanged() {
 		return fleetUpdateRequiresStop
 	}
 
-	if util.Changed(state.InstanceType, plan.InstanceType) {
+	if diff.InstanceType.IsChanged() {
 		return fleetUpdateRequiresStop
 	}
 
-	if util.Changed(state.VPCConfig, plan.VPCConfig) {
+	if diff.VPCConfig.IsChanged() {
 		return fleetUpdateRequiresStop
 	}
 
-	if util.Changed(state.MaxUserDurationInSeconds, plan.MaxUserDurationInSeconds) {
+	if diff.MaxUserDurationInSeconds.IsChanged() {
 		return fleetUpdateRequiresStop
 	}
 
-	if util.Changed(state.DisableIMDSV1, plan.DisableIMDSV1) {
+	if diff.DisableIMDSV1.IsChanged() {
 		return fleetUpdateRequiresStop
 	}
 
-	if util.Changed(state.EnableDefaultInternetAccess, plan.EnableDefaultInternetAccess) {
+	if diff.EnableDefaultInternetAccess.IsChanged() {
 		return fleetUpdateRequiresStop
 	}
 
-	if util.Changed(state.IAMRoleARN, plan.IAMRoleARN) {
+	if diff.IAMRoleARN.IsChanged() {
 		return fleetUpdateRequiresStop
 	}
 
-	if util.Changed(state.StreamView, plan.StreamView) {
+	if diff.StreamView.IsChanged() {
 		return fleetUpdateRequiresStop
 	}
 
-	if util.Changed(state.Platform, plan.Platform) {
+	if diff.Platform.IsChanged() {
 		return fleetUpdateRequiresStop
 	}
 
-	if util.Changed(state.RootVolumeConfig, plan.RootVolumeConfig) {
+	if diff.RootVolumeConfig.IsChanged() {
 		return fleetUpdateRequiresStop
 	}
 

@@ -130,7 +130,7 @@ func (r *resource) Update(ctx context.Context, req tfresource.UpdateRequest, res
 		}
 
 		restartAfter := false
-		mode := updateMode(state, plan)
+		mode := updateMode(diff)
 		var err error
 
 		switch mode {
