@@ -63,7 +63,7 @@ func flattenFooterLinks(
 	for _, link := range awsThemeFooterLinks {
 		out = append(out, resourceModelFooterLinks{
 			DisplayName:   util.StringOrNull(link.DisplayName),
-			FooterLinkUrl: util.StringOrNull(link.FooterLinkURL),
+			FooterLinkURL: util.StringOrNull(link.FooterLinkURL),
 		})
 	}
 

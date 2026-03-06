@@ -17,4 +17,9 @@ resource "awsappstream_app_block" "example" {
     executable_parameters = "-File setup.ps1"
     timeout_in_seconds    = 300
   }
+
+  tags = {
+    Environment = "dev"
+    Project     = "appstream"
+  }
 }

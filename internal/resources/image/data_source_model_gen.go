@@ -82,7 +82,7 @@ type dataSourceModelApplications struct {
 	// The display name of the application.
 	DisplayName types.String `tfsdk:"display_name"`
 	// The URL of the application icon, if set.
-	IconUrl types.String `tfsdk:"icon_url"`
+	IconURL types.String `tfsdk:"icon_url"`
 	// The path to the application executable.
 	LaunchPath types.String `tfsdk:"launch_path"`
 	// The parameters passed to the application at launch.

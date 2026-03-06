@@ -10,7 +10,14 @@ resource "awsappstream_fleet" "always_on_single_session" {
     desired_instances = 2
   }
 
+  desired_state = "RUNNING"
+
   display_name = "Always-On Single-Session Fleet"
+
+  tags = {
+    Environment = "dev"
+    Project     = "appstream"
+  }
 }
 
 # always on fleet - multi session
@@ -27,5 +34,12 @@ resource "awsappstream_fleet" "always_on_multi_session" {
 
   max_sessions_per_instance = 5
 
+  desired_state = "RUNNING"
+
   display_name = "Always-On Multi-Session Fleet"
+
+  tags = {
+    Environment = "dev"
+    Project     = "appstream"
+  }
 }

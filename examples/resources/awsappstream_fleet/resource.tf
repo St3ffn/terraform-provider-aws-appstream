@@ -8,6 +8,13 @@ resource "awsappstream_fleet" "minimal" {
   compute_capacity = {
     desired_instances = 1
   }
+
+  desired_state = "RUNNING"
+
+  tags = {
+    Environment = "dev"
+    Project     = "appstream"
+  }
 }
 
 # full fleet
@@ -54,6 +61,8 @@ resource "awsappstream_fleet" "full" {
   root_volume_config = {
     volume_size_in_gb = 250
   }
+
+  desired_state = "RUNNING"
 
   usb_device_filter_strings = [
     "USB\\VID_046D&PID_C52B,*,*,*,*,*,1,0",

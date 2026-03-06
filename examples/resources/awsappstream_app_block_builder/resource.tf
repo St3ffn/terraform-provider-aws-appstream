@@ -11,4 +11,9 @@ resource "awsappstream_app_block_builder" "example" {
       "subnet-1def9876543210987"
     ]
   }
+
+  tags = {
+    Environment = "dev"
+    Project     = "appstream"
+  }
 }

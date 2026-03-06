@@ -41,7 +41,7 @@ func expandFooterLinks(ctx context.Context, set types.Set, diags *diag.Diagnosti
 	for _, m := range models {
 		out = append(out, awstypes.ThemeFooterLink{
 			DisplayName:   util.StringPointerOrNil(m.DisplayName),
-			FooterLinkURL: util.StringPointerOrNil(m.FooterLinkUrl),
+			FooterLinkURL: util.StringPointerOrNil(m.FooterLinkURL),
 		})
 	}
 

@@ -16,6 +16,11 @@ Manages an AppStream stack. A stack defines the streaming configuration and user
 # minimal stack
 resource "awsappstream_stack" "example" {
   name = "example-stack"
+
+  tags = {
+    Environment = "dev"
+    Project     = "appstream"
+  }
 }
 ```
 

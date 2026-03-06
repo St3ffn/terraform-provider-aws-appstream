@@ -98,8 +98,8 @@ func (r *resource) readStackTheme(ctx context.Context, prior resourceModel) (*re
 		FooterLinks:                flattenFooterLinks(ctx, theme.ThemeFooterLinks, &diags),
 		State:                      types.StringValue(string(theme.State)),
 		CreatedTime:                util.StringFromTime(theme.CreatedTime),
-		ThemeOrganizationLogoUrl:   util.StringOrNull(theme.ThemeOrganizationLogoURL),
-		ThemeFaviconUrl:            util.StringOrNull(theme.ThemeFaviconURL),
+		ThemeOrganizationLogoURL:   util.StringOrNull(theme.ThemeOrganizationLogoURL),
+		ThemeFaviconURL:            util.StringOrNull(theme.ThemeFaviconURL),
 	}
 
 	if diags.HasError() {

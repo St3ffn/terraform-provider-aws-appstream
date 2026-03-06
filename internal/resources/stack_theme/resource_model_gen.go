@@ -29,9 +29,9 @@ type resourceModel struct {
 	// The timestamp when the stack theme was created, in RFC 3339 format.
 	CreatedTime types.String `tfsdk:"created_time"`
 	// The URL of the logo that is displayed in the header of the streaming application catalog page.
-	ThemeOrganizationLogoUrl types.String `tfsdk:"theme_organization_logo_url"`
+	ThemeOrganizationLogoURL types.String `tfsdk:"theme_organization_logo_url"`
 	// The URL of the icon that is displayed at the top of the browser tab during application streaming sessions.
-	ThemeFaviconUrl types.String `tfsdk:"theme_favicon_url"`
+	ThemeFaviconURL types.String `tfsdk:"theme_favicon_url"`
 }
 type resourceModelOrganizationLogoS3Location struct {
 	// The name of the Amazon S3 bucket.
@@ -49,5 +49,5 @@ type resourceModelFooterLinks struct {
 	// The name displayed for the footer link in the catalog page.
 	DisplayName types.String `tfsdk:"display_name"`
 	// The URL that the footer link points to.
-	FooterLinkUrl types.String `tfsdk:"footer_link_url"`
+	FooterLinkURL types.String `tfsdk:"footer_link_url"`
 }

@@ -32,6 +32,11 @@ resource "awsappstream_app_block" "example" {
     executable_parameters = "-File setup.ps1"
     timeout_in_seconds    = 300
   }
+
+  tags = {
+    Environment = "dev"
+    Project     = "appstream"
+  }
 }
 ```
 
@@ -86,6 +91,12 @@ resource "awsappstream_app_block" "appstream2" {
     executable_path       = "powershell.exe"
     executable_parameters = "-File post-setup.ps1"
     timeout_in_seconds    = 300
+  }
+
+  tags = {
+    Environment = "dev"
+    Project     = "appstream"
+    Owner       = "platform-team"
   }
 }
 ```

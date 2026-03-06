@@ -33,6 +33,11 @@ resource "awsappstream_application" "example" {
   ]
 
   app_block_arn = "arn:aws:appstream:eu-west-1:123456789012:app-block/example-block"
+
+  tags = {
+    Environment = "dev"
+    Project     = "appstream"
+  }
 }
 ```
 

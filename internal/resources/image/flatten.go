@@ -97,7 +97,7 @@ func flattenApplications(ctx context.Context, awsApps []awstypes.Application, di
 		out = append(out, dataSourceModelApplications{
 			Name:             util.StringOrNull(app.Name),
 			DisplayName:      util.StringOrNull(app.DisplayName),
-			IconUrl:          util.StringOrNull(app.IconURL),
+			IconURL:          util.StringOrNull(app.IconURL),
 			LaunchPath:       util.StringOrNull(app.LaunchPath),
 			LaunchParameters: util.StringOrNull(app.LaunchParameters),
 			Enabled:          util.BoolOrNull(app.Enabled),

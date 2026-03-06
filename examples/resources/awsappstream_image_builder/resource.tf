@@ -5,4 +5,9 @@ resource "awsappstream_image_builder" "example" {
 
   # Exactly one of image_name or image_arn is required
   image_name = "AppStream-Windows-Server-2022"
+
+  tags = {
+    Environment = "dev"
+    Project     = "appstream"
+  }
 }

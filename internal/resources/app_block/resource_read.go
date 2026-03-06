@@ -100,6 +100,7 @@ func (r *resource) readAppBlock(ctx context.Context, prior resourceModel) (*reso
 		PostSetupScriptDetails: flattenScriptDetailsResource(ctx, prior.PostSetupScriptDetails, appBlock.PostSetupScriptDetails, &diags),
 		PackagingType:          util.StringOrNull(aws.String(string(appBlock.PackagingType))),
 		Tags:                   types.MapNull(types.StringType),
+		TagsAll:                types.MapNull(types.StringType),
 		ARN:                    util.StringOrNull(appBlock.Arn),
 		CreatedTime:            util.StringFromTime(appBlock.CreatedTime),
 		State:                  types.StringValue(string(appBlock.State)),

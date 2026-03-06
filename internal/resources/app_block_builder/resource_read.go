@@ -103,6 +103,7 @@ func (r *resource) readAppBlockBuilder(ctx context.Context, prior resourceModel)
 		EnableDefaultInternetAccess: util.BoolOrNull(appBlockBuilder.EnableDefaultInternetAccess),
 		AccessEndpoints:             flattenAccessEndpoints(ctx, appBlockBuilder.AccessEndpoints, &diags),
 		Tags:                        types.MapNull(types.StringType),
+		TagsAll:                     types.MapNull(types.StringType),
 		ARN:                         util.StringOrNull(appBlockBuilder.Arn),
 		CreatedTime:                 util.StringFromTime(appBlockBuilder.CreatedTime),
 		State:                       types.StringValue(string(appBlockBuilder.State)),

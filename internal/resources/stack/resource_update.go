@@ -67,19 +67,19 @@ func (r *resource) Update(ctx context.Context, req tfresource.UpdateRequest, res
 			})
 		}
 
-		if diff.RedirectUrl.IsChanged() {
-			if plan.RedirectUrl.IsNull() {
+		if diff.RedirectURL.IsChanged() {
+			if plan.RedirectURL.IsNull() {
 				attrToDelete = append(attrToDelete, awstypes.StackAttributeRedirectUrl)
 			} else {
-				input.RedirectURL = aws.String(plan.RedirectUrl.ValueString())
+				input.RedirectURL = aws.String(plan.RedirectURL.ValueString())
 			}
 		}
 
-		if diff.FeedbackUrl.IsChanged() {
-			if plan.FeedbackUrl.IsNull() {
+		if diff.FeedbackURL.IsChanged() {
+			if plan.FeedbackURL.IsNull() {
 				attrToDelete = append(attrToDelete, awstypes.StackAttributeFeedbackUrl)
 			} else {
-				input.FeedbackURL = aws.String(plan.FeedbackUrl.ValueString())
+				input.FeedbackURL = aws.String(plan.FeedbackURL.ValueString())
 			}
 		}
 

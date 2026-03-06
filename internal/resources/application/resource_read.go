@@ -103,6 +103,7 @@ func (r *resource) readApplication(ctx context.Context, prior resourceModel) (*r
 		InstanceFamilies: util.SetStringOrNull(ctx, app.InstanceFamilies, &diags),
 		AppBlockARN:      util.StringOrNull(app.AppBlockArn),
 		Tags:             types.MapNull(types.StringType),
+		TagsAll:          types.MapNull(types.StringType),
 		ARN:              util.StringOrNull(app.Arn),
 		CreatedTime:      util.StringFromTime(app.CreatedTime),
 	}
