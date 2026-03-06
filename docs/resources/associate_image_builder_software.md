@@ -3,12 +3,12 @@
 page_title: "awsappstream_associate_image_builder_software Resource - AWS AppStream"
 subcategory: ""
 description: |-
-  Manages the association between an AppStream image builder and one or more license-included software packages. This resource represents the relationship only and does not create or manage the underlying image builder or software packages. Optionally, a software deployment can be triggered after the association is created.
+  Manages the association between an AppStream image builder and one or more license-included software packages. This resource represents the relationship only and does not create or manage the underlying image builder or software packages. Optionally, a software deployment can be triggered after the association is created. After terraform import, set software_names (and optionally deploy) in configuration because AWS read APIs cannot reconstruct Terraform ownership intent for those attributes.
 ---
 
 # awsappstream_associate_image_builder_software (Resource)
 
-Manages the association between an AppStream image builder and one or more license-included software packages. This resource represents the relationship only and does not create or manage the underlying image builder or software packages. Optionally, a software deployment can be triggered after the association is created.
+Manages the association between an AppStream image builder and one or more license-included software packages. This resource represents the relationship only and does not create or manage the underlying image builder or software packages. Optionally, a software deployment can be triggered after the association is created. After `terraform import`, set `software_names` (and optionally `deploy`) in configuration because AWS read APIs cannot reconstruct Terraform ownership intent for those attributes.
 
 ## Example Usage
 
@@ -31,15 +31,15 @@ resource "awsappstream_associate_image_builder_software" "example" {
 ### Required
 
 - `image_builder_arn` (String) The ARN of the AppStream image builder to which the software is associated. Changing this value forces the association to be replaced.
-- `software_names` (Set of String) A set of license-included software package names to associate with the AppStream image builder. Changes to this set result in software being associated or disassociated accordingly.
+- `software_names` (Set of String) A set of license-included software package names to associate with the AppStream image builder. Changes to this set result in software being associated or disassociated accordingly. Required for normal management and post-import reconciliation because AWS does not return the Terraform-managed target set.
 
 ### Optional
 
-- `deploy` (Boolean) Whether to trigger a software deployment to the image builder after associating the software. When set to `true`, a deployment is started during apply. This setting does not track deployment progress or completion.
+- `deploy` (Boolean) Whether to trigger a software deployment to the image builder after associating the software. When set to `true`, a deployment is started during apply. This setting does not track deployment progress or completion. This attribute is Terraform intent and is not derivable from AWS during import.
 
 ### Read-Only
 
-- `associations` (Attributes Map) Per-software association status and deployment details as reported by AWS. This attribute is informational only and does not affect Terraform lifecycle behavior. (see [below for nested schema](#nestedatt--associations))
+- `associations` (Attributes Map) Per-software association status and deployment details as reported by AWS. This attribute is informational only and does not affect Terraform lifecycle behavior. On import, values are filtered by configured `software_names`. (see [below for nested schema](#nestedatt--associations))
 - `id` (String) A synthetic identifier for the association, equal to the image builder ARN. This value is managed by the provider and cannot be set manually.
 
 <a id="nestedatt--associations"></a>

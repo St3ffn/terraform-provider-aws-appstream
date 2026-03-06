@@ -63,7 +63,8 @@ func (r *resource) Configure(_ context.Context, req tfresource.ConfigureRequest,
 }
 
 // ImportState accepts an AppStream image builder ARN and sets image_builder_arn
-// and id to that value.
+// and id to that value. software_names/deploy are not populated during import
+// because AWS read APIs do not provide Terraform ownership intent.
 func (r *resource) ImportState(ctx context.Context, req tfresource.ImportStateRequest, resp *tfresource.ImportStateResponse) {
 	if err := util.ValidateARNValue(req.ID, "appstream", "image-builder/"); err != nil {
 		resp.Diagnostics.AddError(

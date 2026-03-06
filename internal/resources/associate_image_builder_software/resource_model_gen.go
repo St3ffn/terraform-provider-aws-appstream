@@ -12,13 +12,16 @@ type resourceModel struct {
 	// association to be replaced.
 	ImageBuilderARN types.String `tfsdk:"image_builder_arn"`
 	// A set of license-included software package names to associate with the AppStream image builder. Changes to
-	// this set result in software being associated or disassociated accordingly.
+	// this set result in software being associated or disassociated accordingly. Required for normal management and
+	// post-import reconciliation because AWS does not return the Terraform-managed target set.
 	SoftwareNames types.Set `tfsdk:"software_names"`
 	// Whether to trigger a software deployment to the image builder after associating the software. When set to
 	// `true`, a deployment is started during apply. This setting does not track deployment progress or completion.
+	// This attribute is Terraform intent and is not derivable from AWS during import.
 	Deploy types.Bool `tfsdk:"deploy"`
 	// Per-software association status and deployment details as reported by AWS. This attribute is informational
-	// only and does not affect Terraform lifecycle behavior.
+	// only and does not affect Terraform lifecycle behavior. On import, values are filtered by configured
+	// `software_names`.
 	Associations types.Map `tfsdk:"associations"`
 }
 type resourceModelAssociationsDeploymentErrors struct {
