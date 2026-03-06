@@ -49,4 +49,10 @@ resource "awsappstream_app_block" "appstream2" {
     executable_parameters = "-File post-setup.ps1"
     timeout_in_seconds    = 300
   }
+
+  tags = {
+    Environment = "dev"
+    Project     = "appstream"
+    Owner       = "platform-team"
+  }
 }

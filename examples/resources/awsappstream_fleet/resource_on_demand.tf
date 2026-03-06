@@ -10,7 +10,14 @@ resource "awsappstream_fleet" "on_demand_single_session" {
     desired_instances = 2
   }
 
+  desired_state = "RUNNING"
+
   display_name = "On-Demand Single-Session Fleet"
+
+  tags = {
+    Environment = "dev"
+    Project     = "appstream"
+  }
 }
 
 # on demand fleet - multi session
@@ -27,5 +34,12 @@ resource "awsappstream_fleet" "on_demand_multi_session" {
 
   max_sessions_per_instance = 4
 
+  desired_state = "RUNNING"
+
   display_name = "On-Demand Multi-Session Fleet"
+
+  tags = {
+    Environment = "dev"
+    Project     = "appstream"
+  }
 }

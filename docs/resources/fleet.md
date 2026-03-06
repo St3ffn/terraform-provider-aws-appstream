@@ -23,6 +23,13 @@ resource "awsappstream_fleet" "minimal" {
   compute_capacity = {
     desired_instances = 1
   }
+
+  desired_state = "RUNNING"
+
+  tags = {
+    Environment = "dev"
+    Project     = "appstream"
+  }
 }
 
 # full fleet
@@ -70,6 +77,8 @@ resource "awsappstream_fleet" "full" {
     volume_size_in_gb = 250
   }
 
+  desired_state = "RUNNING"
+
   usb_device_filter_strings = [
     "USB\\VID_046D&PID_C52B,*,*,*,*,*,1,0",
     "USB\\VID_0781&PID_558A,*,*,*,*,*,1,1",
@@ -96,7 +105,14 @@ resource "awsappstream_fleet" "always_on_single_session" {
     desired_instances = 2
   }
 
+  desired_state = "RUNNING"
+
   display_name = "Always-On Single-Session Fleet"
+
+  tags = {
+    Environment = "dev"
+    Project     = "appstream"
+  }
 }
 
 # always on fleet - multi session
@@ -113,7 +129,14 @@ resource "awsappstream_fleet" "always_on_multi_session" {
 
   max_sessions_per_instance = 5
 
+  desired_state = "RUNNING"
+
   display_name = "Always-On Multi-Session Fleet"
+
+  tags = {
+    Environment = "dev"
+    Project     = "appstream"
+  }
 }
 ```
 
@@ -135,7 +158,38 @@ resource "awsappstream_fleet" "elastic" {
     ]
   }
 
+  desired_state = "RUNNING"
+
   display_name = "Elastic Fleet"
+
+  tags = {
+    Environment = "dev"
+    Project     = "appstream"
+  }
+}
+```
+
+```terraform
+# minimal fleet with runtime behavior controls
+resource "awsappstream_fleet" "minimal_runtime_behavior" {
+  name          = "minimal-runtime-behavior-fleet"
+  fleet_type    = "ON_DEMAND"
+  image_name    = "example-image"
+  instance_type = "stream.standard.small"
+
+  compute_capacity = {
+    desired_instances = 1
+  }
+
+  # desired_state enforces the fleet runtime state after create/update (INHERIT, RUNNING, STOPPED).
+  desired_state = "STOPPED"
+  # update_behavior controls update handling when AWS requires stop: auto stop/start or fail if running.
+  update_behavior = "FAIL_IF_RUNNING"
+
+  tags = {
+    Environment = "dev"
+    Project     = "appstream"
+  }
 }
 ```
 
@@ -152,7 +206,14 @@ resource "awsappstream_fleet" "on_demand_single_session" {
     desired_instances = 2
   }
 
+  desired_state = "RUNNING"
+
   display_name = "On-Demand Single-Session Fleet"
+
+  tags = {
+    Environment = "dev"
+    Project     = "appstream"
+  }
 }
 
 # on demand fleet - multi session
@@ -169,7 +230,14 @@ resource "awsappstream_fleet" "on_demand_multi_session" {
 
   max_sessions_per_instance = 4
 
+  desired_state = "RUNNING"
+
   display_name = "On-Demand Multi-Session Fleet"
+
+  tags = {
+    Environment = "dev"
+    Project     = "appstream"
+  }
 }
 ```
 

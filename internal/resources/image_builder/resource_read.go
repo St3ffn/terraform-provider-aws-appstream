@@ -107,6 +107,7 @@ func (r *resource) readImageBuilder(ctx context.Context, prior resourceModel) (*
 		AccessEndpoints:             flattenAccessEndpoints(ctx, imageBuilder.AccessEndpoints, &diags),
 		RootVolumeConfig:            flattenRootVolumeConfig(ctx, imageBuilder.RootVolumeConfig, &diags),
 		Tags:                        types.MapNull(types.StringType),
+		TagsAll:                     types.MapNull(types.StringType),
 		ARN:                         util.StringOrNull(imageBuilder.Arn),
 		CreatedTime:                 util.StringFromTime(imageBuilder.CreatedTime),
 		Platform:                    types.StringValue(string(imageBuilder.Platform)),

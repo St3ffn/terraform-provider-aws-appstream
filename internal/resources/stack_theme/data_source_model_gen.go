@@ -18,9 +18,9 @@ type dataSourceModel struct {
 	// The current state of the AppStream stack theme.
 	State types.String `tfsdk:"state"`
 	// The URL of the logo displayed in the catalog page header.
-	ThemeOrganizationLogoUrl types.String `tfsdk:"theme_organization_logo_url"`
+	ThemeOrganizationLogoURL types.String `tfsdk:"theme_organization_logo_url"`
 	// The URL of the icon displayed in the browser tab during streaming sessions.
-	ThemeFaviconUrl types.String `tfsdk:"theme_favicon_url"`
+	ThemeFaviconURL types.String `tfsdk:"theme_favicon_url"`
 	// The timestamp when the stack theme was created, in RFC 3339 format.
 	CreatedTime types.String `tfsdk:"created_time"`
 }
@@ -28,5 +28,5 @@ type dataSourceModelFooterLinks struct {
 	// The name displayed for the footer link.
 	DisplayName types.String `tfsdk:"display_name"`
 	// The URL that the footer link points to.
-	FooterLinkUrl types.String `tfsdk:"footer_link_url"`
+	FooterLinkURL types.String `tfsdk:"footer_link_url"`
 }

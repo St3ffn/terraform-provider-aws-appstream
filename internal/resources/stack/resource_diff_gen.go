@@ -34,8 +34,8 @@ type resourceDiff struct {
 	Description                 changeKind
 	DisplayName                 changeKind
 	StorageConnectors           changeKind
-	RedirectUrl                 changeKind
-	FeedbackUrl                 changeKind
+	RedirectURL                 changeKind
+	FeedbackURL                 changeKind
 	UserSettings                changeKind
 	ApplicationSettings         changeKind
 	AccessEndpoints             changeKind
@@ -57,10 +57,10 @@ func newResourceDiff(state resourceModel, plan resourceModel) resourceDiff {
 		Description:                 classifyChange(state.Description, plan.Description),
 		DisplayName:                 classifyChange(state.DisplayName, plan.DisplayName),
 		EmbedHostDomains:            classifyChange(state.EmbedHostDomains, plan.EmbedHostDomains),
-		FeedbackUrl:                 classifyChange(state.FeedbackUrl, plan.FeedbackUrl),
+		FeedbackURL:                 classifyChange(state.FeedbackURL, plan.FeedbackURL),
 		ID:                          classifyChange(state.ID, plan.ID),
 		Name:                        classifyChange(state.Name, plan.Name),
-		RedirectUrl:                 classifyChange(state.RedirectUrl, plan.RedirectUrl),
+		RedirectURL:                 classifyChange(state.RedirectURL, plan.RedirectURL),
 		StackErrors:                 classifyChange(state.StackErrors, plan.StackErrors),
 		StorageConnectors:           classifyChange(state.StorageConnectors, plan.StorageConnectors),
 		StreamingExperienceSettings: classifyChange(state.StreamingExperienceSettings, plan.StreamingExperienceSettings),
@@ -84,7 +84,7 @@ func classifyChange(state attr.Value, plan attr.Value) changeKind {
 }
 
 func (d resourceDiff) HasRemoteChanges() bool {
-	return d.Name.IsChanged() || d.Description.IsChanged() || d.DisplayName.IsChanged() || d.StorageConnectors.IsChanged() || d.RedirectUrl.IsChanged() || d.FeedbackUrl.IsChanged() || d.UserSettings.IsChanged() || d.ApplicationSettings.IsChanged() || d.AccessEndpoints.IsChanged() || d.EmbedHostDomains.IsChanged() || d.StreamingExperienceSettings.IsChanged()
+	return d.Name.IsChanged() || d.Description.IsChanged() || d.DisplayName.IsChanged() || d.StorageConnectors.IsChanged() || d.RedirectURL.IsChanged() || d.FeedbackURL.IsChanged() || d.UserSettings.IsChanged() || d.ApplicationSettings.IsChanged() || d.AccessEndpoints.IsChanged() || d.EmbedHostDomains.IsChanged() || d.StreamingExperienceSettings.IsChanged()
 }
 
 func (d resourceDiff) RequiresTagApply() bool {

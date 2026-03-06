@@ -116,6 +116,7 @@ func (r *resource) readFleet(ctx context.Context, prior resourceModel) (*resourc
 		SessionScriptS3Location:        flattenSessionScriptS3Location(ctx, fleet.SessionScriptS3Location, &diags),
 		RootVolumeConfig:               flattenRootVolumeConfig(ctx, fleet.RootVolumeConfig, &diags),
 		Tags:                           types.MapNull(types.StringType),
+		TagsAll:                        types.MapNull(types.StringType),
 		DesiredState:                   prior.DesiredState,
 		UpdateBehavior:                 prior.UpdateBehavior,
 		ARN:                            util.StringOrNull(fleet.Arn),

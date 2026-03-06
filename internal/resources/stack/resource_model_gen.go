@@ -17,9 +17,9 @@ type resourceModel struct {
 	// Storage connectors that enable persistent storage for users of the stack.
 	StorageConnectors types.Set `tfsdk:"storage_connectors"`
 	// The URL users are redirected to after their AppStream streaming session ends.
-	RedirectUrl types.String `tfsdk:"redirect_url"`
+	RedirectURL types.String `tfsdk:"redirect_url"`
 	// The URL users are redirected to after clicking the **Send Feedback** link.
-	FeedbackUrl types.String `tfsdk:"feedback_url"`
+	FeedbackURL types.String `tfsdk:"feedback_url"`
 	// Actions that are enabled or disabled for users during streaming sessions.
 	UserSettings types.Set `tfsdk:"user_settings"`
 	// Controls persistence of application settings for users of the stack.

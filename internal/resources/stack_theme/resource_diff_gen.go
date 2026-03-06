@@ -38,8 +38,8 @@ type resourceDiff struct {
 	FooterLinks                changeKind
 	State                      changeKind
 	CreatedTime                changeKind
-	ThemeOrganizationLogoUrl   changeKind
-	ThemeFaviconUrl            changeKind
+	ThemeOrganizationLogoURL   changeKind
+	ThemeFaviconURL            changeKind
 }
 
 func newResourceDiff(state resourceModel, plan resourceModel) resourceDiff {
@@ -51,8 +51,8 @@ func newResourceDiff(state resourceModel, plan resourceModel) resourceDiff {
 		OrganizationLogoS3Location: classifyChange(state.OrganizationLogoS3Location, plan.OrganizationLogoS3Location),
 		StackName:                  classifyChange(state.StackName, plan.StackName),
 		State:                      classifyChange(state.State, plan.State),
-		ThemeFaviconUrl:            classifyChange(state.ThemeFaviconUrl, plan.ThemeFaviconUrl),
-		ThemeOrganizationLogoUrl:   classifyChange(state.ThemeOrganizationLogoUrl, plan.ThemeOrganizationLogoUrl),
+		ThemeFaviconURL:            classifyChange(state.ThemeFaviconURL, plan.ThemeFaviconURL),
+		ThemeOrganizationLogoURL:   classifyChange(state.ThemeOrganizationLogoURL, plan.ThemeOrganizationLogoURL),
 		ThemeStyling:               classifyChange(state.ThemeStyling, plan.ThemeStyling),
 		TitleText:                  classifyChange(state.TitleText, plan.TitleText),
 	}

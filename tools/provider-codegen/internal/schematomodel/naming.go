@@ -74,12 +74,13 @@ func normalizeWord(word string) string {
 
 	acronyms := map[string]string{
 		"arn":  "ARN",
+		"gb":   "GB",
+		"iam":  "IAM",
 		"id":   "ID",
 		"ids":  "IDs",
-		"iam":  "IAM",
 		"imds": "IMDS",
-		"gb":   "GB",
 		"s3":   "S3",
+		"url":  "URL",
 		"usb":  "USB",
 		"vpc":  "VPC",
 	}

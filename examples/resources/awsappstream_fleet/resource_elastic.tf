@@ -15,5 +15,12 @@ resource "awsappstream_fleet" "elastic" {
     ]
   }
 
+  desired_state = "RUNNING"
+
   display_name = "Elastic Fleet"
+
+  tags = {
+    Environment = "dev"
+    Project     = "appstream"
+  }
 }
