@@ -8,15 +8,15 @@ import (
 	"strings"
 )
 
-func buildID(name, destinationRegion string) string {
-	return fmt.Sprintf("%s|%s", name, destinationRegion)
+func buildID(destinationImageName, destinationRegion, sourceImageName string) string {
+	return fmt.Sprintf("%s|%s|%s", destinationImageName, destinationRegion, sourceImageName)
 }
 
-func parseID(id string) (name, destinationRegion string, err error) {
-	parts := strings.SplitN(id, "|", 2)
-	if len(parts) != 2 || parts[0] == "" || parts[1] == "" {
-		return "", "", fmt.Errorf("invalid copied image ID format")
+func parseID(id string) (destinationImageName, destinationRegion, sourceImageName string, err error) {
+	parts := strings.Split(id, "|")
+	if len(parts) != 3 || parts[0] == "" || parts[1] == "" || parts[2] == "" {
+		return "", "", "", fmt.Errorf("invalid copied image import ID format")
 	}
 
-	return parts[0], parts[1], nil
+	return parts[0], parts[1], parts[2], nil
 }

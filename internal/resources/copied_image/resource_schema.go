@@ -26,20 +26,19 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 			"`CopyImage` is invoked using the provider-configured region (source region), while `destination_region` " +
 			"controls where the copied image is created. " +
 			"Copied images are immutable artifacts and are typically replaced when copy input settings change. " +
-			"AppStream `CopyImage` does not copy tags, so tags are managed separately by the provider. " +
-			"After `terraform import`, configure create-time-only attribute `source_image_name` " +
-			"explicitly because the provider does not reconstruct this value from imported state.",
+			"AppStream `CopyImage` does not copy tags, so tags are managed separately by the provider.",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description: "Identifier of the AppStream Copied Image.",
-				MarkdownDescription: "A synthetic identifier for the copied image, composed of the name and destination region. " +
+				MarkdownDescription: "A synthetic identifier for the copied image, composed of the " +
+					"destination image name, destination region, and source image name. " +
 					"This value is managed by the provider and cannot be set manually.",
 				Computed: true,
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.UseStateForUnknown(),
 				},
 			},
-			"name": schema.StringAttribute{
+			"destination_image_name": schema.StringAttribute{
 				Description: "Name of the AppStream Copied Image.",
 				MarkdownDescription: "A unique destination name for the copied image. " +
 					"Changing this value forces the copied image to be replaced.",
@@ -54,7 +53,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 					),
 				},
 			},
-			"description": schema.StringAttribute{
+			"destination_image_description": schema.StringAttribute{
 				Description: "Description of the AppStream Copied Image.",
 				MarkdownDescription: "A description for the copied image. " +
 					"Changing this value forces the copied image to be replaced.",
@@ -82,7 +81,8 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				Description: "Source AppStream image name.",
 				MarkdownDescription: "The name of the source image used for the copy operation. " +
 					"Changing this value forces the copied image to be replaced. " +
-					"After import, this create-time input must be set explicitly in configuration.",
+					"AWS read APIs do not reliably return this value, so import requires it as the third segment " +
+					"of the import identifier.",
 				Required: true,
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplace(),

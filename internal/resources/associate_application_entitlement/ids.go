@@ -13,7 +13,7 @@ func buildID(stackName, entitlementName, applicationIdentifier string) string {
 }
 
 func parseID(id string) (stackName, entitlementName, applicationIdentifier string, err error) {
-	parts := strings.SplitN(id, "|", 3)
+	parts := strings.Split(id, "|")
 	if len(parts) != 3 || parts[0] == "" || parts[1] == "" || parts[2] == "" {
 		return "", "", "", fmt.Errorf("invalid associate application entitlement ID format")
 	}

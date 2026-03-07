@@ -5,17 +5,18 @@ package copied_image
 import types "github.com/hashicorp/terraform-plugin-framework/types"
 
 type resourceModel struct {
-	// A synthetic identifier for the copied image, composed of the name and destination region. This value is
-	// managed by the provider and cannot be set manually.
+	// A synthetic identifier for the copied image, composed of the destination image name, destination region, and
+	// source image name. This value is managed by the provider and cannot be set manually.
 	ID types.String `tfsdk:"id"`
 	// A unique destination name for the copied image. Changing this value forces the copied image to be replaced.
-	Name types.String `tfsdk:"name"`
+	DestinationImageName types.String `tfsdk:"destination_image_name"`
 	// A description for the copied image. Changing this value forces the copied image to be replaced.
-	Description types.String `tfsdk:"description"`
+	DestinationImageDescription types.String `tfsdk:"destination_image_description"`
 	// The AWS region where the copied image is created. Changing this value forces the copied image to be replaced.
 	DestinationRegion types.String `tfsdk:"destination_region"`
 	// The name of the source image used for the copy operation. Changing this value forces the copied image to be
-	// replaced. After import, this create-time input must be set explicitly in configuration.
+	// replaced. AWS read APIs do not reliably return this value, so import requires it as the third segment of the
+	// import identifier.
 	SourceImageName types.String `tfsdk:"source_image_name"`
 	// A map of tags assigned to the copied image.
 	Tags types.Map `tfsdk:"tags"`

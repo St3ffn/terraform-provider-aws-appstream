@@ -3,22 +3,22 @@
 page_title: "awsappstream_copied_image Resource - AWS AppStream"
 subcategory: ""
 description: |-
-  Manages an AppStream image created by copying an existing image to another region. CopyImage is invoked using the provider-configured region (source region), while destination_region controls where the copied image is created. Copied images are immutable artifacts and are typically replaced when copy input settings change. AppStream CopyImage does not copy tags, so tags are managed separately by the provider. After terraform import, configure create-time-only attribute source_image_name explicitly because the provider does not reconstruct this value from imported state.
+  Manages an AppStream image created by copying an existing image to another region. CopyImage is invoked using the provider-configured region (source region), while destination_region controls where the copied image is created. Copied images are immutable artifacts and are typically replaced when copy input settings change. AppStream CopyImage does not copy tags, so tags are managed separately by the provider.
 ---
 
 # awsappstream_copied_image (Resource)
 
-Manages an AppStream image created by copying an existing image to another region. `CopyImage` is invoked using the provider-configured region (source region), while `destination_region` controls where the copied image is created. Copied images are immutable artifacts and are typically replaced when copy input settings change. AppStream `CopyImage` does not copy tags, so tags are managed separately by the provider. After `terraform import`, configure create-time-only attribute `source_image_name` explicitly because the provider does not reconstruct this value from imported state.
+Manages an AppStream image created by copying an existing image to another region. `CopyImage` is invoked using the provider-configured region (source region), while `destination_region` controls where the copied image is created. Copied images are immutable artifacts and are typically replaced when copy input settings change. AppStream `CopyImage` does not copy tags, so tags are managed separately by the provider.
 
 ## Example Usage
 
 ```terraform
 # minimal copied image
 resource "awsappstream_copied_image" "example" {
-  name               = "example-copied-image"
-  description        = "Copied image for development"
-  source_image_name  = "example-source-image"
-  destination_region = "us-east-1"
+  destination_image_name        = "example-copied-image"
+  destination_image_description = "Copied image for development"
+  destination_region            = "us-east-1"
+  source_image_name             = "example-source-image"
 
   tags = {
     Environment = "dev"
@@ -30,10 +30,10 @@ resource "awsappstream_copied_image" "example" {
 ```terraform
 # copied image protected from destroy
 resource "awsappstream_copied_image" "keep" {
-  name               = "example-copied-image-keep"
-  description        = "Copied image retained for rollback"
-  source_image_name  = "example-source-image"
-  destination_region = "us-east-1"
+  destination_image_name        = "example-copied-image-keep"
+  destination_image_description = "Copied image retained for rollback"
+  destination_region            = "us-east-1"
+  source_image_name             = "example-source-image"
 
   # Prevent accidental image deletion via `terraform destroy` or replacement plans.
   lifecycle {
@@ -53,13 +53,13 @@ resource "awsappstream_copied_image" "keep" {
 
 ### Required
 
+- `destination_image_name` (String) A unique destination name for the copied image. Changing this value forces the copied image to be replaced.
 - `destination_region` (String) The AWS region where the copied image is created. Changing this value forces the copied image to be replaced.
-- `name` (String) A unique destination name for the copied image. Changing this value forces the copied image to be replaced.
-- `source_image_name` (String) The name of the source image used for the copy operation. Changing this value forces the copied image to be replaced. After import, this create-time input must be set explicitly in configuration.
+- `source_image_name` (String) The name of the source image used for the copy operation. Changing this value forces the copied image to be replaced. AWS read APIs do not reliably return this value, so import requires it as the third segment of the import identifier.
 
 ### Optional
 
-- `description` (String) A description for the copied image. Changing this value forces the copied image to be replaced.
+- `destination_image_description` (String) A description for the copied image. Changing this value forces the copied image to be replaced.
 - `tags` (Map of String) A map of tags assigned to the copied image.
 
 ### Read-Only
@@ -70,7 +70,7 @@ resource "awsappstream_copied_image" "keep" {
 - `base_image_arn` (String) The ARN of the image from which this image was created.
 - `created_time` (String) The timestamp when the AppStream copied image was created, in RFC 3339 format.
 - `dynamic_app_providers_enabled` (String) Indicates whether dynamic app providers are enabled.
-- `id` (String) A synthetic identifier for the copied image, composed of the name and destination region. This value is managed by the provider and cannot be set manually.
+- `id` (String) A synthetic identifier for the copied image, composed of the destination image name, destination region, and source image name. This value is managed by the provider and cannot be set manually.
 - `image_builder_name` (String) The name of the image builder used to create the image, if applicable.
 - `image_builder_supported` (Boolean) Whether an AppStream image builder can be launched from this copied image.
 - `image_errors` (Attributes Set) Errors reported by AWS during image creation or management. (see [below for nested schema](#nestedatt--image_errors))
@@ -152,7 +152,5 @@ Import is supported using the following syntax:
 The [`terraform import` command](https://developer.hashicorp.com/terraform/cli/commands/import) can be used, for example:
 
 ```shell
-# Import uses destination image name and destination region.
-# Note: create-time-only attribute source_image_name should be set explicitly in configuration after import.
-terraform import awsappstream_copied_image.example "example-copied-image|us-east-1"
+terraform import awsappstream_copied_image.example "example-copied-image|us-east-1|example-source-image"
 ```

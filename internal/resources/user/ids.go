@@ -13,7 +13,7 @@ func buildID(authenticationType, userName string) string {
 }
 
 func parseID(id string) (authenticationType, userName string, err error) {
-	parts := strings.SplitN(id, "|", 2)
+	parts := strings.Split(id, "|")
 	if len(parts) != 2 || parts[0] == "" || parts[1] == "" {
 		return "", "", fmt.Errorf("invalid user ID format")
 	}

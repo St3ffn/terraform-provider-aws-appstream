@@ -29,45 +29,34 @@ func (r *resource) Create(ctx context.Context, req tfresource.CreateRequest, res
 		return
 	}
 
-	if plan.Name.IsNull() || plan.Name.IsUnknown() ||
+	if plan.DestinationImageName.IsNull() || plan.DestinationImageName.IsUnknown() ||
 		plan.DestinationRegion.IsNull() || plan.DestinationRegion.IsUnknown() ||
 		plan.SourceImageName.IsNull() || plan.SourceImageName.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Invalid Terraform Plan",
-			"Cannot create copied image because name, destination_region, and source_image_name must be known.",
+			"Cannot create copied image because destination_image_name, destination_region, and source_image_name must be known.",
 		)
 		return
 	}
 
-	name := plan.Name.ValueString()
+	destinationImageName := plan.DestinationImageName.ValueString()
 	destinationRegion := plan.DestinationRegion.ValueString()
 	sourceImageName := plan.SourceImageName.ValueString()
 
 	input := &awsappstream.CopyImageInput{
-		DestinationImageName:        aws.String(name),
+		DestinationImageName:        aws.String(destinationImageName),
 		DestinationRegion:           aws.String(destinationRegion),
 		SourceImageName:             aws.String(sourceImageName),
-		DestinationImageDescription: util.StringPointerOrNil(plan.Description),
+		DestinationImageDescription: util.StringPointerOrNil(plan.DestinationImageDescription),
 	}
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	err := util.RetryOn(
-		ctx,
-		func(ctx context.Context) error {
-			_, err := r.appstreamClient.CopyImage(ctx, input)
-			return err
-		},
-		util.WithTimeout(createRetryTimeout),
-		util.WithInitBackoff(createRetryInitBackoff),
-		util.WithMaxBackoff(createRetryMaxBackoff),
-		// see https://docs.aws.amazon.com/appstream2/latest/APIReference/API_CopyImage.html
-		util.WithRetryOnFns(
-			util.IsResourceNotFoundException,
-		),
-	)
+	// see https://docs.aws.amazon.com/appstream2/latest/APIReference/API_CopyImage.html
+	_, err := r.appstreamClient.CopyImage(ctx, input)
+
 	if err != nil {
 		if util.IsResourceAlreadyExists(err) {
 			resp.Diagnostics.AddError(
@@ -75,7 +64,7 @@ func (r *resource) Create(ctx context.Context, req tfresource.CreateRequest, res
 				fmt.Sprintf(
 					"A copied image named %q already exists in %q. To manage it with Terraform, import it using:\n\n"+
 						"  terraform import <resource_address> %q",
-					name, destinationRegion, buildID(name, destinationRegion),
+					destinationImageName, destinationRegion, buildID(destinationImageName, destinationRegion, sourceImageName),
 				),
 			)
 			return
@@ -83,18 +72,18 @@ func (r *resource) Create(ctx context.Context, req tfresource.CreateRequest, res
 
 		resp.Diagnostics.AddError(
 			"Error Creating AWS AppStream Copied Image",
-			fmt.Sprintf("Could not create copied image %q in %q: %v", name, destinationRegion, err),
+			fmt.Sprintf("Could not create copied image %q in %q: %v", destinationImageName, destinationRegion, err),
 		)
 		return
 	}
 
-	imageARN, err := r.ensureAvailable(ctx, name, destinationRegion)
+	imageARN, err := r.ensureAvailable(ctx, destinationImageName, destinationRegion)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error Creating AWS AppStream Copied Image",
 			fmt.Sprintf(
 				"Copied image %q in %q did not reach AVAILABLE state in time: %v",
-				name, destinationRegion, err,
+				destinationImageName, destinationRegion, err,
 			),
 		)
 		return
@@ -105,7 +94,7 @@ func (r *resource) Create(ctx context.Context, req tfresource.CreateRequest, res
 			fmt.Sprintf(
 				"Could not determine ARN for copied image %q in %q after it reached AVAILABLE state. "+
 					"The image cannot be tagged without an ARN.",
-				name, destinationRegion,
+				destinationImageName, destinationRegion,
 			),
 		)
 		return

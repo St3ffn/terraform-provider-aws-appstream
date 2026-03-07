@@ -13,7 +13,7 @@ func buildID(appBlockBuilderName, appBlockARN string) string {
 }
 
 func parseID(id string) (appBlockBuilderName, appBlockARN string, err error) {
-	parts := strings.SplitN(id, "|", 2)
+	parts := strings.Split(id, "|")
 	if len(parts) != 2 || parts[0] == "" || parts[1] == "" {
 		return "", "", fmt.Errorf("invalid associate app block builder app block ID format")
 	}

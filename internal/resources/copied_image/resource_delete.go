@@ -27,16 +27,17 @@ func (r *resource) Delete(ctx context.Context, req tfresource.DeleteRequest, res
 		return
 	}
 
-	if state.Name.IsNull() || state.Name.IsUnknown() ||
-		state.DestinationRegion.IsNull() || state.DestinationRegion.IsUnknown() {
+	if state.DestinationImageName.IsNull() || state.DestinationImageName.IsUnknown() ||
+		state.DestinationRegion.IsNull() || state.DestinationRegion.IsUnknown() ||
+		state.SourceImageName.IsNull() || state.SourceImageName.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Invalid Terraform State",
-			"Cannot delete copied image because name and destination_region must be known.",
+			"Cannot delete copied image because destination_image_name, destination_region, and source_image_name must be known.",
 		)
 		return
 	}
 
-	name := state.Name.ValueString()
+	name := state.DestinationImageName.ValueString()
 	destinationRegion := state.DestinationRegion.ValueString()
 
 	_, err := r.appstreamClient.DeleteImage(

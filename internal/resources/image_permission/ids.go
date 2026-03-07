@@ -13,7 +13,7 @@ func buildID(name, sharedAccountID string) string {
 }
 
 func parseID(id string) (name, sharedAccountID string, err error) {
-	parts := strings.SplitN(id, "|", 2)
+	parts := strings.Split(id, "|")
 	if len(parts) != 2 || parts[0] == "" || parts[1] == "" {
 		return "", "", fmt.Errorf("invalid image permission ID format")
 	}

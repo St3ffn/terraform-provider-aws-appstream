@@ -30,8 +30,8 @@ func (k changeKind) IsCleared() bool {
 
 type resourceDiff struct {
 	ID                          changeKind
-	Name                        changeKind
-	Description                 changeKind
+	DestinationImageName        changeKind
+	DestinationImageDescription changeKind
 	DestinationRegion           changeKind
 	SourceImageName             changeKind
 	Tags                        changeKind
@@ -65,7 +65,8 @@ func newResourceDiff(state resourceModel, plan resourceModel) resourceDiff {
 		AppstreamAgentVersion:       classifyChange(state.AppstreamAgentVersion, plan.AppstreamAgentVersion),
 		BaseImageARN:                classifyChange(state.BaseImageARN, plan.BaseImageARN),
 		CreatedTime:                 classifyChange(state.CreatedTime, plan.CreatedTime),
-		Description:                 classifyChange(state.Description, plan.Description),
+		DestinationImageDescription: classifyChange(state.DestinationImageDescription, plan.DestinationImageDescription),
+		DestinationImageName:        classifyChange(state.DestinationImageName, plan.DestinationImageName),
 		DestinationRegion:           classifyChange(state.DestinationRegion, plan.DestinationRegion),
 		DynamicAppProvidersEnabled:  classifyChange(state.DynamicAppProvidersEnabled, plan.DynamicAppProvidersEnabled),
 		ID:                          classifyChange(state.ID, plan.ID),
@@ -77,7 +78,6 @@ func newResourceDiff(state resourceModel, plan resourceModel) resourceDiff {
 		ImageType:                   classifyChange(state.ImageType, plan.ImageType),
 		LatestAppstreamAgentVersion: classifyChange(state.LatestAppstreamAgentVersion, plan.LatestAppstreamAgentVersion),
 		ManagedSoftwareIncluded:     classifyChange(state.ManagedSoftwareIncluded, plan.ManagedSoftwareIncluded),
-		Name:                        classifyChange(state.Name, plan.Name),
 		Platform:                    classifyChange(state.Platform, plan.Platform),
 		PublicBaseImageReleasedDate: classifyChange(state.PublicBaseImageReleasedDate, plan.PublicBaseImageReleasedDate),
 		SourceImageName:             classifyChange(state.SourceImageName, plan.SourceImageName),
@@ -104,7 +104,7 @@ func classifyChange(state attr.Value, plan attr.Value) changeKind {
 }
 
 func (d resourceDiff) HasRemoteChanges() bool {
-	return d.Name.IsChanged() || d.Description.IsChanged() || d.DestinationRegion.IsChanged() || d.SourceImageName.IsChanged()
+	return d.DestinationImageName.IsChanged() || d.DestinationImageDescription.IsChanged() || d.DestinationRegion.IsChanged() || d.SourceImageName.IsChanged()
 }
 
 func (d resourceDiff) RequiresTagApply() bool {

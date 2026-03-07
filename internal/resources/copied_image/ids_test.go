@@ -12,25 +12,31 @@ import (
 func TestBuildID(t *testing.T) {
 	t.Parallel()
 
-	require.Equal(t, "example-image|us-east-1", buildID("example-image", "us-east-1"))
+	require.Equal(
+		t,
+		"example-image|us-east-1|source-image",
+		buildID("example-image", "us-east-1", "source-image"),
+	)
 }
 
 func TestParseID(t *testing.T) {
 	t.Parallel()
 
 	tests := []struct {
-		name                  string
-		id                    string
-		wantName              string
-		wantDestinationRegion string
-		wantErr               bool
+		name                     string
+		id                       string
+		wantDestinationImageName string
+		wantDestinationRegion    string
+		wantSourceImageName      string
+		wantErr                  bool
 	}{
 		{
-			name:                  "valid_id",
-			id:                    "example-image|us-east-1",
-			wantName:              "example-image",
-			wantDestinationRegion: "us-east-1",
-			wantErr:               false,
+			name:                     "valid_id",
+			id:                       "example-image|us-east-1|source-image",
+			wantDestinationImageName: "example-image",
+			wantDestinationRegion:    "us-east-1",
+			wantSourceImageName:      "source-image",
+			wantErr:                  false,
 		},
 		{
 			name:    "missing_separator",
@@ -44,12 +50,22 @@ func TestParseID(t *testing.T) {
 		},
 		{
 			name:    "empty_name",
-			id:      "|us-east-1",
+			id:      "|us-east-1|source-image",
 			wantErr: true,
 		},
 		{
 			name:    "empty_destination_region",
-			id:      "example-image|",
+			id:      "example-image||source-image",
+			wantErr: true,
+		},
+		{
+			name:    "empty_source_image_name",
+			id:      "example-image|us-east-1|",
+			wantErr: true,
+		},
+		{
+			name:    "too_many_parts",
+			id:      "example-image|us-east-1|source-image|extra",
 			wantErr: true,
 		},
 	}
@@ -58,7 +74,7 @@ func TestParseID(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			name, destinationRegion, err := parseID(tt.id)
+			name, destinationRegion, sourceImageName, err := parseID(tt.id)
 
 			if tt.wantErr {
 				if err == nil {
@@ -71,10 +87,18 @@ func TestParseID(t *testing.T) {
 				t.Fatalf("unexpected error: %v", err)
 			}
 
-			if name != tt.wantName || destinationRegion != tt.wantDestinationRegion {
+			if name != tt.wantDestinationImageName ||
+				destinationRegion != tt.wantDestinationRegion ||
+				sourceImageName != tt.wantSourceImageName {
 				t.Fatalf(
-					"parseID(%q) = (%q, %q), want (%q, %q)",
-					tt.id, name, destinationRegion, tt.wantName, tt.wantDestinationRegion,
+					"parseID(%q) = (%q, %q, %q), want (%q, %q, %q)",
+					tt.id,
+					name,
+					destinationRegion,
+					sourceImageName,
+					tt.wantDestinationImageName,
+					tt.wantDestinationRegion,
+					tt.wantSourceImageName,
 				)
 			}
 		})
