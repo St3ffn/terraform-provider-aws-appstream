@@ -32,11 +32,12 @@ func (r *resource) Read(ctx context.Context, req tfresource.ReadRequest, resp *t
 		return
 	}
 
-	if state.Name.IsNull() || state.Name.IsUnknown() ||
-		state.DestinationRegion.IsNull() || state.DestinationRegion.IsUnknown() {
+	if state.DestinationImageName.IsNull() || state.DestinationImageName.IsUnknown() ||
+		state.DestinationRegion.IsNull() || state.DestinationRegion.IsUnknown() ||
+		state.SourceImageName.IsNull() || state.SourceImageName.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Invalid Terraform State",
-			"Required attributes name and destination_region are missing from state. "+
+			"Required attributes destination_image_name, destination_region, and source_image_name are missing from state. "+
 				"This can happen after an incomplete import or a prior provider bug. Re-import or recreate the resource.",
 		)
 		return
@@ -62,13 +63,14 @@ func (r *resource) Read(ctx context.Context, req tfresource.ReadRequest, resp *t
 func (r *resource) readCopiedImage(ctx context.Context, prior resourceModel) (*resourceModel, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
-	name := prior.Name.ValueString()
+	destinationImageName := prior.DestinationImageName.ValueString()
 	destinationRegion := prior.DestinationRegion.ValueString()
+	sourceImageName := prior.SourceImageName.ValueString()
 
 	out, err := r.appstreamClient.DescribeImages(
 		ctx,
 		&awsappstream.DescribeImagesInput{
-			Names: []string{name},
+			Names: []string{destinationImageName},
 		},
 		func(o *awsappstream.Options) {
 			o.Region = destinationRegion
@@ -84,7 +86,7 @@ func (r *resource) readCopiedImage(ctx context.Context, prior resourceModel) (*r
 		}
 		diags.AddError(
 			"Error Reading AWS AppStream Copied Image",
-			fmt.Sprintf("Could not read copied image %q: %v", name, err),
+			fmt.Sprintf("Could not read copied image %q: %v", destinationImageName, err),
 		)
 		return nil, diags
 	}
@@ -98,14 +100,12 @@ func (r *resource) readCopiedImage(ctx context.Context, prior resourceModel) (*r
 		return nil, diags
 	}
 
-	sourceImageName := util.ARNResourceSuffixOrNil(image.BaseImageArn, "appstream", "image/")
-
 	state := &resourceModel{
-		ID:                          types.StringValue(buildID(name, destinationRegion)),
-		Name:                        types.StringValue(aws.ToString(image.Name)),
-		Description:                 util.StringOrNull(image.Description),
+		ID:                          types.StringValue(buildID(destinationImageName, destinationRegion, sourceImageName)),
+		DestinationImageName:        types.StringValue(aws.ToString(image.Name)),
+		DestinationImageDescription: util.StringOrNull(image.Description),
 		DestinationRegion:           prior.DestinationRegion,
-		SourceImageName:             util.FlattenStateOwnedString(prior.SourceImageName, sourceImageName),
+		SourceImageName:             prior.SourceImageName,
 		Tags:                        types.MapNull(types.StringType),
 		TagsAll:                     types.MapNull(types.StringType),
 		ARN:                         util.StringOrNull(image.Arn),

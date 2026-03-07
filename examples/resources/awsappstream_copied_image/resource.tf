@@ -1,9 +1,9 @@
 # minimal copied image
 resource "awsappstream_copied_image" "example" {
-  name               = "example-copied-image"
-  description        = "Copied image for development"
-  source_image_name  = "example-source-image"
-  destination_region = "us-east-1"
+  destination_image_name        = "example-copied-image"
+  destination_image_description = "Copied image for development"
+  destination_region            = "us-east-1"
+  source_image_name             = "example-source-image"
 
   tags = {
     Environment = "dev"

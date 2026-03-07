@@ -73,21 +73,20 @@ func (r *resource) Configure(_ context.Context, req tfresource.ConfigureRequest,
 	r.tags = tags.NewTagManager(meta.Tagging, meta.DefaultTags)
 }
 
-// ImportState expects <destination_image_name>|<destination_region> and seeds
-// name, destination_region, and id from that identifier. source_image_name is a
-// create-time input and is not reconstructed during import because AWS read APIs
-// do not return the original copy source.
+// ImportState expects <destination_image_name>|<destination_region>|<source_image_name>
+// and seeds destination_image_name, destination_region, source_image_name, and id from that identifier.
 func (r *resource) ImportState(ctx context.Context, req tfresource.ImportStateRequest, resp *tfresource.ImportStateResponse) {
-	name, destinationRegion, err := parseID(req.ID)
+	destinationImageName, destinationRegion, sourceImageName, err := parseID(req.ID)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Unexpected Import Identifier",
-			"Expected import identifier format: <destination_image_name>|<destination_region>",
+			"Expected import identifier format: <destination_image_name>|<destination_region>|<source_image_name>",
 		)
 		return
 	}
 
-	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("name"), name)...)
+	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("destination_image_name"), destinationImageName)...)
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("destination_region"), destinationRegion)...)
-	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("id"), req.ID)...)
+	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("source_image_name"), sourceImageName)...)
+	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("id"), buildID(destinationImageName, destinationRegion, sourceImageName))...)
 }
