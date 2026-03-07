@@ -33,9 +33,12 @@ type FakeTaggingAPI struct {
 		ctx context.Context, params *awstaggingapi.UntagResourcesInput, optFns ...func(*awstaggingapi.Options),
 	) (*awstaggingapi.UntagResourcesOutput, error)
 
-	GetResourcesCalls   int
-	TagResourcesCalls   int
-	UntagResourcesCalls int
+	GetResourcesCalls    int
+	TagResourcesCalls    int
+	UntagResourcesCalls  int
+	GetResourcesOptFns   int
+	TagResourcesOptFns   int
+	UntagResourcesOptFns int
 
 	LastGetResourcesInput   *awstaggingapi.GetResourcesInput
 	LastTagResourcesInput   *awstaggingapi.TagResourcesInput
@@ -56,6 +59,7 @@ func (f *FakeTaggingAPI) GetResources(
 	}
 
 	f.GetResourcesCalls++
+	f.GetResourcesOptFns = len(optFns)
 	f.LastGetResourcesInput = params
 
 	return f.GetResourcesFn(ctx, params, optFns...)
@@ -70,6 +74,7 @@ func (f *FakeTaggingAPI) TagResources(
 	}
 
 	f.TagResourcesCalls++
+	f.TagResourcesOptFns = len(optFns)
 	f.LastTagResourcesInput = params
 
 	return f.TagResourcesFn(ctx, params, optFns...)
@@ -84,6 +89,7 @@ func (f *FakeTaggingAPI) UntagResources(
 	}
 
 	f.UntagResourcesCalls++
+	f.UntagResourcesOptFns = len(optFns)
 	f.LastUntagResourcesInput = params
 
 	return f.UntagResourcesFn(ctx, params, optFns...)
@@ -284,6 +290,39 @@ func TestTagManager_ReadAll(t *testing.T) {
 			)
 		})
 	}
+}
+
+func TestTagManager_ReadAll_ForwardsOptions(t *testing.T) {
+	t.Parallel()
+
+	ctx := context.Background()
+	arn := "arn:aws:appstream:eu-central-1:123456789012:stack/test"
+	expectedRegion := "us-east-1"
+	var gotRegion string
+
+	fake := NewFakeTaggingAPI()
+	fake.GetResourcesFn = func(
+		_ context.Context,
+		_ *awstaggingapi.GetResourcesInput,
+		optFns ...func(*awstaggingapi.Options),
+	) (*awstaggingapi.GetResourcesOutput, error) {
+		opts := awstaggingapi.Options{}
+		for _, optFn := range optFns {
+			optFn(&opts)
+		}
+		gotRegion = opts.Region
+
+		return &awstaggingapi.GetResourcesOutput{}, nil
+	}
+
+	tm := NewTagManager(fake, nil)
+
+	_, diags := tm.ReadAll(ctx, arn, func(o *awstaggingapi.Options) {
+		o.Region = expectedRegion
+	})
+	require.False(t, diags.HasError(), "unexpected diagnostics: %v", diags)
+	require.Equal(t, 1, fake.GetResourcesOptFns)
+	require.Equal(t, expectedRegion, gotRegion)
 }
 func TestTagManager_Apply(t *testing.T) {
 	t.Parallel()
@@ -546,6 +585,67 @@ func TestTagManager_Apply(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestTagManager_Apply_ForwardsOptions(t *testing.T) {
+	t.Parallel()
+
+	ctx := context.Background()
+	arn := "arn:aws:appstream:eu-central-1:123456789012:stack/test"
+	expectedRegion := "us-east-1"
+
+	var getRegion string
+	var tagRegion string
+
+	fake := NewFakeTaggingAPI()
+	fake.GetResourcesFn = func(
+		_ context.Context,
+		_ *awstaggingapi.GetResourcesInput,
+		optFns ...func(*awstaggingapi.Options),
+	) (*awstaggingapi.GetResourcesOutput, error) {
+		opts := awstaggingapi.Options{}
+		for _, optFn := range optFns {
+			optFn(&opts)
+		}
+		getRegion = opts.Region
+
+		return &awstaggingapi.GetResourcesOutput{}, nil
+	}
+	fake.TagResourcesFn = func(
+		_ context.Context,
+		_ *awstaggingapi.TagResourcesInput,
+		optFns ...func(*awstaggingapi.Options),
+	) (*awstaggingapi.TagResourcesOutput, error) {
+		opts := awstaggingapi.Options{}
+		for _, optFn := range optFns {
+			optFn(&opts)
+		}
+		tagRegion = opts.Region
+
+		return &awstaggingapi.TagResourcesOutput{}, nil
+	}
+	fake.UntagResourcesFn = func(
+		context.Context,
+		*awstaggingapi.UntagResourcesInput,
+		...func(*awstaggingapi.Options),
+	) (*awstaggingapi.UntagResourcesOutput, error) {
+		t.Fatal("unexpected UntagResources call")
+		return nil, nil
+	}
+
+	tm := NewTagManager(fake, nil)
+	desired := types.MapValueMust(types.StringType, map[string]attr.Value{
+		"env": types.StringValue("prod"),
+	})
+
+	_, diags := tm.Apply(ctx, arn, desired, func(o *awstaggingapi.Options) {
+		o.Region = expectedRegion
+	})
+	require.False(t, diags.HasError(), "unexpected diagnostics: %v", diags)
+	require.Equal(t, 1, fake.GetResourcesOptFns)
+	require.Equal(t, 1, fake.TagResourcesOptFns)
+	require.Equal(t, expectedRegion, getRegion)
+	require.Equal(t, expectedRegion, tagRegion)
 }
 
 func TestFlattenTags(t *testing.T) {

@@ -41,6 +41,7 @@ For context, [see the open AppStream-related issues](https://github.com/hashicor
 | awsappstream_associate_app_block_builder_app_block | ✅        | ❌           |
 | awsappstream_directory_config                      | ✅        | ❌           |
 | awsappstream_image                                 | ❌        | ✅           |
+| awsappstream_copied_image                          | ✅        | ❌           |
 | awsappstream_imported_image                        | ✅        | ❌           |
 | awsappstream_image_permission                      | ✅        | ❌           |
 | awsappstream_image_permissions                     | ❌        | ✅           |

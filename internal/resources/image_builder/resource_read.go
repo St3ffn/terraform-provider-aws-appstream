@@ -6,10 +6,8 @@ package image_builder
 import (
 	"context"
 	"fmt"
-	"strings"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
-	awsarn "github.com/aws/aws-sdk-go-v2/aws/arn"
 	awsappstream "github.com/aws/aws-sdk-go-v2/service/appstream"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	tfresource "github.com/hashicorp/terraform-plugin-framework/resource"
@@ -92,7 +90,7 @@ func (r *resource) readImageBuilder(ctx context.Context, prior resourceModel) (*
 		return nil, diags
 	}
 
-	imageName := imageNameFromImageARN(imageBuilder.ImageArn)
+	imageName := util.ARNResourceSuffixOrNil(imageBuilder.ImageArn, "appstream", "image/")
 
 	state := &resourceModel{
 		ID:                          types.StringValue(aws.ToString(imageBuilder.Name)),
@@ -137,29 +135,4 @@ func (r *resource) readImageBuilder(ctx context.Context, prior resourceModel) (*
 	}
 
 	return state, diags
-}
-
-func imageNameFromImageARN(imageARN *string) *string {
-	// expected arn:aws:appstream:<region>:<account>:image/<name>
-	if imageARN == nil {
-		return nil
-	}
-
-	const prefix = "image/"
-
-	parsed, err := awsarn.Parse(*imageARN)
-	if err != nil {
-		return nil
-	}
-
-	if parsed.Service != "appstream" || !strings.HasPrefix(parsed.Resource, prefix) {
-		return nil
-	}
-
-	name := strings.TrimPrefix(parsed.Resource, prefix)
-	if name == "" {
-		return nil
-	}
-
-	return aws.String(name)
 }
