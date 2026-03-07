@@ -33,6 +33,7 @@ import (
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/resources/associate_fleet_stack"
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/resources/associate_image_builder_software"
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/resources/associate_user_stack"
+	"github.com/st3ffn/terraform-provider-aws-appstream/internal/resources/copied_image"
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/resources/directory_config"
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/resources/entitlement"
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/resources/export_image_task"
@@ -545,6 +546,7 @@ func (p *awsAppStreamProvider) Resources(_ context.Context) []func() resource.Re
 		image_builder.NewResource,
 		associate_image_builder_software.NewResource,
 		image_permission.NewResource,
+		copied_image.NewResource,
 		imported_image.NewResource,
 		usage_report_subscription.NewResource,
 		associate_app_block_builder_app_block.NewResource,

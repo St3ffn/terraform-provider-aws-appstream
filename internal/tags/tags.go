@@ -42,8 +42,10 @@ func NewTagManager(taggingAPI taggingAPI, defaultTags map[string]string) *TagMan
 }
 
 // ReadAll reads all resource tags for the given ARN.
-func (tm *TagManager) ReadAll(ctx context.Context, arn string) (types.Map, diag.Diagnostics) {
-	tags, diags := tm.readRaw(ctx, arn)
+// Optional AWS SDK options can be provided (for example a region override).
+func (tm *TagManager) ReadAll(ctx context.Context, arn string, optFns ...func(*awstaggingapi.Options),
+) (types.Map, diag.Diagnostics) {
+	tags, diags := tm.readRaw(ctx, arn, optFns...)
 	if diags.HasError() {
 		return types.MapNull(types.StringType), diags
 	}
@@ -51,7 +53,11 @@ func (tm *TagManager) ReadAll(ctx context.Context, arn string) (types.Map, diag.
 	return flattenTags(ctx, tags, &diags), diags
 }
 
-func (tm *TagManager) readRaw(ctx context.Context, arn string) (map[string]string, diag.Diagnostics) {
+func (tm *TagManager) readRaw(
+	ctx context.Context,
+	arn string,
+	optFns ...func(*awstaggingapi.Options),
+) (map[string]string, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
 	if arn == "" {
@@ -60,9 +66,13 @@ func (tm *TagManager) readRaw(ctx context.Context, arn string) (map[string]strin
 
 	raw := make(map[string]string)
 
-	out, err := tm.client.GetResources(ctx, &awstaggingapi.GetResourcesInput{
-		ResourceARNList: []string{arn},
-	})
+	out, err := tm.client.GetResources(
+		ctx,
+		&awstaggingapi.GetResourcesInput{
+			ResourceARNList: []string{arn},
+		},
+		optFns...,
+	)
 	if err != nil {
 		diags.AddError(
 			"Error Reading AWS Tags",
@@ -83,7 +93,13 @@ func (tm *TagManager) readRaw(ctx context.Context, arn string) (map[string]strin
 }
 
 // Apply reconciles the desired tags against the current remote tags.
-func (tm *TagManager) Apply(ctx context.Context, arn string, desired types.Map) (types.Map, diag.Diagnostics) {
+// Optional AWS SDK options can be provided (for example a region override).
+func (tm *TagManager) Apply(
+	ctx context.Context,
+	arn string,
+	desired types.Map,
+	optFns ...func(*awstaggingapi.Options),
+) (types.Map, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
 	if arn == "" {
@@ -92,10 +108,10 @@ func (tm *TagManager) Apply(ctx context.Context, arn string, desired types.Map) 
 
 	if desired.IsUnknown() {
 		// preserve current remote state
-		return tm.ReadAll(ctx, arn)
+		return tm.ReadAll(ctx, arn, optFns...)
 	}
 
-	current, readDiags := tm.readRaw(ctx, arn)
+	current, readDiags := tm.readRaw(ctx, arn, optFns...)
 	diags.Append(readDiags...)
 	if diags.HasError() {
 		return types.MapNull(types.StringType), diags
@@ -113,10 +129,14 @@ func (tm *TagManager) Apply(ctx context.Context, arn string, desired types.Map) 
 	removeKeys, addOrUpdate := diffTags(current, desiredTags)
 
 	if len(removeKeys) > 0 {
-		out, err := tm.client.UntagResources(ctx, &awstaggingapi.UntagResourcesInput{
-			ResourceARNList: []string{arn},
-			TagKeys:         removeKeys,
-		})
+		out, err := tm.client.UntagResources(
+			ctx,
+			&awstaggingapi.UntagResourcesInput{
+				ResourceARNList: []string{arn},
+				TagKeys:         removeKeys,
+			},
+			optFns...,
+		)
 		if err != nil {
 			diags.AddError(
 				"Error Removing AWS Tags",
@@ -139,10 +159,14 @@ func (tm *TagManager) Apply(ctx context.Context, arn string, desired types.Map) 
 	}
 
 	if len(addOrUpdate) > 0 {
-		out, err := tm.client.TagResources(ctx, &awstaggingapi.TagResourcesInput{
-			ResourceARNList: []string{arn},
-			Tags:            addOrUpdate,
-		})
+		out, err := tm.client.TagResources(
+			ctx,
+			&awstaggingapi.TagResourcesInput{
+				ResourceARNList: []string{arn},
+				Tags:            addOrUpdate,
+			},
+			optFns...,
+		)
 		if err != nil {
 			diags.AddError(
 				"Error Updating AWS Tags",
