@@ -88,5 +88,5 @@ func (r *resource) ImportState(ctx context.Context, req tfresource.ImportStateRe
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("destination_image_name"), destinationImageName)...)
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("destination_region"), destinationRegion)...)
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("source_image_name"), sourceImageName)...)
-	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("id"), buildID(destinationImageName, destinationRegion, sourceImageName))...)
+	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("id"), req.ID)...)
 }
