@@ -38,15 +38,16 @@ func (r *resource) Create(ctx context.Context, req tfresource.CreateRequest, res
 	}
 
 	name := plan.Name.ValueString()
+	iamRoleARN := plan.IAMRoleARN.ValueString()
+	sourceAmiID := plan.SourceAmiID.ValueString()
 
 	input := &awsappstream.CreateImportedImageInput{
-		Name:        util.StringPointerOrNil(plan.Name),
-		IamRoleArn:  util.StringPointerOrNil(plan.IAMRoleARN),
-		SourceAmiId: util.StringPointerOrNil(plan.SourceAmiID),
+		Name:        aws.String(name),
+		IamRoleArn:  aws.String(iamRoleARN),
+		SourceAmiId: aws.String(sourceAmiID),
+		DisplayName: util.StringPointerOrNil(plan.DisplayName),
+		Description: util.StringPointerOrNil(plan.Description),
 	}
-
-	input.DisplayName = util.StringPointerOrNil(plan.DisplayName)
-	input.Description = util.StringPointerOrNil(plan.Description)
 
 	if !plan.AgentSoftwareVersion.IsNull() && !plan.AgentSoftwareVersion.IsUnknown() {
 		input.AgentSoftwareVersion = awstypes.AgentSoftwareVersion(plan.AgentSoftwareVersion.ValueString())
@@ -85,7 +86,7 @@ func (r *resource) Create(ctx context.Context, req tfresource.CreateRequest, res
 				fmt.Sprintf(
 					"An imported image named %q already exists. To manage it with Terraform, import it using:\n\n"+
 						"  terraform import <resource_address> %q",
-					name, name,
+					name, buildID(name, iamRoleARN, sourceAmiID),
 				),
 			)
 			return

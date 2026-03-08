@@ -5,18 +5,15 @@ package imported_image
 import types "github.com/hashicorp/terraform-plugin-framework/types"
 
 type resourceModel struct {
-	// A synthetic identifier for the imported image, equal to the image name. This value is managed by the provider
-	// and cannot be set manually.
+	// A synthetic identifier for the imported image, composed of image name, IAM role ARN, and source AMI ID. This
+	// value is managed by the provider and cannot be set manually.
 	ID types.String `tfsdk:"id"`
 	// A unique name for the imported image. Changing this value forces the imported image to be replaced.
 	Name types.String `tfsdk:"name"`
 	// The ARN of the IAM role that allows AppStream to access and validate the source AMI. Changing this value
-	// forces the imported image to be replaced. This create-time input is not returned by `DescribeImages`, so after
-	// import it must be set explicitly in configuration.
+	// forces the imported image to be replaced.
 	IAMRoleARN types.String `tfsdk:"iam_role_arn"`
-	// The EC2 AMI ID to import into AppStream. Changing this value forces the imported image to be replaced. This
-	// create-time input is not returned by `DescribeImages`, so after import it must be set explicitly in
-	// configuration.
+	// The EC2 AMI ID to import into AppStream. Changing this value forces the imported image to be replaced.
 	SourceAmiID types.String `tfsdk:"source_ami_id"`
 	// The AppStream agent software version used for the imported image. Valid values are `CURRENT_LATEST` and
 	// `ALWAYS_LATEST`. Changing this value forces the imported image to be replaced. This create-time input is not

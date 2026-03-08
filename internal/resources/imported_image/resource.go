@@ -73,16 +73,20 @@ func (r *resource) Configure(_ context.Context, req tfresource.ConfigureRequest,
 	r.tags = tags.NewTagManager(meta.Tagging, meta.DefaultTags)
 }
 
-// ImportState expects <image_name> and seeds both name and id from that identifier.
+// ImportState expects <name>|<iam_role_arn>|<source_ami_id>
+// and seeds name, iam_role_arn, source_ami_id, and id from that identifier.
 func (r *resource) ImportState(ctx context.Context, req tfresource.ImportStateRequest, resp *tfresource.ImportStateResponse) {
-	if req.ID == "" {
+	name, iamRoleARN, sourceAmiID, err := parseID(req.ID)
+	if err != nil {
 		resp.Diagnostics.AddError(
 			"Unexpected Import Identifier",
-			"Expected import identifier format: <image_name>",
+			"Expected import identifier format: <name>|<iam_role_arn>|<source_ami_id>",
 		)
 		return
 	}
 
-	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("name"), req.ID)...)
+	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("name"), name)...)
+	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("iam_role_arn"), iamRoleARN)...)
+	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("source_ami_id"), sourceAmiID)...)
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("id"), req.ID)...)
 }

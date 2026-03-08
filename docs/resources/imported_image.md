@@ -3,12 +3,12 @@
 page_title: "awsappstream_imported_image Resource - AWS AppStream"
 subcategory: ""
 description: |-
-  Manages an AppStream imported image created from an EC2 AMI. Imported images are immutable artifacts and are typically replaced when input settings change. After terraform import, configure create-time-only attributes explicitly (iam_role_arn, source_ami_id, agent_software_version, runtime_validation_config, app_catalog_config) because AWS DescribeImages does not return these original input values.
+  Manages an AppStream imported image created from an EC2 AMI. Imported images are immutable artifacts and are typically replaced when input settings change. After terraform import, configure create-time-only attributes explicitly (agent_software_version, runtime_validation_config, app_catalog_config) because AWS DescribeImages does not return these original input values.
 ---
 
 # awsappstream_imported_image (Resource)
 
-Manages an AppStream imported image created from an EC2 AMI. Imported images are immutable artifacts and are typically replaced when input settings change. After `terraform import`, configure create-time-only attributes explicitly (`iam_role_arn`, `source_ami_id`, `agent_software_version`, `runtime_validation_config`, `app_catalog_config`) because AWS `DescribeImages` does not return these original input values.
+Manages an AppStream imported image created from an EC2 AMI. Imported images are immutable artifacts and are typically replaced when input settings change. After `terraform import`, configure create-time-only attributes explicitly (`agent_software_version`, `runtime_validation_config`, `app_catalog_config`) because AWS `DescribeImages` does not return these original input values.
 
 ## Example Usage
 
@@ -89,9 +89,9 @@ resource "awsappstream_imported_image" "keep" {
 
 ### Required
 
-- `iam_role_arn` (String) The ARN of the IAM role that allows AppStream to access and validate the source AMI. Changing this value forces the imported image to be replaced. This create-time input is not returned by `DescribeImages`, so after import it must be set explicitly in configuration.
+- `iam_role_arn` (String) The ARN of the IAM role that allows AppStream to access and validate the source AMI. Changing this value forces the imported image to be replaced.
 - `name` (String) A unique name for the imported image. Changing this value forces the imported image to be replaced.
-- `source_ami_id` (String) The EC2 AMI ID to import into AppStream. Changing this value forces the imported image to be replaced. This create-time input is not returned by `DescribeImages`, so after import it must be set explicitly in configuration.
+- `source_ami_id` (String) The EC2 AMI ID to import into AppStream. Changing this value forces the imported image to be replaced.
 
 ### Optional
 
@@ -110,7 +110,7 @@ resource "awsappstream_imported_image" "keep" {
 - `base_image_arn` (String) The ARN of the image from which this image was created.
 - `created_time` (String) The timestamp when the AppStream imported image was created, in RFC 3339 format.
 - `dynamic_app_providers_enabled` (String) Indicates whether dynamic app providers are enabled.
-- `id` (String) A synthetic identifier for the imported image, equal to the image name. This value is managed by the provider and cannot be set manually.
+- `id` (String) A synthetic identifier for the imported image, composed of image name, IAM role ARN, and source AMI ID. This value is managed by the provider and cannot be set manually.
 - `image_builder_name` (String) The name of the image builder used to create the image, if applicable.
 - `image_builder_supported` (Boolean) Whether an AppStream image builder can be launched from this imported image.
 - `image_errors` (Attributes Set) Errors reported by AWS during image creation or management. (see [below for nested schema](#nestedatt--image_errors))
@@ -217,9 +217,8 @@ Import is supported using the following syntax:
 The [`terraform import` command](https://developer.hashicorp.com/terraform/cli/commands/import) can be used, for example:
 
 ```shell
-# Import uses image name only.
-# Note: create-time-only attributes (iam_role_arn, source_ami_id, agent_software_version,
-# runtime_validation_config, app_catalog_config) are not returned by DescribeImages and
-# should be set explicitly in configuration after import.
-terraform import awsappstream_imported_image.example "example-image"
+# Import uses: name|iam_role_arn|source_ami_id.
+# Note: create-time-only attributes (agent_software_version, runtime_validation_config, app_catalog_config)
+# are not returned by DescribeImages and should be set explicitly in configuration after import.
+terraform import awsappstream_imported_image.example "example-image|arn:aws:iam::123456789012:role/appstream-import|ami-0abc1234def567890"
 ```
