@@ -5,7 +5,6 @@ on:
 
 permissions:
   contents: read
-  pull-requests: read
 
 jobs:
   commitlint:
@@ -15,10 +14,11 @@ jobs:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           fetch-depth: 0
-      - name: Validate PR Commits
-        id: commitlint
-        uses: wagoid/commitlint-github-action@b948419dd99f3fd78a6548d48f94e3df7f6bf3ed # v6.2.1
+      - uses: actions/setup-go@4b73464bb391d4059bd26b0524d20df3927bd417 # v6.3.0
         with:
-          failOnWarnings: true
-          failOnErrors: true
-          helpURL: https://www.conventionalcommits.org/en/v1.0.0/#summary
+          go-version-file: 'tools/commitlint/go.mod'
+          cache: true
+      - name: Validate PR Commits
+        working-directory: tools/commitlint
+        run: |
+          go run ./cmd/commitlint --format github

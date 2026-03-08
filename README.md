@@ -196,6 +196,12 @@ Examples:
 - `fix: handle write-only password on update`
 - `chore: pin workflow action shas`
 
+For local validation, this repository includes a dedicated `commitlint` CLI tool:
+
+- Install: `make install-tool-commitlint`
+- Run (default PR-style range): `commitlint`
+- Full usage and output formats: [`tools/commitlint/README.md`](tools/commitlint/README.md)
+
 ## Development Prerequisites
 
 Before running local development targets, ensure these tools are available:
@@ -213,12 +219,14 @@ Some targets execute `go run ...` tools and may download modules on first run
 |--------------------|--------------------------------------------------------------|---------------------------------------------------------|
 | `make fmt`         | Format Go code (provider + tools) with configured formatters | Go, `golangci-lint`                                     |
 | `make lint`        | Run linters (provider + tools)                               | Go, `golangci-lint`                                     |
+| `make commitlint`  | Validate commit messages with local commitlint tool          | Go, git repository with commit history                  |
 | `make test`        | Run unit tests (provider + tools); supports `TESTFLAGS`      | Go                                                      |
 | `make govulncheck` | Run vulnerability checks (provider + tools)                  | Go, network access on first run                         |
 | `make generate`    | Generate provider artifacts/docs and format examples         | Go, Terraform CLI, network access on first run          |
 | `make build`       | Build provider binary into `./bin`                           | Go                                                      |
 | `make build-debug` | Build non-optimized debug binary                             | Go                                                      |
 | `make install`     | Install provider binary with `go install`                    | Go                                                      |
+| `make install-tool-commitlint` | Install `commitlint` CLI tool with `go install`       | Go                                                      |
 | `make testacc`     | Run acceptance tests; supports `TESTFLAGS`                   | Go, Terraform CLI, AWS credentials + test prerequisites |
 
 Module-specific targets are also available for `fmt`, `lint`, `test`, and
@@ -227,11 +235,13 @@ Module-specific targets are also available for `fmt`, `lint`, `test`, and
 - `*-provider`
 - `*-tool-provider-codegen`
 - `*-tool-appstream-changelog-issues`
+- `*-tool-commitlint`
 
 Examples:
 
 - `make test TESTFLAGS='-p=8 -parallel=8'`
 - `make testacc TESTFLAGS='-p=4 -parallel=4'`
+- `make commitlint COMMITLINTFLAGS='--format json --fail-level none'`
 
 ## Local Provider Build and Test
 
