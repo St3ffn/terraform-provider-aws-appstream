@@ -88,6 +88,7 @@ Resources currently available only in `st3ffn/aws-appstream`:
 - `awsappstream_entitlement`
 - `awsappstream_copied_image`
 - `awsappstream_imported_image`
+- `awsappstream_updated_image`
 - `awsappstream_image_permission`
 - `awsappstream_stack_theme`
 - `awsappstream_usage_report_subscription`
@@ -164,7 +165,7 @@ Plan-time warnings may appear when a fleet update is expected to require restart
 
 At a high level, `st3ffn/awsappstream` includes:
 
-- Core resources: `fleet`, `stack`, `image_builder`, `app_block_builder`, `application`, `entitlement`, `directory_config`, `user`, `usage_report_subscription`, `stack_theme`, `copied_image`, `imported_image`, `image_permission`, `app_block`
+- Core resources: `fleet`, `stack`, `image_builder`, `app_block_builder`, `application`, `entitlement`, `directory_config`, `user`, `usage_report_subscription`, `stack_theme`, `copied_image`, `imported_image`, `updated_image`, `image_permission`, `app_block`
 - Association resources: `associate_fleet_stack`, `associate_application_fleet`, `associate_application_entitlement`, `associate_user_stack`, `associate_image_builder_software`, `associate_app_block_builder_app_block`
 - Data sources for core entities plus operational views such as `sessions`, `software_associations`, `export_image_task`, and `export_image_tasks`
 
