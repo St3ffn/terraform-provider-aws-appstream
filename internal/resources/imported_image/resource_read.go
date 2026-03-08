@@ -90,7 +90,9 @@ func (r *resource) readImportedImage(ctx context.Context, prior resourceModel) (
 	}
 
 	state := &resourceModel{
-		ID:                          types.StringValue(aws.ToString(image.Name)),
+		ID: types.StringValue(
+			buildID(aws.ToString(image.Name), prior.IAMRoleARN.ValueString(), prior.SourceAmiID.ValueString()),
+		),
 		Name:                        types.StringValue(aws.ToString(image.Name)),
 		IAMRoleARN:                  prior.IAMRoleARN,
 		SourceAmiID:                 prior.SourceAmiID,

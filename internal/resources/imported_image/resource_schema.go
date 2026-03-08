@@ -29,13 +29,13 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 		Description: "Manage an AWS AppStream Imported Image",
 		MarkdownDescription: "Manages an AppStream imported image created from an EC2 AMI. " +
 			"Imported images are immutable artifacts and are typically replaced when input settings change. " +
-			"After `terraform import`, configure create-time-only attributes explicitly (`iam_role_arn`, `source_ami_id`, " +
-			"`agent_software_version`, `runtime_validation_config`, `app_catalog_config`) because AWS `DescribeImages` " +
+			"After `terraform import`, configure create-time-only attributes explicitly " +
+			"(`agent_software_version`, `runtime_validation_config`, `app_catalog_config`) because AWS `DescribeImages` " +
 			"does not return these original input values.",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description: "Identifier of the AppStream Imported Image.",
-				MarkdownDescription: "A synthetic identifier for the imported image, equal to the image name. " +
+				MarkdownDescription: "A synthetic identifier for the imported image, composed of image name, IAM role ARN, and source AMI ID. " +
 					"This value is managed by the provider and cannot be set manually.",
 				Computed: true,
 				PlanModifiers: []planmodifier.String{
@@ -60,8 +60,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 			"iam_role_arn": schema.StringAttribute{
 				Description: "IAM role ARN for the Imported Image.",
 				MarkdownDescription: "The ARN of the IAM role that allows AppStream to access and validate the source AMI. " +
-					"Changing this value forces the imported image to be replaced. " +
-					"This create-time input is not returned by `DescribeImages`, so after import it must be set explicitly in configuration.",
+					"Changing this value forces the imported image to be replaced.",
 				Required: true,
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplace(),
@@ -73,8 +72,7 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 			"source_ami_id": schema.StringAttribute{
 				Description: "Source EC2 AMI ID for the Imported Image.",
 				MarkdownDescription: "The EC2 AMI ID to import into AppStream. " +
-					"Changing this value forces the imported image to be replaced. " +
-					"This create-time input is not returned by `DescribeImages`, so after import it must be set explicitly in configuration.",
+					"Changing this value forces the imported image to be replaced.",
 				Required: true,
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplace(),
