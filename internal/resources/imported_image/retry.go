@@ -6,11 +6,11 @@ package imported_image
 import "time"
 
 const (
-	createRetryTimeout     = 10 * time.Minute
+	createRetryTimeout     = 5 * time.Minute
 	createRetryInitBackoff = 5 * time.Second
 	createRetryMaxBackoff  = 30 * time.Second
 
-	waitAvailableRetryTimeout     = 90 * time.Minute
+	waitAvailableRetryTimeout     = 3 * time.Hour
 	waitAvailableRetryInitBackoff = 30 * time.Second
 	waitAvailableRetryMaxBackoff  = 1 * time.Minute
 )
