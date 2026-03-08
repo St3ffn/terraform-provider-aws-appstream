@@ -75,7 +75,6 @@ func (r *resource) Create(ctx context.Context, req tfresource.CreateRequest, res
 		// see https://docs.aws.amazon.com/appstream2/latest/APIReference/API_CreateImportedImage.html
 		util.WithRetryOnFns(
 			util.IsOperationNotPermittedException,
-			util.IsResourceNotFoundException,
 			util.IsInvalidRoleException,
 		),
 	)
