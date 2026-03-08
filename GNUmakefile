@@ -7,8 +7,14 @@ GOBIN := $(shell go env GOBIN)
 GOPATH := $(shell go env GOPATH)
 INSTALL_DIR := $(if $(GOBIN),$(GOBIN),$(GOPATH)/bin)
 TESTFLAGS ?=
+COMMITLINTFLAGS ?=
 
 default: fmt generate lint govulncheck test build
+
+commitlint:
+	@echo "🧾  Validating commit messages..."
+	@cd tools/commitlint && go run ./cmd/commitlint $(COMMITLINTFLAGS)
+	@echo "✅  Commitlint completed"
 
 build:
 	@echo "🚧  Building provider..."
@@ -27,7 +33,12 @@ install:
 	@go install -v .
 	@echo "✅  Install completed: $(INSTALL_DIR)/$(BINARY_NAME)"
 
-fmt: fmt-provider fmt-tool-provider-codegen fmt-tool-appstream-changelog-issues
+install-tool-commitlint:
+	@echo "📦  Installing tools/commitlint..."
+	@cd tools/commitlint && go install -v ./cmd/commitlint
+	@echo "✅  tools/commitlint install completed: $(INSTALL_DIR)/commitlint"
+
+fmt: fmt-provider fmt-tool-provider-codegen fmt-tool-appstream-changelog-issues fmt-tool-commitlint
 	@echo "✅  Format completed"
 
 fmt-provider:
@@ -45,7 +56,12 @@ fmt-tool-appstream-changelog-issues:
 	@cd tools/appstream-changelog-issues && golangci-lint fmt --config ../../.golangci.yaml ./...
 	@echo "✅  tools/appstream-changelog-issues format completed"
 
-lint: lint-provider lint-tool-provider-codegen lint-tool-appstream-changelog-issues
+fmt-tool-commitlint:
+	@echo "🧹  Formatting tools/commitlint Go files..."
+	@cd tools/commitlint && golangci-lint fmt --config ../../.golangci.yaml ./...
+	@echo "✅  tools/commitlint format completed"
+
+lint: lint-provider lint-tool-provider-codegen lint-tool-appstream-changelog-issues lint-tool-commitlint
 	@echo "✅  Lint completed"
 
 lint-provider:
@@ -63,7 +79,12 @@ lint-tool-appstream-changelog-issues:
 	@cd tools/appstream-changelog-issues && golangci-lint run
 	@echo "✅  tools/appstream-changelog-issues lint completed"
 
-govulncheck: govulncheck-provider govulncheck-tool-provider-codegen govulncheck-tool-appstream-changelog-issues
+lint-tool-commitlint:
+	@echo "🔍  Linting tools/commitlint..."
+	@cd tools/commitlint && golangci-lint run --config ../../.golangci.yaml
+	@echo "✅  tools/commitlint lint completed"
+
+govulncheck: govulncheck-provider govulncheck-tool-provider-codegen govulncheck-tool-appstream-changelog-issues govulncheck-tool-commitlint
 	@echo "✅  govulncheck completed"
 
 govulncheck-provider:
@@ -81,12 +102,17 @@ govulncheck-tool-appstream-changelog-issues:
 	@cd tools/appstream-changelog-issues && go run golang.org/x/vuln/cmd/govulncheck@latest ./...
 	@echo "✅  tools/appstream-changelog-issues govulncheck completed"
 
+govulncheck-tool-commitlint:
+	@echo "🔐  Running govulncheck (tools/commitlint)..."
+	@cd tools/commitlint && go run golang.org/x/vuln/cmd/govulncheck@latest ./...
+	@echo "✅  tools/commitlint govulncheck completed"
+
 generate:
 	@echo "⚙️  Running code generation..."
 	@cd tools/provider-codegen && go generate ./...
 	@echo "✅  Generation completed"
 
-test: test-provider test-tool-provider-codegen test-tool-appstream-changelog-issues
+test: test-provider test-tool-provider-codegen test-tool-appstream-changelog-issues test-tool-commitlint
 	@echo "✅  Tests completed"
 
 test-provider:
@@ -104,6 +130,11 @@ test-tool-appstream-changelog-issues:
 	@cd tools/appstream-changelog-issues && go test -v -cover -timeout=5m $(TESTFLAGS) ./...
 	@echo "✅  tools/appstream-changelog-issues tests completed"
 
+test-tool-commitlint:
+	@echo "🧪  Running tools/commitlint tests..."
+	@cd tools/commitlint && go test -v -timeout=5m $(TESTFLAGS) ./...
+	@echo "✅  tools/commitlint tests completed"
+
 testacc:
 	@echo "🧪  Running acceptance tests..."
 	@TF_ACC=1 go test -v -cover -timeout 120m $(TESTFLAGS) ./...
@@ -115,25 +146,31 @@ clean:
 	@echo "✅  Clean complete"
 
 .PHONY: \
+	commitlint \
 	fmt \
 	fmt-provider \
 	fmt-tool-provider-codegen \
 	fmt-tool-appstream-changelog-issues \
+	fmt-tool-commitlint \
 	lint \
 	lint-provider \
 	lint-tool-provider-codegen \
 	lint-tool-appstream-changelog-issues \
+	lint-tool-commitlint \
 	test \
 	test-provider \
 	test-tool-provider-codegen \
 	test-tool-appstream-changelog-issues \
+	test-tool-commitlint \
 	govulncheck \
 	govulncheck-provider \
 	govulncheck-tool-provider-codegen \
 	govulncheck-tool-appstream-changelog-issues \
+	govulncheck-tool-commitlint \
 	testacc \
 	build \
 	build-debug \
 	install \
+	install-tool-commitlint \
 	generate \
 	clean
