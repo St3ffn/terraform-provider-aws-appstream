@@ -43,6 +43,7 @@ For context, [see the open AppStream-related issues](https://github.com/hashicor
 | awsappstream_image                                 | ❌        | ✅           |
 | awsappstream_copied_image                          | ✅        | ❌           |
 | awsappstream_imported_image                        | ✅        | ❌           |
+| awsappstream_updated_image                         | ✅        | ❌           |
 | awsappstream_image_permission                      | ✅        | ❌           |
 | awsappstream_image_permissions                     | ❌        | ✅           |
 | awsappstream_image_builder                         | ✅        | ✅           |

@@ -47,6 +47,7 @@ import (
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/resources/software_associations"
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/resources/stack"
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/resources/stack_theme"
+	"github.com/st3ffn/terraform-provider-aws-appstream/internal/resources/updated_image"
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/resources/usage_report_subscription"
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/resources/user"
 )
@@ -548,6 +549,7 @@ func (p *awsAppStreamProvider) Resources(_ context.Context) []func() resource.Re
 		image_permission.NewResource,
 		copied_image.NewResource,
 		imported_image.NewResource,
+		updated_image.NewResource,
 		usage_report_subscription.NewResource,
 		associate_app_block_builder_app_block.NewResource,
 		app_block_builder.NewResource,
