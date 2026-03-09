@@ -19,6 +19,10 @@ updates:
     directory: "/tools/provider-codegen"
     schedule:
       interval: "daily"
+  - package-ecosystem: "gomod"
+    directory: "/tools/commitlint"
+    schedule:
+      interval: "daily"
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
