@@ -94,7 +94,7 @@ jobs:
         run: |
           "$(go env GOPATH)/bin/govulncheck" -format sarif ./... > govulncheck.sarif
       - name: Upload SARIF file
-        uses: github/codeql-action/upload-sarif@0d579ffd059c29b07949a3cce3983f0780820c98 # v4.32.6
+        uses: github/codeql-action/upload-sarif@b1bff81932f5cdfc8695c7752dcee935dcd061c8 # v4.33.0
         with:
           sarif_file: ${{ matrix.module.work_dir }}/govulncheck.sarif
           category: govulncheck/${{ matrix.module.name }}
