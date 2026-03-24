@@ -1,5 +1,6 @@
 # Terraform AWS AppStream Provider
 
+[![Hypercommit](https://img.shields.io/badge/Hypercommit-DB2475)](https://hypercommit.com/terraform-provider-aws-appstream)
 [![Release](https://img.shields.io/github/v/release/St3ffn/terraform-provider-aws-appstream?logo=github)](https://github.com/St3ffn/terraform-provider-aws-appstream/releases)
 [![CI](https://github.com/St3ffn/terraform-provider-aws-appstream/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/St3ffn/terraform-provider-aws-appstream/actions/workflows/test.yml?branch=main)
 [![License](https://img.shields.io/github/license/st3ffn/terraform-provider-aws-appstream)](/LICENSE)
