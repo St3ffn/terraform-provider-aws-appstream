@@ -24,6 +24,9 @@ type resourceModel struct {
 	UserSettings types.Set `tfsdk:"user_settings"`
 	// Controls persistence of application settings for users of the stack.
 	ApplicationSettings types.Object `tfsdk:"application_settings"`
+	// Controls URL redirection settings for the stack. Use `host_to_client` to redirect URLs from the remote
+	// AppStream session to the local client browser.
+	ContentRedirection types.Object `tfsdk:"content_redirection"`
 	// Interface VPC endpoints through which users can connect to the stack.
 	AccessEndpoints types.Set `tfsdk:"access_endpoints"`
 	// Domains where streaming sessions can be embedded in an iframe.
@@ -69,6 +72,18 @@ type resourceModelApplicationSettings struct {
 	SettingsGroup types.String `tfsdk:"settings_group"`
 	// The S3 bucket name where users persistent application settings are stored.
 	S3BucketName types.String `tfsdk:"s3_bucket_name"`
+}
+type resourceModelContentRedirectionHostToClient struct {
+	// Whether URLs opened in the remote AppStream session are redirected to the local client browser.
+	Enabled types.Bool `tfsdk:"enabled"`
+	// A set of URL patterns that are allowed to be redirected to the local client browser.
+	AllowedUrls types.Set `tfsdk:"allowed_urls"`
+	// A set of URL patterns that are denied from redirection. Denied patterns take precedence over allowed patterns.
+	DeniedUrls types.Set `tfsdk:"denied_urls"`
+}
+type resourceModelContentRedirection struct {
+	// Controls redirection of URLs from the remote AppStream session to the local client browser.
+	HostToClient types.Object `tfsdk:"host_to_client"`
 }
 type resourceModelAccessEndpoints struct {
 	// The type of interface endpoint.

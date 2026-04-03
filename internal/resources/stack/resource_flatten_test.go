@@ -168,6 +168,152 @@ func TestFlattenApplicationSettingsResource_computed_bucket_preserved(t *testing
 	require.Equal(t, "bucket", model.S3BucketName.ValueString())
 }
 
+func TestFlattenContentRedirectionResource(t *testing.T) {
+	t.Parallel()
+
+	ctx := context.Background()
+
+	tests := []struct {
+		name          string
+		prior         types.Object
+		aws           *awstypes.ContentRedirection
+		expectNull    bool
+		expectUnknown bool
+		want          *resourceModelContentRedirectionHostToClient
+		wantNullHost  bool
+	}{
+		{
+			name:       "prior_null_returns_null",
+			prior:      types.ObjectNull(contentRedirectionObjectType.AttrTypes),
+			aws:        &awstypes.ContentRedirection{},
+			expectNull: true,
+		},
+		{
+			name:          "prior_unknown_returns_unknown",
+			prior:         types.ObjectUnknown(contentRedirectionObjectType.AttrTypes),
+			aws:           &awstypes.ContentRedirection{},
+			expectUnknown: true,
+		},
+		{
+			name: "aws_nil_returns_null_host_to_client",
+			prior: mustObject(t, contentRedirectionObjectType.AttrTypes, resourceModelContentRedirection{
+				HostToClient: mustObject(t, contentRedirectionHostToClientObjectType.AttrTypes, resourceModelContentRedirectionHostToClient{
+					Enabled:     types.BoolValue(true),
+					AllowedUrls: types.SetValueMust(types.StringType, []attr.Value{types.StringValue("https://example.com/*")}),
+					DeniedUrls:  types.SetValueMust(types.StringType, []attr.Value{types.StringValue("https://example.com/admin/*")}),
+				}),
+			}),
+			aws:          nil,
+			wantNullHost: true,
+		},
+		{
+			name: "basic_mapping",
+			prior: mustObject(t, contentRedirectionObjectType.AttrTypes, resourceModelContentRedirection{
+				HostToClient: mustObject(t, contentRedirectionHostToClientObjectType.AttrTypes, resourceModelContentRedirectionHostToClient{
+					Enabled:     types.BoolValue(false),
+					AllowedUrls: types.SetValueMust(types.StringType, []attr.Value{}),
+					DeniedUrls:  types.SetValueMust(types.StringType, []attr.Value{}),
+				}),
+			}),
+			aws: &awstypes.ContentRedirection{
+				HostToClient: &awstypes.UrlRedirectionConfig{
+					Enabled:     aws.Bool(true),
+					AllowedUrls: []string{"https://example.com/*"},
+					DeniedUrls:  []string{"https://example.com/admin/*"},
+				},
+			},
+			want: &resourceModelContentRedirectionHostToClient{
+				Enabled: types.BoolValue(true),
+				AllowedUrls: types.SetValueMust(types.StringType, []attr.Value{
+					types.StringValue("https://example.com/*"),
+				}),
+				DeniedUrls: types.SetValueMust(types.StringType, []attr.Value{
+					types.StringValue("https://example.com/admin/*"),
+				}),
+			},
+		},
+		{
+			name: "state_owned_urls_not_adopted_when_not_configured",
+			prior: mustObject(t, contentRedirectionObjectType.AttrTypes, resourceModelContentRedirection{
+				HostToClient: mustObject(t, contentRedirectionHostToClientObjectType.AttrTypes, resourceModelContentRedirectionHostToClient{
+					Enabled:     types.BoolValue(false),
+					AllowedUrls: types.SetNull(types.StringType),
+					DeniedUrls:  types.SetNull(types.StringType),
+				}),
+			}),
+			aws: &awstypes.ContentRedirection{
+				HostToClient: &awstypes.UrlRedirectionConfig{
+					Enabled:     aws.Bool(true),
+					AllowedUrls: []string{"https://example.com/*"},
+					DeniedUrls:  []string{"https://example.com/admin/*"},
+				},
+			},
+			want: &resourceModelContentRedirectionHostToClient{
+				Enabled:     types.BoolValue(true),
+				AllowedUrls: types.SetNull(types.StringType),
+				DeniedUrls:  types.SetNull(types.StringType),
+			},
+		},
+		{
+			name: "empty_aws_slices_become_empty_sets_when_owned",
+			prior: mustObject(t, contentRedirectionObjectType.AttrTypes, resourceModelContentRedirection{
+				HostToClient: mustObject(t, contentRedirectionHostToClientObjectType.AttrTypes, resourceModelContentRedirectionHostToClient{
+					Enabled:     types.BoolValue(true),
+					AllowedUrls: types.SetValueMust(types.StringType, []attr.Value{types.StringValue("https://example.com/*")}),
+					DeniedUrls:  types.SetValueMust(types.StringType, []attr.Value{types.StringValue("https://example.com/admin/*")}),
+				}),
+			}),
+			aws: &awstypes.ContentRedirection{
+				HostToClient: &awstypes.UrlRedirectionConfig{
+					Enabled:     aws.Bool(false),
+					AllowedUrls: []string{},
+					DeniedUrls:  []string{},
+				},
+			},
+			want: &resourceModelContentRedirectionHostToClient{
+				Enabled:     types.BoolValue(false),
+				AllowedUrls: types.SetValueMust(types.StringType, []attr.Value{}),
+				DeniedUrls:  types.SetValueMust(types.StringType, []attr.Value{}),
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			var diags diag.Diagnostics
+
+			out := flattenContentRedirectionResource(ctx, tt.prior, tt.aws, &diags)
+			require.False(t, diags.HasError(), "unexpected diagnostics: %v", diags)
+
+			if tt.expectNull {
+				require.True(t, out.IsNull())
+				return
+			}
+
+			if tt.expectUnknown {
+				require.True(t, out.IsUnknown())
+				return
+			}
+
+			var model resourceModelContentRedirection
+			diags = out.As(ctx, &model, basetypes.ObjectAsOptions{})
+			require.False(t, diags.HasError())
+
+			if tt.wantNullHost {
+				require.True(t, model.HostToClient.IsNull())
+				return
+			}
+
+			var hostToClient resourceModelContentRedirectionHostToClient
+			diags = model.HostToClient.As(ctx, &hostToClient, basetypes.ObjectAsOptions{})
+			require.False(t, diags.HasError())
+			require.Equal(t, *tt.want, hostToClient)
+		})
+	}
+}
+
 func TestFlattenAccessEndpointsResource_basic_mapping(t *testing.T) {
 	t.Parallel()
 

@@ -58,6 +58,10 @@ func (r *resource) Create(ctx context.Context, req tfresource.CreateRequest, res
 		input.ApplicationSettings = expandApplicationSettings(ctx, plan.ApplicationSettings, &resp.Diagnostics)
 	}
 
+	if !plan.ContentRedirection.IsNull() && !plan.ContentRedirection.IsUnknown() {
+		input.ContentRedirection = expandContentRedirection(ctx, plan.ContentRedirection, &resp.Diagnostics)
+	}
+
 	if !plan.AccessEndpoints.IsNull() && !plan.AccessEndpoints.IsUnknown() {
 		input.AccessEndpoints = expandAccessEndpoints(ctx, plan.AccessEndpoints, &resp.Diagnostics)
 	}

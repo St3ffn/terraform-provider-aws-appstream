@@ -331,6 +331,145 @@ func TestFlattenApplicationSettingsData(t *testing.T) {
 	}
 }
 
+func TestFlattenContentRedirectionData(t *testing.T) {
+	t.Parallel()
+
+	ctx := context.Background()
+
+	tests := []struct {
+		name  string
+		input *awstypes.ContentRedirection
+		want  types.Object
+	}{
+		{
+			name:  "nil_input_returns_null_object",
+			input: nil,
+			want:  types.ObjectNull(contentRedirectionObjectType.AttrTypes),
+		},
+		{
+			name: "host_to_client_nil_returns_null_object",
+			input: &awstypes.ContentRedirection{
+				HostToClient: nil,
+			},
+			want: types.ObjectNull(contentRedirectionObjectType.AttrTypes),
+		},
+		{
+			name: "host_to_client_enabled_false_with_nil_lists",
+			input: &awstypes.ContentRedirection{
+				HostToClient: &awstypes.UrlRedirectionConfig{
+					Enabled: aws.Bool(false),
+				},
+			},
+			want: types.ObjectValueMust(
+				contentRedirectionObjectType.AttrTypes,
+				map[string]attr.Value{
+					"host_to_client": types.ObjectValueMust(
+						contentRedirectionHostToClientObjectType.AttrTypes,
+						map[string]attr.Value{
+							"enabled":      types.BoolValue(false),
+							"allowed_urls": types.SetNull(types.StringType),
+							"denied_urls":  types.SetNull(types.StringType),
+						},
+					),
+				},
+			),
+		},
+		{
+			name: "host_to_client_enabled_true_with_empty_lists",
+			input: &awstypes.ContentRedirection{
+				HostToClient: &awstypes.UrlRedirectionConfig{
+					Enabled:     aws.Bool(true),
+					AllowedUrls: []string{},
+					DeniedUrls:  []string{},
+				},
+			},
+			want: types.ObjectValueMust(
+				contentRedirectionObjectType.AttrTypes,
+				map[string]attr.Value{
+					"host_to_client": types.ObjectValueMust(
+						contentRedirectionHostToClientObjectType.AttrTypes,
+						map[string]attr.Value{
+							"enabled":      types.BoolValue(true),
+							"allowed_urls": types.SetNull(types.StringType),
+							"denied_urls":  types.SetNull(types.StringType),
+						},
+					),
+				},
+			),
+		},
+		{
+			name: "host_to_client_allowed_urls_only",
+			input: &awstypes.ContentRedirection{
+				HostToClient: &awstypes.UrlRedirectionConfig{
+					Enabled:     aws.Bool(true),
+					AllowedUrls: []string{"https://example.com/*"},
+				},
+			},
+			want: types.ObjectValueMust(
+				contentRedirectionObjectType.AttrTypes,
+				map[string]attr.Value{
+					"host_to_client": types.ObjectValueMust(
+						contentRedirectionHostToClientObjectType.AttrTypes,
+						map[string]attr.Value{
+							"enabled": types.BoolValue(true),
+							"allowed_urls": types.SetValueMust(
+								types.StringType,
+								[]attr.Value{types.StringValue("https://example.com/*")},
+							),
+							"denied_urls": types.SetNull(types.StringType),
+						},
+					),
+				},
+			),
+		},
+		{
+			name: "host_to_client_set",
+			input: &awstypes.ContentRedirection{
+				HostToClient: &awstypes.UrlRedirectionConfig{
+					Enabled:     aws.Bool(true),
+					AllowedUrls: []string{"https://example.com/*"},
+					DeniedUrls:  []string{"https://example.com/admin/*"},
+				},
+			},
+			want: types.ObjectValueMust(
+				contentRedirectionObjectType.AttrTypes,
+				map[string]attr.Value{
+					"host_to_client": types.ObjectValueMust(
+						contentRedirectionHostToClientObjectType.AttrTypes,
+						map[string]attr.Value{
+							"enabled": types.BoolValue(true),
+							"allowed_urls": types.SetValueMust(
+								types.StringType,
+								[]attr.Value{types.StringValue("https://example.com/*")},
+							),
+							"denied_urls": types.SetValueMust(
+								types.StringType,
+								[]attr.Value{types.StringValue("https://example.com/admin/*")},
+							),
+						},
+					),
+				},
+			),
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			var diags diag.Diagnostics
+
+			got := flattenContentRedirectionData(ctx, tt.input, &diags)
+
+			require.False(t, diags.HasError(), "unexpected diagnostics: %v", diags)
+			require.True(
+				t, got.Equal(tt.want),
+				"flattenContentRedirection() = %#v, want %#v", got, tt.want,
+			)
+		})
+	}
+}
+
 func TestFlattenAccessEndpointsData(t *testing.T) {
 	t.Parallel()
 

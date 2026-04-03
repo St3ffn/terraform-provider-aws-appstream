@@ -14,6 +14,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	tfresource "github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
@@ -202,6 +203,41 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 						Description:         "S3 bucket name for persistent application settings.",
 						MarkdownDescription: "The S3 bucket name where users persistent application settings are stored.",
 						Computed:            true,
+					},
+				},
+			},
+			"content_redirection": schema.SingleNestedAttribute{
+				Description: "Content redirection configuration for the Stack.",
+				MarkdownDescription: "Controls URL redirection settings for the stack. " +
+					"Use `host_to_client` to redirect URLs from the remote AppStream session to the local client browser.",
+				Optional: true,
+				PlanModifiers: []planmodifier.Object{
+					objectplanmodifier.RequiresReplace(),
+				},
+				Attributes: map[string]schema.Attribute{
+					"host_to_client": schema.SingleNestedAttribute{
+						Description:         "Host-to-client URL redirection settings.",
+						MarkdownDescription: "Controls redirection of URLs from the remote AppStream session to the local client browser.",
+						Optional:            true,
+						Attributes: map[string]schema.Attribute{
+							"enabled": schema.BoolAttribute{
+								Description:         "Whether host-to-client URL redirection is enabled.",
+								MarkdownDescription: "Whether URLs opened in the remote AppStream session are redirected to the local client browser.",
+								Required:            true,
+							},
+							"allowed_urls": schema.SetAttribute{
+								Description:         "URL patterns allowed for redirection.",
+								MarkdownDescription: "A set of URL patterns that are allowed to be redirected to the local client browser.",
+								Optional:            true,
+								ElementType:         types.StringType,
+							},
+							"denied_urls": schema.SetAttribute{
+								Description:         "URL patterns denied from redirection.",
+								MarkdownDescription: "A set of URL patterns that are denied from redirection. Denied patterns take precedence over allowed patterns.",
+								Optional:            true,
+								ElementType:         types.StringType,
+							},
+						},
 					},
 				},
 			},

@@ -99,6 +99,7 @@ func (r *resource) readStack(ctx context.Context, prior resourceModel) (*resourc
 		FeedbackURL:                 util.StringOrNull(stack.FeedbackURL),
 		UserSettings:                flattenUserSettingsResource(ctx, prior.UserSettings, stack.UserSettings, &diags),
 		ApplicationSettings:         flattenApplicationSettingsResource(ctx, prior.ApplicationSettings, stack.ApplicationSettings, &diags),
+		ContentRedirection:          flattenContentRedirectionResource(ctx, prior.ContentRedirection, stack.ContentRedirection, &diags),
 		Tags:                        types.MapNull(types.StringType),
 		TagsAll:                     types.MapNull(types.StringType),
 		AccessEndpoints:             flattenAccessEndpointsResource(ctx, prior.AccessEndpoints, stack.AccessEndpoints, &diags),

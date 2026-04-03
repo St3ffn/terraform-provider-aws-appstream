@@ -23,6 +23,8 @@ type dataSourceModel struct {
 	UserSettings types.Set `tfsdk:"user_settings"`
 	// Application settings persistence configuration for the stack.
 	ApplicationSettings types.Object `tfsdk:"application_settings"`
+	// URL redirection settings configured for the stack.
+	ContentRedirection types.Object `tfsdk:"content_redirection"`
 	// Tags assigned to the stack.
 	Tags types.Map `tfsdk:"tags"`
 	// Interface VPC endpoints through which users can connect to the stack.
@@ -63,6 +65,19 @@ type dataSourceModelApplicationSettings struct {
 	SettingsGroup types.String `tfsdk:"settings_group"`
 	// The S3 bucket name where users persistent application settings are stored.
 	S3BucketName types.String `tfsdk:"s3_bucket_name"`
+}
+type dataSourceModelContentRedirectionHostToClient struct {
+	// Whether URLs opened in the remote AppStream session are redirected to the local client browser.
+	Enabled types.Bool `tfsdk:"enabled"`
+	// A set of URL patterns that are allowed to be redirected to the local client browser.
+	AllowedUrls types.Set `tfsdk:"allowed_urls"`
+	// A set of URL patterns that are denied from redirection. Denied patterns take precedence over allowed patterns.
+	DeniedUrls types.Set `tfsdk:"denied_urls"`
+}
+type dataSourceModelContentRedirection struct {
+	// URL redirection settings for URLs opened in the remote AppStream session and redirected to the local client
+	// browser.
+	HostToClient types.Object `tfsdk:"host_to_client"`
 }
 type dataSourceModelAccessEndpoints struct {
 	// The type of interface endpoint.

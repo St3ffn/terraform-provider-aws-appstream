@@ -304,6 +304,139 @@ func TestExpandApplicationSettings(t *testing.T) {
 	}
 }
 
+func TestExpandContentRedirection(t *testing.T) {
+	t.Parallel()
+
+	ctx := context.Background()
+
+	tests := []struct {
+		name      string
+		input     types.Object
+		want      *awstypes.ContentRedirection
+		wantError bool
+	}{
+		{
+			name: "null_object_returns_error",
+			input: types.ObjectNull(
+				contentRedirectionObjectType.AttrTypes,
+			),
+			want:      nil,
+			wantError: true,
+		},
+		{
+			name: "host_to_client_null_returns_nil",
+			input: types.ObjectValueMust(
+				contentRedirectionObjectType.AttrTypes,
+				map[string]attr.Value{
+					"host_to_client": types.ObjectNull(contentRedirectionHostToClientObjectType.AttrTypes),
+				},
+			),
+			want: nil,
+		},
+		{
+			name: "host_to_client_enabled_false_with_null_sets",
+			input: types.ObjectValueMust(
+				contentRedirectionObjectType.AttrTypes,
+				map[string]attr.Value{
+					"host_to_client": types.ObjectValueMust(
+						contentRedirectionHostToClientObjectType.AttrTypes,
+						map[string]attr.Value{
+							"enabled":      types.BoolValue(false),
+							"allowed_urls": types.SetNull(types.StringType),
+							"denied_urls":  types.SetNull(types.StringType),
+						},
+					),
+				},
+			),
+			want: &awstypes.ContentRedirection{
+				HostToClient: &awstypes.UrlRedirectionConfig{
+					Enabled: aws.Bool(false),
+				},
+			},
+		},
+		{
+			name: "host_to_client_empty_sets_expand_to_nil_slices",
+			input: types.ObjectValueMust(
+				contentRedirectionObjectType.AttrTypes,
+				map[string]attr.Value{
+					"host_to_client": types.ObjectValueMust(
+						contentRedirectionHostToClientObjectType.AttrTypes,
+						map[string]attr.Value{
+							"enabled":      types.BoolValue(true),
+							"allowed_urls": types.SetValueMust(types.StringType, []attr.Value{}),
+							"denied_urls":  types.SetValueMust(types.StringType, []attr.Value{}),
+						},
+					),
+				},
+			),
+			want: &awstypes.ContentRedirection{
+				HostToClient: &awstypes.UrlRedirectionConfig{
+					Enabled: aws.Bool(true),
+				},
+			},
+		},
+		{
+			name: "host_to_client_set_returns_struct",
+			input: types.ObjectValueMust(
+				contentRedirectionObjectType.AttrTypes,
+				map[string]attr.Value{
+					"host_to_client": types.ObjectValueMust(
+						contentRedirectionHostToClientObjectType.AttrTypes,
+						map[string]attr.Value{
+							"enabled": types.BoolValue(true),
+							"allowed_urls": types.SetValueMust(
+								types.StringType,
+								[]attr.Value{types.StringValue("https://example.com/*")},
+							),
+							"denied_urls": types.SetValueMust(
+								types.StringType,
+								[]attr.Value{types.StringValue("https://example.com/admin/*")},
+							),
+						},
+					),
+				},
+			),
+			want: &awstypes.ContentRedirection{
+				HostToClient: &awstypes.UrlRedirectionConfig{
+					Enabled:     aws.Bool(true),
+					AllowedUrls: []string{"https://example.com/*"},
+					DeniedUrls:  []string{"https://example.com/admin/*"},
+				},
+			},
+		},
+		{
+			name: "invalid_object_type",
+			input: types.ObjectValueMust(
+				map[string]attr.Type{
+					"enabled": types.BoolType,
+				},
+				map[string]attr.Value{
+					"enabled": types.BoolValue(true),
+				},
+			),
+			wantError: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			var diags diag.Diagnostics
+
+			got := expandContentRedirection(ctx, tt.input, &diags)
+
+			if tt.wantError {
+				require.True(t, diags.HasError(), "expected diagnostics error")
+				return
+			}
+
+			require.False(t, diags.HasError(), "unexpected diagnostics: %v", diags)
+			require.Equal(t, tt.want, got)
+		})
+	}
+}
+
 func TestExpandAccessEndpoints(t *testing.T) {
 	t.Parallel()
 

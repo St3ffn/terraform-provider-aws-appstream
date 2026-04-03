@@ -135,6 +135,37 @@ func (ds *dataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp
 					},
 				},
 			},
+			"content_redirection": schema.SingleNestedAttribute{
+				Description:         "Content redirection configuration for the Stack.",
+				MarkdownDescription: "URL redirection settings configured for the stack.",
+				Computed:            true,
+				Attributes: map[string]schema.Attribute{
+					"host_to_client": schema.SingleNestedAttribute{
+						Description:         "Host-to-client URL redirection settings.",
+						MarkdownDescription: "URL redirection settings for URLs opened in the remote AppStream session and redirected to the local client browser.",
+						Computed:            true,
+						Attributes: map[string]schema.Attribute{
+							"enabled": schema.BoolAttribute{
+								Description:         "Whether host-to-client URL redirection is enabled.",
+								MarkdownDescription: "Whether URLs opened in the remote AppStream session are redirected to the local client browser.",
+								Computed:            true,
+							},
+							"allowed_urls": schema.SetAttribute{
+								Description:         "URL patterns allowed for redirection.",
+								MarkdownDescription: "A set of URL patterns that are allowed to be redirected to the local client browser.",
+								Computed:            true,
+								ElementType:         types.StringType,
+							},
+							"denied_urls": schema.SetAttribute{
+								Description:         "URL patterns denied from redirection.",
+								MarkdownDescription: "A set of URL patterns that are denied from redirection. Denied patterns take precedence over allowed patterns.",
+								Computed:            true,
+								ElementType:         types.StringType,
+							},
+						},
+					},
+				},
+			},
 			"tags": schema.MapAttribute{
 				Description:         "Tags applied to the Stack.",
 				MarkdownDescription: "Tags assigned to the stack.",

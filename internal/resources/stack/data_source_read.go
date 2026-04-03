@@ -89,6 +89,7 @@ func (ds *dataSource) Read(ctx context.Context, req datasource.ReadRequest, resp
 		FeedbackURL:         util.StringOrNull(stack.FeedbackURL),
 		UserSettings:        flattenUserSettingsData(ctx, stack.UserSettings, &resp.Diagnostics),
 		ApplicationSettings: flattenApplicationSettingsData(ctx, stack.ApplicationSettings, &resp.Diagnostics),
+		ContentRedirection:  flattenContentRedirectionData(ctx, stack.ContentRedirection, &resp.Diagnostics),
 		Tags:                types.MapNull(types.StringType),
 		AccessEndpoints:     flattenAccessEndpointsData(ctx, stack.AccessEndpoints, &resp.Diagnostics),
 		EmbedHostDomains:    util.SetStringOrNull(ctx, stack.EmbedHostDomains, &resp.Diagnostics),
