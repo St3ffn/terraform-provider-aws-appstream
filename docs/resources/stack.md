@@ -97,6 +97,7 @@ resource "awsappstream_stack" "example" {
 
 - `access_endpoints` (Attributes Set) Interface VPC endpoints through which users can connect to the stack. (see [below for nested schema](#nestedatt--access_endpoints))
 - `application_settings` (Attributes) Controls persistence of application settings for users of the stack. (see [below for nested schema](#nestedatt--application_settings))
+- `content_redirection` (Attributes) Controls URL redirection settings for the stack. Use `host_to_client` to redirect URLs from the remote AppStream session to the local client browser. (see [below for nested schema](#nestedatt--content_redirection))
 - `description` (String) The stack description, if set. Must be 256 characters or fewer.
 - `display_name` (String) The name displayed to users in the AppStream user interface.
 - `embed_host_domains` (Set of String) Domains where streaming sessions can be embedded in an iframe.
@@ -138,6 +139,27 @@ Optional:
 Read-Only:
 
 - `s3_bucket_name` (String) The S3 bucket name where users persistent application settings are stored.
+
+
+<a id="nestedatt--content_redirection"></a>
+### Nested Schema for `content_redirection`
+
+Optional:
+
+- `host_to_client` (Attributes) Controls redirection of URLs from the remote AppStream session to the local client browser. (see [below for nested schema](#nestedatt--content_redirection--host_to_client))
+
+<a id="nestedatt--content_redirection--host_to_client"></a>
+### Nested Schema for `content_redirection.host_to_client`
+
+Required:
+
+- `enabled` (Boolean) Whether URLs opened in the remote AppStream session are redirected to the local client browser.
+
+Optional:
+
+- `allowed_urls` (Set of String) A set of URL patterns that are allowed to be redirected to the local client browser.
+- `denied_urls` (Set of String) A set of URL patterns that are denied from redirection. Denied patterns take precedence over allowed patterns.
+
 
 
 <a id="nestedatt--storage_connectors"></a>

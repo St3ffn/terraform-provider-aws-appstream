@@ -30,6 +30,7 @@ data "awsappstream_stack" "example" {
 - `access_endpoints` (Attributes Set) Interface VPC endpoints through which users can connect to the stack. (see [below for nested schema](#nestedatt--access_endpoints))
 - `application_settings` (Attributes) Application settings persistence configuration for the stack. (see [below for nested schema](#nestedatt--application_settings))
 - `arn` (String) The Amazon Resource Name (ARN) of the AppStream stack.
+- `content_redirection` (Attributes) URL redirection settings configured for the stack. (see [below for nested schema](#nestedatt--content_redirection))
 - `created_time` (String) The timestamp when the stack was created, in RFC 3339 format.
 - `description` (String) The stack description, if set.
 - `display_name` (String) The name displayed to users in the AppStream user interface.
@@ -60,6 +61,24 @@ Read-Only:
 - `enabled` (Boolean) Whether application settings persistence is enabled.
 - `s3_bucket_name` (String) The S3 bucket name where users persistent application settings are stored.
 - `settings_group` (String) The name of the application settings group.
+
+
+<a id="nestedatt--content_redirection"></a>
+### Nested Schema for `content_redirection`
+
+Read-Only:
+
+- `host_to_client` (Attributes) URL redirection settings for URLs opened in the remote AppStream session and redirected to the local client browser. (see [below for nested schema](#nestedatt--content_redirection--host_to_client))
+
+<a id="nestedatt--content_redirection--host_to_client"></a>
+### Nested Schema for `content_redirection.host_to_client`
+
+Read-Only:
+
+- `allowed_urls` (Set of String) A set of URL patterns that are allowed to be redirected to the local client browser.
+- `denied_urls` (Set of String) A set of URL patterns that are denied from redirection. Denied patterns take precedence over allowed patterns.
+- `enabled` (Boolean) Whether URLs opened in the remote AppStream session are redirected to the local client browser.
+
 
 
 <a id="nestedatt--stack_errors"></a>

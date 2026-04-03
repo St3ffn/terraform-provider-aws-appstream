@@ -38,6 +38,7 @@ type resourceDiff struct {
 	FeedbackURL                 changeKind
 	UserSettings                changeKind
 	ApplicationSettings         changeKind
+	ContentRedirection          changeKind
 	AccessEndpoints             changeKind
 	EmbedHostDomains            changeKind
 	StreamingExperienceSettings changeKind
@@ -53,6 +54,7 @@ func newResourceDiff(state resourceModel, plan resourceModel) resourceDiff {
 		ARN:                         classifyChange(state.ARN, plan.ARN),
 		AccessEndpoints:             classifyChange(state.AccessEndpoints, plan.AccessEndpoints),
 		ApplicationSettings:         classifyChange(state.ApplicationSettings, plan.ApplicationSettings),
+		ContentRedirection:          classifyChange(state.ContentRedirection, plan.ContentRedirection),
 		CreatedTime:                 classifyChange(state.CreatedTime, plan.CreatedTime),
 		Description:                 classifyChange(state.Description, plan.Description),
 		DisplayName:                 classifyChange(state.DisplayName, plan.DisplayName),
@@ -84,7 +86,7 @@ func classifyChange(state attr.Value, plan attr.Value) changeKind {
 }
 
 func (d resourceDiff) HasRemoteChanges() bool {
-	return d.Name.IsChanged() || d.Description.IsChanged() || d.DisplayName.IsChanged() || d.StorageConnectors.IsChanged() || d.RedirectURL.IsChanged() || d.FeedbackURL.IsChanged() || d.UserSettings.IsChanged() || d.ApplicationSettings.IsChanged() || d.AccessEndpoints.IsChanged() || d.EmbedHostDomains.IsChanged() || d.StreamingExperienceSettings.IsChanged()
+	return d.Name.IsChanged() || d.Description.IsChanged() || d.DisplayName.IsChanged() || d.StorageConnectors.IsChanged() || d.RedirectURL.IsChanged() || d.FeedbackURL.IsChanged() || d.UserSettings.IsChanged() || d.ApplicationSettings.IsChanged() || d.ContentRedirection.IsChanged() || d.AccessEndpoints.IsChanged() || d.EmbedHostDomains.IsChanged() || d.StreamingExperienceSettings.IsChanged()
 }
 
 func (d resourceDiff) RequiresTagApply() bool {

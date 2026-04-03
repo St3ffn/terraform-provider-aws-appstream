@@ -39,6 +39,20 @@ var applicationSettingsObjectType = types.ObjectType{
 	},
 }
 
+var contentRedirectionHostToClientObjectType = types.ObjectType{
+	AttrTypes: map[string]attr.Type{
+		"enabled":      types.BoolType,
+		"allowed_urls": types.SetType{ElemType: types.StringType},
+		"denied_urls":  types.SetType{ElemType: types.StringType},
+	},
+}
+
+var contentRedirectionObjectType = types.ObjectType{
+	AttrTypes: map[string]attr.Type{
+		"host_to_client": contentRedirectionHostToClientObjectType,
+	},
+}
+
 var accessEndpointObjectType = types.ObjectType{
 	AttrTypes: map[string]attr.Type{
 		"endpoint_type": types.StringType,
@@ -261,6 +275,96 @@ func flattenApplicationSettingsResource(
 		},
 	)
 	diags.Append(d...)
+	return obj
+}
+
+func flattenContentRedirectionResource(
+	ctx context.Context, prior types.Object, awsContentRedirection *awstypes.ContentRedirection, diags *diag.Diagnostics,
+) types.Object {
+
+	// user never managed this attribute
+	if prior.IsNull() {
+		return types.ObjectNull(contentRedirectionObjectType.AttrTypes)
+	}
+
+	// terraform does not yet know during planning
+	if prior.IsUnknown() {
+		return types.ObjectUnknown(contentRedirectionObjectType.AttrTypes)
+	}
+
+	// decode prior state
+	var priorModel resourceModelContentRedirection
+	diags.Append(prior.As(ctx, &priorModel, basetypes.ObjectAsOptions{})...)
+	if diags.HasError() {
+		return types.ObjectNull(contentRedirectionObjectType.AttrTypes)
+	}
+
+	// drift: user configured it but aws no longer has it
+	if awsContentRedirection == nil || awsContentRedirection.HostToClient == nil {
+		obj, d := types.ObjectValueFrom(
+			ctx,
+			contentRedirectionObjectType.AttrTypes,
+			resourceModelContentRedirection{
+				HostToClient: types.ObjectNull(contentRedirectionHostToClientObjectType.AttrTypes),
+			},
+		)
+		diags.Append(d...)
+		return obj
+	}
+
+	obj, d := types.ObjectValueFrom(
+		ctx,
+		contentRedirectionObjectType.AttrTypes,
+		resourceModelContentRedirection{
+			HostToClient: mustObjectValueFromStack(
+				ctx,
+				contentRedirectionHostToClientObjectType.AttrTypes,
+				resourceModelContentRedirectionHostToClient{
+					Enabled: util.BoolOrNull(awsContentRedirection.HostToClient.Enabled),
+					AllowedUrls: util.FlattenStateOwnedStringSet(
+						ctx,
+						extractContentRedirectionHostToClient(ctx, priorModel).AllowedUrls,
+						awsContentRedirection.HostToClient.AllowedUrls, diags,
+					),
+					DeniedUrls: util.FlattenStateOwnedStringSet(
+						ctx,
+						extractContentRedirectionHostToClient(ctx, priorModel).DeniedUrls,
+						awsContentRedirection.HostToClient.DeniedUrls, diags,
+					),
+				},
+				diags,
+			),
+		},
+	)
+	diags.Append(d...)
+	return obj
+}
+
+func extractContentRedirectionHostToClient(
+	ctx context.Context, prior resourceModelContentRedirection,
+) resourceModelContentRedirectionHostToClient {
+
+	if prior.HostToClient.IsNull() || prior.HostToClient.IsUnknown() {
+		return resourceModelContentRedirectionHostToClient{
+			Enabled:     types.BoolNull(),
+			AllowedUrls: types.SetNull(types.StringType),
+			DeniedUrls:  types.SetNull(types.StringType),
+		}
+	}
+
+	var out resourceModelContentRedirectionHostToClient
+	_ = prior.HostToClient.As(ctx, &out, basetypes.ObjectAsOptions{})
+	return out
+}
+
+func mustObjectValueFromStack[T any](
+	ctx context.Context, attrTypes map[string]attr.Type, in T, diags *diag.Diagnostics,
+) types.Object {
+	obj, d := types.ObjectValueFrom(ctx, attrTypes, in)
+	diags.Append(d...)
+	if diags.HasError() {
+		return types.ObjectNull(attrTypes)
+	}
 	return obj
 }
 

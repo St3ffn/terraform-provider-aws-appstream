@@ -95,6 +95,43 @@ func flattenApplicationSettingsData(
 	return obj
 }
 
+func flattenContentRedirectionData(
+	ctx context.Context, awsContentRedirection *awstypes.ContentRedirection, diags *diag.Diagnostics,
+) types.Object {
+
+	if awsContentRedirection == nil || awsContentRedirection.HostToClient == nil {
+		return types.ObjectNull(contentRedirectionObjectType.AttrTypes)
+	}
+
+	hostToClient, d := types.ObjectValueFrom(
+		ctx,
+		contentRedirectionHostToClientObjectType.AttrTypes,
+		dataSourceModelContentRedirectionHostToClient{
+			Enabled:     util.BoolOrNull(awsContentRedirection.HostToClient.Enabled),
+			AllowedUrls: util.SetStringOrNull(ctx, awsContentRedirection.HostToClient.AllowedUrls, diags),
+			DeniedUrls:  util.SetStringOrNull(ctx, awsContentRedirection.HostToClient.DeniedUrls, diags),
+		},
+	)
+	diags.Append(d...)
+	if diags.HasError() {
+		return types.ObjectNull(contentRedirectionObjectType.AttrTypes)
+	}
+
+	obj, d := types.ObjectValueFrom(
+		ctx,
+		contentRedirectionObjectType.AttrTypes,
+		dataSourceModelContentRedirection{
+			HostToClient: hostToClient,
+		},
+	)
+	diags.Append(d...)
+	if diags.HasError() {
+		return types.ObjectNull(contentRedirectionObjectType.AttrTypes)
+	}
+
+	return obj
+}
+
 func flattenAccessEndpointsData(
 	ctx context.Context, awsAccessEndpoint []awstypes.AccessEndpoint, diags *diag.Diagnostics,
 ) types.Set {

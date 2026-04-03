@@ -73,6 +73,35 @@ func expandApplicationSettings(
 	}
 }
 
+func expandContentRedirection(
+	ctx context.Context, obj types.Object, diags *diag.Diagnostics,
+) *awstypes.ContentRedirection {
+
+	var m resourceModelContentRedirection
+	diags.Append(obj.As(ctx, &m, basetypes.ObjectAsOptions{})...)
+	if diags.HasError() {
+		return nil
+	}
+
+	if m.HostToClient.IsNull() {
+		return nil
+	}
+
+	var hostToClient resourceModelContentRedirectionHostToClient
+	diags.Append(m.HostToClient.As(ctx, &hostToClient, basetypes.ObjectAsOptions{})...)
+	if diags.HasError() {
+		return nil
+	}
+
+	return &awstypes.ContentRedirection{
+		HostToClient: &awstypes.UrlRedirectionConfig{
+			Enabled:     util.BoolPointerOrNil(hostToClient.Enabled),
+			AllowedUrls: util.ExpandStringSetOrNil(ctx, hostToClient.AllowedUrls, diags),
+			DeniedUrls:  util.ExpandStringSetOrNil(ctx, hostToClient.DeniedUrls, diags),
+		},
+	}
+}
+
 func expandAccessEndpoints(ctx context.Context, setVal types.Set, diags *diag.Diagnostics) []awstypes.AccessEndpoint {
 	var models []resourceModelAccessEndpoints
 	diags.Append(setVal.ElementsAs(ctx, &models, false)...)
