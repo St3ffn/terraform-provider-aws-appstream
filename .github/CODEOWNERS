@@ -9,7 +9,6 @@
 
 # Tooling
 /tools/provider-codegen/** @St3ffn
-/tools/appstream-changelog-issues/** @St3ffn
 
 # CI/CD and repo governance
 /.github/workflows/** @St3ffn

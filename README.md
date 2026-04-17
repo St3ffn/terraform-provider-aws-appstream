@@ -234,7 +234,6 @@ Module-specific targets are also available for `fmt`, `lint`, `test`, and
 
 - `*-provider`
 - `*-tool-provider-codegen`
-- `*-tool-appstream-changelog-issues`
 - `*-tool-commitlint`
 
 Examples:
