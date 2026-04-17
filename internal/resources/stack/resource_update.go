@@ -124,6 +124,18 @@ func (r *resource) Update(ctx context.Context, req tfresource.UpdateRequest, res
 			}
 		}
 
+		if diff.ContentRedirection.IsChanged() {
+			if plan.ContentRedirection.IsNull() {
+				attrToDelete = append(attrToDelete, awstypes.StackAttributeContentRedirection)
+			} else {
+				input.ContentRedirection = expandContentRedirection(
+					ctx,
+					plan.ContentRedirection,
+					&resp.Diagnostics,
+				)
+			}
+		}
+
 		if diff.AccessEndpoints.IsChanged() {
 			if plan.AccessEndpoints.IsNull() {
 				attrToDelete = append(attrToDelete, awstypes.StackAttributeAccessEndpoints)
