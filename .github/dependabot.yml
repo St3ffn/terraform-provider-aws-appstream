@@ -12,10 +12,6 @@ updates:
         patterns:
           - "github.com/aws/*"
   - package-ecosystem: "gomod"
-    directory: "/tools/appstream-changelog-issues"
-    schedule:
-      interval: "daily"
-  - package-ecosystem: "gomod"
     directory: "/tools/provider-codegen"
     schedule:
       interval: "daily"
