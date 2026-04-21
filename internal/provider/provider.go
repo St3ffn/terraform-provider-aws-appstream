@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	awsratelimit "github.com/aws/aws-sdk-go-v2/aws/ratelimit"
 	awsretry "github.com/aws/aws-sdk-go-v2/aws/retry"
 	awsconfig "github.com/aws/aws-sdk-go-v2/config"
 	awscredentials "github.com/aws/aws-sdk-go-v2/credentials"
@@ -443,6 +444,8 @@ func (p *awsAppStreamProvider) Configure(ctx context.Context, req provider.Confi
 						func(so *awsretry.StandardOptions) {
 							so.MaxAttempts = retryMaxAttempts
 							so.MaxBackoff = retryMaxBackoff
+							// Disable SDK retry token-bucket quota checks.
+							so.RateLimiter = awsratelimit.None
 						},
 					}
 				})
@@ -450,6 +453,8 @@ func (p *awsAppStreamProvider) Configure(ctx context.Context, req provider.Confi
 				return awsretry.NewStandard(func(so *awsretry.StandardOptions) {
 					so.MaxAttempts = retryMaxAttempts
 					so.MaxBackoff = retryMaxBackoff
+					// Disable SDK retry token-bucket quota checks.
+					so.RateLimiter = awsratelimit.None
 				})
 			}
 		}))
