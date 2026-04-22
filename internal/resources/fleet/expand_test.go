@@ -112,6 +112,7 @@ func TestExpandVPCConfig(t *testing.T) {
 
 	if got == nil {
 		t.Fatalf("expected VpcConfig, got nil")
+		return
 	}
 
 	if !reflect.DeepEqual(got.SubnetIds, []string{"subnet-1"}) {
@@ -145,6 +146,7 @@ func TestExpandDomainJoinInfo(t *testing.T) {
 
 	if got == nil {
 		t.Fatalf("expected DomainJoinInfo, got nil")
+		return
 	}
 
 	if aws.ToString(got.DirectoryName) != "example.com" {
@@ -174,6 +176,7 @@ func TestExpandSessionScriptS3Location(t *testing.T) {
 
 	if got == nil {
 		t.Fatalf("expected S3Location, got nil")
+		return
 	}
 
 	if aws.ToString(got.S3Bucket) != "bucket" {

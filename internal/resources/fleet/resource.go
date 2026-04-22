@@ -45,8 +45,8 @@ func (r *resource) ValidateConfig(ctx context.Context, req tfresource.ValidateCo
 		return
 	}
 
-	hasImageName := !config.ImageName.IsNull() && !config.ImageName.IsUnknown()
-	hasImageArn := !config.ImageARN.IsNull() && !config.ImageARN.IsUnknown()
+	hasImageName := !config.ImageName.IsNull()
+	hasImageArn := !config.ImageARN.IsNull()
 
 	fleetType := config.FleetType.ValueString()
 	switch fleetType {
@@ -115,30 +115,32 @@ func (r *resource) ValidateConfig(ctx context.Context, req tfresource.ValidateCo
 			)
 		}
 
-		var vpc resourceModelVPCConfig
-		resp.Diagnostics.Append(
-			config.VPCConfig.As(ctx, &vpc, basetypes.ObjectAsOptions{})...,
-		)
-		if resp.Diagnostics.HasError() {
-			return
-		}
-
-		// subnets are mandatory for elastic fleets
-		if vpc.SubnetIDs.IsNull() {
-			resp.Diagnostics.AddAttributeError(
-				path.Root("vpc_config").AtName("subnet_ids"),
-				"Missing Required Attribute",
-				"`subnet_ids` must be specified for elastic fleets.",
+		if !config.VPCConfig.IsUnknown() {
+			var vpc resourceModelVPCConfig
+			resp.Diagnostics.Append(
+				config.VPCConfig.As(ctx, &vpc, basetypes.ObjectAsOptions{})...,
 			)
-		} else if !vpc.SubnetIDs.IsUnknown() {
-			// aws requires at least two subnets in different AZs
-			subnets := vpc.SubnetIDs.Elements()
-			if len(subnets) < 2 {
+			if resp.Diagnostics.HasError() {
+				return
+			}
+
+			// subnets are mandatory for elastic fleets
+			if vpc.SubnetIDs.IsNull() {
 				resp.Diagnostics.AddAttributeError(
 					path.Root("vpc_config").AtName("subnet_ids"),
-					"Invalid VPC Configuration",
-					"Elastic fleets require at least two subnets in different availability zones.",
+					"Missing Required Attribute",
+					"`subnet_ids` must be specified for elastic fleets.",
 				)
+			} else if !vpc.SubnetIDs.IsUnknown() {
+				// aws requires at least two subnets in different AZs
+				subnets := vpc.SubnetIDs.Elements()
+				if len(subnets) < 2 {
+					resp.Diagnostics.AddAttributeError(
+						path.Root("vpc_config").AtName("subnet_ids"),
+						"Invalid VPC Configuration",
+						"Elastic fleets require at least two subnets in different availability zones.",
+					)
+				}
 			}
 		}
 
@@ -188,7 +190,7 @@ func (r *resource) ValidateConfig(ctx context.Context, req tfresource.ValidateCo
 		}
 
 		// platform is only supported for elastic fleets
-		if !config.Platform.IsNull() && !config.Platform.IsUnknown() {
+		if !config.Platform.IsNull() {
 			resp.Diagnostics.AddAttributeError(
 				path.Root("platform"),
 				"Invalid Configuration",
@@ -206,48 +208,50 @@ func (r *resource) ValidateConfig(ctx context.Context, req tfresource.ValidateCo
 			return
 		}
 
-		var capacity resourceModelComputeCapacity
-		resp.Diagnostics.Append(
-			config.ComputeCapacity.As(ctx, &capacity, basetypes.ObjectAsOptions{})...,
-		)
-		if resp.Diagnostics.HasError() {
-			return
-		}
-
-		hasDesiredInstances := !capacity.DesiredInstances.IsNull() && !capacity.DesiredInstances.IsUnknown()
-		hasDesiredSessions := !capacity.DesiredSessions.IsNull() && !capacity.DesiredSessions.IsUnknown()
-
-		switch {
-		// aws requires exactly one of instances or sessions
-		case hasDesiredInstances && hasDesiredSessions:
-			resp.Diagnostics.AddAttributeError(
-				path.Root("compute_capacity"),
-				"Invalid Compute Capacity Configuration",
-				"Only one of `desired_instances` or `desired_sessions` may be specified.",
+		if !config.ComputeCapacity.IsUnknown() {
+			var capacity resourceModelComputeCapacity
+			resp.Diagnostics.Append(
+				config.ComputeCapacity.As(ctx, &capacity, basetypes.ObjectAsOptions{})...,
 			)
+			if resp.Diagnostics.HasError() {
+				return
+			}
 
-		case !hasDesiredInstances && !hasDesiredSessions:
-			resp.Diagnostics.AddAttributeError(
-				path.Root("compute_capacity"),
-				"Missing Required Attribute",
-				"Exactly one of `desired_instances` or `desired_sessions` must be specified for non-elastic fleets.",
-			)
+			hasDesiredInstances := !capacity.DesiredInstances.IsNull()
+			hasDesiredSessions := !capacity.DesiredSessions.IsNull()
 
-		// desired_sessions implies a multi-session fleet
-		case hasDesiredSessions:
-			if config.MaxSessionsPerInstance.IsNull() || config.MaxSessionsPerInstance.IsUnknown() {
+			switch {
+			// aws requires exactly one of instances or sessions
+			case hasDesiredInstances && hasDesiredSessions:
 				resp.Diagnostics.AddAttributeError(
-					path.Root("compute_capacity").AtName("desired_sessions"),
+					path.Root("compute_capacity"),
 					"Invalid Compute Capacity Configuration",
-					"`desired_sessions` can only be used for multi-session fleets. "+
-						"Set `max_sessions_per_instance` to a value greater than 1.",
+					"Only one of `desired_instances` or `desired_sessions` may be specified.",
 				)
-			} else if config.MaxSessionsPerInstance.ValueInt32() <= 1 {
+
+			case !hasDesiredInstances && !hasDesiredSessions:
 				resp.Diagnostics.AddAttributeError(
-					path.Root("compute_capacity").AtName("desired_sessions"),
-					"Invalid Compute Capacity Configuration",
-					"`desired_sessions` requires `max_sessions_per_instance` to be greater than 1.",
+					path.Root("compute_capacity"),
+					"Missing Required Attribute",
+					"Exactly one of `desired_instances` or `desired_sessions` must be specified for non-elastic fleets.",
 				)
+
+			// desired_sessions implies a multi-session fleet
+			case hasDesiredSessions:
+				if config.MaxSessionsPerInstance.IsNull() {
+					resp.Diagnostics.AddAttributeError(
+						path.Root("compute_capacity").AtName("desired_sessions"),
+						"Invalid Compute Capacity Configuration",
+						"`desired_sessions` can only be used for multi-session fleets. "+
+							"Set `max_sessions_per_instance` to a value greater than 1.",
+					)
+				} else if !config.MaxSessionsPerInstance.IsUnknown() && config.MaxSessionsPerInstance.ValueInt32() <= 1 {
+					resp.Diagnostics.AddAttributeError(
+						path.Root("compute_capacity").AtName("desired_sessions"),
+						"Invalid Compute Capacity Configuration",
+						"`desired_sessions` requires `max_sessions_per_instance` to be greater than 1.",
+					)
+				}
 			}
 		}
 	}

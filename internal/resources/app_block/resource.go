@@ -47,47 +47,54 @@ func (r *resource) ValidateConfig(ctx context.Context, req tfresource.ValidateCo
 
 	// determine packaging type (aws defaults to CUSTOM if unset)
 	packagingType := "CUSTOM"
-	if !config.PackagingType.IsNull() && !config.PackagingType.IsUnknown() {
+	validatePackagingSpecific := true
+	switch {
+	case config.PackagingType.IsNull():
+	case config.PackagingType.IsUnknown():
+		validatePackagingSpecific = false
+	default:
 		packagingType = config.PackagingType.ValueString()
 	}
 
-	hasSetupScript := !config.SetupScriptDetails.IsNull() && !config.SetupScriptDetails.IsUnknown()
-	hasPostSetupScript := !config.PostSetupScriptDetails.IsNull() && !config.PostSetupScriptDetails.IsUnknown()
+	hasSetupScript := !config.SetupScriptDetails.IsNull()
+	hasPostSetupScript := !config.PostSetupScriptDetails.IsNull()
 
-	switch packagingType {
+	if validatePackagingSpecific {
+		switch packagingType {
 
-	case "CUSTOM":
-		// setup script is mandatory
-		if !hasSetupScript {
-			resp.Diagnostics.AddAttributeError(
-				path.Root("setup_script_details"),
-				"Missing Required Attribute",
-				"`setup_script_details` must be specified when `packaging_type` is `CUSTOM`.",
-			)
-		}
+		case "CUSTOM":
+			// setup script is mandatory
+			if !hasSetupScript {
+				resp.Diagnostics.AddAttributeError(
+					path.Root("setup_script_details"),
+					"Missing Required Attribute",
+					"`setup_script_details` must be specified when `packaging_type` is `CUSTOM`.",
+				)
+			}
 
-		// post-setup script not allowed
-		if hasPostSetupScript {
-			resp.Diagnostics.AddAttributeError(
-				path.Root("post_setup_script_details"),
-				"Invalid Configuration",
-				"`post_setup_script_details` can only be specified when `packaging_type` is `APPSTREAM2`.",
-			)
-		}
+			// post-setup script not allowed
+			if hasPostSetupScript {
+				resp.Diagnostics.AddAttributeError(
+					path.Root("post_setup_script_details"),
+					"Invalid Configuration",
+					"`post_setup_script_details` can only be specified when `packaging_type` is `APPSTREAM2`.",
+				)
+			}
 
-	case "APPSTREAM2":
-		// setup script not allowed
-		if hasSetupScript {
-			resp.Diagnostics.AddAttributeError(
-				path.Root("setup_script_details"),
-				"Invalid Configuration",
-				"`setup_script_details` cannot be specified when `packaging_type` is `APPSTREAM2`.",
-			)
+		case "APPSTREAM2":
+			// setup script not allowed
+			if hasSetupScript {
+				resp.Diagnostics.AddAttributeError(
+					path.Root("setup_script_details"),
+					"Invalid Configuration",
+					"`setup_script_details` cannot be specified when `packaging_type` is `APPSTREAM2`.",
+				)
+			}
 		}
 	}
 
 	// validate source_s3_location.s3_key requirements
-	if !config.SourceS3Location.IsNull() && !config.SourceS3Location.IsUnknown() {
+	if validatePackagingSpecific && !config.SourceS3Location.IsNull() && !config.SourceS3Location.IsUnknown() {
 		var source resourceModelSourceS3Location
 
 		resp.Diagnostics.Append(
@@ -97,7 +104,7 @@ func (r *resource) ValidateConfig(ctx context.Context, req tfresource.ValidateCo
 			return
 		}
 
-		hasS3Key := !source.S3Key.IsNull() && !source.S3Key.IsUnknown()
+		hasS3Key := !source.S3Key.IsNull()
 
 		if packagingType == "CUSTOM" && !hasS3Key {
 			resp.Diagnostics.AddAttributeError(

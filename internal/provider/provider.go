@@ -221,105 +221,6 @@ func (p *awsAppStreamProvider) ValidateConfig(ctx context.Context, req provider.
 		return
 	}
 
-	if config.AccessKey.IsUnknown() {
-		resp.Diagnostics.AddAttributeError(
-			path.Root("access_key"),
-			"Unknown AWS Access Key",
-			"The AWS AppStream provider cannot be configured because \"access_key\" is unknown. "+
-				"Provider configuration values must be static. "+
-				"Set \"access_key\" to a fixed string or remove it to use the AWS SDK default.",
-		)
-		return
-	}
-
-	if config.SecretAccessKey.IsUnknown() {
-		resp.Diagnostics.AddAttributeError(
-			path.Root("secret_access_key"),
-			"Unknown AWS Secret Access Key",
-			"The AWS AppStream provider cannot be configured because \"secret_access_key\" is unknown. "+
-				"Provider configuration values must be static. "+
-				"Set \"secret_access_key\" to a fixed string or remove it to use the AWS SDK default.",
-		)
-		return
-	}
-
-	if config.SessionToken.IsUnknown() {
-		resp.Diagnostics.AddAttributeError(
-			path.Root("session_token"),
-			"Unknown AWS Session Token",
-			"The AWS AppStream provider cannot be configured because \"session_token\" is unknown. "+
-				"Provider configuration values must be static. "+
-				"Set \"session_token\" to a fixed string or remove it to use the AWS SDK default.",
-		)
-		return
-	}
-
-	if config.Profile.IsUnknown() {
-		resp.Diagnostics.AddAttributeError(
-			path.Root("profile"),
-			"Unknown AWS Profile",
-			"The AWS AppStream provider cannot be configured because \"profile\" is unknown. "+
-				"Provider configuration values must be static. "+
-				"Set \"profile\" to a fixed string or remove it to use the AWS SDK default.",
-		)
-		return
-	}
-
-	if config.Region.IsUnknown() {
-		resp.Diagnostics.AddAttributeError(
-			path.Root("region"),
-			"Unknown AWS Region",
-			"The AWS AppStream provider cannot be configured because \"region\" is unknown. "+
-				"Provider configuration values must be static. "+
-				"Set \"region\" to a fixed string or remove it to use the AWS SDK default.",
-		)
-		return
-	}
-
-	if config.RetryMode.IsUnknown() {
-		resp.Diagnostics.AddAttributeError(
-			path.Root("retry_mode"),
-			"Unknown AWS Retry Mode",
-			"The AWS AppStream provider cannot be configured because \"retry_mode\" is unknown. "+
-				"Provider configuration values must be static. "+
-				"Set \"retry_mode\" to a fixed value or remove it to use the default.",
-		)
-		return
-	}
-
-	if config.RetryMaxAttempts.IsUnknown() {
-		resp.Diagnostics.AddAttributeError(
-			path.Root("retry_max_attempts"),
-			"Unknown AWS Retry Max Attempts",
-			"The AWS AppStream provider cannot be configured because \"retry_max_attempts\" is unknown. "+
-				"Provider configuration values must be static. "+
-				"Set it to a fixed number or remove it to use the default.",
-		)
-		return
-	}
-
-	if config.RetryMaxBackoff.IsUnknown() {
-		resp.Diagnostics.AddAttributeError(
-			path.Root("retry_max_backoff"),
-			"Unknown AWS Retry Max Backoff",
-			"The AWS AppStream provider cannot be configured because \"retry_max_backoff\" is unknown. "+
-				"Provider configuration values must be static. "+
-				"Set it to a fixed number or remove it to use the default.",
-		)
-		return
-	}
-
-	if config.DefaultTags != nil && config.DefaultTags.Tags.IsUnknown() {
-		resp.Diagnostics.AddAttributeError(
-			path.Root("default_tags").AtName("tags"),
-			"Unknown Default Tags",
-			"The AWS AppStream provider cannot be configured because \"default_tags.tags\" is unknown. "+
-				"Provider configuration values must be static. "+
-				"Set \"default_tags.tags\" to a fixed map or remove it to use no default tags.",
-		)
-		return
-	}
-
 	hasAccessKey := !config.AccessKey.IsNull()
 	hasSecretKey := !config.SecretAccessKey.IsNull()
 	hasSession := !config.SessionToken.IsNull()
@@ -374,15 +275,15 @@ func (p *awsAppStreamProvider) Configure(ctx context.Context, req provider.Confi
 		return
 	}
 
-	hasAccessKey := !config.AccessKey.IsNull()
-	hasSecretKey := !config.SecretAccessKey.IsNull()
+	hasAccessKey := !config.AccessKey.IsNull() && !config.AccessKey.IsUnknown()
+	hasSecretKey := !config.SecretAccessKey.IsNull() && !config.SecretAccessKey.IsUnknown()
 	useStaticCreds := hasAccessKey && hasSecretKey
-	hasSession := !config.SessionToken.IsNull()
-	hasProfile := !config.Profile.IsNull()
-	hasRegion := !config.Region.IsNull()
-	hasRetryMode := !config.RetryMode.IsNull()
-	hasRetryMaxAttempts := !config.RetryMaxAttempts.IsNull()
-	hasRetryMaxBackoff := !config.RetryMaxBackoff.IsNull()
+	hasSession := !config.SessionToken.IsNull() && !config.SessionToken.IsUnknown()
+	hasProfile := !config.Profile.IsNull() && !config.Profile.IsUnknown()
+	hasRegion := !config.Region.IsNull() && !config.Region.IsUnknown()
+	hasRetryMode := !config.RetryMode.IsNull() && !config.RetryMode.IsUnknown()
+	hasRetryMaxAttempts := !config.RetryMaxAttempts.IsNull() && !config.RetryMaxAttempts.IsUnknown()
+	hasRetryMaxBackoff := !config.RetryMaxBackoff.IsNull() && !config.RetryMaxBackoff.IsUnknown()
 	retryConfigured := hasRetryMode || hasRetryMaxAttempts || hasRetryMaxBackoff
 
 	var awsopts []func(*awsconfig.LoadOptions) error
@@ -498,7 +399,7 @@ func (p *awsAppStreamProvider) Configure(ctx context.Context, req provider.Confi
 
 	defaultTags := map[string]string{}
 
-	if config.DefaultTags != nil && !config.DefaultTags.Tags.IsNull() {
+	if config.DefaultTags != nil && !config.DefaultTags.Tags.IsNull() && !config.DefaultTags.Tags.IsUnknown() {
 		diags := config.DefaultTags.Tags.ElementsAs(ctx, &defaultTags, false)
 		resp.Diagnostics.Append(diags...)
 		if resp.Diagnostics.HasError() {
