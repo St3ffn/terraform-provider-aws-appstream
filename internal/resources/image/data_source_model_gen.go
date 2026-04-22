@@ -18,6 +18,8 @@ type dataSourceModel struct {
 	NameRegex types.String `tfsdk:"name_regex"`
 	// The image visibility. Valid values are `PUBLIC`, `PRIVATE`, or `SHARED`.
 	Visibility types.String `tfsdk:"visibility"`
+	// The image states used to filter AppStream images.
+	States types.Set `tfsdk:"states"`
 	// Whether the most recent AppStream image is returned when multiple images match the selection criteria. If set
 	// to `false` and multiple images match, the data source will return an error.
 	MostRecent types.Bool `tfsdk:"most_recent"`

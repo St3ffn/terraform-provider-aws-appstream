@@ -26,6 +26,15 @@ data "awsappstream_image" "test" {
 `
 }
 
+func testAccImageDataSourceByARNAndState(region string) string {
+	return testhelpers.TestAccProviderBasicConfig() + `
+data "awsappstream_image" "test" {
+  arn = "` + testAccPublicImageARN(region) + `"
+  states = ["AVAILABLE"]
+}
+`
+}
+
 func TestAccImageDataSource_basicByARN(t *testing.T) {
 	testEnv := testhelpers.LoadAccTestEnv(t)
 
@@ -41,6 +50,34 @@ func TestAccImageDataSource_basicByARN(t *testing.T) {
 					resource.TestCheckResourceAttrSet("data.awsappstream_image.test", "created_time"),
 					resource.TestCheckResourceAttrSet("data.awsappstream_image.test", "platform"),
 					resource.TestCheckResourceAttrSet("data.awsappstream_image.test", "state"),
+					resource.TestCheckResourceAttrSet("data.awsappstream_image.test", "image_type"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccImageDataSource_byARNAndAvailableState(t *testing.T) {
+	testEnv := testhelpers.LoadAccTestEnv(t)
+
+	resource.ParallelTest(t, resource.TestCase{
+		ProtoV6ProviderFactories: testhelpers.ProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccImageDataSourceByARNAndState(testEnv.Region),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr("data.awsappstream_image.test", "arn", testAccPublicImageARN(testEnv.Region)),
+					resource.TestCheckResourceAttr("data.awsappstream_image.test", "name", testAccPublicImageName),
+					resource.TestCheckResourceAttr("data.awsappstream_image.test", "visibility", "PUBLIC"),
+					resource.TestCheckResourceAttr("data.awsappstream_image.test", "state", "AVAILABLE"),
+					resource.TestCheckResourceAttr("data.awsappstream_image.test", "states.#", "1"),
+					resource.TestCheckTypeSetElemAttr(
+						"data.awsappstream_image.test",
+						"states.*",
+						"AVAILABLE",
+					),
+					resource.TestCheckResourceAttrSet("data.awsappstream_image.test", "created_time"),
+					resource.TestCheckResourceAttrSet("data.awsappstream_image.test", "platform"),
 					resource.TestCheckResourceAttrSet("data.awsappstream_image.test", "image_type"),
 				),
 			},

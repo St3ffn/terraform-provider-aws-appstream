@@ -51,6 +51,7 @@ data "awsappstream_image" "latest_private" {
 - `most_recent` (Boolean) Whether the most recent AppStream image is returned when multiple images match the selection criteria. If set to `false` and multiple images match, the data source will return an error.
 - `name` (String) The name of the AppStream image. Cannot be used together with `arn` or `name_regex`. If multiple images with the same name exist, the data source will return an error.
 - `name_regex` (String) A regular expression used to match AppStream image names. Uses Go regular expression syntax. Cannot be used together with `arn` or `name`. If the expression matches multiple images, the data source will return an error.
+- `states` (Set of String) The image states used to filter AppStream images.
 - `visibility` (String) The image visibility. Valid values are `PUBLIC`, `PRIVATE`, or `SHARED`.
 
 ### Read-Only

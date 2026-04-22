@@ -8,6 +8,7 @@ import (
 	"regexp"
 
 	awstypes "github.com/aws/aws-sdk-go-v2/service/appstream/types"
+	"github.com/hashicorp/terraform-plugin-framework-validators/setvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -72,6 +73,19 @@ func (ds *dataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp
 				Validators: []validator.String{
 					stringvalidator.OneOf(
 						util.AWSEnumToSlice(awstypes.VisibilityType.Values)...,
+					),
+				},
+			},
+			"states": schema.SetAttribute{
+				Description:         "States of the AppStream Image.",
+				MarkdownDescription: "The image states used to filter AppStream images.",
+				Optional:            true,
+				ElementType:         types.StringType,
+				Validators: []validator.Set{
+					setvalidator.ValueStringsAre(
+						stringvalidator.OneOf(
+							util.AWSEnumToSlice(awstypes.ImageState.Values)...,
+						),
 					),
 				},
 			},

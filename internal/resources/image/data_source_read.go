@@ -13,6 +13,7 @@ import (
 	awsappstream "github.com/aws/aws-sdk-go-v2/service/appstream"
 	awstypes "github.com/aws/aws-sdk-go-v2/service/appstream/types"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/st3ffn/terraform-provider-aws-appstream/internal/util"
 )
@@ -74,7 +75,10 @@ func (ds *dataSource) Read(ctx context.Context, req datasource.ReadRequest, resp
 		ID:                          types.StringValue(aws.ToString(selected.Arn)),
 		ARN:                         types.StringValue(aws.ToString(selected.Arn)),
 		Name:                        types.StringValue(aws.ToString(selected.Name)),
+		NameRegex:                   config.NameRegex,
 		Visibility:                  types.StringValue(string(selected.Visibility)),
+		States:                      config.States,
+		MostRecent:                  config.MostRecent,
 		BaseImageARN:                util.StringOrNull(selected.BaseImageArn),
 		DisplayName:                 util.StringOrNull(selected.DisplayName),
 		State:                       types.StringValue(string(selected.State)),
@@ -98,6 +102,10 @@ func (ds *dataSource) Read(ctx context.Context, req datasource.ReadRequest, resp
 		Tags:                        types.MapNull(types.StringType),
 	}
 
+	if state.States.IsNull() && state.States.Type(ctx) == nil {
+		state.States = types.SetNull(types.StringType)
+	}
+
 	if !state.ARN.IsNull() && selected.Visibility != awstypes.VisibilityTypePublic {
 		tags, diags := ds.tags.ReadAll(ctx, state.ARN.ValueString())
 		resp.Diagnostics.Append(diags...)
@@ -113,8 +121,9 @@ func (ds *dataSource) Read(ctx context.Context, req datasource.ReadRequest, resp
 
 func (ds *dataSource) listImages(ctx context.Context, config *dataSourceModel) ([]awstypes.Image, error) {
 	var (
-		arns  []string
-		names []string
+		arns   []string
+		names  []string
+		states map[awstypes.ImageState]struct{}
 	)
 
 	if !config.ARN.IsNull() && !config.ARN.IsUnknown() {
@@ -132,6 +141,12 @@ func (ds *dataSource) listImages(ctx context.Context, config *dataSourceModel) (
 			return nil, err
 		}
 		regex = r
+	}
+
+	var diags diag.Diagnostics
+	states = expandStates(ctx, config.States, &diags)
+	if diags.HasError() {
+		return nil, fmt.Errorf("expanding states filter: %v", diags)
 	}
 
 	var out []awstypes.Image
@@ -155,6 +170,11 @@ func (ds *dataSource) listImages(ctx context.Context, config *dataSourceModel) (
 		for _, image := range resp.Images {
 			if regex != nil {
 				if image.Name == nil || !regex.MatchString(*image.Name) {
+					continue
+				}
+			}
+			if states != nil {
+				if _, ok := states[image.State]; !ok {
 					continue
 				}
 			}
