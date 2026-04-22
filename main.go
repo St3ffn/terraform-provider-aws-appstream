@@ -26,7 +26,7 @@ func main() {
 	opts := providerserver.ServeOpts{
 		// Also update the tfplugindocs generate command to either remove the
 		// -provider-name flag or set its value to the updated provider name.
-		Address: "registry.terraform.io/st3ffn/awsappstream",
+		Address: "registry.terraform.io/st3ffn/aws-appstream",
 		Debug:   debug,
 	}
 

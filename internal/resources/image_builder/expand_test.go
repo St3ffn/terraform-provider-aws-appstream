@@ -115,6 +115,7 @@ func TestExpandDomainJoinInfo(t *testing.T) {
 
 	if got == nil {
 		t.Fatalf("expected DomainJoinInfo, got nil")
+		return
 	}
 
 	if aws.ToString(got.DirectoryName) != "corp.example.com" {

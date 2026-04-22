@@ -38,8 +38,8 @@ func (ds *dataSource) ValidateConfig(ctx context.Context, req datasource.Validat
 		return
 	}
 
-	if !config.UserID.IsNull() && !config.UserID.IsUnknown() {
-		if config.AuthenticationType.IsNull() || config.AuthenticationType.IsUnknown() {
+	if !config.UserID.IsNull() {
+		if config.AuthenticationType.IsNull() {
 			resp.Diagnostics.AddAttributeError(
 				path.Root("authentication_type"),
 				"Invalid Session Filter Configuration",

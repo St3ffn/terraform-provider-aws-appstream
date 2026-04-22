@@ -42,8 +42,8 @@ func (r *resource) ValidateConfig(ctx context.Context, req tfresource.ValidateCo
 		return
 	}
 
-	hasImageName := !config.ImageName.IsNull() && !config.ImageName.IsUnknown()
-	hasImageArn := !config.ImageARN.IsNull() && !config.ImageARN.IsUnknown()
+	hasImageName := !config.ImageName.IsNull()
+	hasImageArn := !config.ImageARN.IsNull()
 
 	// can either have image name or image arn
 	switch {

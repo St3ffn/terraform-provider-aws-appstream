@@ -39,9 +39,9 @@ func (ds *dataSource) ValidateConfig(ctx context.Context, req datasource.Validat
 		return
 	}
 
-	hasArn := !config.ARN.IsNull() && !config.ARN.IsUnknown()
-	hasName := !config.Name.IsNull() && !config.Name.IsUnknown()
-	hasNameRegex := !config.NameRegex.IsNull() && !config.NameRegex.IsUnknown()
+	hasArn := !config.ARN.IsNull()
+	hasName := !config.Name.IsNull()
+	hasNameRegex := !config.NameRegex.IsNull()
 
 	selectionCount := 0
 	if hasArn {
