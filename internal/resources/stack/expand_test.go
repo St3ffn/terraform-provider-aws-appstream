@@ -596,6 +596,7 @@ func TestExpandStreamingExperienceSettings(t *testing.T) {
 
 			if got == nil {
 				t.Fatalf("expected %#v, got nil", tt.want)
+				return
 			}
 
 			if got.PreferredProtocol != tt.want.PreferredProtocol {

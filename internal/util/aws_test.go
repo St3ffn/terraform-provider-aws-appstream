@@ -209,6 +209,30 @@ func TestErrorPredicates(t *testing.T) {
 			want: false,
 		},
 		{
+			name: "throttling/throttled_exception_match",
+			err:  &smithy.GenericAPIError{Code: "ThrottledException"},
+			fn:   IsThrottledException,
+			want: true,
+		},
+		{
+			name: "throttling/throttling_exception_match",
+			err:  &smithy.GenericAPIError{Code: "ThrottlingException"},
+			fn:   IsThrottledException,
+			want: true,
+		},
+		{
+			name: "throttling/no_match",
+			err:  &smithy.GenericAPIError{Code: "other"},
+			fn:   IsThrottledException,
+			want: false,
+		},
+		{
+			name: "throttling/no_match_nil",
+			err:  nil,
+			fn:   IsThrottledException,
+			want: false,
+		},
+		{
 			name: "non_aws_error",
 			err:  errors.New("plain error"),
 			fn:   IsResourceNotFoundException,
