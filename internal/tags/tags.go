@@ -6,14 +6,14 @@ package tags
 import (
 	"context"
 	"fmt"
-	"sort"
-	"strings"
 
+	"github.com/aws/aws-sdk-go-v2/aws"
 	awstaggingapi "github.com/aws/aws-sdk-go-v2/service/resourcegroupstaggingapi"
-	awstaggingtypes "github.com/aws/aws-sdk-go-v2/service/resourcegroupstaggingapi/types"
+	"github.com/aws/smithy-go"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/st3ffn/terraform-provider-aws-appstream/internal/util"
 )
 
 type taggingAPI interface {
@@ -129,14 +129,41 @@ func (tm *TagManager) Apply(
 	removeKeys, addOrUpdate := diffTags(current, desiredTags)
 
 	if len(removeKeys) > 0 {
-		out, err := tm.client.UntagResources(
+		err := util.RetryOn(
 			ctx,
-			&awstaggingapi.UntagResourcesInput{
-				ResourceARNList: []string{arn},
-				TagKeys:         removeKeys,
+			func(ctx context.Context) error {
+				out, err := tm.client.UntagResources(
+					ctx,
+					&awstaggingapi.UntagResourcesInput{
+						ResourceARNList: []string{arn},
+						TagKeys:         removeKeys,
+					},
+					optFns...,
+				)
+				if err != nil {
+					return err
+				}
+
+				if out != nil && len(out.FailedResourcesMap) > 0 {
+					for _, failedResource := range out.FailedResourcesMap {
+						return &smithy.GenericAPIError{
+							Code:    string(failedResource.ErrorCode),
+							Message: aws.ToString(failedResource.ErrorMessage),
+						}
+					}
+				}
+
+				return err
 			},
-			optFns...,
+			util.WithTimeout(taggingRetryTimeout),
+			util.WithInitBackoff(taggingRetryInitBackoff),
+			util.WithMaxBackoff(taggingRetryMaxBackoff),
+			// see https://docs.aws.amazon.com/resourcegroupstagging/latest/APIReference/API_UntagResources.html
+			util.WithRetryOnFns(
+				util.IsThrottledException,
+			),
 		)
+
 		if err != nil {
 			diags.AddError(
 				"Error Removing AWS Tags",
@@ -144,29 +171,44 @@ func (tm *TagManager) Apply(
 			)
 			return types.MapNull(types.StringType), diags
 		}
-
-		if out != nil && len(out.FailedResourcesMap) > 0 {
-			diags.AddError(
-				"Error Removing AWS Tags",
-				fmt.Sprintf(
-					"Could not remove tags from resource %q because AWS reported failed resources: %s",
-					arn,
-					formatFailedResources(out.FailedResourcesMap),
-				),
-			)
-			return types.MapNull(types.StringType), diags
-		}
 	}
 
 	if len(addOrUpdate) > 0 {
-		out, err := tm.client.TagResources(
+		err := util.RetryOn(
 			ctx,
-			&awstaggingapi.TagResourcesInput{
-				ResourceARNList: []string{arn},
-				Tags:            addOrUpdate,
+			func(ctx context.Context) error {
+				out, err := tm.client.TagResources(
+					ctx,
+					&awstaggingapi.TagResourcesInput{
+						ResourceARNList: []string{arn},
+						Tags:            addOrUpdate,
+					},
+					optFns...,
+				)
+				if err != nil {
+					return err
+				}
+
+				if out != nil && len(out.FailedResourcesMap) > 0 {
+					for _, failedResource := range out.FailedResourcesMap {
+						return &smithy.GenericAPIError{
+							Code:    string(failedResource.ErrorCode),
+							Message: aws.ToString(failedResource.ErrorMessage),
+						}
+					}
+				}
+
+				return err
 			},
-			optFns...,
+			util.WithTimeout(taggingRetryTimeout),
+			util.WithInitBackoff(taggingRetryInitBackoff),
+			util.WithMaxBackoff(taggingRetryMaxBackoff),
+			// see https://docs.aws.amazon.com/resourcegroupstagging/latest/APIReference/API_TagResources.html
+			util.WithRetryOnFns(
+				util.IsThrottledException,
+			),
 		)
+
 		if err != nil {
 			diags.AddError(
 				"Error Updating AWS Tags",
@@ -174,53 +216,9 @@ func (tm *TagManager) Apply(
 			)
 			return types.MapNull(types.StringType), diags
 		}
-
-		if out != nil && len(out.FailedResourcesMap) > 0 {
-			diags.AddError(
-				"Error Updating AWS Tags",
-				fmt.Sprintf(
-					"Could not update tags for resource %q because AWS reported failed resources: %s",
-					arn,
-					formatFailedResources(out.FailedResourcesMap),
-				),
-			)
-			return types.MapNull(types.StringType), diags
-		}
 	}
 
 	return flattenTags(ctx, desiredTags, &diags), diags
-}
-
-func formatFailedResources(failed map[string]awstaggingtypes.FailureInfo) string {
-	if len(failed) == 0 {
-		return ""
-	}
-
-	arns := make([]string, 0, len(failed))
-	for arn := range failed {
-		arns = append(arns, arn)
-	}
-	sort.Strings(arns)
-
-	parts := make([]string, 0, len(arns))
-	for _, arn := range arns {
-		info := failed[arn]
-
-		code := string(info.ErrorCode)
-		if code == "" {
-			code = "UnknownError"
-		}
-
-		part := fmt.Sprintf("%s (code=%s status=%d", arn, code, info.StatusCode)
-		if info.ErrorMessage != nil && *info.ErrorMessage != "" {
-			part += fmt.Sprintf(" message=%q", *info.ErrorMessage)
-		}
-		part += ")"
-
-		parts = append(parts, part)
-	}
-
-	return strings.Join(parts, "; ")
 }
 
 func flattenTags(ctx context.Context, tags map[string]string, diags *diag.Diagnostics) types.Map {

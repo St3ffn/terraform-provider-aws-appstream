@@ -74,6 +74,11 @@ func IsAppStreamNotFound(err error) bool {
 	return IsAWSAPIError(err, "ResourceNotFoundException", "EntitlementNotFoundException")
 }
 
+// IsThrottledException reports whether err is a ThrottledException or ThrottlingException.
+func IsThrottledException(err error) bool {
+	return IsAWSAPIError(err, "ThrottledException", "ThrottlingException")
+}
+
 // AWSEnumToSlice converts an AWS SDK enum value list function into a []string.
 func AWSEnumToSlice[T ~string](awsEnumValuesFunc func(T) []T) []string {
 	var zero T
