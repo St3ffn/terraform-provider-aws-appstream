@@ -6,6 +6,7 @@ project {
   copyright_holder = "St3ffn"
 
   header_ignore = [
+    ".git/**",
     "examples/**",
     ".idea/**",
     ".golangci.yaml",

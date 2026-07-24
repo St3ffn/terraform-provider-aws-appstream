@@ -29,60 +29,62 @@ func (k changeKind) IsCleared() bool {
 }
 
 type resourceDiff struct {
-	ID                          changeKind
-	Name                        changeKind
-	ImageName                   changeKind
-	ImageARN                    changeKind
-	InstanceType                changeKind
-	Description                 changeKind
-	DisplayName                 changeKind
-	DisableIMDSV1               changeKind
-	VPCConfig                   changeKind
-	IAMRoleARN                  changeKind
-	EnableDefaultInternetAccess changeKind
-	DomainJoinInfo              changeKind
-	AppstreamAgentVersion       changeKind
-	AccessEndpoints             changeKind
-	RootVolumeConfig            changeKind
-	Tags                        changeKind
-	TagsAll                     changeKind
-	ARN                         changeKind
-	CreatedTime                 changeKind
-	Platform                    changeKind
-	NetworkAccessConfiguration  changeKind
-	LatestAppstreamAgentVersion changeKind
-	State                       changeKind
-	StateChangeReason           changeKind
-	ImageBuilderErrors          changeKind
+	ID                            changeKind
+	Name                          changeKind
+	ImageName                     changeKind
+	ImageARN                      changeKind
+	InstanceType                  changeKind
+	Description                   changeKind
+	DisplayName                   changeKind
+	DisableIMDSV1                 changeKind
+	VPCConfig                     changeKind
+	IAMRoleARN                    changeKind
+	EnableDefaultInternetAccess   changeKind
+	DomainJoinInfo                changeKind
+	AppstreamAgentVersion         changeKind
+	AccessEndpoints               changeKind
+	RootVolumeConfig              changeKind
+	Tags                          changeKind
+	TagsAll                       changeKind
+	ARN                           changeKind
+	CreatedTime                   changeKind
+	Platform                      changeKind
+	NetworkAccessConfiguration    changeKind
+	ResolvedAppstreamAgentVersion changeKind
+	LatestAppstreamAgentVersion   changeKind
+	State                         changeKind
+	StateChangeReason             changeKind
+	ImageBuilderErrors            changeKind
 }
 
 func newResourceDiff(state resourceModel, plan resourceModel) resourceDiff {
 	return resourceDiff{
-		ARN:                         classifyChange(state.ARN, plan.ARN),
-		AccessEndpoints:             classifyChange(state.AccessEndpoints, plan.AccessEndpoints),
-		AppstreamAgentVersion:       classifyChange(state.AppstreamAgentVersion, plan.AppstreamAgentVersion),
-		CreatedTime:                 classifyChange(state.CreatedTime, plan.CreatedTime),
-		Description:                 classifyChange(state.Description, plan.Description),
-		DisableIMDSV1:               classifyChange(state.DisableIMDSV1, plan.DisableIMDSV1),
-		DisplayName:                 classifyChange(state.DisplayName, plan.DisplayName),
-		DomainJoinInfo:              classifyChange(state.DomainJoinInfo, plan.DomainJoinInfo),
-		EnableDefaultInternetAccess: classifyChange(state.EnableDefaultInternetAccess, plan.EnableDefaultInternetAccess),
-		IAMRoleARN:                  classifyChange(state.IAMRoleARN, plan.IAMRoleARN),
-		ID:                          classifyChange(state.ID, plan.ID),
-		ImageARN:                    classifyChange(state.ImageARN, plan.ImageARN),
-		ImageBuilderErrors:          classifyChange(state.ImageBuilderErrors, plan.ImageBuilderErrors),
-		ImageName:                   classifyChange(state.ImageName, plan.ImageName),
-		InstanceType:                classifyChange(state.InstanceType, plan.InstanceType),
-		LatestAppstreamAgentVersion: classifyChange(state.LatestAppstreamAgentVersion, plan.LatestAppstreamAgentVersion),
-		Name:                        classifyChange(state.Name, plan.Name),
-		NetworkAccessConfiguration:  classifyChange(state.NetworkAccessConfiguration, plan.NetworkAccessConfiguration),
-		Platform:                    classifyChange(state.Platform, plan.Platform),
-		RootVolumeConfig:            classifyChange(state.RootVolumeConfig, plan.RootVolumeConfig),
-		State:                       classifyChange(state.State, plan.State),
-		StateChangeReason:           classifyChange(state.StateChangeReason, plan.StateChangeReason),
-		Tags:                        classifyChange(state.Tags, plan.Tags),
-		TagsAll:                     classifyChange(state.TagsAll, plan.TagsAll),
-		VPCConfig:                   classifyChange(state.VPCConfig, plan.VPCConfig),
+		ARN:                           classifyChange(state.ARN, plan.ARN),
+		AccessEndpoints:               classifyChange(state.AccessEndpoints, plan.AccessEndpoints),
+		AppstreamAgentVersion:         classifyChange(state.AppstreamAgentVersion, plan.AppstreamAgentVersion),
+		CreatedTime:                   classifyChange(state.CreatedTime, plan.CreatedTime),
+		Description:                   classifyChange(state.Description, plan.Description),
+		DisableIMDSV1:                 classifyChange(state.DisableIMDSV1, plan.DisableIMDSV1),
+		DisplayName:                   classifyChange(state.DisplayName, plan.DisplayName),
+		DomainJoinInfo:                classifyChange(state.DomainJoinInfo, plan.DomainJoinInfo),
+		EnableDefaultInternetAccess:   classifyChange(state.EnableDefaultInternetAccess, plan.EnableDefaultInternetAccess),
+		IAMRoleARN:                    classifyChange(state.IAMRoleARN, plan.IAMRoleARN),
+		ID:                            classifyChange(state.ID, plan.ID),
+		ImageARN:                      classifyChange(state.ImageARN, plan.ImageARN),
+		ImageBuilderErrors:            classifyChange(state.ImageBuilderErrors, plan.ImageBuilderErrors),
+		ImageName:                     classifyChange(state.ImageName, plan.ImageName),
+		InstanceType:                  classifyChange(state.InstanceType, plan.InstanceType),
+		LatestAppstreamAgentVersion:   classifyChange(state.LatestAppstreamAgentVersion, plan.LatestAppstreamAgentVersion),
+		Name:                          classifyChange(state.Name, plan.Name),
+		NetworkAccessConfiguration:    classifyChange(state.NetworkAccessConfiguration, plan.NetworkAccessConfiguration),
+		Platform:                      classifyChange(state.Platform, plan.Platform),
+		ResolvedAppstreamAgentVersion: classifyChange(state.ResolvedAppstreamAgentVersion, plan.ResolvedAppstreamAgentVersion),
+		RootVolumeConfig:              classifyChange(state.RootVolumeConfig, plan.RootVolumeConfig),
+		State:                         classifyChange(state.State, plan.State),
+		StateChangeReason:             classifyChange(state.StateChangeReason, plan.StateChangeReason),
+		Tags:                          classifyChange(state.Tags, plan.Tags),
+		TagsAll:                       classifyChange(state.TagsAll, plan.TagsAll),
+		VPCConfig:                     classifyChange(state.VPCConfig, plan.VPCConfig),
 	}
 }
 
