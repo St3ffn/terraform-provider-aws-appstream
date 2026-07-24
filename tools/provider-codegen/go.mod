@@ -1,6 +1,6 @@
 module github.com/st3ffn/terraform-provider-aws-appstream/tools/provider-codegen
 
-go 1.26.2
+go 1.26.5
 
 require (
 	github.com/dave/jennifer v1.7.1
