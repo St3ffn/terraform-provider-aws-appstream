@@ -209,10 +209,11 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 				},
 			},
 			"appstream_agent_version": schema.StringAttribute{
-				Description:         "AppStream agent version.",
-				MarkdownDescription: "The AppStream agent version used by the image builder.",
-				Optional:            true,
-				Computed:            true,
+				Description: "AppStream agent version.",
+				MarkdownDescription: "The desired AppStream agent version used by the image builder. " +
+					"Use `LATEST` to request the latest available agent version.",
+				Optional: true,
+				Computed: true,
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.UseStateForUnknown(),
 					stringplanmodifier.RequiresReplace(),
@@ -350,6 +351,12 @@ func (r *resource) Schema(_ context.Context, _ tfresource.SchemaRequest, resp *t
 						Computed:            true,
 					},
 				},
+			},
+			"resolved_appstream_agent_version": schema.StringAttribute{
+				Description: "Resolved AppStream agent version.",
+				MarkdownDescription: "The concrete AppStream agent version returned by AWS for the image builder. " +
+					"When `appstream_agent_version` is set to `LATEST`, this contains the version that `LATEST` resolved to.",
+				Computed: true,
 			},
 			"latest_appstream_agent_version": schema.StringAttribute{
 				Description:         "Latest AppStream agent version indicator.",
