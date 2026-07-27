@@ -34,7 +34,8 @@ type resourceModel struct {
 	// Specifies the Active Directory domain and organizational unit used to join the image builder to a Microsoft
 	// Active Directory domain.
 	DomainJoinInfo types.Object `tfsdk:"domain_join_info"`
-	// The AppStream agent version used by the image builder.
+	// The desired AppStream agent version used by the image builder. Use `LATEST` to request the latest available
+	// agent version.
 	AppstreamAgentVersion types.String `tfsdk:"appstream_agent_version"`
 	// Interface VPC endpoints through which administrators can connect to the image builder.
 	AccessEndpoints types.Set `tfsdk:"access_endpoints"`
@@ -52,6 +53,9 @@ type resourceModel struct {
 	Platform types.String `tfsdk:"platform"`
 	// Network details of the elastic network interface attached to the image builder.
 	NetworkAccessConfiguration types.Object `tfsdk:"network_access_configuration"`
+	// The concrete AppStream agent version returned by AWS for the image builder. When `appstream_agent_version` is
+	// set to `LATEST`, this contains the version that `LATEST` resolved to.
+	ResolvedAppstreamAgentVersion types.String `tfsdk:"resolved_appstream_agent_version"`
 	// Indicates whether the image builder is using the latest AppStream agent version.
 	LatestAppstreamAgentVersion types.String `tfsdk:"latest_appstream_agent_version"`
 	// The state of the AppStream image builder.

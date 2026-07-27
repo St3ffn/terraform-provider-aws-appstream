@@ -88,7 +88,7 @@ resource "awsappstream_image_builder" "example" {
 ### Optional
 
 - `access_endpoints` (Attributes Set) Interface VPC endpoints through which administrators can connect to the image builder. (see [below for nested schema](#nestedatt--access_endpoints))
-- `appstream_agent_version` (String) The AppStream agent version used by the image builder.
+- `appstream_agent_version` (String) The desired AppStream agent version used by the image builder. Use `LATEST` to request the latest available agent version.
 - `description` (String) The image builder description, if set.
 - `disable_imds_v1` (Boolean) Whether Instance Metadata Service Version 1 (IMDSv1) is disabled for the AppStream image builder. If `true`, only IMDSv2 is enabled. If `false`, both IMDSv1 and IMDSv2 are enabled. The default value is `false`.
 - `display_name` (String) The display name of the image builder shown in the AppStream user interface.
@@ -110,6 +110,7 @@ resource "awsappstream_image_builder" "example" {
 - `latest_appstream_agent_version` (String) Indicates whether the image builder is using the latest AppStream agent version.
 - `network_access_configuration` (Attributes) Network details of the elastic network interface attached to the image builder. (see [below for nested schema](#nestedatt--network_access_configuration))
 - `platform` (String) The operating system platform of the image builder.
+- `resolved_appstream_agent_version` (String) The concrete AppStream agent version returned by AWS for the image builder. When `appstream_agent_version` is set to `LATEST`, this contains the version that `LATEST` resolved to.
 - `state` (String) The state of the AppStream image builder.
 - `state_change_reason` (Attributes) The reason for the most recent image builder state change, if applicable. (see [below for nested schema](#nestedatt--state_change_reason))
 - `tags_all` (Map of String) A map of tags, including default tags, assigned to the image builder.

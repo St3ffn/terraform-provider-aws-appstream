@@ -230,3 +230,11 @@ func flattenImageBuilderErrors(
 
 	return setVal
 }
+
+func flattenAppstreamAgentVersion(prior types.String, awsValue *string) types.String {
+	if !prior.IsNull() && !prior.IsUnknown() {
+		return prior
+	}
+
+	return util.StringOrNull(awsValue)
+}

@@ -390,3 +390,66 @@ func TestFlattenImageBuilderErrors(t *testing.T) {
 		})
 	}
 }
+
+func TestFlattenAppstreamAgentVersion(t *testing.T) {
+	t.Parallel()
+
+	resolved := "07-03-2026"
+	updated := "08-01-2026"
+
+	tests := []struct {
+		name     string
+		prior    types.String
+		awsValue *string
+		want     types.String
+	}{
+		{
+			name:     "preserve_latest_intent",
+			prior:    types.StringValue("LATEST"),
+			awsValue: &resolved,
+			want:     types.StringValue("LATEST"),
+		},
+		{
+			name:     "preserve_latest_intent_when_aws_value_missing",
+			prior:    types.StringValue("LATEST"),
+			awsValue: nil,
+			want:     types.StringValue("LATEST"),
+		},
+		{
+			name:     "preserve_concrete_intent",
+			prior:    types.StringValue(resolved),
+			awsValue: &updated,
+			want:     types.StringValue(resolved),
+		},
+		{
+			name:     "fill_null_prior_from_aws",
+			prior:    types.StringNull(),
+			awsValue: &resolved,
+			want:     types.StringValue(resolved),
+		},
+		{
+			name:     "fill_unknown_prior_from_aws",
+			prior:    types.StringUnknown(),
+			awsValue: &resolved,
+			want:     types.StringValue(resolved),
+		},
+		{
+			name:     "null_when_prior_and_aws_value_missing",
+			prior:    types.StringNull(),
+			awsValue: nil,
+			want:     types.StringNull(),
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			got := flattenAppstreamAgentVersion(tt.prior, tt.awsValue)
+
+			if !got.Equal(tt.want) {
+				t.Fatalf("got %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
